@@ -1,0 +1,183 @@
+<!doctype html>
+<!--
+  /motion starting page. Copy it to motion-output/<slug>/work/index.html and replace the scenes,
+  copy, colours and font with ones made for this video — everything below is placeholder that
+  shows the contract and the helpers, not a design.
+
+  Contract (read by scripts/render.mjs):
+    window.MOTION = { width, height, fps, duration }
+    window.seek(t)         draws the exact frame at t seconds; a pure function of t
+    window.motionAudio()   optional; returns the soundtrack as a base64 WAV
+
+  Preview in a browser: index.html?t=3.2 freezes at 3.2s, index.html?play loops in real time.
+-->
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  /* Ship the real font next to this file; a font that fails to load renders as fallback type. */
+  /* @font-face { font-family: "Brand"; src: url("brand.woff2"); font-weight: 100 900; } */
+  :root {
+    --bg: #0e0e10;
+    --fg: #f4f1ea;
+    --accent: #ff5a1f;
+    --muted: #8a877f;
+    --font: "Brand", "Inter", system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: var(--bg); color: var(--fg); font-family: var(--font); }
+  .scene { position: absolute; inset: 0; display: none; padding: 12% 8%; }
+  .scene.on { display: block; }
+  .word { display: inline-block; will-change: transform, opacity; }
+
+  #s1 h1 { position: absolute; top: 34%; left: 8%; right: 8%; font-size: 132px; font-weight: 800; line-height: 1.08; letter-spacing: -3px; }
+  #s2 .card { position: absolute; top: 30%; left: 8%; right: 8%; padding: 64px; border-radius: 40px; background: #1b1b1f; }
+  #s2 .label { font-size: 34px; letter-spacing: 4px; text-transform: uppercase; color: var(--muted); }
+  #s2 .num { font-size: 200px; font-weight: 800; font-variant-numeric: tabular-nums; letter-spacing: -4px; }
+  #s2 svg { display: block; width: 100%; height: 24px; }
+  #s3 .cta { position: absolute; top: 44%; left: 50%; padding: 40px 88px; border-radius: 999px; background: var(--accent); color: var(--bg); font-size: 64px; font-weight: 700; white-space: nowrap; }
+</style>
+</head>
+<body>
+  <section class="scene" id="s1"><h1>Say the one thing they must remember</h1></section>
+  <section class="scene" id="s2">
+    <div class="card">
+      <div class="label">A real number from the source</div>
+      <div class="num">0</div>
+      <svg viewBox="0 0 100 4" preserveAspectRatio="none"><path d="M0 2 H100" stroke="var(--accent)" stroke-width="4" fill="none" pathLength="1" stroke-dasharray="1"/></svg>
+    </div>
+  </section>
+  <section class="scene" id="s3"><div class="cta">The call to action</div></section>
+
+<script>
+window.MOTION = { width: 1080, height: 1920, fps: 30, duration: 9 };
+
+// ---- helpers: everything takes t in seconds and returns plain numbers ----
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const prog = (t, start, dur) => clamp((t - start) / dur);          // 0 → 1 across [start, start + dur]
+const lerp = (a, b, x) => a + (b - a) * x;
+const easeOutExpo = (x) => (x >= 1 ? 1 : 1 - Math.pow(2, -10 * x));  // fast, then settles: slides
+const easeIn = (x) => x * x * x;                                     // exits: faster than entrances
+const easeInOut = (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2); // camera moves
+// Damped spring from 0 to 1, `s` seconds after it starts. 150/18 is soft, 300/26 snappy, 220/12 bouncy.
+function spring(s, stiffness = 150, damping = 18) {
+  if (s <= 0) return 0;
+  const w0 = Math.sqrt(stiffness), zeta = damping / (2 * w0);
+  if (zeta >= 1) return 1 - Math.exp(-w0 * s) * (1 + w0 * s);
+  const wd = w0 * Math.sqrt(1 - zeta * zeta);
+  return 1 - Math.exp(-zeta * w0 * s) * (Math.cos(wd * s) + (zeta * w0 / wd) * Math.sin(wd * s));
+}
+// Seeded random, so "random" detail is identical on every render.
+const rand = (seed) => { const x = Math.sin(seed * 12.9898) * 43758.5453; return x - Math.floor(x); };
+
+const $ = (sel) => document.querySelector(sel);
+const set = (el, styles) => Object.assign(el.style, styles);
+// Split a heading into word spans once, so words can be staggered.
+for (const h of document.querySelectorAll("h1")) {
+  h.innerHTML = h.textContent.split(" ").map((w) => `<span class="word">${w}</span>`).join(" ");
+}
+
+// ---- scenes: [start, end) in seconds, and a draw function getting local time ----
+const scenes = [
+  { el: $("#s1"), start: 0, end: 3.4, draw(t) {
+    // Hook. The first frame already shows a word: no fade from black.
+    document.querySelectorAll("#s1 .word").forEach((w, i) => {
+      const k = spring(t + 0.25 - i * 0.07);
+      set(w, { opacity: clamp(k * 1.6), transform: `translateY(${lerp(80, 0, k)}px)` });
+    });
+    // A slow push-in keeps the hold alive while the line is read.
+    const out = easeIn(prog(t, 3.1, 0.3));
+    set($("#s1 h1"), { opacity: 1 - out, transformOrigin: "0 50%", transform: `translateY(${-40 * out}px) scale(${lerp(1, 1.05, t / 3.4)})` });
+  } },
+  { el: $("#s2"), start: 3.4, end: 6.6, draw(t) {
+    const k = spring(t, 300, 26);
+    set($("#s2 .card"), { opacity: clamp(k * 2), transform: `translateX(${lerp(160, 0, k)}px) scale(${lerp(0.95, 1, k)})` });
+    $("#s2 .num").textContent = Math.round(12480 * easeOutExpo(prog(t, 0.25, 1.5))).toLocaleString("en-US");
+    $("#s2 path").style.strokeDashoffset = 1 - easeInOut(prog(t, 0.6, 0.9)); // draw-on line
+    const out = easeIn(prog(t, 2.95, 0.25));
+    set($("#s2"), { opacity: 1 - out });
+  } },
+  { el: $("#s3"), start: 6.6, end: 9, draw(t) {
+    const k = spring(t, 220, 14);
+    const press = 1 - 0.06 * Math.sin(Math.PI * prog(t, 1.2, 0.22)); // a simulated tap
+    set($("#s3 .cta"), { opacity: clamp(k * 2), transform: `translate(-50%, ${lerp(60, 0, k)}px) scale(${lerp(0.94, 1, k) * press})` });
+  } },
+];
+
+window.seek = async (t) => {
+  for (const s of scenes) {
+    const on = t >= s.start && t < s.end;
+    s.el.classList.toggle("on", on);
+    if (on) s.draw(t - s.start);
+  }
+};
+
+// ---- sound: made in the page, rendered offline, deterministic ----
+window.motionAudio = async () => {
+  const { duration } = window.MOTION, sr = 48000, bpm = 120, beat = 60 / bpm;
+  const ctx = new OfflineAudioContext(2, Math.ceil(sr * duration), sr);
+  const master = ctx.createGain();
+  master.gain.value = 0.6;
+  master.connect(ctx.destination);
+  // Soft kick on every beat: a short falling sine.
+  for (let at = 0; at < duration; at += beat) {
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.frequency.setValueAtTime(110, at);
+    o.frequency.exponentialRampToValueAtTime(45, at + 0.12);
+    g.gain.setValueAtTime(0.0001, at);
+    g.gain.exponentialRampToValueAtTime(0.8, at + 0.005);
+    g.gain.exponentialRampToValueAtTime(0.0001, at + 0.25);
+    o.connect(g).connect(master);
+    o.start(at);
+    o.stop(at + 0.3);
+  }
+  // A pad under it (A minor), filtered so it sits behind everything else.
+  const lp = ctx.createBiquadFilter();
+  lp.type = "lowpass";
+  lp.frequency.value = 900;
+  const pad = ctx.createGain();
+  pad.gain.setValueAtTime(0, 0);
+  pad.gain.linearRampToValueAtTime(0.12, 1);
+  pad.gain.setValueAtTime(0.12, duration - 1);
+  pad.gain.linearRampToValueAtTime(0, duration);
+  lp.connect(pad).connect(master);
+  for (const f of [220, 261.63, 329.63]) {
+    const o = ctx.createOscillator();
+    o.type = "triangle";
+    o.frequency.value = f;
+    o.connect(lp);
+    o.start(0);
+  }
+  return wavBase64(await ctx.startRendering());
+};
+
+function wavBase64(buf) {
+  const ch = buf.numberOfChannels, n = buf.length, size = n * ch * 2;
+  const v = new DataView(new ArrayBuffer(44 + size));
+  const str = (o, s) => [...s].forEach((c, i) => v.setUint8(o + i, c.charCodeAt(0)));
+  str(0, "RIFF"); v.setUint32(4, 36 + size, true); str(8, "WAVEfmt ");
+  v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, ch, true);
+  v.setUint32(24, buf.sampleRate, true); v.setUint32(28, buf.sampleRate * ch * 2, true);
+  v.setUint16(32, ch * 2, true); v.setUint16(34, 16, true); str(36, "data"); v.setUint32(40, size, true);
+  const data = Array.from({ length: ch }, (_, c) => buf.getChannelData(c));
+  for (let i = 0, o = 44; i < n; i++) for (let c = 0; c < ch; c++, o += 2) v.setInt16(o, clamp(data[c][i], -1, 1) * 0x7fff, true);
+  const bytes = new Uint8Array(v.buffer);
+  let s = "";
+  for (let i = 0; i < bytes.length; i += 0x8000) s += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+  return btoa(s);
+}
+
+// ---- browser preview only; render.mjs ignores this ----
+const params = new URLSearchParams(location.search);
+const fit = () => set(document.body, { width: MOTION.width + "px", height: MOTION.height + "px", transformOrigin: "0 0",
+  transform: `scale(${Math.min(innerWidth / MOTION.width, innerHeight / MOTION.height)})` });
+if (params.has("t")) { fit(); seek(Number(params.get("t"))); }
+else if (params.has("play")) {
+  fit();
+  const t0 = performance.now();
+  const loop = () => { seek(((performance.now() - t0) / 1000) % MOTION.duration); requestAnimationFrame(loop); };
+  loop();
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+{
+  "voice": {
+    "engine": "kokoro",
+    "name": "am_michael",
+    "speed": 0.88
+  },
+  "lead": 0.3,
+  "tail": 0.8,
+  "segments": [
+    {
+      "id": "s01-hook",
+      "text": "Think of the last useful thing you read. Now explain it in one sentence, without looking back.",
+      "pause_after": 0.5,
+      "display": "Think of the last useful thing you read. Now explain it in one sentence, without looking back."
+    },
+    {
+      "id": "s02-turn",
+      "text": "Where did you get stuck? That gap is our starting point.",
+      "pause_after": 0.4
+    },
+    {
+      "id": "s03-promise",
+      "text": "In this video, we'll separate recognizing an explanation from producing one, then build a small test you can use on anything you study."
+    }
+  ]
+}

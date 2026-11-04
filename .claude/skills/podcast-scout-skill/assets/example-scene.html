@@ -1,0 +1,76 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+  :root { --bg:#101418; --ink:#F2EFE9; --dim:#5B6670; --accent:#F2B134; --blue:#4E79A7; }
+  html,body { margin:0; width:1920px; height:1080px; background:var(--bg); overflow:hidden;
+              font-family: "DejaVu Sans", Arial, sans-serif; color:var(--ink); }
+  .abs { position:absolute; }
+  #page { left:260px; top:170px; width:560px; height:700px; background:#1B2229; border-radius:18px;
+          box-shadow: 0 30px 80px rgba(0,0,0,.45); padding:56px 52px; box-sizing:border-box; }
+  #page .t { font-size:40px; font-weight:700; margin-bottom:34px; }
+  .bar { height:16px; border-radius:8px; background:#3A4550; margin:0 0 22px; }
+  #bubble { left:1040px; top:250px; width:640px; height:360px; }
+  #say { left:1110px; top:330px; width:520px; font-size:44px; line-height:1.35; }
+  #gap { left:1095px; top:405px; width:520px; height:70px; border:5px dashed var(--accent); border-radius:16px; }
+  #gapLabel { left:1300px; top:560px; font-size:36px; color:var(--accent); font-weight:700; }
+  .col { top:290px; width:640px; text-align:center; }
+  .col h2 { font-size:64px; margin:0 0 16px; letter-spacing:2px; }
+  .col p { font-size:38px; color:#C9CED3; margin:0; }
+  #colL { left:180px; } #colR { left:1100px; }
+  #vs { left:930px; top:310px; font-size:56px; color:var(--dim); font-weight:700; }
+  #test { left:560px; top:620px; width:800px; height:150px; border-radius:22px; background:#1B2229;
+          border:4px solid var(--accent); box-sizing:border-box; padding:34px 40px; font-size:46px; font-weight:700; }
+  #cap { left:0; right:0; top:960px; height:120px; } /* caption zone kept clear */
+</style></head>
+<body>
+  <div id="page" class="abs"><div class="t">Chapter 4</div>
+    <div class="bar" style="width:100%"></div><div class="bar" style="width:92%"></div><div class="bar" style="width:97%"></div>
+    <div class="bar" style="width:84%"></div><div class="bar" style="width:100%"></div><div class="bar" style="width:76%"></div>
+    <div class="bar" style="width:95%"></div><div class="bar" style="width:88%"></div><div class="bar" style="width:60%"></div>
+    <div class="bar" style="width:93%"></div><div class="bar" style="width:81%"></div>
+  </div>
+  <svg id="bubble" class="abs" viewBox="0 0 640 360"><path id="bpath" pathLength="1" stroke-dasharray="1"
+     d="M60 20 H580 Q620 20 620 60 V240 Q620 280 580 280 H220 L120 345 L150 280 H60 Q20 280 20 240 V60 Q20 20 60 20 Z"
+     fill="none" stroke="#F2EFE9" stroke-width="7" stroke-linejoin="round"/></svg>
+  <div id="say" class="abs"></div>
+  <div id="gap" class="abs"></div>
+  <div id="gapLabel" class="abs">the gap</div>
+  <div id="colL" class="abs col"><h2>RECOGNIZING</h2><p>"Yes, I've seen this"</p></div>
+  <div id="vs" class="abs">vs</div>
+  <div id="colR" class="abs col"><h2 style="color:var(--accent)">PRODUCING</h2><p>"Here's how it works"</p></div>
+  <div id="test" class="abs">✎ &nbsp;The one-sentence test</div>
+<script>
+window.MOTION = { width: 1920, height: 1080, fps: 30, duration: 21.3 };
+const T = { s1:[0.3,6.518], s2:[7.018,10.405], s3:[10.805,20.405] };   // from narration/timings.json
+const clamp=(x,a=0,b=1)=>Math.min(b,Math.max(a,x)), prog=(t,s,d)=>clamp((t-s)/d), lerp=(a,b,x)=>a+(b-a)*x;
+const eo=x=>1-Math.pow(1-x,3), ei=x=>x*x*x, eio=x=>x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2;   // premium/calm
+const $=s=>document.querySelector(s), set=(el,st)=>Object.assign(el.style,st);
+const SAY="It's about… um…";
+window.seek = async (t) => {
+  // ---- s1: the page is on screen at frame 0; "explain it" → page dims, bubble draws on
+  const drift = Math.sin(t*0.9)*12; document.body.style.backgroundPosition = "0 0"; document.body.style.background = `radial-gradient(1200px 800px at ${960+Math.sin(t*0.4)*160}px ${540+Math.cos(t*0.3)*90}px, #18212A, #101418)`;
+  const k1 = eio(prog(t, 2.7, 0.9));                 // "Now explain it"
+  const outPage = ei(prog(t, T.s3[0]-0.2, 0.5));
+  set($("#page"), { opacity: lerp(1, .45, k1) * (1-outPage), transform:`translate(${lerp(0,-40,k1)}px, ${drift}px) scale(${lerp(1,.96,k1)})` });
+  $("#bpath").style.strokeDashoffset = 1 - eio(prog(t, 3.0, 1.0));
+  const outB = ei(prog(t, T.s3[0]-0.2, 0.5));
+  set($("#bubble"), { opacity: (t<3?0:1)*(1-outB), transform:`translateY(${-drift}px)` });
+  // ---- s2: a few typed words, then the gap is outlined
+  const typed = Math.floor(SAY.length * prog(t, T.s2[0]-0.6, 1.4));
+  const cursor = (Math.floor(t*2)%2===0 && t>3.6 && t<T.s3[0]) ? "|" : "";
+  $("#say").textContent = SAY.slice(0, typed) + cursor;
+  set($("#say"), { opacity: 1-outB, transform:`translateY(${-drift}px)` });
+  const kg = eo(prog(t, T.s2[0]+1.5, 0.6));          // "That gap"
+  set($("#gap"), { opacity: kg*(1-outB), transform:`translateY(${-drift}px) scale(${lerp(.9,1,kg)})` });
+  set($("#gapLabel"), { opacity: eo(prog(t, T.s2[0]+1.9, .5))*(1-outB), transform:`translateY(${lerp(20,0,kg)-drift}px)` });
+  // ---- s3: recognizing vs producing, then the test card
+  const s = T.s3[0];
+  const kl = eo(prog(t, s+0.15, .7)), kr = eo(prog(t, s+2.0, .7)), kv = eo(prog(t, s+1.6, .5));
+  set($("#colL"), { opacity: kl, transform:`translateX(${lerp(-60,0,kl)}px) translateY(${drift*.5}px)` });
+  set($("#colR"), { opacity: kr, transform:`translateX(${lerp(60,0,kr)}px) translateY(${-drift*.5}px)` });
+  set($("#vs"), { opacity: kv });
+  const kt = eo(prog(t, s+5.6, .8));                  // "then build a small test"
+  set($("#test"), { opacity: kt, transform:`translateY(${lerp(50,0,kt)}px) scale(${1+0.01*Math.sin(t*1.3)})` });
+};
+if (location.search.includes("t=")) window.seek(parseFloat(new URLSearchParams(location.search).get("t")));
+</script></body></html>

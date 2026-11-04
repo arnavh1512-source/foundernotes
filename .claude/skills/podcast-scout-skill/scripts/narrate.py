@@ -1,0 +1,373 @@
+#!/usr/bin/env python3
+"""Synthesize narration with a MALE voice and write timings + captions.
+
+    python3 narrate.py SCRIPT.json --out DIR [--engine kokoro|piper|edge|voicebox|files]
+                                   [--voice NAME] [--speed 1.0] [--allow-non-male]
+    python3 narrate.py --list-voices
+
+SCRIPT.json (see assets/narration-script.example.json):
+    {"voice": {"engine": "kokoro", "name": "am_michael", "speed": 1.0},
+     "lead": 0.3, "tail": 0.8,
+     "segments": [{"id": "s01", "text": "Spoken words (respell names here)...", "display": "Same words, correct spelling",
+                   "pause_after": 0.4}]}
+A plain .txt/.md file also works: each blank-line-separated paragraph becomes one segment.
+
+Outputs in DIR:
+    segments/<id>.wav    one take per segment (re-used if text+voice unchanged)
+    narration.wav        48 kHz mono master with lead/pauses/tail
+    timings.json         start/end of every segment on the master clock (drives scene timing)
+    captions.srt/.vtt    single-line captions; word timing inside a segment is ESTIMATED from
+                         character counts (good enough for captions, not for lip-sync)
+
+Default voice policy: male narrator. The script refuses voices that are not on the male
+allowlist unless --allow-non-male is passed (the channel owner must ask for that explicitly).
+"""
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+import os
+import re
+import shutil
+import subprocess
+import sys
+import tempfile
+import urllib.request
+import wave
+from pathlib import Path
+
+SR = 48000
+VOICES_DIR = Path(os.environ.get("STUDIO_VOICES_DIR", Path.home() / ".cache" / "studio-voices"))
+
+# Male voices only. Defaults first.
+MALE_VOICES = {
+    "kokoro": ["am_michael", "am_adam", "am_fenrir", "am_onyx", "am_eric", "am_liam", "am_echo",
+               "am_puck", "bm_george", "bm_lewis", "bm_daniel", "bm_fable"],
+    "piper": ["en_US-ryan-high", "en_US-ryan-medium", "en_US-joe-medium", "en_US-john-medium",
+              "en_US-bryce-medium", "en_US-norman-medium", "en_GB-alan-medium",
+              "en_GB-northern_english_male-medium"],
+    "edge": ["en-US-AndrewNeural", "en-US-GuyNeural", "en-US-BrianNeural", "en-US-ChristopherNeural",
+             "en-US-EricNeural", "en-US-RogerNeural", "en-US-SteffanNeural", "en-GB-RyanNeural",
+             "en-GB-ThomasNeural", "en-AU-WilliamNeural", "en-IN-PrabhatNeural",
+             "en-US-AndrewMultilingualNeural", "en-US-BrianMultilingualNeural"],
+}
+DEFAULT_VOICE = {"kokoro": "am_michael", "piper": "en_US-ryan-high", "edge": "en-US-AndrewNeural"}
+ENGINE_ORDER = ["kokoro", "piper", "edge"]
+
+
+def die(msg: str, code: int = 2):
+    print(f"narrate: {msg}", file=sys.stderr)
+    sys.exit(code)
+
+
+def run(cmd, **kw):
+    return subprocess.run(cmd, check=True, capture_output=True, **kw)
+
+
+# ---------------------------------------------------------------- script loading
+def load_script(path: Path) -> dict:
+    text = path.read_text(encoding="utf-8-sig")
+    if path.suffix.lower() == ".json":
+        data = json.loads(text)
+    else:
+        paras = [p.strip() for p in re.split(r"\n\s*\n", text) if p.strip() and not p.lstrip().startswith("#")]
+        data = {"segments": [{"id": f"s{i+1:02d}", "text": " ".join(p.split())} for i, p in enumerate(paras)]}
+    segs = data.get("segments") or []
+    if not segs:
+        die("script has no segments")
+    seen = set()
+    for i, s in enumerate(segs):
+        s.setdefault("id", f"s{i+1:02d}")
+        if s["id"] in seen:
+            die(f"duplicate segment id {s['id']}")
+        seen.add(s["id"])
+        if not str(s.get("text", "")).strip():
+            die(f"segment {s['id']} has no text")
+        if s.get("display"):
+            a, b = len(str(s["text"]).split()), len(str(s["display"]).split())
+            if abs(a - b) > max(2, 0.2 * a):
+                print(f"narrate: warning: {s['id']} display has {b} words vs {a} spoken; captions should "
+                      f"match speech (use display only for spelling fixes)", file=sys.stderr)
+    return data
+
+
+# ---------------------------------------------------------------- engines
+def have_kokoro() -> bool:
+    try:
+        import kokoro_onnx  # noqa: F401
+    except Exception:
+        return False
+    return (VOICES_DIR / "kokoro-v1.0.onnx").exists() and (VOICES_DIR / "voices-v1.0.bin").exists()
+
+
+def have_piper(voice: str) -> bool:
+    return shutil.which("piper") is not None and (VOICES_DIR / f"{voice}.onnx").exists()
+
+
+def have_edge() -> bool:
+    try:
+        import edge_tts  # noqa: F401
+        return True
+    except Exception:
+        return shutil.which("edge-tts") is not None
+
+
+_KOKORO = None
+
+
+def synth_kokoro(text, voice, speed, out: Path):
+    global _KOKORO
+    from kokoro_onnx import Kokoro
+    import soundfile as sf
+    if _KOKORO is None:
+        _KOKORO = Kokoro(str(VOICES_DIR / "kokoro-v1.0.onnx"), str(VOICES_DIR / "voices-v1.0.bin"))
+    lang = "en-gb" if voice.startswith("b") else "en-us"
+    samples, sr = _KOKORO.create(text, voice=voice, speed=float(speed), lang=lang)
+    tmp = out.with_suffix(".raw.wav")
+    sf.write(str(tmp), samples, sr)
+    to_master_format(tmp, out)
+    tmp.unlink(missing_ok=True)
+
+
+def synth_piper(text, voice, speed, out: Path):
+    tmp = out.with_suffix(".raw.wav")
+    length_scale = 1.0 / float(speed) if float(speed) > 0 else 1.0
+    subprocess.run(["piper", "-m", str(VOICES_DIR / f"{voice}.onnx"), "-f", str(tmp),
+                    "--length_scale", f"{length_scale:.3f}", "--sentence_silence", "0.25"],
+                   input=text.encode(), check=True, capture_output=True)
+    to_master_format(tmp, out)
+    tmp.unlink(missing_ok=True)
+
+
+def synth_edge(text, voice, speed, out: Path):
+    tmp = out.with_suffix(".mp3")
+    rate = f"{int(round((float(speed) - 1) * 100)):+d}%"
+    exe = [shutil.which("edge-tts")] if shutil.which("edge-tts") else [sys.executable, "-m", "edge_tts"]
+    run(exe + ["--voice", voice, f"--rate={rate}", "--text", text, "--write-media", str(tmp)])
+    to_master_format(tmp, out)
+    tmp.unlink(missing_ok=True)
+
+
+def synth_voicebox(text, voice, speed, out: Path):
+    """voicebox (github.com/jamiepine/voicebox) running locally; voice = profile id of a
+    MALE preset profile (e.g. kokoro am_michael or Qwen CustomVoice Ryan/Aiden)."""
+    base = os.environ.get("VOICEBOX_URL", "http://127.0.0.1:17493")
+    body = {"profile_id": voice, "text": text, "language": "en"}
+    if os.environ.get("VOICEBOX_ENGINE"):
+        body["engine"] = os.environ["VOICEBOX_ENGINE"]
+    if os.environ.get("VOICEBOX_INSTRUCT"):
+        body["instruct"] = os.environ["VOICEBOX_INSTRUCT"]
+    req = urllib.request.Request(f"{base}/generate/stream", data=json.dumps(body).encode(),
+                                 headers={"Content-Type": "application/json"})
+    tmp = out.with_suffix(".raw.wav")
+    with urllib.request.urlopen(req, timeout=600) as r:
+        tmp.write_bytes(r.read())
+    to_master_format(tmp, out, speed=speed)
+    tmp.unlink(missing_ok=True)
+
+
+def synth_files(seg_id, voice_dir: Path, out: Path, speed):
+    src = voice_dir / f"{seg_id}.wav"
+    if not src.exists():
+        die(f"files engine: missing recording {src}")
+    to_master_format(src, out, speed=speed)
+
+
+def to_master_format(src: Path, dst: Path, speed=1.0):
+    af = ["aresample=48000", "highpass=f=70"]
+    if abs(float(speed) - 1.0) > 1e-3:
+        af.insert(0, f"atempo={float(speed):.3f}")
+    # trim leading/trailing silence so pauses are controlled by the script, not the engine
+    af += ["silenceremove=start_periods=1:start_threshold=-50dB:start_silence=0.05",
+           "areverse", "silenceremove=start_periods=1:start_threshold=-50dB:start_silence=0.08", "areverse"]
+    run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(src), "-ac", "1", "-ar", str(SR),
+         "-af", ",".join(af), "-c:a", "pcm_s16le", str(dst)])
+
+
+def wav_seconds(path: Path) -> float:
+    with wave.open(str(path)) as w:
+        return w.getnframes() / float(w.getframerate())
+
+
+def silence(seconds: float, out: Path):
+    run(["ffmpeg", "-y", "-loglevel", "error", "-f", "lavfi", "-i", f"anullsrc=r={SR}:cl=mono",
+         "-t", f"{max(seconds, 0.01):.3f}", "-c:a", "pcm_s16le", str(out)])
+
+
+# ---------------------------------------------------------------- captions
+def caption_chunks(text: str, max_chars: int = 42):
+    words, line, chunks = text.split(), "", []
+    for w in words:
+        cand = f"{line} {w}".strip()
+        if len(cand) > max_chars and line:
+            chunks.append(line)
+            line = w
+        else:
+            line = cand
+        if re.search(r"[.!?;:]$", w) and len(line) >= 18:
+            chunks.append(line)
+            line = ""
+    if line:
+        chunks.append(line)
+    return chunks
+
+
+def ts(t: float, sep=","):
+    t = max(t, 0)
+    h, rem = divmod(int(round(t * 1000)), 3600000)
+    m, rem = divmod(rem, 60000)
+    s, ms = divmod(rem, 1000)
+    return f"{h:02d}:{m:02d}:{s:02d}{sep}{ms:03d}"
+
+
+def build_captions(timings):
+    cues = []
+    for seg in timings:
+        chunks = caption_chunks(seg["display"])
+        # keep every cue <= ~6 s: split long chunks further by words
+        dur_per_char = (seg["end"] - seg["start"]) / max(sum(len(c) for c in chunks), 1)
+        fixed = []
+        for c in chunks:
+            ws = c.split()
+            n = max(1, int(len(c) * dur_per_char // 6) + 1)
+            step = -(-len(ws) // n)
+            fixed += [" ".join(ws[i:i + step]) for i in range(0, len(ws), step)]
+        chunks = fixed
+        total = sum(len(c) for c in chunks) or 1
+        t, dur = seg["start"], seg["end"] - seg["start"]
+        for c in chunks:
+            d = dur * len(c) / total
+            cues.append((t, t + d, c))
+            t += d
+    # small lead-in so captions appear just before the word, never overlapping
+    out = []
+    for i, (a, b, c) in enumerate(cues):
+        a2 = max(a - 0.15, out[-1][1] if out else 0)
+        out.append((a2, b, c))
+    return out
+
+
+def write_captions(cues, out_dir: Path):
+    srt = "\n".join(f"{i}\n{ts(a)} --> {ts(b)}\n{c}\n" for i, (a, b, c) in enumerate(cues, 1))
+    (out_dir / "captions.srt").write_text(srt, encoding="utf-8")
+    vtt = "WEBVTT\n\n" + "\n".join(f"{ts(a, '.')} --> {ts(b, '.')}\n{c}\n" for a, b, c in cues)
+    (out_dir / "captions.vtt").write_text(vtt, encoding="utf-8")
+
+
+# ---------------------------------------------------------------- main
+def pick_engine(requested, voice):
+    if requested:
+        return requested
+    for eng in ENGINE_ORDER:
+        v = voice or DEFAULT_VOICE[eng]
+        if eng == "kokoro" and have_kokoro():
+            return eng
+        if eng == "piper" and have_piper(v if v in MALE_VOICES["piper"] else DEFAULT_VOICE["piper"]):
+            return eng
+        if eng == "edge" and have_edge():
+            return eng
+    die("no TTS engine available. Run scripts/setup_studio.sh (installs Kokoro + Piper male voices).")
+
+
+def main(argv=None):
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("script", nargs="?")
+    ap.add_argument("--out")
+    ap.add_argument("--engine", choices=["kokoro", "piper", "edge", "voicebox", "files"])
+    ap.add_argument("--voice")
+    ap.add_argument("--speed", type=float)
+    ap.add_argument("--files-dir", help="for --engine files: folder of <segment-id>.wav recordings")
+    ap.add_argument("--allow-non-male", action="store_true",
+                    help="only when the channel owner explicitly asked for a non-male narrator")
+    ap.add_argument("--list-voices", action="store_true")
+    a = ap.parse_args(argv)
+
+    if a.list_voices:
+        for eng, vs in MALE_VOICES.items():
+            print(f"{eng:7s} (default {DEFAULT_VOICE[eng]}): {', '.join(vs)}")
+        print("voicebox: pass the profile id of a male preset profile (see references/voiceover.md)")
+        print(f"engines available here: kokoro={have_kokoro()} piper={have_piper(DEFAULT_VOICE['piper'])} edge={have_edge()}")
+        return 0
+    if not a.script or not a.out:
+        ap.error("SCRIPT and --out are required")
+    if not shutil.which("ffmpeg"):
+        die("ffmpeg not found")
+
+    data = load_script(Path(a.script))
+    vcfg = data.get("voice", {})
+    engine = a.engine or vcfg.get("engine")
+    voice = a.voice or vcfg.get("name")
+    engine = pick_engine(engine, voice)
+    if engine in DEFAULT_VOICE:
+        voice = voice or DEFAULT_VOICE[engine]
+        if voice not in MALE_VOICES[engine] and not a.allow_non_male:
+            die(f"voice '{voice}' is not on the male allowlist for {engine}. "
+                f"Male options: {', '.join(MALE_VOICES[engine])}")
+    elif engine == "voicebox" and not voice:
+        die("voicebox needs --voice <profile id of a male preset profile>")
+    speed = a.speed or vcfg.get("speed", 1.0)
+    lead, tail = float(data.get("lead", 0.3)), float(data.get("tail", 0.8))
+
+    out = Path(a.out).resolve()
+    seg_dir = out / "segments"
+    seg_dir.mkdir(parents=True, exist_ok=True)
+
+    timings, parts = [], []
+    with tempfile.TemporaryDirectory() as td:
+        td = Path(td)
+        lead_wav = td / "lead.wav"
+        silence(lead, lead_wav)
+        parts.append(lead_wav)
+        clock = wav_seconds(lead_wav)
+        for i, s in enumerate(data["segments"]):
+            text = " ".join(str(s["text"]).split())
+            key = hashlib.sha256(f"{engine}|{voice}|{speed}|{text}".encode()).hexdigest()[:16]
+            wav = seg_dir / f"{s['id']}.wav"
+            stamp = seg_dir / f"{s['id']}.key"
+            if not (wav.exists() and stamp.exists() and stamp.read_text() == key):
+                print(f"  [{engine}:{voice}] {s['id']}: {text[:60]}{'…' if len(text) > 60 else ''}", file=sys.stderr)
+                if engine == "kokoro":
+                    synth_kokoro(text, voice, speed, wav)
+                elif engine == "piper":
+                    synth_piper(text, voice, speed, wav)
+                elif engine == "edge":
+                    synth_edge(text, voice, speed, wav)
+                elif engine == "voicebox":
+                    synth_voicebox(text, voice, speed, wav)
+                else:
+                    synth_files(s["id"], Path(a.files_dir or "recordings"), wav, speed)
+                stamp.write_text(key)
+            d = wav_seconds(wav)
+            timings.append({"id": s["id"], "start": round(clock, 3), "end": round(clock + d, 3),
+                            "text": text, "display": " ".join(str(s.get("display", text)).split()),
+                            "words": len(text.split())})
+            parts.append(wav)
+            clock += d
+            gap = float(s.get("pause_after", 0.35 if i < len(data["segments"]) - 1 else tail))
+            gw = td / f"gap{i}.wav"
+            silence(gap, gw)
+            parts.append(gw)
+            clock += wav_seconds(gw)
+        listing = td / "list.txt"
+        listing.write_text("".join(f"file '{Path(p).resolve().as_posix()}'\n" for p in parts))
+        run(["ffmpeg", "-y", "-loglevel", "error", "-f", "concat", "-safe", "0", "-i", str(listing),
+             "-c:a", "pcm_s16le", "-ar", str(SR), "-ac", "1", str(out / "narration.wav")])
+
+    total = wav_seconds(out / "narration.wav")
+    if total + 0.1 < clock:
+        die(f"narration.wav is {total:.2f}s but the segments add up to {clock:.2f}s; concat failed")
+    words = sum(t["words"] for t in timings)
+    speech = sum(t["end"] - t["start"] for t in timings)
+    meta = {"engine": engine, "voice": voice, "speed": speed, "male_voice_policy": not a.allow_non_male,
+            "duration": round(total, 3), "words": words,
+            "wpm_speech": round(words / (speech / 60), 1) if speech else None,
+            "word_timing": "estimated-from-characters", "segments": timings}
+    (out / "timings.json").write_text(json.dumps(meta, indent=2), encoding="utf-8")
+    write_captions(build_captions(timings), out)
+    print(json.dumps({k: meta[k] for k in ("engine", "voice", "duration", "words", "wpm_speech")}))
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

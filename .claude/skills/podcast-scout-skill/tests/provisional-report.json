@@ -1,0 +1,243 @@
+{
+  "schema_version": "1.0",
+  "mode": "provisional",
+  "created_at": "2026-11-04T12:00:00+05:30",
+  "audience": "English-speaking global beginners",
+  "language": "English",
+  "podcast": {
+    "title": "Synthetic learning conversation — test fixture",
+    "url": null,
+    "input_type": "transcript",
+    "coverage": "complete",
+    "coverage_note": "Complete synthetic two-topic transcript supplied for a test. It is not a real podcast.",
+    "transcript_language": "English",
+    "has_timestamps": false,
+    "transcript_source": "transcript.txt"
+  },
+  "capabilities": [
+    "transcript-reading"
+  ],
+  "summary": "Two distinct ideas grounded in a synthetic transcript. Neither has independent research or verified YouTube demand.",
+  "topics": [
+    {
+      "id": "recall",
+      "title": "What explaining an idea from memory can reveal",
+      "premise": "Show a learner identifying an unclear explanation, without asserting proven learning gains.",
+      "guest_claim": "The speaker reports noticing gaps when explaining without the book.",
+      "angle": "Show a learner identifying an unclear explanation, without asserting proven learning gains.",
+      "viewer_benefit": "Learn a question to ask when checking whether an explanation is clear.",
+      "moment": {
+        "quote": "I close the book and try to explain the idea from memory.",
+        "quote_language": "English",
+        "english_meaning": null,
+        "locator": "Paragraph 2",
+        "timestamp": null,
+        "locator_type": "paragraph",
+        "verified": true
+      },
+      "findings": [
+        {
+          "claim": "The speaker reports noticing gaps when explaining without the book.",
+          "kind": "guest-opinion",
+          "source_urls": []
+        },
+        {
+          "claim": "Independent evidence is needed before presenting this as an effective technique.",
+          "kind": "unresolved",
+          "source_urls": []
+        }
+      ],
+      "sources": [],
+      "scores": {
+        "audience_value": 65,
+        "curiosity": 62,
+        "evidence": 35,
+        "originality": 50,
+        "visual_potential": 80
+      },
+      "score": 57,
+      "score_reasons": {
+        "audience_value": "A concrete learning or reflection question can be useful to beginners.",
+        "curiosity": "The question invites a small personal demonstration without promising an outcome.",
+        "evidence": "Only a synthetic anecdote is available; no independent research was accessed.",
+        "originality": "The explanatory angle is a hypothesis; existing YouTube coverage was not compared.",
+        "visual_potential": "A before-and-after diagram can show the proposed comparison clearly."
+      },
+      "verdict": "needs-research",
+      "confidence": "low",
+      "research_checks": {
+        "central_claim_status": "unverified",
+        "coverage_compared": false,
+        "one_source_exception": null
+      },
+      "youtube_demand": {
+        "status": "unavailable",
+        "explanation": "No keyword data, comments, analytics, or existing videos were accessed.",
+        "observations": []
+      },
+      "titles": [
+        "Can You Explain It Without the Book?",
+        "The Gaps in Your Explanation",
+        "What Happens When You Close the Book?"
+      ],
+      "hook": "Try explaining the last thing you read. Where does your explanation stop making sense?",
+      "thumbnail": "A closed book beside an unfinished explanation diagram; text: Can you explain it?",
+      "duration_seconds": 180,
+      "duration_reason": "A provisional three-minute demonstration with an explicit uncertainty section; revisit after research.",
+      "narration_words": {
+        "min": 390,
+        "max": 480,
+        "assumption": "Planning estimate of 130–160 words per minute for three minutes, adjusted later for visual pauses."
+      },
+      "outline": [
+        {
+          "heading": "Introduce the question",
+          "seconds": 30,
+          "teaching_point": "Learn a question to ask when checking whether an explanation is clear.",
+          "narration_direction": "Frame the speaker observation as an anecdote, not a proven result.",
+          "animation_direction": "Introduce a learner and label the question."
+        },
+        {
+          "heading": "Demonstrate the comparison",
+          "seconds": 100,
+          "teaching_point": "Show a learner identifying an unclear explanation, without asserting proven learning gains.",
+          "narration_direction": "Walk through a clearly labeled illustrative example.",
+          "animation_direction": "Use two labeled panels and move a marker between the original record and later explanation."
+        },
+        {
+          "heading": "Explain the limits",
+          "seconds": 50,
+          "teaching_point": "An anecdote does not establish effectiveness.",
+          "narration_direction": "Name the unresolved evidence and invite observation rather than promise improvement.",
+          "animation_direction": "Show an evidence-needed label beside the takeaway."
+        }
+      ],
+      "keywords": [
+        "recall",
+        "learning",
+        "educational animation"
+      ],
+      "research_queries": [
+        "retrieval practice learning systematic review",
+        "self explanation learning meta analysis"
+      ],
+      "caveats": [
+        "Synthetic source. Do not publish as a real guest statement.",
+        "No efficacy claim or YouTube demand has been verified."
+      ],
+      "claude_code_handoff": "Create a provisional 180-second storyboard for What explaining an idea from memory can reveal. Use the supplied quote only as synthetic test material. Use a 30-second question, 100-second illustrative comparison, and 50-second limitations section. Aim for 390–480 narration words. Use clear diagrams and synchronized captions. Research the listed queries before asserting effectiveness. Do not impersonate a speaker or imply endorsement. No external footage is licensed. Acceptance: timings sum to180 seconds; uncertainty visible; no fabricated research or metrics."
+    },
+    {
+      "id": "journal",
+      "title": "A decision journal as a record of what you expected",
+      "premise": "Animate a dated prediction beside its outcome, while avoiding claims that journaling improves decisions.",
+      "guest_claim": "The speaker uses written predictions to compare expectations with later outcomes.",
+      "angle": "Animate a dated prediction beside its outcome, while avoiding claims that journaling improves decisions.",
+      "viewer_benefit": "See how a written record differs from a later memory of a prediction.",
+      "moment": {
+        "quote": "I keep a decision journal to compare my predictions with what happened.",
+        "quote_language": "English",
+        "english_meaning": null,
+        "locator": "Paragraph 3",
+        "timestamp": null,
+        "locator_type": "paragraph",
+        "verified": true
+      },
+      "findings": [
+        {
+          "claim": "The speaker uses written predictions to compare expectations with later outcomes.",
+          "kind": "guest-opinion",
+          "source_urls": []
+        },
+        {
+          "claim": "Independent evidence is needed before presenting this as an effective technique.",
+          "kind": "unresolved",
+          "source_urls": []
+        }
+      ],
+      "sources": [],
+      "scores": {
+        "audience_value": 75,
+        "curiosity": 58,
+        "evidence": 35,
+        "originality": 55,
+        "visual_potential": 72
+      },
+      "score": 58,
+      "score_reasons": {
+        "audience_value": "A concrete learning or reflection question can be useful to beginners.",
+        "curiosity": "The question invites a small personal demonstration without promising an outcome.",
+        "evidence": "Only a synthetic anecdote is available; no independent research was accessed.",
+        "originality": "The explanatory angle is a hypothesis; existing YouTube coverage was not compared.",
+        "visual_potential": "A before-and-after diagram can show the proposed comparison clearly."
+      },
+      "verdict": "needs-research",
+      "confidence": "low",
+      "research_checks": {
+        "central_claim_status": "unverified",
+        "coverage_compared": false,
+        "one_source_exception": null
+      },
+      "youtube_demand": {
+        "status": "unavailable",
+        "explanation": "No keyword data, comments, analytics, or existing videos were accessed.",
+        "observations": []
+      },
+      "titles": [
+        "What Did You Actually Predict?",
+        "A Written Prediction Versus a Memory",
+        "What a Decision Journal Records"
+      ],
+      "hook": "Before checking the outcome, can you remember exactly what you predicted?",
+      "thumbnail": "A dated note next to a different remembered prediction; text: What did you expect?",
+      "duration_seconds": 180,
+      "duration_reason": "A provisional three-minute demonstration with an explicit uncertainty section; revisit after research.",
+      "narration_words": {
+        "min": 390,
+        "max": 480,
+        "assumption": "Planning estimate of 130–160 words per minute for three minutes, adjusted later for visual pauses."
+      },
+      "outline": [
+        {
+          "heading": "Introduce the question",
+          "seconds": 30,
+          "teaching_point": "See how a written record differs from a later memory of a prediction.",
+          "narration_direction": "Frame the speaker observation as an anecdote, not a proven result.",
+          "animation_direction": "Introduce a learner and label the question."
+        },
+        {
+          "heading": "Demonstrate the comparison",
+          "seconds": 100,
+          "teaching_point": "Animate a dated prediction beside its outcome, while avoiding claims that journaling improves decisions.",
+          "narration_direction": "Walk through a clearly labeled illustrative example.",
+          "animation_direction": "Use two labeled panels and move a marker between the original record and later explanation."
+        },
+        {
+          "heading": "Explain the limits",
+          "seconds": 50,
+          "teaching_point": "An anecdote does not establish effectiveness.",
+          "narration_direction": "Name the unresolved evidence and invite observation rather than promise improvement.",
+          "animation_direction": "Show an evidence-needed label beside the takeaway."
+        }
+      ],
+      "keywords": [
+        "journal",
+        "learning",
+        "educational animation"
+      ],
+      "research_queries": [
+        "hindsight bias original study",
+        "decision journal forecasting evidence review"
+      ],
+      "caveats": [
+        "Synthetic source. Do not publish as a real guest statement.",
+        "No efficacy claim or YouTube demand has been verified."
+      ],
+      "claude_code_handoff": "Create a provisional 180-second storyboard for A decision journal as a record of what you expected. Use the supplied quote only as synthetic test material. Use a 30-second question, 100-second illustrative comparison, and 50-second limitations section. Aim for 390–480 narration words. Use clear diagrams and synchronized captions. Research the listed queries before asserting effectiveness. Do not impersonate a speaker or imply endorsement. No external footage is licensed. Acceptance: timings sum to180 seconds; uncertainty visible; no fabricated research or metrics."
+    }
+  ],
+  "shortfall_reason": "The short synthetic transcript contains only two distinct ideas. Both need research; zero topics meet the strong threshold.",
+  "warnings": [
+    "Synthetic test data only. No research sources were accessed. Scores are editorial assessments, not forecasts."
+  ]
+}

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Podcast Scout Studio"
+  short_description: "Research podcasts into evidence-checked, male-narrated animated YouTube explainers"
+  default_prompt: "Use $podcast-scout-skill to find and research five strong educational video ideas from this podcast, prepare production briefs, and produce the first video end to end with the male narrator."

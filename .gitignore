@@ -1,0 +1,8 @@
+studio-output/
+motion-output/
+node_modules/
+.venv/
+__pycache__/
+*.pyc
+*.onnx
+voices-v1.0.bin

@@ -1,0 +1,730 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://podcast-scout.local/schemas/report.json",
+  "title": "Podcast Scout research report",
+  "description": "Portable export contract. Validate evidence, scoring arithmetic, verdict gates, and timing sums separately using research-and-scoring.md. Five topics is an aim, not a schema minimum.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "mode",
+    "created_at",
+    "audience",
+    "language",
+    "podcast",
+    "capabilities",
+    "summary",
+    "topics",
+    "shortfall_reason",
+    "warnings"
+  ],
+  "properties": {
+    "audience": {
+      "type": "string",
+      "minLength": 1
+    },
+    "language": {
+      "const": "English"
+    },
+    "podcast": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "title",
+        "url",
+        "coverage",
+        "transcript_source",
+        "coverage_note"
+      ],
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "url": {
+          "$ref": "#/$defs/nullableUrl"
+        },
+        "coverage": {
+          "enum": [
+            "complete",
+            "partial",
+            "unknown",
+            "unavailable"
+          ]
+        },
+        "input_type": {
+          "enum": [
+            "youtube",
+            "other-link",
+            "media-file",
+            "transcript"
+          ]
+        },
+        "coverage_note": {
+          "type": "string"
+        },
+        "transcript_language": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "has_timestamps": {
+          "type": "boolean"
+        },
+        "transcript_source": {
+          "type": "string",
+          "description": "Actual transcript retrieval tool or supplied filename; unavailable when access failed."
+        }
+      }
+    },
+    "capabilities": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true,
+      "description": "List verified available capabilities using canonical names: transcript-reading, transcript-retrieval, web-search, webpage-reading, video-understanding, youtube-analytics, keyword-research, obscura. A provisional offline report should list transcript-reading only."
+    },
+    "summary": {
+      "type": "string"
+    },
+    "topics": {
+      "type": "array",
+      "maxItems": 15,
+      "items": {
+        "$ref": "#/$defs/topic"
+      }
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "mode": {
+      "enum": [
+        "researched",
+        "provisional",
+        "blocked"
+      ]
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "shortfall_reason": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Explain when fewer than five topics qualify as strong; null only when at least five do."
+    },
+    "schema_version": {
+      "const": "1.0"
+    }
+  },
+  "$defs": {
+    "creativeText": { "type": "string", "minLength": 1, "maxLength": 2000 },
+    "creativePackage": {
+      "type": "object", "additionalProperties": false,
+      "description": "Optional creative development for a topic. Select one of the three named concepts. Each hook must use ordered, contiguous shots starting at0 and ending at30 seconds; validate those cross-field rules separately. Existing topic hook, titles, and thumbnail remain the selected summary.",
+      "required": ["concepts", "hooks", "packaging_pairs", "selected_concept", "promise_payoff", "retention_notes", "pilot_plan"],
+      "properties": {
+        "concepts": {
+          "type": "array", "minItems": 3, "maxItems": 3,
+          "items": {
+            "type": "object", "additionalProperties": false,
+            "required": ["name", "viewer_question", "opening_visual", "teaching_arc", "why_choose"],
+            "properties": {
+              "name": { "type": "string", "minLength": 1, "maxLength": 120 },
+              "viewer_question": { "$ref": "#/$defs/creativeText" },
+              "opening_visual": { "$ref": "#/$defs/creativeText" },
+              "teaching_arc": { "$ref": "#/$defs/creativeText" },
+              "why_choose": { "$ref": "#/$defs/creativeText" }
+            }
+          }
+        },
+        "hooks": {
+          "type": "array", "minItems": 3, "maxItems": 3,
+          "items": {
+            "type": "object", "additionalProperties": false,
+            "required": ["name", "narration", "shots"],
+            "properties": {
+              "name": { "type": "string", "minLength": 1, "maxLength": 120 },
+              "narration": { "type": "string", "minLength": 1, "maxLength": 900, "description": "Spoken opening that can fit into30 seconds with its visual pauses; check aloud." },
+              "shots": {
+                "type": "array", "minItems": 1, "maxItems": 12,
+                "items": {
+                  "type": "object", "additionalProperties": false,
+                  "required": ["start_seconds", "end_seconds", "visual"],
+                  "properties": {
+                    "start_seconds": { "type": "number", "minimum": 0, "exclusiveMaximum": 30 },
+                    "end_seconds": { "type": "number", "exclusiveMinimum": 0, "maximum": 30 },
+                    "visual": { "$ref": "#/$defs/creativeText" }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "packaging_pairs": {
+          "type": "array", "minItems": 3, "maxItems": 3,
+          "items": {
+            "type": "object", "additionalProperties": false,
+            "required": ["title", "thumbnail_text", "thumbnail_visual", "why_it_works"],
+            "properties": {
+              "title": { "type": "string", "minLength": 1, "maxLength": 100 },
+              "thumbnail_text": { "type": "string", "maxLength": 80, "description": "May be empty when the visual communicates the premise without text." },
+              "thumbnail_visual": { "$ref": "#/$defs/creativeText" },
+              "why_it_works": { "$ref": "#/$defs/creativeText" }
+            }
+          }
+        },
+        "selected_concept": { "type": "string", "minLength": 1, "maxLength": 120, "description": "Must exactly match a concepts[].name; check separately." },
+        "promise_payoff": {
+          "type": "array", "minItems": 1, "maxItems": 12,
+          "items": {
+            "type": "object", "additionalProperties": false,
+            "required": ["promise", "payoff_scene", "evidence_urls"],
+            "properties": {
+              "promise": { "$ref": "#/$defs/creativeText" },
+              "payoff_scene": { "$ref": "#/$defs/creativeText" },
+              "evidence_urls": { "type": "array", "maxItems": 12, "uniqueItems": true, "items": { "type": "string", "format": "uri", "pattern": "^https?://" }, "description": "Use relevant read sources from this topic. Empty for an illustrative or provisional promise; never invent support." }
+            }
+          }
+        },
+        "retention_notes": { "type": "array", "minItems": 1, "maxItems": 12, "items": { "$ref": "#/$defs/creativeText" } },
+        "pilot_plan": { "$ref": "#/$defs/creativeText" }
+      }
+    },
+    "nullableUrl": {
+      "anyOf": [
+        {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^https?://"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "title",
+        "url",
+        "type",
+        "access",
+        "published_at",
+        "retrieved_at",
+        "supports",
+        "limitations"
+      ],
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^https?://"
+        },
+        "type": {
+          "enum": [
+            "primary",
+            "authoritative-secondary",
+            "secondary",
+            "youtube",
+            "audience-comment",
+            "other"
+          ]
+        },
+        "access": {
+          "enum": [
+            "read",
+            "search-result-only",
+            "unavailable"
+          ]
+        },
+        "supports": {
+          "type": "string",
+          "minLength": 1
+        },
+        "limitations": {
+          "type": "string"
+        },
+        "published_at": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Use the visible publication date without inventing missing precision."
+        },
+        "retrieved_at": {
+          "type": "string",
+          "format": "date"
+        }
+      }
+    },
+    "scene": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "heading",
+        "seconds",
+        "teaching_point",
+        "narration_direction",
+        "animation_direction"
+      ],
+      "properties": {
+        "heading": {
+          "type": "string",
+          "minLength": 1
+        },
+        "seconds": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "teaching_point": {
+          "type": "string",
+          "minLength": 1
+        },
+        "narration_direction": {
+          "type": "string",
+          "minLength": 1
+        },
+        "animation_direction": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "topic": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "title",
+        "premise",
+        "guest_claim",
+        "angle",
+        "viewer_benefit",
+        "moment",
+        "findings",
+        "sources",
+        "scores",
+        "score",
+        "verdict",
+        "confidence",
+        "youtube_demand",
+        "titles",
+        "hook",
+        "thumbnail",
+        "duration_seconds",
+        "duration_reason",
+        "narration_words",
+        "outline",
+        "keywords",
+        "research_queries",
+        "caveats",
+        "claude_code_handoff",
+        "score_reasons",
+        "research_checks"
+      ],
+      "properties": {
+        "creative_package": { "$ref": "#/$defs/creativePackage" },
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "premise": {
+          "type": "string",
+          "minLength": 1
+        },
+        "angle": {
+          "type": "string",
+          "minLength": 1
+        },
+        "moment": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "quote",
+            "quote_language",
+            "english_meaning",
+            "locator",
+            "timestamp",
+            "locator_type",
+            "verified"
+          ],
+          "properties": {
+            "quote": {
+              "type": "string",
+              "minLength": 1
+            },
+            "locator": {
+              "type": "string",
+              "minLength": 1
+            },
+            "timestamp": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "pattern": "^(?:[0-9]{1,3}:)?[0-5][0-9]:[0-5][0-9](?:\\.[0-9]{1,3})?$"
+            },
+            "verified": {
+              "const": true
+            },
+            "quote_language": {
+              "type": "string",
+              "minLength": 1
+            },
+            "english_meaning": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Labeled translation or paraphrase, never represented as an exact original quote."
+            },
+            "locator_type": {
+              "enum": [
+                "caption-segment",
+                "transcription-segment",
+                "chapter",
+                "paragraph",
+                "line"
+              ]
+            }
+          }
+        },
+        "findings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "claim",
+              "kind",
+              "source_urls"
+            ],
+            "properties": {
+              "claim": {
+                "type": "string",
+                "minLength": 1
+              },
+              "kind": {
+                "enum": [
+                  "supported-finding",
+                  "guest-opinion",
+                  "editorial-inference",
+                  "unresolved"
+                ]
+              },
+              "source_urls": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uri",
+                  "pattern": "^https?://"
+                },
+                "uniqueItems": true
+              }
+            }
+          }
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/source"
+          }
+        },
+        "scores": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "audience_value",
+            "curiosity",
+            "evidence",
+            "originality",
+            "visual_potential"
+          ],
+          "properties": {
+            "curiosity": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 100
+            },
+            "evidence": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 100
+            },
+            "originality": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 100
+            },
+            "audience_value": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 100
+            },
+            "visual_potential": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 100
+            }
+          }
+        },
+        "verdict": {
+          "enum": [
+            "strong",
+            "promising",
+            "needs-research"
+          ]
+        },
+        "confidence": {
+          "enum": [
+            "high",
+            "medium",
+            "low"
+          ]
+        },
+        "titles": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "hook": {
+          "type": "string",
+          "minLength": 1
+        },
+        "thumbnail": {
+          "type": "string",
+          "minLength": 1
+        },
+        "outline": {
+          "type": "array",
+          "minItems": 3,
+          "items": {
+            "$ref": "#/$defs/scene"
+          }
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "caveats": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "guest_claim": {
+          "type": "string",
+          "minLength": 1
+        },
+        "viewer_benefit": {
+          "type": "string",
+          "minLength": 1
+        },
+        "score": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Math.round(audience_value*.25 + curiosity*.20 + evidence*.25 + originality*.15 + visual_potential*.15)"
+        },
+        "duration_seconds": {
+          "type": "integer",
+          "minimum": 60,
+          "maximum": 3600
+        },
+        "duration_reason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "narration_words": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "min",
+            "max",
+            "assumption"
+          ],
+          "properties": {
+            "min": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "max": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "assumption": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "research_queries": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "claude_code_handoff": {
+          "type": "string",
+          "minLength": 1
+        },
+        "youtube_demand": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "status",
+            "explanation",
+            "observations"
+          ],
+          "properties": {
+            "status": {
+              "enum": [
+                "measured",
+                "proxy",
+                "unavailable"
+              ]
+            },
+            "explanation": {
+              "type": "string",
+              "minLength": 1
+            },
+            "observations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "provider",
+                  "metric",
+                  "value",
+                  "unit",
+                  "period",
+                  "observed_at",
+                  "url"
+                ],
+                "properties": {
+                  "provider": {
+                    "type": "string"
+                  },
+                  "metric": {
+                    "type": "string"
+                  },
+                  "value": {
+                    "type": [
+                      "number",
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "unit": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "period": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "url": {
+                    "$ref": "#/$defs/nullableUrl"
+                  },
+                  "observed_at": {
+                    "type": "string",
+                    "format": "date"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "score_reasons": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "audience_value",
+            "curiosity",
+            "evidence",
+            "originality",
+            "visual_potential"
+          ],
+          "properties": {
+            "audience_value": {
+              "type": "string",
+              "minLength": 1
+            },
+            "curiosity": {
+              "type": "string",
+              "minLength": 1
+            },
+            "evidence": {
+              "type": "string",
+              "minLength": 1
+            },
+            "originality": {
+              "type": "string",
+              "minLength": 1
+            },
+            "visual_potential": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "research_checks": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "central_claim_status",
+            "coverage_compared"
+          ],
+          "properties": {
+            "central_claim_status": {
+              "enum": [
+                "supported",
+                "mixed",
+                "contradicted",
+                "unverified"
+              ]
+            },
+            "coverage_compared": {
+              "type": "boolean"
+            },
+            "one_source_exception": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Only for a narrow claim established by one read primary specification; explain why evidence may exceed65. This does not permit strong or high confidence."
+            }
+          }
+        }
+      }
+    }
+  }
+}
