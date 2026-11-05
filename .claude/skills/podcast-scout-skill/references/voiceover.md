@@ -72,3 +72,27 @@ Writing for the ear:
 3. If speech recognition (Whisper/whisper.cpp) is available, transcribe `narration.wav` and diff
    against the script to catch skipped words; otherwise state that the check was not run.
 4. Captions come from the same timings; per-word timing inside a segment is an estimate.
+
+## Human-explainer delivery (default since 2026-11)
+`narrate.py` voices Kokoro scripts sentence by sentence through a **performance layer**, `perform_plan`. The rules:
+- questions are slower, rise about half a semitone, and are followed by a longer pause;
+- short punchlines are slower, sit lower, and are slightly louder;
+- sentences starting "But", "So", "Yet" or "Now" lift;
+- number-heavy sentences are slower;
+- long explanations are a touch quicker;
+- pauses vary: longer after a question, before a punchline, at "…" and before a turn.
+
+Small seeded jitter keeps it from sounding metronomic, and the same script always gives the same audio.
+Pitch shifts use ffmpeg rubberband with formants preserved, kept within ±0.9 st.
+
+The default voice is the male blend `am_fenrir+am_puck`. Measured on the same passage: pitch spread about 4.1 st against
+about 3.5 for am_michael, and no words lost in the ASR check. Blends are written `am_a+am_b` or `am_a:0.6+am_b:0.4`,
+and every component must be on the male allowlist.
+
+To make it sound human, write for it:
+- vary sentence length;
+- ask real questions;
+- give punchlines their own short sentence;
+- use "…" for a held beat.
+
+`"perform": false` in script.json, or `--no-perform`, gives the old flat read.

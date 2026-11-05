@@ -52,7 +52,7 @@ MALE_VOICES = {
              "en-GB-ThomasNeural", "en-AU-WilliamNeural", "en-IN-PrabhatNeural",
              "en-US-AndrewMultilingualNeural", "en-US-BrianMultilingualNeural"],
 }
-DEFAULT_VOICE = {"kokoro": "am_michael", "piper": "en_US-ryan-high", "edge": "en-US-AndrewNeural"}
+DEFAULT_VOICE = {"kokoro": "am_fenrir+am_puck", "piper": "en_US-ryan-high", "edge": "en-US-AndrewNeural"}
 ENGINE_ORDER = ["kokoro", "piper", "edge"]
 
 
@@ -132,11 +132,94 @@ def synth_kokoro(text, voice, speed, out: Path):
     if _KOKORO is None:
         _KOKORO = Kokoro(str(VOICES_DIR / "kokoro-v1.0.onnx"), str(VOICES_DIR / "voices-v1.0.bin"))
     lang = "en-gb" if voice.startswith("b") else "en-us"
-    samples, sr = _KOKORO.create(text, voice=voice, speed=float(speed), lang=lang)
+    samples, sr = _KOKORO.create(text, voice=_kokoro_voice(voice), speed=float(speed), lang=lang)
     tmp = out.with_suffix(".raw.wav")
     sf.write(str(tmp), samples, sr)
     to_master_format(tmp, out)
     tmp.unlink(missing_ok=True)
+
+
+def _kokoro_voice(voice):
+    """'am_fenrir+am_puck' or 'am_fenrir:0.6+am_puck:0.4' → a blended style vector (all parts must be male)."""
+    if "+" not in voice:
+        return voice
+    parts = [(p.split(":")[0], float(p.split(":")[1]) if ":" in p else 1.0) for p in voice.split("+")]
+    tot = sum(w for _, w in parts)
+    return sum(_KOKORO.get_voice_style(n) * (w / tot) for n, w in parts)
+
+
+_NUMWORD = re.compile(r"\d|\b(one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|twenty|thirty|forty|fifty|"
+                      r"sixty|seventy|eighty|ninety|hundred|thousand|million|percent)\b", re.I)
+
+
+def perform_plan(sentences, seed_text):
+    """Delivery for each sentence, like a human explainer: (speed multiplier, pitch shift in semitones, gain dB,
+    pause after in s). Deterministic: jitter is seeded from the text, so the same script always sounds the same."""
+    plan = []
+    for i, snt in enumerate(sentences):
+        h = int(hashlib.sha256(f"{seed_text}|{i}|{snt}".encode()).hexdigest()[:8], 16)
+        j = lambda k, amp: ((h >> (k * 8)) % 1000 / 1000 - 0.5) * 2 * amp     # noqa: E731
+        n = len(snt.split()); q = snt.rstrip().endswith("?"); ex = snt.rstrip().endswith("!")
+        short = n <= 5; long_ = n >= 18; nums = bool(_NUMWORD.search(snt))
+        turn = bool(re.match(r"(but|so|yet|and yet|still|now)\b", snt.strip(), re.I))
+        sp = 1.0 + (-0.08 if short else 0) + (-0.05 if q else 0) + (-0.05 if nums else 0) + (0.04 if long_ else 0) + j(0, 0.025)
+        st = (0.35 if i == 0 else 0) + (0.55 if q else 0) + (0.3 if ex else 0) + (-0.35 if short and not q else 0) \
+            + (0.25 if turn else 0) + j(1, 0.25)
+        db = (0.8 if short else 0) + (-0.4 if long_ else 0) + j(2, 0.5)
+        nxt = sentences[i + 1] if i + 1 < len(sentences) else ""
+        # pauses breathe like speech: longer after questions, before a punchline, at a turn; never metronomic
+        pause = 0.34 + (0.22 if q else 0) + (0.16 if nxt and len(nxt.split()) <= 5 else 0) + (0.2 if "..." in snt[-4:] else 0) \
+            + (0.14 if re.match(r"(but|so|yet|now)\b", nxt.strip(), re.I) else 0) + j(3, 0.12)
+        plan.append((max(0.85, min(1.08, sp)), max(-0.8, min(0.9, st)), db, max(0.18, pause)))
+    return plan
+
+
+PERFORM_VERSION = "p2"
+
+
+def synth_kokoro_performed(text, voice, speed, out: Path):
+    """Sentence-by-sentence synthesis with varied pace, pitch, level and pauses (see perform_plan)."""
+    global _KOKORO
+    from kokoro_onnx import Kokoro
+    import numpy as np, soundfile as sf
+    if _KOKORO is None:
+        _KOKORO = Kokoro(str(VOICES_DIR / "kokoro-v1.0.onnx"), str(VOICES_DIR / "voices-v1.0.bin"))
+    v = _kokoro_voice(voice)
+    lang = "en-gb" if voice.startswith("b") else "en-us"
+    sentences = [x for x in re.split(r"(?<=[.!?])\s+", text.strip()) if x.strip()]
+    chunks, sr = [], 24000
+    with tempfile.TemporaryDirectory() as td:
+        for k, (snt, (sp, st, db, pause)) in enumerate(zip(sentences, perform_plan(sentences, text))):
+            y, sr = _KOKORO.create(snt, voice=v, speed=float(speed) * sp, lang=lang)
+            a = Path(td) / f"s{k}.wav"; b = Path(td) / f"s{k}p.wav"
+            sf.write(str(a), y, sr)
+            af = [f"volume={db:.2f}dB"]
+            if abs(st) > 0.05 and has_rubberband():
+                af.insert(0, f"rubberband=pitch={2 ** (st / 12):.5f}:formant=preserved:pitchq=quality")
+            run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(a), "-af", ",".join(af), str(b)])
+            y2, _ = sf.read(str(b), dtype="float32")
+            # trim engine silence at both ends so our pause is the pause
+            nz = np.flatnonzero(np.abs(y2) > 0.004)
+            if nz.size:
+                y2 = y2[max(nz[0] - int(0.02 * sr), 0): nz[-1] + int(0.06 * sr)]
+            chunks.append(y2)
+            if k < len(sentences) - 1:
+                chunks.append(np.zeros(int(pause * sr), dtype="float32"))
+        tmp = out.with_suffix(".raw.wav")
+        sf.write(str(tmp), np.concatenate(chunks) if chunks else np.zeros(1, "float32"), sr)
+    to_master_format(tmp, out)
+    tmp.unlink(missing_ok=True)
+
+
+_RB = None
+
+
+def has_rubberband():
+    global _RB
+    if _RB is None:
+        r = subprocess.run(["ffmpeg", "-hide_banner", "-filters"], capture_output=True, text=True)
+        _RB = " rubberband " in r.stdout
+    return _RB
 
 
 def synth_piper(text, voice, speed, out: Path):
@@ -338,6 +421,8 @@ def main(argv=None):
     ap.add_argument("--voice")
     ap.add_argument("--speed", type=float)
     ap.add_argument("--files-dir", help="for --engine files: folder of <segment-id>.wav recordings")
+    ap.add_argument("--no-perform", action="store_true",
+                    help="read flat (one take per segment) instead of the human-explainer performance layer")
     ap.add_argument("--allow-non-male", action="store_true",
                     help="only when the channel owner explicitly asked for a non-male narrator")
     ap.add_argument("--list-voices", action="store_true")
@@ -363,12 +448,14 @@ def main(argv=None):
     engine = pick_engine(engine, voice)
     if engine in DEFAULT_VOICE:
         voice = voice or DEFAULT_VOICE[engine]
-        if voice not in MALE_VOICES[engine] and not a.allow_non_male:
+        parts_ = [v.split(":")[0] for v in voice.split("+")] if engine == "kokoro" else [voice]
+        if any(p_ not in MALE_VOICES[engine] for p_ in parts_) and not a.allow_non_male:
             die(f"voice '{voice}' is not on the male allowlist for {engine}. "
                 f"Male options: {', '.join(MALE_VOICES[engine])}")
     elif engine == "voicebox" and not voice:
         die("voicebox needs --voice <profile id of a male preset profile>")
     speed = a.speed or vcfg.get("speed", 1.0)
+    perform = engine == "kokoro" and not a.no_perform and vcfg.get("perform", True)
     lead, tail = float(data.get("lead", 0.3)), float(data.get("tail", 0.8))
 
     out = Path(a.out).resolve()
@@ -390,12 +477,16 @@ def main(argv=None):
                 extra = hashlib.sha256(src.read_bytes()).hexdigest() if src.exists() else "missing"
             elif engine == "voicebox":
                 extra = "|".join(os.environ.get(k, "") for k in ("VOICEBOX_URL", "VOICEBOX_ENGINE", "VOICEBOX_INSTRUCT"))
+            if perform:
+                extra += "|" + PERFORM_VERSION
             key = hashlib.sha256(f"{engine}|{voice}|{speed}|{text}|{extra}".encode()).hexdigest()[:16]
             wav = seg_dir / f"{s['id']}.wav"
             stamp = seg_dir / f"{s['id']}.key"
             if not (wav.exists() and stamp.exists() and stamp.read_text() == key):
                 print(f"  [{engine}:{voice}] {s['id']}: {text[:60]}{'…' if len(text) > 60 else ''}", file=sys.stderr)
-                if engine == "kokoro":
+                if engine == "kokoro" and perform:
+                    synth_kokoro_performed(text, voice, speed, wav)
+                elif engine == "kokoro":
                     synth_kokoro(text, voice, speed, wav)
                 elif engine == "piper":
                     synth_piper(text, voice, speed, wav)
@@ -427,7 +518,7 @@ def main(argv=None):
         die(f"narration.wav is {total:.2f}s but the segments add up to {clock:.2f}s; concat failed")
     words = sum(t["words"] for t in timings)
     speech = sum(t["end"] - t["start"] for t in timings)
-    meta = {"engine": engine, "voice": voice, "speed": speed, "male_voice_policy": not a.allow_non_male,
+    meta = {"engine": engine, "voice": voice, "speed": speed, "performance": PERFORM_VERSION if perform else "flat", "male_voice_policy": not a.allow_non_male,
             "duration": round(total, 3), "words": words,
             "wpm_speech": round(words / (speech / 60), 1) if speech else None,
             "word_timing": "estimated-from-characters", "segments": timings}
