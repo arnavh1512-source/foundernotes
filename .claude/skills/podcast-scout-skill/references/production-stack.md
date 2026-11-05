@@ -98,3 +98,31 @@ Local voice studio (FastAPI :17493). Male presets without cloning. See voiceover
 
 ### Obscura — [h4ckf0r0day/obscura](https://github.com/h4ckf0r0day/obscura) (Apache-2.0)
 Research browser; see obscura.md.
+
+## Generative images and clips: Open Generative AI / MuAPI (`scripts/gen_media.py`)
+Open Generative AI (github.com/Anil-matcha/Open-Generative-AI, MIT) is a studio app for MuAPI's model hub,
+which offers 200+ image, video, audio and lip-sync models (Flux, Qwen-Image, Z-Image, Kling, Veo, Wan …).
+We use the same API it uses, from the command line: `gen_media.py`, either with `--model --prompt --aspect --out` or with `--batch plates.json`.
+
+**Access.** The tool needs a MuAPI key, saved as a network secret for `api.muapi.ai` (header `x-api-key`).
+Generations are paid.
+- The tool checks the account balance first.
+- It refuses to save MuAPI's stock "sample" image, which an unfunded account gets back with status `completed` and a cost of $0.
+- Local inference (sd.cpp, Wan2GP) runs only in the desktop app on a GPU machine, not in this sandbox.
+
+**Use it for:**
+- painted environment plates behind our SVG characters and charts (no people in them), at 16:9;
+- textures;
+- thumbnail backgrounds;
+- occasional b-roll stills.
+
+Match the backdrop's palette in the prompt ("flat painted gouache illustration, muted …, no people, no text, no logos").
+
+**Never use it for:**
+- real people or their likeness;
+- brands, logos or copyrighted characters;
+- text inside the image;
+- anything presented as data or as a real photo of a real event.
+
+Every asset gets an `<file>.json` sidecar (model, prompt, request id, date): copy it into CREDITS.
+Tick YouTube's "altered or synthetic content" disclosure when realistic AI imagery appears.
