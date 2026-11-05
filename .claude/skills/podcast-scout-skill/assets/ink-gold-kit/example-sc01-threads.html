@@ -1,0 +1,78 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="kit.css"></head><body>
+<script src="timing.js"></script><script src="kit.js"></script><script src="kit-loop.js"></script>
+<script>
+// sc01 — "Two people. Same job. Twenty years each. One of them has twenty years of experience.
+//         The other, as an old saying goes, has one year of experience... twenty times."
+// Reads: (1) two men, one floor, one warm pool; a light point between them [0–3]
+//        (2) gold threads leave the point: left opens into a climbing spiral with pages 1..n,
+//            right closes into a loop and retraces; its page always reads "1" [3–8]
+//        (3) "twenty times": a ×N counter by the loop ticks to ×20, the loop greys [8–end]
+// Camera: slow lateral track left → right (signature move), slight push.
+K.scene("sc01-threads", {
+  build(S) {
+    const C = K.C;
+    // far: soft horizon haze + a few far shapes (fog)
+    K.el("rect", { x: -400, y: 520, width: 2720, height: 360, fill: "#152635" }, S.far);
+    for (let i = 0; i < 9; i++) K.el("rect", { x: -300 + i * 300 + K.rand(i) * 80, y: 430 + K.rand(i * 3) * 70, width: 120 + K.rand(i * 5) * 90, height: 500, fill: "#1A2E3F", opacity: 0.7 }, S.far);
+    S.key = K.glow(S.far, 960, 330, 620, "warm", 0.55);
+    K.floor(S.world, 860);
+    S.pool = K.el("ellipse", { cx: 960, cy: 872, rx: 640, ry: 70, fill: "#FFE7B0", opacity: 0.1, filter: "url(#soft)" }, S.world);
+    // the origin point: a small light on the ground
+    S.origin = K.glow(S.world, 960, 820, 60, "warm", 0);
+    S.dot = K.el("circle", { cx: 960, cy: 820, r: 7, fill: C.goldLt, filter: "url(#glow)", opacity: 0 }, S.world);
+    // threads (in world so the camera tracks them)
+    S.spiral = K.thread(S.world, "M960 820 C900 810 760 780 720 700 " + K.spiralPath(720, 700, 16, 46, 3.4, 95, 0.5).replace(/^M/, "L"), { w: 6 });
+    const loopD = "M960 820 C1040 815 1150 800 1200 730 " + K.loopPath(1200, 635, 135, 95, 6, 3, 72, Math.PI / 2).replace(/^M/, "L");
+    S.loop = K.thread(S.world, loopD, { w: 6 });
+    // pages riding the threads
+    S.pagesL = Array.from({ length: 6 }, (_, i) => K.page(S.world, String(i + 1), { band: C.sea }));
+    // place page i on spiral turn i (alternating sides, always higher), at the length where the thread reaches it
+    { const L = S.spiral._line.getTotalLength(), N = 400;
+      S.pagesL.forEach((p, i) => { const u = 0.3 + i * 0.52, a = -Math.PI / 2 + u * Math.PI * 2, r = 16 + 46 * u;
+        const tx = 720 + r * Math.cos(a), ty = 700 + r * 0.5 * Math.sin(a) - 95 * u; let best = 0, bd = 1e9;
+        for (let j = 0; j <= N; j++) { const q = S.spiral._line.getPointAtLength(L * j / N), d = (q.x - tx) ** 2 + (q.y - ty) ** 2; if (d < bd) { bd = d; best = j / N; } }
+        p._x = tx; p._y = ty; p._f = best; p._i = i; }); }
+    S.pageR = K.page(S.world, "1", { band: C.ember });
+    S.count = K.text(S.world, "×1", 1200, 470, { font: "serif", size: 70, fill: C.cream });
+    // the two men
+    S.climber = new K.Hunter(S.world, { rim: -1 });
+    S.looper = new K.Hunter(S.world, { rim: 1, colors: K.LOOPER });
+    S.dust = K.dust(S.world, 26, [500, 200, 920, 640], 5);
+    S.lblL = K.label(S.world, "20 years", 380, 190, { size: 30, fill: C.sea }); S.lblR = K.label(S.world, "20 years", 1560, 190, { size: 30, fill: C.ember });
+    K.op(S.lblL, 0); K.op(S.lblR, 0);
+  },
+  draw(t, S) {
+    const D = S.dur, at = (f) => S.at("s01-hook", f);
+    // camera: lateral track left→right with a slight push
+    const track = K.eio(K.prog(t, 0, D));
+    K.camera(S, K.lerp(1.0, 1.08, track), K.lerp(900, 1030, track), 560);
+    // men: idle, offset; they look at their threads once drawn
+    const tA = K.alive(t, 1), tB = K.alive(t + 0.9, 7);
+    const lookL = K.eo(K.prog(t, at(0.3), 0.8)), lookR = K.eo(K.prog(t, at(0.45), 0.8));
+    S.climber.pose(Object.assign({}, K.POSE.stand, { x: 380, y: 860, s: 1.02, facing: 1, bob: tA.bob, head: tA.head - 6 * lookL, look: -0.6 * lookL, lookY: -0.8 * lookL, blink: tA.blink, shF: 10, shB: -8 }));
+    const sag = K.eo(K.prog(t, at(0.8), 1.4));
+    S.looper.pose(Object.assign({}, K.POSE.stand, { x: 1560, y: 860, s: 1.0, facing: -1, bob: tB.bob, head: tB.head + 8 * sag - 4 * lookR, look: 0.5 * lookR, lookY: -0.4 * lookR, blink: tB.blink, brow: -0.25 * sag, mouth: 0.25 - 0.4 * sag, lean: 2 * sag }));
+    K.op(S.lblL, K.eo(K.prog(t, at(0.08), 0.6))); K.op(S.lblR, K.eo(K.prog(t, at(0.16), 0.6)));
+    // origin lights on "Same job"
+    const o = K.eo(K.prog(t, at(0.1), 0.6)); K.op(S.origin, o * 0.9); K.op(S.dot, o);
+    // threads: spiral draws from "One of them has twenty years" ; loop from "The other"
+    const ks = K.eio(K.prog(t, at(0.28), at(0.62) - at(0.28) + 2.6));
+    const ptS = K.drawThread(S.spiral, ks);
+    const kl = K.prog(t, at(0.5), D - at(0.5) - 0.3);
+    const ptL = K.drawThread(S.loop, kl);
+    // the loop greys as it repeats (after the first lap)
+    K.threadGrey(S.loop, K.clamp((kl - 0.25) / 0.7) * 0.85);
+    // pages ride outward on the spiral, numbers rising
+    const Ls = S.spiral._line.getTotalLength();
+    S.pagesL.forEach((p) => { const k = K.prog(ks, p._f, 0.05); K.tf(p, p._x, p._y - 46, 0.55 + 0.04 * p._i, (K.rand(p._i) - 0.5) * 10 * K.eo(k)); K.op(p, K.eo(k)); });
+    // one page rides the loop and always reads "1"
+    K.tf(S.pageR, ptL.x, ptL.y - 50, 0.6, Math.sin(t * 2) * 4); K.op(S.pageR, K.eo(K.prog(t, at(0.55), 0.5)) * (kl < 0.995 ? 1 : 0.9));
+    // lap counter ×1..×20 tied to laps drawn; finishes on "twenty times"
+    const laps = Math.max(1, Math.min(20, Math.round(K.lerp(1, 20, K.eio(K.prog(t, at(0.7), at(1) - at(0.7) + 0.4))))));
+    S.count._t.textContent = "×" + laps; K.op(S.count, K.eo(K.prog(t, at(0.66), 0.5)));
+    K.tf(S.count, 1200 + Math.sin(t * 1.1) * 3, 470, laps >= 20 ? 1 + 0.06 * Math.sin(K.prog(t, at(1) + 0.3, 0.4) * Math.PI) : 1);
+    S.dust._tick(t);
+    K.op(S.key, 0.5 + 0.05 * Math.sin(t * 0.7));
+  },
+});
+</script></body></html>

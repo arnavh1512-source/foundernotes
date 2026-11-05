@@ -1,0 +1,7 @@
+@font-face { font-family: "HTHand"; src: url("fonts/Caveat.ttf"); }
+@font-face { font-family: "HTSerif"; src: url("fonts/Lora-Bold.ttf"); font-weight: 700; }
+@font-face { font-family: "HTSans"; src: url("fonts/InstrumentSans-Regular.ttf"); font-weight: 400; }
+@font-face { font-family: "HTSans"; src: url("fonts/InstrumentSans-Bold.ttf"); font-weight: 700; }
+html, body { margin: 0; width: 1920px; height: 1080px; overflow: hidden; background: #0E1822; }
+#stage { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; display: block; }
+.fontwarm { position: absolute; left: -9999px; }

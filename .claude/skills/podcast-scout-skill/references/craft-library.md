@@ -94,6 +94,8 @@ p5.brush and lemo-opuscar. Read the sections your stage needs. Numbers are start
 - Pitfalls: gold as decoration (if two things are gold, one is wrong); hard glints read as stickers;
   grey/violet skin under coloured light; a frozen frame reads as a bug; text on similar colours.
 
+- **Rotate backgrounds** (owner rule): no two adjacent scenes share a backdrop; ≥ 6 per film; pick by meaning. Presets in `assets/ink-gold-kit` (`K.backdrop`).
+
 ## 8. Voice
 - Male narrator default; one voice per video and per channel; never clone a real person.
 - Write for the ear: 8–20 words/sentence, numbers spelled out in the voice text and written as digits

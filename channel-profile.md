@@ -43,3 +43,7 @@ Values left as `TBD` fall back to the defaults shown.
 ## Subtitles (owner rule)
 - Every video has subtitles burned into the picture (assemble.py default), in the channel font, cream on a
   translucent ink box at the bottom. Keep the bottom ~180 px of every scene clear. Also upload the .srt as captions.
+
+## Backgrounds (owner rule)
+- Change backgrounds regularly. No two adjacent scenes share a backdrop, and use at least 6 different backdrops per film.
+- Use `K.backdrop` (assets/ink-gold-kit), and let the backdrop follow the meaning (e.g. clinic for hospital data, fog for uncertainty, sunrise for the turn).
