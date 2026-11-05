@@ -137,3 +137,36 @@ p5.brush and lemo-opuscar. Read the sections your stage needs. Numbers are start
   readable, the picture isn't doing its job.
 - Deliver: MP4 + poster, .srt, TREATMENT.md, FACTS.md (claim → source → quoted wording), CREDITS
   (every asset and licence), and a one-command build script. The owner uploads.
+
+## 12. Lessons from collage-director (vox-ai-motion-graphics-generator, read in full)
+Most of this costs nothing. It changes how we plan and direct, whatever the engine.
+- **Two approval gates:** the beat map first, then the look. Before building a film, run a **style bake-off**: render the film's
+  most important beat in 3–4 looks (backdrop × cast palette × type treatment, or collage themes) as stills, and let
+  the owner pick. The look is locked before anything moves. Changing it after rendering costs a full re-render.
+- **Arc library, as candidates for the treatment's three structures:**
+  - `hook_payoff`: hook → context → build → payoff → wrap.
+  - `pas`: problem → agitate → solve → proof → CTA.
+  - `bab`: before → after → bridge.
+  - `how_it_works`.
+  - `timeline`.
+  - `man_in_hole`: baseline → fall → deepening → ascent → resolution.
+- **Hook in ≤ 3 s, on screen as well as spoken:** a bold headline, surprising statistic, mistake or direct question in the first shot.
+- **Shot cadence:** cut or reframe every ~4–6 s.
+  - Split each beat into 2 shots: a wide/establishing shot, then a close detail cut-in on the thing the narration names.
+  - A scene longer than ~10 s needs internal cut-ins, i.e. camera reframes to the active element. This is more than fades within one framing.
+- **Shot spec in the storyboard:** for every shot, record shot size, camera move, element motion and amplitude.
+  - **Shot size:** `EST_WIDE`, `WIDE`, `MEDIUM`, `CLOSE`, `DETAIL`.
+  - **Camera move:** exactly ONE per shot, from `static`, `push_in`, `pull_out`, `pan`, `tilt`, `parallax`. It is one continuous move that never loops, retracts or resets.
+  - **Element motion:** what moves *inside* the frame, i.e. the energy. Several elements per shot.
+  - **Amplitude:** `calm`, `punchy` or `max`. Pick by meaning and keep one per beat.
+- **Designing for motion:**
+  - high-contrast silhouettes on flat backgrounds;
+  - text isolated on clean banners or cards, never over busy detail;
+  - flat-safe camera moves only on flat art (no fake 3D rotation).
+- **Mixed aspect ratios:** fill with a blurred, darkened copy of the clip instead of black bars (`assemble.py --fill blur`).
+- **Cut-out compositing** (a real photo kept pixel-faithful as a "sticker" while the world around it is stylised; the "C-roll" mode):
+  - use only for the owner's own photos or products we may show;
+  - freeze the face or label layer;
+  - put no print texture on faces.
+- **Restyled talking head** ("A-roll" mode): if the owner ever records himself, ASR splits the take into ≤ 9.5 s beats at
+  sentence ends or ≥ 0.35 s pauses (beats < 2 s are merged), then the world around him is restyled. His face and lip-sync stay untouched.

@@ -76,7 +76,7 @@ Use [video-brief.md](assets/video-brief.md) for every selected topic. Return: so
 
 Read [studio-crew.md](references/studio-crew.md) for roles, handoffs and the gate loop, [craft-library.md](references/craft-library.md) for everything the studio learned, and fill [production-plan.md](assets/production-plan.md).
 
-0. **Benchmark + treatment** — pick 1–2 reference works for this topic (learn / never take), write `TREATMENT.md` with three candidate structures and the chosen one, the logline, the one native move at the peak, and how the ending rhymes with the opening. Run the swap-the-title test.
+0. **Benchmark + treatment + style bake-off** — pick 1–2 reference works for this topic (learn / never take), write `TREATMENT.md` with three candidate structures and the chosen one, the logline, the one native move at the peak, and how the ending rhymes with the opening. Run the swap-the-title test. Then render the key beat in 3–4 looks as stills (backdrop × cast palette × type) and have the owner pick: the look is locked before anything moves (craft-library §12). Storyboard every shot with shot size, ONE camera move, element motion and amplitude; reframe or cut every ~4–6 s.
 
 1. **Script** — *studio-scriptwriter*. Beat-by-beat narration with `[ON SCREEN: …]` per beat, claim IDs on every factual sentence, 130–160 wpm target, word count within ±10 % of the runtime target. Score five hooks, keep the brief's chosen hook unless one scores clearly better. Structural audit: controlling idea, promise/payoff debts closed, first useful insight before 0:30.
 2. **Fact lock** — *studio-reality-checker* compares every claim ID with the source ledger. Unsupported sentences are qualified or cut, and the change is logged. Nothing is voiced before the fact lock passes.

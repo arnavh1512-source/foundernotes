@@ -219,3 +219,16 @@ class RecheckN1SetupCore(unittest.TestCase):
             env.pop("MOTION_CHROMIUM", None); env.pop("NODE_PATH", None)
             out = subprocess.run(["bash", "-c", script], capture_output=True, text=True, env=env).stdout
             self.assertIn("MOD", out); self.assertIn("BROWSER", out)
+
+
+class CaptionSemanticsTest(unittest.TestCase):
+    def test_no_number_unit_split_and_sentences_kept(self):
+        import importlib, sys, os
+        sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
+        n = importlib.import_module("narrate")
+        cues = n.caption_chunks("Patients of hospital doctors under 40 had an adjusted death rate of 10.8% within 30 days.")
+        self.assertTrue(all(not c.endswith(" 30") for c in cues), cues)
+        cues = n.caption_chunks("Those were observational studies, mostly of medical knowledge and following guidelines. They don't prove experience harms anyone.")
+        self.assertTrue(any(c.startswith("They don't") for c in cues), cues)
+        cues = n.caption_chunks("Patients of surgeons 60 and older did slightly better.")
+        self.assertTrue(all(not c.endswith(" 60") for c in cues), cues)

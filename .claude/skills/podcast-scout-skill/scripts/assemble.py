@@ -61,6 +61,8 @@ def main(argv=None):
     ap.add_argument("--captions")
     ap.add_argument("--burn", dest="burn", action="store_true", default=True,
                     help="burn captions into the picture (DEFAULT: channel rule, subtitles on every video)")
+    ap.add_argument("--fill", choices=["black", "blur"], default="black",
+                    help="how clips of another aspect ratio fill the frame: black bars or a blurred copy")
     ap.add_argument("--no-burn", dest="burn", action="store_false", help="soft captions only (mov_text track)")
     ap.add_argument("--sub-font", default="DejaVu Sans", help="font family for burned subtitles")
     ap.add_argument("--sub-fonts-dir", default=None, help="folder with the subtitle font files (e.g. film/fonts)")
@@ -98,8 +100,13 @@ def main(argv=None):
         norm = []
         for i, s in enumerate(scenes):
             n = td / f"n{i:03d}.mp4"
-            vf = (f"scale={W}:{H}:force_original_aspect_ratio=decrease,pad={W}:{H}:(ow-iw)/2:(oh-ih)/2:color=black,"
-                  f"fps={a.fps},format=yuv420p,setsar=1")
+            if a.fill == "blur":   # mismatched aspect: blurred, darkened copy of the clip behind it (no black bars)
+                vf = (f"split[bgs][fgs];[bgs]scale={W}:{H}:force_original_aspect_ratio=increase,crop={W}:{H},"
+                      f"boxblur=26:2,eq=brightness=-0.06[bg];[fgs]scale={W}:{H}:force_original_aspect_ratio=decrease[fg];"
+                      f"[bg][fg]overlay=(W-w)/2:(H-h)/2,fps={a.fps},format=yuv420p,setsar=1")
+            else:
+                vf = (f"scale={W}:{H}:force_original_aspect_ratio=decrease,pad={W}:{H}:(ow-iw)/2:(oh-ih)/2:color=black,"
+                      f"fps={a.fps},format=yuv420p,setsar=1")
             args = ["-i", s, "-vf", vf, "-c:v", "libx264", "-preset", "medium", "-crf", "16"]
             if a.keep_clip_audio:
                 if has_audio(s):

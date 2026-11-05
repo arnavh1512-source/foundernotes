@@ -205,21 +205,59 @@ def silence(seconds: float, out: Path):
 
 
 # ---------------------------------------------------------------- captions
-def caption_chunks(text: str, max_chars: int = 42):
-    words, line, chunks = text.split(), "", []
+# words a caption line should not end on (articles, prepositions, auxiliaries, determiners): the
+# reader would be left hanging; keep them with the next words instead
+_BAD_END = set("a an the of to in into and or nor for with at on by from that than as not under over about "
+               "is was were are be been no so but if when where what how who which whose their his her its my "
+               "your our each every only this these those more most less very".split())
+
+
+def _bad_end(w: str) -> bool:
+    if re.search(r"[.!?;:,]$", w):
+        return False
+    lw = w.lower().strip("\"'“”‘’()")
+    # a bare number is half of "number + unit" (30 → days); keep them together
+    return lw in _BAD_END or re.fullmatch(r"\d[\d.,]*", lw) is not None
+
+
+_CONJ = set("and but or because so which who whose where when while though although if than".split())
+
+
+def _chunk_sentence(words, max_chars):
+    cur, out = [], []
     for w in words:
-        cand = f"{line} {w}".strip()
-        if len(cand) > max_chars and line:
-            chunks.append(line)
-            line = w
+        if cur and len(" ".join(cur + [w])) > max_chars:
+            # best break: after punctuation > before a conjunction > latest word that doesn't dangle
+            minlen = max_chars * 0.4
+            cands = [j for j in range(len(cur) - 1, 0, -1) if len(" ".join(cur[: j + 1])) >= minlen] or [len(cur) - 1]
+            j = next((j for j in cands if re.search(r"[,;:]$", cur[j])), None)
+            if j is None:
+                j = next((j for j in cands if j + 1 < len(cur) and cur[j + 1].lower() in _CONJ and not _bad_end(cur[j])), None)
+            if j is None:
+                j = next((j for j in cands if not _bad_end(cur[j])), cands[0])
+            out.append(cur[: j + 1]); cur = cur[j + 1:]
+        cur.append(w)
+    if cur:
+        out.append(cur)
+    return [" ".join(c) for c in out]
+
+
+def caption_chunks(text: str, max_chars: int = 42):
+    """Semantic caption lines: one sentence never spills into the next cue's start; inside a sentence break
+    after punctuation, then before a conjunction, never after a dangling word or a bare number
+    (no "within 30 | days", no "of the | doctors")."""
+    chunks = []
+    for sent in re.split(r"(?<=[.!?])\s+", text.strip()):
+        if sent:
+            chunks += _chunk_sentence(sent.split(), max_chars)
+    # fold tiny cues (< 14 chars) into a neighbour when the pair still fits
+    out = []
+    for c in chunks:
+        if out and (len(c) < 14 or len(out[-1]) < 14) and len(out[-1]) + 1 + len(c) <= max_chars:
+            out[-1] += " " + c
         else:
-            line = cand
-        if re.search(r"[.!?;:]$", w) and len(line) >= 18:
-            chunks.append(line)
-            line = ""
-    if line:
-        chunks.append(line)
-    return chunks
+            out.append(c)
+    return out
 
 
 def ts(t: float, sep=","):  # noqa: E302
@@ -238,10 +276,8 @@ def build_captions(timings):
         dur_per_char = (seg["end"] - seg["start"]) / max(sum(len(c) for c in chunks), 1)
         fixed = []
         for c in chunks:
-            ws = c.split()
             n = max(1, int(len(c) * dur_per_char // 6) + 1)
-            step = -(-len(ws) // n)
-            fixed += [" ".join(ws[i:i + step]) for i in range(0, len(ws), step)]
+            fixed += caption_chunks(c, max_chars=max(18, len(c) // n + 6)) if n > 1 else [c]
         chunks = fixed
         total = sum(len(c) for c in chunks) or 1
         t, dur = seg["start"], seg["end"] - seg["start"]
