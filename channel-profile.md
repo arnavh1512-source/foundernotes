@@ -32,3 +32,10 @@ Values left as `TBD` fall back to the defaults shown.
 ## Approvals
 - **Autonomous end-to-end allowed:** no (stop at script+storyboard and at look stills)  ← change to yes to skip
 - **Paid tools allowed:** no (ask with a cost estimate first)
+
+## Source podcasts (owner rule)
+- Never name, credit or mention the podcast, host or guest an idea came from: not in narration, on screen,
+  in captions, the description, tags, pinned comment or CREDITS. Scouting notes stay internal (studio-output/).
+- Because of that, never quote a guest's exact words. Put ideas in our own words; present a well-known
+  saying as a saying ("origin unclear" if unknown). Factual claims still cite their primary research on screen
+  and in the description.
