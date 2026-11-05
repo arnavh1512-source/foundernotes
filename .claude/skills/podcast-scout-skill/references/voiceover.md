@@ -73,26 +73,31 @@ Writing for the ear:
    against the script to catch skipped words; otherwise state that the check was not run.
 4. Captions come from the same timings; per-word timing inside a segment is an estimate.
 
-## Human-explainer delivery (default since 2026-11)
-`narrate.py` voices Kokoro scripts sentence by sentence through a **performance layer**, `perform_plan`. The rules:
-- questions are slower, rise about half a semitone, and are followed by a longer pause;
-- short punchlines are slower, sit lower, and are slightly louder;
-- sentences starting "But", "So", "Yet" or "Now" lift;
-- number-heavy sentences are slower;
-- long explanations are a touch quicker;
-- pauses vary: longer after a question, before a punchline, at "…" and before a turn.
+## Sounding human: what LISTENING showed (earshot, 2026-11)
+Every candidate was rendered on the same passage, loudness-matched, and scored with earshot
+(AudioSet "Speech synthesizer" vs "Speech" / "Narration", CLAP match, realness). ASR checked that every word survived.
 
-Small seeded jitter keeps it from sounding metronomic, and the same script always gives the same audio.
-Pitch shifts use ffmpeg rubberband with formants preserved, kept within ±0.9 st.
+| change | Speech synthesizer ↓ | Narration ↑ | verdict |
+|---|---|---|---|
+| am_michael, single take per segment (baseline) | 0.88 | 0.17 | the most human raw voice |
+| "expressive" voices (fenrir, puck, liam, blends) | 0.93–0.94 | 0.05–0.06 | read MORE synthetic |
+| sentence-by-sentence takes with varied pace | 0.92–0.94 | 0.05–0.10 | worse: breaks the engine's own phrasing |
+| + per-sentence pitch shifting (rubberband) | 0.95 | 0.05 | "error buzz / digital glitch"; dropped |
+| + breaths in long pauses | 0.61 | 0.21 | no gain over the chain alone; dropped |
+| **+ studio chain** (small room, warm mic EQ, gentle compression, pink room tone ≈ −50 dBFS) | **0.33** | **0.30** | **adopted (default)** |
+| the whole film narration, before → after | 0.80 → 0.30 | 0.18 → 0.31 | the final mix with music: 0.18 |
 
-The default voice is the male blend `am_fenrir+am_puck`. Measured on the same passage: pitch spread about 4.1 st against
-about 3.5 for am_michael, and no words lost in the ASR check. Blends are written `am_a+am_b` or `am_a:0.6+am_b:0.4`,
-and every component must be on the male allowlist.
+The defaults that follow from this:
+- Kokoro `am_michael`, speed 0.88, one take per segment.
+- `"chain": "studio"` is applied to narration.wav. The length is unchanged, so timings stay valid.
+- Use `"chain": "dry"` for a lighter version, or `"none"`.
+- The sentence-split performance layer remains as an opt-in (`"perform": "pace"`) but isn't recommended.
 
-To make it sound human, write for it:
+What makes it human is the writing, so write for the ear:
 - vary sentence length;
 - ask real questions;
-- give punchlines their own short sentence;
-- use "…" for a held beat.
+- give a punchline its own short sentence;
+- use "…" for a held beat;
+- use commas where a speaker would breathe.
 
-`"perform": false` in script.json, or `--no-perform`, gives the old flat read.
+**Always listen before shipping:** `earshot describe`/`match` the narration and the final mix, and compare against the previous film.

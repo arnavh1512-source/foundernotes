@@ -4,7 +4,7 @@ This repo holds the skills and subagents used to research and produce animated e
 YouTube videos.
 
 ## Standing defaults for every session
-- **Narration is always a male voice.** Default Kokoro blend `am_fenrir+am_puck` (speed 0.84) with the human-explainer performance layer (varied pace, pitch, level and pauses per sentence) via
+- **Narration is always a male voice.** Default Kokoro `am_michael` (speed 0.88) with the earshot-tuned **studio chain** (room, warm mic, compression, room tone; checked by listening with earshot) via
   `.claude/skills/podcast-scout-skill/scripts/narrate.py`; fallback Piper `en_US-ryan-high`.
   Use a non-male voice only if the channel owner asks for it in their own words.
 - **Subagents run on Sonnet at medium effort.** The crew in `.claude/agents/studio-*.md` sets

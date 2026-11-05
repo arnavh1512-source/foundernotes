@@ -30,7 +30,7 @@ class MaleVoicePolicy(unittest.TestCase):
         for engine, voice in narrate.DEFAULT_VOICE.items():
             for part in voice.split("+"):          # a blend: every component must be male
                 self.assertIn(part.split(":")[0], narrate.MALE_VOICES[engine])
-        self.assertEqual(narrate.DEFAULT_VOICE["kokoro"], "am_fenrir+am_puck")
+        self.assertEqual(narrate.DEFAULT_VOICE["kokoro"], "am_michael")
 
     def test_kokoro_allowlist_is_male_only(self):
         for v in narrate.MALE_VOICES["kokoro"]:

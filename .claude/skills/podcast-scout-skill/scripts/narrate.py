@@ -52,7 +52,7 @@ MALE_VOICES = {
              "en-GB-ThomasNeural", "en-AU-WilliamNeural", "en-IN-PrabhatNeural",
              "en-US-AndrewMultilingualNeural", "en-US-BrianMultilingualNeural"],
 }
-DEFAULT_VOICE = {"kokoro": "am_fenrir+am_puck", "piper": "en_US-ryan-high", "edge": "en-US-AndrewNeural"}
+DEFAULT_VOICE = {"kokoro": "am_michael", "piper": "en_US-ryan-high", "edge": "en-US-AndrewNeural"}
 ENGINE_ORDER = ["kokoro", "piper", "edge"]
 
 
@@ -174,10 +174,10 @@ def perform_plan(sentences, seed_text):
     return plan
 
 
-PERFORM_VERSION = "p2"
+PERFORM_VERSION = "p3"
 
 
-def synth_kokoro_performed(text, voice, speed, out: Path):
+def synth_kokoro_performed(text, voice, speed, out: Path, mode="pace"):
     """Sentence-by-sentence synthesis with varied pace, pitch, level and pauses (see perform_plan)."""
     global _KOKORO
     from kokoro_onnx import Kokoro
@@ -193,8 +193,10 @@ def synth_kokoro_performed(text, voice, speed, out: Path):
             y, sr = _KOKORO.create(snt, voice=v, speed=float(speed) * sp, lang=lang)
             a = Path(td) / f"s{k}.wav"; b = Path(td) / f"s{k}p.wav"
             sf.write(str(a), y, sr)
-            af = [f"volume={db:.2f}dB"]
-            if abs(st) > 0.05 and has_rubberband():
+            # earshot listening (2026-11): pitch-shifting each sentence made the voice read as "glitchy / speech
+            # synthesizer", so the default mode is "pace" (pace, pauses only); "full" keeps pitch + level
+            af = [f"volume={db:.2f}dB" if mode == "full" else "anull"]
+            if mode == "full" and abs(st) > 0.05 and has_rubberband():
                 af.insert(0, f"rubberband=pitch={2 ** (st / 12):.5f}:formant=preserved:pitchq=quality")
             run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(a), "-af", ",".join(af), str(b)])
             y2, _ = sf.read(str(b), dtype="float32")
@@ -206,7 +208,9 @@ def synth_kokoro_performed(text, voice, speed, out: Path):
             if k < len(sentences) - 1:
                 chunks.append(np.zeros(int(pause * sr), dtype="float32"))
         tmp = out.with_suffix(".raw.wav")
-        sf.write(str(tmp), np.concatenate(chunks) if chunks else np.zeros(1, "float32"), sr)
+        y_all = np.concatenate(chunks) if chunks else np.zeros(1, "float32")
+        pk = float(np.max(np.abs(y_all))) or 1.0
+        sf.write(str(tmp), y_all * min(1.0, 0.89 / pk), sr)       # never clip (peak <= -1 dBFS)
     to_master_format(tmp, out)
     tmp.unlink(missing_ok=True)
 
@@ -275,6 +279,30 @@ def to_master_format(src: Path, dst: Path, speed=1.0):
            "areverse", "silenceremove=start_periods=1:start_threshold=-50dB:start_silence=0.08", "areverse"]
     run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(src), "-ac", "1", "-ar", str(SR),
          "-af", ",".join(af), "-c:a", "pcm_s16le", str(dst)])
+
+
+# A recording chain for TTS narration, chosen by LISTENING with earshot (2026-11, same passage, loudness-matched):
+# AudioSet "Speech synthesizer" 0.88 → 0.33 and "Narration, monologue" 0.17 → 0.30 for am_michael, every word still
+# transcribed. Raw TTS is unnaturally clean (noise floor ~-120 dBFS): a small room, a warm mic EQ, gentle compression
+# and a pink room tone make it read as a voice recorded in a room. Length is unchanged, so timings stay valid.
+VOICE_CHAINS = {
+    "studio": ("aecho=0.85:0.58:18|30|44|58:0.13|0.09|0.05|0.03,equalizer=f=170:t=q:w=1:g=2,"
+               "equalizer=f=6500:t=q:w=2:g=-1.5,acompressor=threshold=-20dB:ratio=2.5:attack=8:release=120", 0.003),
+    "dry": ("equalizer=f=170:t=q:w=1:g=2,acompressor=threshold=-20dB:ratio=2.5:attack=8:release=120", 0.0016),
+}
+
+
+def apply_voice_chain(path: Path, name: str):
+    if name not in VOICE_CHAINS:
+        die(f"unknown voice chain '{name}' (choose {', '.join(VOICE_CHAINS)} or none)")
+    fx, amp = VOICE_CHAINS[name]
+    tmp = path.with_suffix(".chain.wav")
+    d = wav_seconds(path)
+    run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(path), "-f", "lavfi", "-t", f"{d + 1:.3f}", "-i",
+         f"anoisesrc=color=pink:amplitude={amp}:seed=11", "-filter_complex",
+         f"[0]{fx}[v];[1]lowpass=f=6000,highpass=f=80[n];[v][n]amix=inputs=2:duration=first:normalize=0,"
+         f"alimiter=limit=0.89", "-ar", str(SR), "-ac", "1", "-c:a", "pcm_s16le", str(tmp)])
+    tmp.replace(path)
 
 
 def wav_seconds(path: Path) -> float:
@@ -455,7 +483,9 @@ def main(argv=None):
     elif engine == "voicebox" and not voice:
         die("voicebox needs --voice <profile id of a male preset profile>")
     speed = a.speed or vcfg.get("speed", 1.0)
-    perform = engine == "kokoro" and not a.no_perform and vcfg.get("perform", True)
+    pv = vcfg.get("perform", False)      # earshot: sentence-split takes read MORE synthetic; opt-in only
+    perform = engine == "kokoro" and not a.no_perform and pv not in (False, "flat", "off")
+    perform_mode = "full" if pv == "full" else "pace"
     lead, tail = float(data.get("lead", 0.3)), float(data.get("tail", 0.8))
 
     out = Path(a.out).resolve()
@@ -478,14 +508,14 @@ def main(argv=None):
             elif engine == "voicebox":
                 extra = "|".join(os.environ.get(k, "") for k in ("VOICEBOX_URL", "VOICEBOX_ENGINE", "VOICEBOX_INSTRUCT"))
             if perform:
-                extra += "|" + PERFORM_VERSION
+                extra += "|" + PERFORM_VERSION + perform_mode
             key = hashlib.sha256(f"{engine}|{voice}|{speed}|{text}|{extra}".encode()).hexdigest()[:16]
             wav = seg_dir / f"{s['id']}.wav"
             stamp = seg_dir / f"{s['id']}.key"
             if not (wav.exists() and stamp.exists() and stamp.read_text() == key):
                 print(f"  [{engine}:{voice}] {s['id']}: {text[:60]}{'…' if len(text) > 60 else ''}", file=sys.stderr)
                 if engine == "kokoro" and perform:
-                    synth_kokoro_performed(text, voice, speed, wav)
+                    synth_kokoro_performed(text, voice, speed, wav, mode=perform_mode)
                 elif engine == "kokoro":
                     synth_kokoro(text, voice, speed, wav)
                 elif engine == "piper":
@@ -513,12 +543,16 @@ def main(argv=None):
         run(["ffmpeg", "-y", "-loglevel", "error", "-f", "concat", "-safe", "0", "-i", str(listing),
              "-c:a", "pcm_s16le", "-ar", str(SR), "-ac", "1", str(out / "narration.wav")])
 
+    chain = vcfg.get("chain", "studio")
+    if chain and chain != "none":
+        apply_voice_chain(out / "narration.wav", chain)
     total = wav_seconds(out / "narration.wav")
     if total + 0.1 < clock:
         die(f"narration.wav is {total:.2f}s but the segments add up to {clock:.2f}s; concat failed")
     words = sum(t["words"] for t in timings)
     speech = sum(t["end"] - t["start"] for t in timings)
-    meta = {"engine": engine, "voice": voice, "speed": speed, "performance": PERFORM_VERSION if perform else "flat", "male_voice_policy": not a.allow_non_male,
+    meta = {"engine": engine, "voice": voice, "speed": speed, "performance": PERFORM_VERSION + perform_mode if perform else "flat",
+            "chain": chain, "male_voice_policy": not a.allow_non_male,
             "duration": round(total, 3), "words": words,
             "wpm_speech": round(words / (speech / 60), 1) if speech else None,
             "word_timing": "estimated-from-characters", "segments": timings}
