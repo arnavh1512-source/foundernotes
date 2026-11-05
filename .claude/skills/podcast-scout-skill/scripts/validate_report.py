@@ -14,7 +14,7 @@ from urllib.parse import urlparse
 WEIGHTS = {"audience_value": 25, "curiosity": 20, "evidence": 25,
            "originality": 15, "visual_potential": 15}
 FACTUAL_TYPES = ("primary", "authoritative-secondary", "secondary")
-STAMP = r"(?:(?:\d{1,3}):)?[0-5]\d:[0-5]\d(?:[.,]\d{1,3})?"
+STAMP = r"(?:\d{1,3}:[0-5]\d|[0-5]?\d):[0-5]\d(?:[.,]\d{1,3})?"   # h:mm:ss, mm:ss or m:ss (vidIQ-style [0:20])
 CUE = re.compile(rf"(?m)^\s*\[?({STAMP})\]?(?=\s|$)")
 
 
@@ -70,15 +70,24 @@ def validate(report, transcript=None):
     mode = report.get("mode")
     if mode not in ("researched", "provisional", "blocked"):
         errors.append("Invalid report mode.")
+    # input contract: "podcast" (default) needs conversation provenance; "topic" (plain-topic workflow) has no
+    # podcast — every claim is sourced externally, so source moments and podcast coverage do not apply.
+    source_input = report.get("input", "podcast")
+    if source_input not in ("podcast", "topic"):
+        errors.append("input must be 'podcast' or 'topic'.")
+    topic_mode = source_input == "topic"
     topics = report.get("topics")
     if not isinstance(topics, list) or any(not isinstance(t, dict) for t in topics):
         return errors + ["topics must be an array of objects."]
     if mode == "blocked" and topics:
         errors.append("A blocked report cannot contain podcast-derived recommendations.")
-    podcast = report.get("podcast", {})
+    podcast = report.get("podcast", {"coverage": "not-applicable"} if topic_mode else {})
     if not isinstance(podcast, dict):
         return errors + ["podcast must be an object."]
-    if podcast.get("coverage") not in ("complete", "unknown", "partial", "unavailable"):
+    if topic_mode:
+        if podcast.get("coverage") not in (None, "not-applicable"):
+            errors.append("Topic-mode reports have no podcast: use coverage 'not-applicable'.")
+    elif podcast.get("coverage") not in ("complete", "unknown", "partial", "unavailable"):
         errors.append("Invalid podcast coverage.")
     if podcast.get("coverage") in ("unknown", "partial", "unavailable") and not podcast.get("coverage_note"):
         errors.append("Limited or unknown coverage needs coverage_note.")
@@ -144,7 +153,9 @@ def validate(report, transcript=None):
             elif finding.get("kind") == "supported-finding" and (not urls or not set(urls).issubset(read_urls)):
                 fail("Supported findings must point to inspected sources in the source ledger.")
         moment = topic.get("moment", {})
-        if not isinstance(moment, dict) or not isinstance(moment.get("quote"), str) or not moment["quote"].strip():
+        if topic_mode and not moment:
+            pass                                    # no conversation to quote; claims rely on read sources
+        elif not isinstance(moment, dict) or not isinstance(moment.get("quote"), str) or not moment["quote"].strip():
             fail("A nonempty exact source quote is required.")
         else:
             if moment.get("verified") is not True:

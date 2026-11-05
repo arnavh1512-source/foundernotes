@@ -61,6 +61,47 @@ def spans(log, start_key, end_key):
     return list(zip(starts, ends + [None] * (len(starts) - len(ends))))
 
 
+def audio_seconds(path):
+    """Decoded audio length (container durations can lie)."""
+    r = sh(["ffprobe", "-v", "error", "-select_streams", "a:0", "-show_entries", "packet=pts_time,duration_time",
+            "-of", "csv=p=0", path])
+    last = 0.0
+    for line in r.stdout.splitlines():
+        try:
+            pts, d = (float(x) for x in line.split(",")[:2]); last = max(last, pts + d)
+        except ValueError:
+            continue
+    return last
+
+
+SRT_TIME = re.compile(r"^\s*(\d+):(\d{2}):(\d{2})[,.](\d{3})\s*-->\s*(\d+):(\d{2}):(\d{2})[,.](\d{3})\s*$")
+
+
+def parse_srt_strict(text):
+    """Return (cues, problems). Every non-empty block must have a valid time line and text."""
+    cues, problems = [], []
+    for n, block in enumerate(re.split(r"\n\s*\n", text.strip()), 1):
+        lines = [l for l in block.strip().splitlines()]
+        if not lines:
+            continue
+        idx = next((i for i, l in enumerate(lines[:2]) if "-->" in l), None)
+        m = SRT_TIME.match(lines[idx]) if idx is not None else None
+        if not m:
+            problems.append(f"block {n}: missing or malformed time line"); continue
+        g = list(map(int, m.groups()))
+        if g[2] > 59 or g[6] > 59 or g[1] > 59 or g[5] > 59:
+            problems.append(f"block {n}: minutes/seconds out of range"); continue
+        a = g[0] * 3600 + g[1] * 60 + g[2] + g[3] / 1000
+        b = g[4] * 3600 + g[5] * 60 + g[6] + g[7] / 1000
+        body = [l for l in lines[idx + 1:] if l.strip()]
+        if b <= a:
+            problems.append(f"block {n}: end {b:.3f}s is not after start {a:.3f}s")
+        if not body:
+            problems.append(f"block {n}: no caption text")
+        cues.append((a, b, body))
+    return cues, problems
+
+
 def parse_srt(text):
     cues = []
     for block in re.split(r"\n\s*\n", text.strip()):
@@ -119,6 +160,9 @@ def main(argv=None):
     if not au:
         add("FAIL", "spec", "no audio stream (narration missing)")
     else:
+        a_dur = float(au.get("duration") or 0) or audio_seconds(a.video)
+        if a_dur + 0.5 < dur:
+            add("FAIL", "spec", f"audio stream covers {a_dur:.2f}s of a {dur:.2f}s video")
         i, tp = loudness(a.video)
         if i is None:
             add("WARN", "loudness", "could not measure")
@@ -161,7 +205,9 @@ def main(argv=None):
             add("WARN", "voice", "narration was rendered with --allow-non-male")
 
     if a.captions:
-        cues = parse_srt(Path(a.captions).read_text(encoding="utf-8-sig"))
+        cues, problems = parse_srt_strict(Path(a.captions).read_text(encoding="utf-8-sig"))
+        for pr in problems:
+            add("FAIL", "captions", pr)
         if not cues:
             add("FAIL", "captions", "no cues parsed")
         prev_end = 0.0
@@ -187,10 +233,13 @@ def main(argv=None):
         rows = (n + cols - 1) // cols
         step = max(dur / n, 0.04)
         Path(a.sheet).parent.mkdir(parents=True, exist_ok=True)
-        sh(["ffmpeg", "-y", "-loglevel", "error", "-i", a.video, "-vf",
+        Path(a.sheet).unlink(missing_ok=True)          # never report a stale sheet from an earlier run
+        r_sheet = sh(["ffmpeg", "-y", "-loglevel", "error", "-i", a.video, "-vf",
             f"fps=1/{step:.3f},scale=480:-2,drawtext=text='%{{pts\\:hms}}':x=8:y=8:fontsize=18:fontcolor=white:box=1:boxcolor=black@0.6,tile={cols}x{rows}",
             "-frames:v", "1", a.sheet])
-        add("OK" if Path(a.sheet).exists() else "WARN", "sheet", f"contact sheet {a.sheet} (open it and look)")
+        ok_sheet = r_sheet.returncode == 0 and Path(a.sheet).exists() and Path(a.sheet).stat().st_size > 0
+        add("OK" if ok_sheet else "FAIL", "sheet", f"contact sheet {a.sheet} (open it and look)" if ok_sheet
+            else f"contact sheet could not be written: {r_sheet.stderr.strip()[:160]}")
 
     fails = [r for r in res if r["level"] == "FAIL"]
     for r in res:

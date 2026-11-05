@@ -101,8 +101,17 @@ def have_kokoro() -> bool:
     return (VOICES_DIR / "kokoro-v1.0.onnx").exists() and (VOICES_DIR / "voices-v1.0.bin").exists()
 
 
+def tool(name: str):
+    """Find a console script next to this Python first (venv bin/ or Windows Scripts/), then on PATH."""
+    here = Path(sys.executable).parent
+    for cand in (here / name, here / f"{name}.exe", here / "Scripts" / f"{name}.exe", here / "bin" / name):
+        if cand.exists():
+            return str(cand)
+    return shutil.which(name)
+
+
 def have_piper(voice: str) -> bool:
-    return shutil.which("piper") is not None and (VOICES_DIR / f"{voice}.onnx").exists()
+    return tool("piper") is not None and (VOICES_DIR / f"{voice}.onnx").exists()
 
 
 def have_edge() -> bool:
@@ -110,7 +119,7 @@ def have_edge() -> bool:
         import edge_tts  # noqa: F401
         return True
     except Exception:
-        return shutil.which("edge-tts") is not None
+        return tool("edge-tts") is not None
 
 
 _KOKORO = None
@@ -133,7 +142,7 @@ def synth_kokoro(text, voice, speed, out: Path):
 def synth_piper(text, voice, speed, out: Path):
     tmp = out.with_suffix(".raw.wav")
     length_scale = 1.0 / float(speed) if float(speed) > 0 else 1.0
-    subprocess.run(["piper", "-m", str(VOICES_DIR / f"{voice}.onnx"), "-f", str(tmp),
+    subprocess.run([tool("piper") or "piper", "-m", str(VOICES_DIR / f"{voice}.onnx"), "-f", str(tmp),
                     "--length_scale", f"{length_scale:.3f}", "--sentence_silence", "0.25"],
                    input=text.encode(), check=True, capture_output=True)
     to_master_format(tmp, out)
@@ -143,7 +152,7 @@ def synth_piper(text, voice, speed, out: Path):
 def synth_edge(text, voice, speed, out: Path):
     tmp = out.with_suffix(".mp3")
     rate = f"{int(round((float(speed) - 1) * 100)):+d}%"
-    exe = [shutil.which("edge-tts")] if shutil.which("edge-tts") else [sys.executable, "-m", "edge_tts"]
+    exe = [tool("edge-tts")] if tool("edge-tts") else [sys.executable, "-m", "edge_tts"]
     run(exe + ["--voice", voice, f"--rate={rate}", "--text", text, "--write-media", str(tmp)])
     to_master_format(tmp, out)
     tmp.unlink(missing_ok=True)
@@ -324,7 +333,13 @@ def main(argv=None):
         clock = wav_seconds(lead_wav)
         for i, s in enumerate(data["segments"]):
             text = " ".join(str(s["text"]).split())
-            key = hashlib.sha256(f"{engine}|{voice}|{speed}|{text}".encode()).hexdigest()[:16]
+            extra = ""
+            if engine == "files":                      # a replaced recording must invalidate the cached take
+                src = Path(a.files_dir or "recordings") / f"{s['id']}.wav"
+                extra = hashlib.sha256(src.read_bytes()).hexdigest() if src.exists() else "missing"
+            elif engine == "voicebox":
+                extra = "|".join(os.environ.get(k, "") for k in ("VOICEBOX_URL", "VOICEBOX_ENGINE", "VOICEBOX_INSTRUCT"))
+            key = hashlib.sha256(f"{engine}|{voice}|{speed}|{text}|{extra}".encode()).hexdigest()[:16]
             wav = seg_dir / f"{s['id']}.wav"
             stamp = seg_dir / f"{s['id']}.key"
             if not (wav.exists() and stamp.exists() and stamp.read_text() == key):
@@ -373,6 +388,17 @@ def main(argv=None):
     return 0
 
 
+def missing_words(want, heard):
+    """Script words not heard, counted with multiplicity (two 'not's scripted, one heard → one missing)."""
+    from collections import Counter
+    left = Counter(want) - Counter(heard)
+    out = []
+    for w in want:
+        if left[w] > 0:
+            out.append(w); left[w] -= 1
+    return out
+
+
 def asr_check(out: Path, timings, model_name: str) -> int:
     """Transcribe each take and report segments whose displayed words are mostly missing.
     Small models mishear short names: confirm flagged lines by listening before re-taking."""
@@ -382,16 +408,24 @@ def asr_check(out: Path, timings, model_name: str) -> int:
         print("narrate: --asr needs faster-whisper (pip install faster-whisper 'av<19'); check NOT run", file=sys.stderr)
         return 0
     model = WhisperModel(model_name, device="cpu", compute_type="int8")
-    norm = lambda s: re.sub(r"[^a-z0-9 ]", " ", s.lower()).split()
+    norm = lambda s: re.sub(r"[^a-z0-9 ]", " ", re.sub(r"[’']", "", s.lower())).split()
+    critical = {"not", "no", "never", "nor", "none", "nothing", "nobody", "nowhere", "neither", "cannot",
+                "dont", "doesnt", "didnt", "isnt", "arent", "wasnt", "werent", "cant", "couldnt", "wont",
+                "wouldnt", "shouldnt", "hasnt", "havent", "hadnt", "aint", "without"}
     report, flagged = [], 0
     for seg in timings:
         res, _ = model.transcribe(str(out / "segments" / f"{seg['id']}.wav"), language="en", beam_size=5)
         heard = " ".join(x.text for x in res).strip()
-        want = norm(seg["display"]); got = set(norm(heard))
-        missing = [w for w in want if w not in got]
-        bad = len(missing) > max(1, int(len(want) * 0.08))
+        want = norm(seg["display"]); got_list = norm(heard)
+        # multiset comparison: two "not"s in the script and one heard is a missing "not"
+        missing = missing_words(want, got_list)
+        # meaning-critical words: a dropped or added negation / number reverses or changes the claim
+        neg_want = sum(w in critical for w in want); neg_got = sum(w in critical for w in got_list)
+        crit_missing = [w for w in missing if w in critical or w.isdigit()]
+        bad = len(missing) > max(1, int(len(want) * 0.08)) or bool(crit_missing) or neg_want != neg_got
         flagged += bad
-        report.append({"id": seg["id"], "ok": not bad, "missing": missing, "heard": heard})
+        report.append({"id": seg["id"], "ok": not bad, "missing": missing, "critical_missing": crit_missing,
+                       "negations_script": neg_want, "negations_heard": neg_got, "heard": heard})
         if bad:
             print(f"  ASR CHECK {seg['id']}: missing {missing[:8]} | heard: {heard[:140]}", file=sys.stderr)
     (out / "asr.json").write_text(json.dumps(report, indent=1), encoding="utf-8")

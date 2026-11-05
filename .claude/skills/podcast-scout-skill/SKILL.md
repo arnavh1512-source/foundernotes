@@ -33,7 +33,7 @@ Deliver the work in the current task; do not stop at a plan. Never publish or up
 - Default to original long-form animated explainers. Recommend the shortest length that teaches the idea properly; never pad to a fixed duration.
 - Use only capabilities actually available in the current environment. Never claim to have watched a video when you only read its transcript, or to have listened to audio you only measured.
 - **Obscura is the default browser for public research pages.** Check its availability once per job; disclose a specific reason before falling back.
-- A plain topic (no podcast) is allowed: skip stage 1's transcript requirement, label the report `topic-mode`, and source every claim externally.
+- A plain topic (no podcast) is allowed: skip stage 1's transcript requirement, set `"input": "topic"` in the JSON report (podcast coverage `not-applicable`, no source moments), and source every claim externally.
 
 ## 0. Kick-off
 

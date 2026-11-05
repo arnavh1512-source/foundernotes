@@ -12,7 +12,7 @@
 // MOTION_CHROMIUM=/path/to/chrome overrides the browser Playwright would launch.
 import { spawn, execFileSync } from "node:child_process";
 import { createRequire } from "node:module";
-import { mkdirSync, writeFileSync, rmSync } from "node:fs";
+import { mkdirSync, writeFileSync, rmSync, readdirSync } from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 
@@ -36,13 +36,15 @@ function loadChromium() {
   const req = createRequire(import.meta.url);
   const tries = [
     () => req("playwright"),
-    () => req(path.join(execFileSync("npm", ["root", "-g"]).toString().trim(), "playwright")),
+    // npm is a .cmd shim on Windows: execFileSync("npm") raises ENOENT there unless run through the shell
+    () => req(path.join(execFileSync("npm", ["root", "-g"], { shell: process.platform === "win32" }).toString().trim(), "playwright")),
     () => req("playwright-core"),
   ];
+  const errors = [];
   for (const t of tries) {
-    try { return t().chromium; } catch { /* next */ }
+    try { return t().chromium; } catch (e) { errors.push(e.message.split("\n")[0]); }
   }
-  throw new Error("Playwright not found: npm i -D playwright (or npm i -g playwright)");
+  throw new Error("Playwright not found: npm i -D playwright (or npm i -g playwright)\n  tried: " + errors.join("\n  tried: "));
 }
 
 function ffmpeg(args) {
@@ -80,6 +82,8 @@ async function shoot(page, t, alpha) {
 
 async function stills(page, times, dir) {
   mkdirSync(dir, { recursive: true });
+  // clear stills from earlier runs: the sheet reads a numbered sequence and would pick up stale frames
+  for (const f of readdirSync(dir)) if (/^still-\d+\.png$/.test(f) || f === "sheet.png") rmSync(path.join(dir, f));
   for (const [i, t] of times.entries()) {
     const name = `still-${String(i).padStart(2, "0")}.png`;
     writeFileSync(path.join(dir, name), await shoot(page, t, false));
@@ -87,7 +91,7 @@ async function stills(page, times, dir) {
   }
   const cols = Math.min(times.length, 6);
   const rows = Math.ceil(times.length / cols);
-  const sheet = ffmpeg(["-framerate", "1", "-i", path.join(dir, "still-%02d.png"),
+  const sheet = ffmpeg(["-framerate", "1", "-i", path.join(dir, "still-%02d.png"), "-frames:v", "1",
     "-vf", `scale=-2:480,tile=${cols}x${rows}:padding=12:color=0x808080`, "-frames:v", "1", path.join(dir, "sheet.png")]);
   sheet.stdin.end();
   await sheet.done;

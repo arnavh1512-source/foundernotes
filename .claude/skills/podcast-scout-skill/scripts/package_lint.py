@@ -32,12 +32,16 @@ BANNED = ["you won't believe", "shocking", "gone wrong", "insane", "mind-blowing
           "this changes everything", "100% guaranteed", "doctors hate"]
 
 
-def secs(stamp: str) -> int:
-    parts = [int(p) for p in stamp.strip().split(":")]
-    total = 0
-    for p in parts:
-        total = total * 60 + p
-    return total
+STAMP = re.compile(r"^(?:(\d+):)?([0-5]?\d):([0-5]\d)$")
+
+
+def secs(stamp) -> int | None:
+    """'MM:SS' or 'H:MM:SS' → seconds; None when malformed (YouTube ignores bad stamps)."""
+    m = STAMP.match(str(stamp).strip()) if isinstance(stamp, str) else None
+    if not m:
+        return None
+    h, mm, ss = m.groups()
+    return int(h or 0) * 3600 + int(mm) * 60 + int(ss)
 
 
 def words(s):
@@ -56,8 +60,15 @@ def main(argv=None):
         out.append((level, area, msg))
 
     titles = pkg.get("titles") or []
-    if not titles:
-        add("FAIL", "titles", "no titles")
+    if not isinstance(titles, list) or not titles:
+        add("FAIL", "titles", "no titles"); titles = []
+    clean = []
+    for i, t in enumerate(titles):
+        if not isinstance(t, str) or not t.strip():
+            add("FAIL", "titles", f"[{i}] empty title")
+        else:
+            clean.append(t.strip())
+    titles = clean
     for i, t in enumerate(titles):
         n = len(t)
         if n > 70:
@@ -81,7 +92,9 @@ def main(argv=None):
         elif wc > 3:
             add("WARN", "thumbnail", f"'{text}' has {wc} words (aim <= 3)")
         ti = th.get("title_index")
-        if isinstance(ti, int) and ti < len(titles) and text:
+        if ti is not None and not (type(ti) is int and 0 <= ti < len(titles)):
+            add("FAIL", "thumbnail", f"title_index {ti!r} does not point at a title (0..{len(titles) - 1})")
+        elif isinstance(ti, int) and text:
             tw, xw = set(words(titles[ti])), set(words(text))
             if xw and len(xw & tw) / len(xw) > 0.8:
                 add("WARN", "thumbnail", f"'{text}' repeats title [{ti}]; the thumbnail should add a visual question")
@@ -99,6 +112,11 @@ def main(argv=None):
             add("WARN", "description", "sources not listed in description")
 
     ch = pkg.get("chapters") or []
+    bad = [c for c in ch if not (isinstance(c, (list, tuple)) and len(c) == 2 and secs(c[0]) is not None
+                                and isinstance(c[1], str) and c[1].strip())]
+    for c in bad:
+        add("FAIL", "chapters", f"malformed chapter {c!r} (need [\"MM:SS\", \"title\"])")
+    ch = [c for c in ch if c not in bad]
     if ch:
         times = [secs(c[0]) for c in ch]
         if times[0] != 0:

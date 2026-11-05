@@ -93,8 +93,12 @@ def main(argv=None):
             vf = (f"scale={W}:{H}:force_original_aspect_ratio=decrease,pad={W}:{H}:(ow-iw)/2:(oh-ih)/2:color=black,"
                   f"fps={a.fps},format=yuv420p,setsar=1")
             args = ["-i", s, "-vf", vf, "-c:v", "libx264", "-preset", "medium", "-crf", "16"]
-            if a.keep_clip_audio and has_audio(s):
-                args += ["-c:a", "aac", "-ar", "48000", "-ac", "2"]
+            if a.keep_clip_audio:
+                if has_audio(s):
+                    args += ["-map", "0:v:0", "-map", "0:a:0", "-c:a", "aac", "-ar", "48000", "-ac", "2"]
+                else:   # every clip needs an audio track or concat drops audio for the whole film
+                    args = ["-i", s, "-f", "lavfi", "-i", "anullsrc=r=48000:cl=stereo", "-vf", vf, "-c:v", "libx264",
+                            "-preset", "medium", "-crf", "16", "-map", "0:v:0", "-map", "1:a:0", "-c:a", "aac", "-shortest"]
             else:
                 args += ["-an"]
             ff(args + [str(n)])
@@ -131,7 +135,12 @@ def main(argv=None):
         inputs = ["-i", str(picture), "-i", a.narration]
         # TTS has a high peak-to-average ratio: compress the voice before balancing it against music
         voice_chain = ("[1:a]aresample=48000,aformat=channel_layouts=stereo,"
-                       "acompressor=threshold=0.1:ratio=3:attack=5:release=80:makeup=2,apad[voice]")
+                       "acompressor=threshold=0.1:ratio=3:attack=5:release=80:makeup=2,apad[voice0]")
+        if a.keep_clip_audio and has_audio(picture):    # clip audio (dialogue, live sound) sits under the narration
+            voice_chain += (";[0:a]aresample=48000,aformat=channel_layouts=stereo,volume=-6dB,apad[clip];"
+                            "[voice0][clip]amix=inputs=2:duration=first:normalize=0[voice]")
+        else:
+            voice_chain += ";[voice0]anull[voice]"
         if a.music:
             inputs += ["-stream_loop", "-1", "-i", a.music]
             fil = (f"{voice_chain};[voice]asplit=2[v1][vkey];"
@@ -170,7 +179,9 @@ def main(argv=None):
         ff(args)
 
     if a.captions:
-        shutil.copyfile(a.captions, out.with_suffix(".srt"))
+        side = out.with_suffix(".srt")
+        if Path(a.captions).resolve() != side.resolve():
+            shutil.copyfile(a.captions, side)
     print(json.dumps({"out": str(out), "duration": round(duration(out), 3), "narration": round(narr_d, 3),
                       "format": f"{W}x{H}@{a.fps}", "music": bool(a.music), "captions": bool(a.captions),
                       "burned": bool(a.burn)}))
