@@ -22,5 +22,11 @@ separately, never vendored) and adapts ideas and rules from these projects:
 | [h4ckf0r0day/obscura](https://github.com/h4ckf0r0day/obscura) | Apache-2.0 | Research browser (downloaded separately) |
 | [acamposuribe/p5.brush](https://github.com/acamposuribe/p5.brush) | MIT | Painted background plates (standalone build vendored per film) |
 | [lemomo-ai/lemo-opuscar](https://github.com/lemomo-ai/lemo-opuscar) | MIT | Directing method ideas; sampler/sfx/ASR tools used from an installed copy; instrument samples CC0 / CC BY 3.0 (Salamander) |
+| [WordPress/openverse](https://github.com/WordPress/openverse) | MIT (API); media per file | `fetch_sfx.py` searches CC0 sound effects and records each file's licence |
+| [Leonxlnx/earshot](https://github.com/Leonxlnx/earshot) | MIT | Code-made SFX bank, film sync/loudness listening and critique (installed separately) |
+| [heygen-com/hyperframes](https://github.com/heygen-com/hyperframes) | Apache-2.0 | Seam doctrine ideas (vector law, the current, carriers, no idle wobble) re-implemented in our kit |
+| [feitangyuan/onetake](https://github.com/feitangyuan/onetake) | PolyForm Noncommercial | Ideas only (carry, rhythm variance, operated camera, no particle flourishes); no code used |
+| [pyang5166/gbro-collage-broll](https://github.com/pyang5166/gbro-collage-broll) | MIT | Method idea: one metaphor per narration line, gated metaphor → still → motion |
+| Synfig / OpenToonz / Pencil2D | GPL-3 / BSD / GPL-2 | Optional desktop engines for owner-drawn shots |
 | Kokoro-82M / [kokoro-onnx](https://github.com/thewh1teagle/kokoro-onnx) | Apache-2.0 / MIT | Default male narration (am_michael) |
 | [Piper](https://github.com/rhasspy/piper) voices | MIT (voice cards vary; check each) | Fallback male narration (en_US-ryan-high) |

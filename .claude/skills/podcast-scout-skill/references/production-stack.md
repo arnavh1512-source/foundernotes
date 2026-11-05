@@ -26,6 +26,9 @@ Reviewed 2026-11-04 at each repo's default-branch HEAD. Re-check a repo's README
 | Whole-pipeline reference (stage manifests, reviewer, budget) | **OpenMontage** — AGPL-3.0: read for ideas, do not copy code into this repo | — |
 | Painted backgrounds (watercolour washes, charcoal, hatching) under SVG characters | **p5.brush** standalone (`K.paintPlate`) | anidoodle painted styles |
 | Original score from real instrument samples, procedural foley, ASR voice check, −14 LUFS two-pass master | **lemo-opuscar** `core/` | our assemble.py |
+| Recorded CC0 sound effects (crowd, footsteps, paper, doors, birds) | **Openverse** API via `scripts/fetch_sfx.py` (logs licence + source per file) | earshot bank |
+| Code-made sound effects aimed at the picture; *listening* to a mix (describe, match, timeline, critique) | **earshot** | lemo `sfx.py` |
+| Hand-drawn frame-by-frame or bone-rigged vector shots the owner draws in a desktop app | **Pencil2D** / **Synfig** / **OpenToonz** (export clips, drop into `scenes/`) | our SVG rig |
 | Male narration | `scripts/narrate.py` (Kokoro/Piper); **voicebox** for Qwen male presets | see voiceover.md |
 | Research page reading | **Obscura** | host reader |
 
@@ -80,6 +83,15 @@ Natural media in WebGL2: pencils, charcoal, markers, watercolour fills that blee
 
 ### lemo-opuscar — [lemomo-ai/lemo-opuscar](https://github.com/lemomo-ai/lemo-opuscar) (MIT)
 A 66-style library of code-built films with a strong directing method (DIRECTOR.md: benchmark, treatment with three structures, one native move, silences, J/L cuts, reading-time rules, "not the demo again") and tools in `core/`: Kokoro TTS + faster-whisper check, **sampler.py** (97 real instruments; `sh tools/fetch.sh instruments vsco2ce|vcsl|salamander` — checksummed downloads), **sfx.py** procedural foley, `mux.sh` two-pass loudnorm, `readcheck.mjs`, `sheet.py`. Install under `~/studio-tools/lemo-opuscar`; its Python needs numpy, scipy, soundfile, soxr (+ faster-whisper for ASR). Learn from its styles; never rebuild its demo films. Credit Salamander piano exactly as INSTRUMENTS.md says.
+
+### Openverse — [WordPress/openverse](https://github.com/WordPress/openverse) (MIT code; media under each file's licence)
+Search engine API for openly licensed audio and images (`api.openverse.org/v1/audio/?q=…&license=cc0`). `scripts/fetch_sfx.py sfx.json --out sfx/` downloads candidates per role and writes `sources.json` (title, creator, licence, landing page) for CREDITS. Use CC0 by default; CC BY needs attribution; never NC/ND on a monetised channel. Note: Freesound's CDN refuses some cloud/datacenter networks (HTTP 403) and Wikimedia rate-limits — run it on the owner's machine if it fails here.
+
+### earshot — [Leonxlnx/earshot](https://github.com/Leonxlnx/earshot) (MIT)
+"Ears for coding agents": `describe`/`match`/`rank`/`find` a sound, `timeline` and `sheet` a whole film (events, loudness, sync to cuts), `critique` a mix against professional references, `measure` (LUFS/peak, no models). `sfx render <id> --dur --apex --pitch` renders any of 252 code-made effects (whooshes, taps, knocks, swipes, shutters, mallets, shimmers, risers…) with no network; `kit` places a whole film's effects with measured sync points (taps lead the cut, whoosh peaks land after it). Install: `pip install torch --index-url https://download.pytorch.org/whl/cpu && pip install -e <clone>`; the listening models (~1.1 GB CLAP + AST) download on first use (`earshot doctor --fetch`).
+
+### Synfig, OpenToonz, Pencil2D — desktop 2D animation (GPL/BSD-style; installed separately)
+For shots the owner wants to draw or rig by hand. **Synfig** (vector + bones) renders headless: `synfig scene.sif -t ffmpeg -o shot.mp4 -w 1920 -h 1080`. **Pencil2D** (raster/vector frame-by-frame, onion skin) exports from the command line: `pencil2d shot.pclx -o shot.mp4 --width 1920 --height 1080`. **OpenToonz** (Studio Ghibli's production suite; X-sheet, ink & paint, effects) renders scenes with its `tcomposer` tool. Export each shot at the scene's exact narration span and 30 fps into `scenes/`; `assemble.py` handles the rest. Borrow their concepts in our code too: exposure sheets (holding drawings on 2s), onion-skin checks between keys, and bone rigs with weight.
 
 ### voicebox — [jamiepine/voicebox](https://github.com/jamiepine/voicebox) (MIT)
 Local voice studio (FastAPI :17493). Male presets without cloning. See voiceover.md.
