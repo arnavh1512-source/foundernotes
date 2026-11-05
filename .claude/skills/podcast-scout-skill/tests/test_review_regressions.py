@@ -191,6 +191,31 @@ class RecheckM3Crossfade(unittest.TestCase):
 class RecheckM9Setup(unittest.TestCase):
     def test_setup_resolves_playwright_like_renderer(self):
         src = (ROOT.parent / "motion" / "scripts" / "setup.sh").read_text()
-        body = src[src.index("chromium_found()"):]
+        body = src[src.index("pw_node()"):src.index("install_ffmpeg()")]
         self.assertIn('"root", "-g"', body)
         self.assertIn("playwright-core", body)
+        self.assertIn("pw_node browser", body)
+
+
+class RecheckN1SetupCore(unittest.TestCase):
+    def test_module_gate_uses_shared_resolver(self):
+        src = (ROOT.parent / "motion" / "scripts" / "setup.sh").read_text()
+        self.assertIn("pw_found() { pw_node module; }", src)
+        self.assertIn("pw_node browser", src)
+
+    @unittest.skipUnless(shutil.which("node") and shutil.which("npm"), "node/npm missing")
+    def test_core_only_install_is_found(self):
+        """Fixture: only a local playwright-core (stub with a real browser path); global root redirected to empty."""
+        import os
+        with tempfile.TemporaryDirectory() as td:
+            td = Path(td); (td / "scripts").mkdir()
+            core = td / "node_modules" / "playwright-core"; core.mkdir(parents=True)
+            (core / "package.json").write_text('{"name":"playwright-core","main":"index.js"}')
+            (core / "index.js").write_text('module.exports = { chromium: { executablePath: () => "/bin/sh" } };')
+            src = (ROOT.parent / "motion" / "scripts" / "setup.sh").read_text()
+            funcs = src[src.index("pw_node()"):src.index("install_ffmpeg()")]
+            script = f'here="{td}"\n' + funcs + '\npw_found && echo MOD\nchromium_found && echo BROWSER\n'
+            env = dict(os.environ, NPM_CONFIG_PREFIX=str(td / "emptyglobal"), npm_config_prefix=str(td / "emptyglobal"))
+            env.pop("MOTION_CHROMIUM", None); env.pop("NODE_PATH", None)
+            out = subprocess.run(["bash", "-c", script], capture_output=True, text=True, env=env).stdout
+            self.assertIn("MOD", out); self.assertIn("BROWSER", out)

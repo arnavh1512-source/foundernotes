@@ -34,7 +34,7 @@ fi
 if [ -x "$VENV/bin/python" ]; then
   if "$VENV/bin/python" -c "import kokoro_onnx, soundfile, piper" 2>/dev/null; then ok "kokoro-onnx + piper-tts"
   elif $check_only; then bad "python TTS packages"
-  else "$VENV/bin/pip" install -q --disable-pip-version-check kokoro-onnx soundfile piper-tts edge-tts \
+  else "$VENV/bin/pip" install -q --disable-pip-version-check kokoro-onnx soundfile piper-tts edge-tts jsonschema \
          && ok "installed kokoro-onnx, piper-tts, edge-tts" || bad "pip install failed (network?)"; fi
 fi
 
