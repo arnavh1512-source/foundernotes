@@ -32,3 +32,4 @@ separately, never vendored) and adapts ideas and rules from these projects:
 | [Piper](https://github.com/rhasspy/piper) voices | MIT (voice cards vary; check each) | Fallback male narration (en_US-ryan-high) |
 - Open Generative AI (Anil-matcha/Open-Generative-AI), MIT. `scripts/gen_media.py` follows its MuAPI client's request pattern (submit + poll); no code is copied. Generated assets are subject to MuAPI's and each model's terms.
 - vox-ai-motion-graphics-generator (Anil-matcha), MIT per its package.json/README (no LICENSE file upstream). Vendored as .claude/skills/collage-director with changes: male-voice allowlist, voice-cloning guard, proxy key support, channel rules.
+- pixelfx (patch-gg/pixelfx), MIT: ideas only (acts: wind-up, snap, hit-stop, shake; poses on 12 fps; colour/light buffers; the check tool's idea). K.onTwos/K.act/K.keys in assets/ink-gold-kit/kit-loop.js and scripts/lint_scenes.py are our own code.

@@ -170,3 +170,30 @@ Most of this costs nothing. It changes how we plan and direct, whatever the engi
   - put no print texture on faces.
 - **Restyled talking head** ("A-roll" mode): if the owner ever records himself, ASR splits the take into ≤ 9.5 s beats at
   sentence ends or ≥ 0.35 s pauses (beats < 2 s are merged), then the world around him is restyled. His face and lip-sync stay untouched.
+
+## 13. Lessons from pixelfx (patch-gg/pixelfx, MIT, read in full; ideas only, our own code)
+- **An effect alone looks like a sticker. The body around it sells it.** Every action has a sequence (kit: `K.keys`, `K.act`):
+  1. A wind-up the opposite way to the blow.
+  2. A big silhouette change on the release frame ("snap").
+  3. A **hit-stop** on contact that freezes the whole frame, with a small decaying shake. Heavier impacts freeze longer, 0.03–0.2 s.
+  4. The target reacts.
+  5. A follow-through that overshoots, then recovery.
+  Use it for stamps, impacts, a counter landing on its number, a bar hitting its value, and doors.
+- **Characters on twos.** Poses step at 12 fps (`K.onTwos(t)`) while light, particles and camera stay smooth.
+  It reads as hand-animated instead of tweened. Use it per film as a style choice, and keep one cadence per film.
+- **Separate colour from light.** Colour pixels and additive light are separate layers, so hot things look hot.
+  Glow stays subtle (k 0.2–0.5), and white is only for the hottest core.
+- **A 1–2 frame "hero frame"** of white or flash on the impact frame gives punch.
+- **Motion symptom → fix:**
+  - floaty → fast in, slow out, and a shorter total time;
+  - stiff or mechanical → vary each element's size, speed, delay and life, and add secondary motion;
+  - washed out → less glow and darker edge steps;
+  - flat → light from one side;
+  - a one-shot that pops off → let it shrink or dither out before it ends;
+  - the action lands out of sync → put the key on the effect's own time constant, never on a time you eyeballed.
+- **Drafts, not one-shots.** When direction is open, write 3–5 genuinely different takes, render all of them, and look before choosing.
+- **Judge motion from consecutive frames** (12 fps steps or the MP4), not from a contact sheet's samples. Motion bugs don't show in samples.
+- **Check before rendering.** `scripts/lint_scenes.py` checks the render contract (no Math.random, Date or rAF), that scene ids exist in timing,
+  and the channel rules: no podcast names, a source line on numbers, the caption zone, rotating backdrops, and the film's cast.
+- pixelfx itself (244 pixel-art effects, sprite sheets) suits a pixel-art or game-themed film. Running its code needs the
+  owner's OK in this environment (external code).

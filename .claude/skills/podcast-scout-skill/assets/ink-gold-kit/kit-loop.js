@@ -149,3 +149,45 @@
     "sc06-hospital": "clinic", "sc07-surgery": "ember", "sc08-kk": "violet", "sc09-archer": "fog", "sc10-practice": "blueprint",
     "sc11-arrested": "night", "sc12-turn": "sunrise", "sc13-gap": "fog", "sc14-check": "teal", "sc15-close": "dawn" };
 })();
+
+/* ---------- acting timing (ideas from pixelfx's "acts" — our own code) ----------
+ * K.onTwos(t, fps)   character poses step on 12 fps like hand-drawn animation, while light, particles
+ *                    and camera stay smooth: pose(K.onTwos(t)) — use for characters only.
+ * K.act(t, hits)     hit-stop + shake: hits = [{ t, stop: 0.03–0.2, shake: 0.18, amp: 6 }]. Returns
+ *                    { t: effective time (frozen during each stop), sx, sy: shake offset for the frame }.
+ *                    Drive the WHOLE scene from the returned t so everything freezes together on contact.
+ * K.keys(t, keys)    pose keys [[time, poseObj, mode]] with modes "snap" (hold, jump on the key),
+ *                    "out" (fast in, settle), "in" (slow start), "line"; returns the interpolated pose.
+ * Recipe that sells an action: wind-up the opposite way (≈25 % of the move) → a big silhouette change on
+ * the release frame ("snap") → freeze on contact (heavier = longer, 0.03–0.2 s) with a small shake →
+ * the target reacts → overshooting follow-through → recovery to rest.
+ */
+(function () {
+  const K = window.K;
+  K.onTwos = (t, fps = 12) => Math.floor(t * fps + 1e-6) / fps;
+  K.act = (t, hits = []) => {
+    let lost = 0, sx = 0, sy = 0;
+    for (const h of hits) {
+      if (t > h.t) lost += Math.min(t - h.t, h.stop || 0);
+      const since = t - h.t;
+      if (since >= 0 && since < (h.shake || 0)) {
+        const k = 1 - since / h.shake, a = (h.amp ?? 6) * k * k;
+        sx += a * Math.sin(since * 97 + h.t * 13); sy += a * 0.6 * Math.cos(since * 83 + h.t * 7);
+      }
+    }
+    return { t: t - lost, sx, sy };
+  };
+  const EASE = { out: (x) => 1 - Math.pow(1 - x, 4), in: (x) => x * x * x, line: (x) => x };
+  K.keys = (t, keys) => {
+    if (t <= keys[0][0]) return Object.assign({}, keys[0][1]);
+    for (let i = 1; i < keys.length; i++) {
+      const [t1, p1, mode] = keys[i], [t0, p0] = keys[i - 1];
+      if (t < t1) {
+        if (mode === "snap") return Object.assign({}, p0);
+        const e = (EASE[mode] || K.eio)((t - t0) / (t1 - t0));
+        return K.mix(Object.assign({}, K.POSE.stand, p0), p1, e);
+      }
+    }
+    return Object.assign({}, keys[keys.length - 1][1]);
+  };
+})();
