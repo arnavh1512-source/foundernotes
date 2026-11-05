@@ -88,7 +88,9 @@ p5.brush and lemo-opuscar. Read the sections your stage needs. Numbers are start
 - Painted plates (p5.brush) for skies/walls/ground: watercolour fills with bleed 0.2–0.35 and texture
   0.4–0.6, charcoal/HB lines with a light wiggle. Value-ladder plates: pale far → near-black near.
 - Rim light on the side facing the key (2–4 px, warm), never swallowing thin shapes.
-- Grain is added in ffmpeg at assembly, not drawn per frame (page grain makes renders ~2× slower).
+- Grain is added in ffmpeg at assembly, not drawn per frame (page grain makes renders ~2× slower) — and only
+  very lightly (`--grain 1–2`): per-frame random grain is incompressible and balloons file size (strength 5
+  pushed a 5-minute 1080p master past 1.4 GB). Prefer painted texture in the plates over grain.
 - Pitfalls: gold as decoration (if two things are gold, one is wrong); hard glints read as stickers;
   grey/violet skin under coloured light; a frozen frame reads as a bug; text on similar colours.
 

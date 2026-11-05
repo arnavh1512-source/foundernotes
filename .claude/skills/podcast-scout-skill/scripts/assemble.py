@@ -65,7 +65,9 @@ def main(argv=None):
     ap.add_argument("--crossfade", type=float, default=0.0)
     ap.add_argument("--keep-clip-audio", action="store_true")
     ap.add_argument("--lufs", type=float, default=-14.0)
-    ap.add_argument("--grain", type=float, default=0.0, help="film grain strength added at encode (0 = none; 4-8 subtle)")
+    ap.add_argument("--grain", type=float, default=0.0, help="film grain strength added at encode (0 = none). WARNING: moving grain is random per frame and "
+                         "compresses very badly (a 5-min 1080p film grew past 1.4 GB at strength 5). Use 1-2 at most, "
+                         "or leave grain to YouTube's own compression")
     ap.add_argument("--out", required=True)
     a = ap.parse_args(argv)
 
