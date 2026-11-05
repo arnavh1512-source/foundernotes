@@ -82,7 +82,7 @@ RETURN: ≤150-word summary + list of files written + open issues
 
 ### studio-editor — assembly + captions
 - Hard cut by default; every transition needs a reason; dip-to-background only for chapter breaks.
-- Captions: single line ≤42 chars, 1–7 s each, appear ~0.15 s before the words, never overlap; burn-in only for Shorts, soft captions + .srt sidecar for long-form.
+- Captions: single line ≤42 chars, 1–7 s each, appear ~0.15 s before the words, never overlap; burned in on every video, long-form and Shorts (channel rule, assemble.py default), plus the .srt sidecar uploaded as YouTube captions.
 - Fix the edit rather than relying on `assemble.py`'s last-frame hold.
 
 ### studio-packager — video optimisation + SEO

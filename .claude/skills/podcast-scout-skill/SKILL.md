@@ -107,14 +107,14 @@ Score: compose an original cue sheet from the same timeline with real samples (l
 ```bash
 python3 scripts/assemble.py --scenes-list studio-output/<slug>/scenes/list.txt \
   --narration studio-output/<slug>/narration/narration.wav \
-  --captions studio-output/<slug>/narration/captions.srt [--music bed.wav] \
+  --captions studio-output/<slug>/narration/captions.srt --sub-font "Instrument Sans" --sub-fonts-dir studio-output/<slug>/film/fonts [--music bed.wav] \
   --out studio-output/<slug>/final/video.mp4
 python3 scripts/qc_video.py studio-output/<slug>/final/video.mp4 \
   --timings studio-output/<slug>/narration/timings.json \
   --captions studio-output/<slug>/narration/captions.srt --sheet studio-output/<slug>/final/sheet.jpg
 ```
 
-Then run the full checklist in [production-qa.md](references/production-qa.md): look at the contact sheet and mid-transition stills yourself, verify claims on screen match the ledger, captions match speech. Verdict defaults to NEEDS WORK; max three fix loops per scene, then escalate to the owner with evidence.
+Subtitles are burned into every video by default (channel rule); keep the bottom ~180 px of every scene clear for them. Then run the full checklist in [production-qa.md](references/production-qa.md): look at the contact sheet and mid-transition stills yourself, verify claims on screen match the ledger, captions match speech. Verdict defaults to NEEDS WORK; max three fix loops per scene, then escalate to the owner with evidence.
 
 Deliver alongside the master: `TREATMENT.md`, `FACTS.md` (claim → source → quoted wording), `CREDITS` (voice engine, sample libraries with exact CC BY lines, fonts, code libraries), and `build.sh` that re-renders everything in one command.
 

@@ -118,7 +118,7 @@ p5.brush and lemo-opuscar. Read the sections your stage needs. Numbers are start
 
 ## 10. Captions, packaging, retention
 - Captions: one line, semantic grouping (never split number+unit or before a preposition),
-  0.7–7 s, ≤ 42 chars, appear ~0.15 s early; soft captions for long-form, burned-in for Shorts.
+  0.7–7 s, ≤ 42 chars, appear ~0.15 s early. **Subtitles are burned in on every video** (channel rule; assemble.py does it by default, in the channel font) and the .srt sidecar is also uploaded as YouTube captions.
 - First 15 s: confirm the title's promise, open a question the viewer can't close, prove a payoff.
   Score 5 hooks (`scripts/vendor/youtube-agent/hookscore.py`), keep the best honest one.
 - Title + thumbnail are one unit; ≤ 60 chars; thumbnail ≤ 3 words that add to the title; build the

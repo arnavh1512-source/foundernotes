@@ -39,3 +39,7 @@ Values left as `TBD` fall back to the defaults shown.
 - Because of that, never quote a guest's exact words. Put ideas in our own words; present a well-known
   saying as a saying ("origin unclear" if unknown). Factual claims still cite their primary research on screen
   and in the description.
+
+## Subtitles (owner rule)
+- Every video has subtitles burned into the picture (assemble.py default), in the channel font, cream on a
+  translucent ink box at the bottom. Keep the bottom ~180 px of every scene clear. Also upload the .srt as captions.

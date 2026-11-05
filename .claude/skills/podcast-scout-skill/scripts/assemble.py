@@ -2,7 +2,7 @@
 """Assemble the final YouTube master: scene clips + male narration + optional music + captions.
 
     python3 assemble.py --scenes s01.mp4 s02.mp4 ... --narration narration.wav --out final.mp4
-                        [--music bed.wav --music-db -22] [--captions captions.srt --burn]
+                        [--music bed.wav --music-db -22] [--captions captions.srt [--no-burn] [--sub-font F --sub-fonts-dir DIR]]
                         [--format landscape|vertical] [--fps 30] [--crossfade 0]
     python3 assemble.py --scenes-list scenes.txt ...   (one clip path per line)
 
@@ -12,7 +12,7 @@ What it does
 - if the picture is shorter than the narration, holds the last frame; never cuts the voice
 - mixes music under the voice with side-chain ducking (voice always on top)
 - loudness-normalises to -14 LUFS integrated, -1 dBTP (YouTube playback target)
-- soft-muxes captions (mov_text) or burns them in with --burn; always keeps the .srt sidecar
+- burns captions into the picture by default (channel rule; --no-burn for a soft mov_text track); always keeps the .srt sidecar
 - H.264 High, yuv420p, +faststart, AAC 48 kHz 256 kb/s
 
 Clips may be silent; any audio inside clips is dropped unless --keep-clip-audio is given.
@@ -59,7 +59,12 @@ def main(argv=None):
     ap.add_argument("--music")
     ap.add_argument("--music-db", type=float, default=-22.0, help="music bed level before ducking (dB)")
     ap.add_argument("--captions")
-    ap.add_argument("--burn", action="store_true", help="burn captions into the picture")
+    ap.add_argument("--burn", dest="burn", action="store_true", default=True,
+                    help="burn captions into the picture (DEFAULT: channel rule, subtitles on every video)")
+    ap.add_argument("--no-burn", dest="burn", action="store_false", help="soft captions only (mov_text track)")
+    ap.add_argument("--sub-font", default="DejaVu Sans", help="font family for burned subtitles")
+    ap.add_argument("--sub-fonts-dir", default=None, help="folder with the subtitle font files (e.g. film/fonts)")
+    ap.add_argument("--sub-size", type=int, default=13, help="subtitle size in libass units (13 ≈ 49 px at 1080p)")
     ap.add_argument("--format", choices=FORMATS, default="landscape")
     ap.add_argument("--fps", type=int, default=30)
     ap.add_argument("--crossfade", type=float, default=0.0)
@@ -164,11 +169,16 @@ def main(argv=None):
             fil += f";[0:v]noise=alls={a.grain:g}:allf=t[vg]"
             vmap = "[vg]"
         if a.captions and a.burn:
-            style = ("FontName=DejaVu Sans,Fontsize=18,PrimaryColour=&H00FFFFFF,OutlineColour=&H00000000,"
-                     "BorderStyle=3,Outline=2,Shadow=0,MarginV=60,Alignment=2")
+            # cream text on a translucent ink box, bottom centre (ASS colours are &HAABBGGRR)
+            style = (f"FontName={a.sub_font},Fontsize={a.sub_size},Bold=1,PrimaryColour=&H00D2E8F3,"
+                     "OutlineColour=&H5022180E,BackColour=&H5022180E,BorderStyle=3,Outline=6,Shadow=0,"
+                     "MarginV=22,MarginL=40,MarginR=40,Alignment=2")
             sub = Path(a.captions).resolve().as_posix().replace(":", r"\:")
             src = "[vg]" if vmap == "[vg]" else "[0:v]"
-            fil += f";{src}subtitles='{sub}':force_style='{style}'[vout]"
+            fdir = ""
+            if a.sub_fonts_dir:
+                fdir = ":fontsdir='" + Path(a.sub_fonts_dir).resolve().as_posix().replace(":", r"\:") + "'"
+            fil += f";{src}subtitles='{sub}'{fdir}:force_style='{style}'[vout]"
             vmap = "[vout]"
 
         args = inputs[:]
