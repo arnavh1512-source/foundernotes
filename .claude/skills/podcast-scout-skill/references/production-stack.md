@@ -141,3 +141,14 @@ Guards built in:
 - text in the posters must match the fact lock exactly.
 
 See `.claude/skills/collage-director/SKILL.md`.
+
+## Ten named looks: `animation-styles` skill (Anylancer's free pack, adapted)
+Covers Pixel Art, Chalkboard, Glow Sketch, PS2, Comic Art, Flat Vector, a minimal line-and-dot look ("Dan Koe"), CGI Motion
+(three.js), a brick-toy look and a soft clay 3D explainer look. Each style file states what it must have, how to make any
+script work in it, its motion and its text, and what to avoid. Every film is one HTML file with a deterministic `draw(t)`.
+
+The template's RENDER BRIDGE lets `motion/scripts/render.mjs` render it frame-exact (tested: 1920×1080, controls
+hidden). Use it for a whole film's look, or per chapter, to rotate visual languages between films.
+
+Channel rules override the pack's defaults: 16:9, burned-in subtitles, male narration with the studio chain, the fact
+lock, no podcast names, a new cast, rotating looks. 3D styles load three.js from cdnjs.

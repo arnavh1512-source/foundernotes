@@ -37,6 +37,7 @@ Otherwise proceed with sensible defaults and state them.
 | Motion video / ad / launch clip / kinetic type → MP4 | `motion` |
 | Educational YouTube video, podcast → explainer, narrated (male voice) long-form | `podcast-scout-skill` (it uses `motion` for scenes) |
 | Paper-collage motion graphics, collage explainer/Short, collage B-roll inserts (MuAPI, needs credit) | `collage-director` |
+| Named animation looks: Pixel Art, Chalkboard, Glow Sketch, PS2, Comic Art, Flat Vector, line-and-dot minimal, CGI Motion, brick-toy, clay 3D explainer | `animation-styles` |
 | Screenshot, click-through, visual check in a real browser | `playwright-cli` |
 | Big multi-discipline project needing a specialist-agent plan | `navigator` |
 
