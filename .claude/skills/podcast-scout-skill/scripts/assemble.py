@@ -65,6 +65,7 @@ def main(argv=None):
     ap.add_argument("--crossfade", type=float, default=0.0)
     ap.add_argument("--keep-clip-audio", action="store_true")
     ap.add_argument("--lufs", type=float, default=-14.0)
+    ap.add_argument("--tp", type=float, default=-1.5, help="true-peak ceiling before AAC (AAC adds ~0.3-0.6 dB)")
     ap.add_argument("--grain", type=float, default=0.0, help="film grain strength added at encode (0 = none). WARNING: moving grain is random per frame and "
                          "compresses very badly (a 5-min 1080p film grew past 1.4 GB at strength 5). Use 1-2 at most, "
                          "or leave grain to YouTube's own compression")
@@ -154,9 +155,9 @@ def main(argv=None):
                    f"[2:a]aresample=48000,aformat=channel_layouts=stereo,volume={a.music_db}dB[bed];"
                    f"[bed][vkey]sidechaincompress=threshold=0.02:ratio=8:attack=20:release=400[ducked];"
                    f"[v1][ducked]amix=inputs=2:duration=first:normalize=0,"
-                   f"loudnorm=I={a.lufs}:TP=-1.0:LRA=11[aout]")
+                   f"loudnorm=I={a.lufs}:TP={a.tp}:LRA=11[aout]")
         else:
-            fil = f"{voice_chain};[voice]loudnorm=I={a.lufs}:TP=-1.0:LRA=11[aout]"
+            fil = f"{voice_chain};[voice]loudnorm=I={a.lufs}:TP={a.tp}:LRA=11[aout]"
 
         vmap = "0:v"
         if a.grain > 0:

@@ -222,7 +222,7 @@ def caption_chunks(text: str, max_chars: int = 42):
     return chunks
 
 
-def ts(t: float, sep=","):
+def ts(t: float, sep=","):  # noqa: E302
     t = max(t, 0)
     h, rem = divmod(int(round(t * 1000)), 3600000)
     m, rem = divmod(rem, 60000)
@@ -249,6 +249,21 @@ def build_captions(timings):
             d = dur * len(c) / total
             cues.append((t, t + d, c))
             t += d
+    # fold flash cues (< 0.8 s) into a neighbour from the same moment so nothing blinks past unread
+    merged = []
+    for a, b, c in cues:
+        if merged and (b - a < 0.8 or merged[-1][1] - merged[-1][0] < 0.8) and abs(merged[-1][1] - a) < 0.05 \
+                and len(merged[-1][2]) + 1 + len(c) <= 52:
+            pa, _, pc = merged.pop(); merged.append((pa, b, pc + " " + c))
+        else:
+            merged.append((a, b, c))
+    def two_lines(c):          # a merged cue longer than 42 chars becomes two balanced lines
+        if len(c) <= 42 or "\n" in c:
+            return c
+        mid = len(c) // 2
+        cut = min((i for i, ch in enumerate(c) if ch == " "), key=lambda i: abs(i - mid))
+        return c[:cut] + "\n" + c[cut + 1:]
+    cues = [(a, b, two_lines(c)) for a, b, c in merged]
     # small lead-in so captions appear just before the word, never overlapping
     out = []
     for i, (a, b, c) in enumerate(cues):
