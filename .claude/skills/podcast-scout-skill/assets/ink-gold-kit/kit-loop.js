@@ -5,8 +5,17 @@
 (function () {
   const K = window.K;
   // the two men (rig colours). Climber = kit default teal coat. Looper = rust coat, so they read apart.
-  K.LOOPER = { jacket: "#7A4A32", jacketDk: "#57321F", pants: "#33302E", pantsDk: "#24211F", hair: "#2A1C14", skin: "#C98B62", skinDk: "#9C6542", skinLt: "#E2AC80" };
-  K.CLIMBER = {};
+  // CAST for this film (owner rule: new characters every video — see CAST.md; After the Win's lead was
+  // wavy hair, teal jacket, medium skin, no glasses/beard, build 1).
+  // Climber: deep skin, close crop, glasses, slim, navy overcoat-blue jacket, olive trousers.
+  K.CLIMBER = { hairStyle: "crop", glasses: true, facialHair: "none", build: 0.94,
+    skin: "#7B4A2E", skinDk: "#5C3420", skinLt: "#9A6342", hair: "#15100D",
+    jacket: "#2F4D7A", jacketDk: "#203657", tee: "#EDE2CB", pants: "#4A4A36", pantsDk: "#35352A", shoe: "#E9E2D2" };
+  // Looper: light-olive skin, curly hair, full beard, broad build, rust jacket, grey trousers.
+  K.LOOPER = { hairStyle: "curly", glasses: false, facialHair: "full", build: 1.1,
+    skin: "#D7A47C", skinDk: "#B07D58", skinLt: "#EBC29E", hair: "#3B2A1E",
+    jacket: "#8A4A2E", jacketDk: "#62321E", tee: "#E8DCC4", pants: "#3E4246", pantsDk: "#2C2F33", shoe: "#D9D2C4" };
+  K.DEFAULT_CAST = K.CLIMBER;
   K.grey = "#8A949C";
 
   // closed loop retraced `laps` times; each lap drifts a hair so the groove thickens (one year, repeated)

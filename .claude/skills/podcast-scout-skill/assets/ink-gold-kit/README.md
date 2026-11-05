@@ -6,6 +6,7 @@ Copy this folder into `studio-output/<slug>/film/` to start a film.
 - `kit.js`: stage, camera with parallax, light (glow, beam, dust), gold thread, type, cards, props,
   the `K.Hunter` character rig (proportioned legs, hand anchors, poses, blink/anticipate/settle),
   p5.brush painted plates, vector-law seams, and the scene runner (`K.scene`).
+- `CAST.md`: **owner rule — new characters every video**; the cast log, plus the rig options (hair, facial hair, glasses, build, colours).
 - `kit-loop.js`: loop/spiral thread paths, `K.threadGrey`, calendar `K.page`, zero-based `K.bars`,
   the `K.qmark` pin, `K.floor`, `K.bow`, and **backdrops**.
 - **Backdrops (owner rule: change backgrounds regularly).** `K.backdrop(S, name)` has 11 presets: night,

@@ -47,3 +47,8 @@ Values left as `TBD` fall back to the defaults shown.
 ## Backgrounds (owner rule)
 - Change backgrounds regularly. No two adjacent scenes share a backdrop, and use at least 6 different backdrops per film.
 - Use `K.backdrop` (assets/ink-gold-kit), and let the backdrop follow the meaning (e.g. clinic for hospital data, fog for uncertainty, sunrise for the turn).
+
+## Characters (owner rule)
+- New characters in every video. Check `assets/ink-gold-kit/CAST.md` and differ from every earlier lead in
+  at least 4 of: skin tone, hair style, facial hair, glasses, build, outfit colours. Log the new cast there.
+- Real people are never drawn.

@@ -163,7 +163,7 @@
   // Knees bend +ve (shin swings back); elbows bend +ve (forearm swings forward/up).
   K.Hunter = class {
     constructor(parent, o = {}) {
-      const c = (this.c = Object.assign({}, K.C, o.colors || {}));
+      const c = (this.c = Object.assign({}, K.C, o.colors ? {} : (K.DEFAULT_CAST || {}), o.colors || {})); const B = (this.build = c.build || 1);
       this.o = Object.assign({ scale: 1, rim: 1 }, o);
       const ink = K.C.ink, LW = 3;
       const P = (d, fill, par, ex = {}) => K.el("path", Object.assign({ d, fill, stroke: ink, "stroke-width": LW, "stroke-linejoin": "round", "stroke-linecap": "round" }, ex), par);
@@ -202,15 +202,16 @@
       this.legB = leg(true); this.armB = arm(true);
       // torso (jacket over tee)
       this.torso = K.el("g", {}, this.body);
-      P("M-42 8 C-46 -40 -52 -100 -60 -154 C-52 -174 -26 -182 0 -182 C26 -182 52 -174 60 -154 C54 -100 48 -40 44 8 Z", c.jacket, this.torso);
-      P("M-6 -174 C4 -164 14 -164 26 -174 L24 4 L-4 4 Z", c.tee, this.torso);
-      K.el("path", { d: "M-6 -174 C4 -164 14 -164 26 -174", stroke: ink, "stroke-width": 3, fill: "none" }, this.torso);
-      P("M-6 -176 L-20 -132 L-6 -112 L-2 -170 Z", c.jacketDk, this.torso);
-      P("M26 -176 L38 -130 L26 -110 L22 -170 Z", c.jacketDk, this.torso);
-      SH("M-42 8 C-46 -40 -52 -100 -60 -154 C-54 -168 -44 -172 -36 -174 C-34 -110 -30 -50 -24 8 Z", this.torso, 0.25);
-      P("M-44 -10 L46 -10 L45 10 L-43 10 Z", c.jacketDk, this.torso);
-      K.el("path", { d: "M-40 -2 L44 -2", stroke: ink, "stroke-width": 1.5, opacity: 0.6 }, this.torso);
-      this.rimT = K.el("path", { d: "M58 -150 C52 -100 47 -40 43 4", stroke: c.cream, "stroke-width": 4, fill: "none", opacity: 0.0, "stroke-linecap": "round" }, this.torso);
+      this.tShape = K.el("g", { transform: `scale(${B} 1)` }, this.torso);
+      P("M-42 8 C-46 -40 -52 -100 -60 -154 C-52 -174 -26 -182 0 -182 C26 -182 52 -174 60 -154 C54 -100 48 -40 44 8 Z", c.jacket, this.tShape);
+      P("M-6 -174 C4 -164 14 -164 26 -174 L24 4 L-4 4 Z", c.tee, this.tShape);
+      K.el("path", { d: "M-6 -174 C4 -164 14 -164 26 -174", stroke: ink, "stroke-width": 3, fill: "none" }, this.tShape);
+      P("M-6 -176 L-20 -132 L-6 -112 L-2 -170 Z", c.jacketDk, this.tShape);
+      P("M26 -176 L38 -130 L26 -110 L22 -170 Z", c.jacketDk, this.tShape);
+      SH("M-42 8 C-46 -40 -52 -100 -60 -154 C-54 -168 -44 -172 -36 -174 C-34 -110 -30 -50 -24 8 Z", this.tShape, 0.25);
+      P("M-44 -10 L46 -10 L45 10 L-43 10 Z", c.jacketDk, this.tShape);
+      K.el("path", { d: "M-40 -2 L44 -2", stroke: ink, "stroke-width": 1.5, opacity: 0.6 }, this.tShape);
+      this.rimT = K.el("path", { d: "M58 -150 C52 -100 47 -40 43 4", stroke: c.cream, "stroke-width": 4, fill: "none", opacity: 0.0, "stroke-linecap": "round" }, this.tShape);
       // head (origin = neck base)
       this.head = K.el("g", {}, this.torso);
       P("M-12 8 L-11 -26 L13 -26 L14 8 Z", c.skinDk, this.head);
@@ -219,11 +220,28 @@
       SH("M-34 -66 C-31 -32 -14 -12 6 -12 C-8 -16 -20 -34 -22 -62 Z", this.face, 0.22);
       K.el("path", { d: "M14 -44 C22 -40 30 -40 36 -46", stroke: c.skinDk, "stroke-width": 3, fill: "none", opacity: 0.7, "stroke-linecap": "round" }, this.face);
       P("M-20 -72 C-32 -78 -34 -58 -26 -50 C-22 -46 -18 -50 -18 -54 Z", c.skinDk, this.face);
-      // wavy hair with volume
-      P("M-36 -64 C-46 -98 -30 -134 4 -136 C30 -138 50 -122 50 -98 C51 -86 45 -80 41 -86 C37 -94 29 -98 22 -92 C16 -102 4 -104 -3 -96 C-11 -102 -21 -96 -22 -84 C-25 -76 -28 -70 -36 -64 Z", c.hair, this.face);
-      P("M-22 -84 L-19 -60 L-14 -64 L-16 -86 Z", c.hair, this.face);
-      K.el("path", { d: "M-14 -122 C0 -130 16 -128 28 -120", stroke: "#4A3A30", "stroke-width": 3, fill: "none", "stroke-linecap": "round", opacity: 0.6 }, this.face);
-      this.rimH = K.el("path", { d: "M36 -126 C46 -118 51 -106 50 -96", stroke: c.cream, "stroke-width": 3, fill: "none", opacity: 0, "stroke-linecap": "round" }, this.face);
+      // hair style (cast option): wavy | crop | curly | bald | long ; facial hair: none | stubble | full | moustache
+      const hs = c.hairStyle || "wavy";
+      if (hs === "wavy" || hs === "long") {
+        if (hs === "long") P("M-36 -70 C-50 -40 -46 -10 -30 2 L-10 -6 C-24 -26 -28 -48 -22 -70 Z", c.hair, this.face);
+        P("M-36 -64 C-46 -98 -30 -134 4 -136 C30 -138 50 -122 50 -98 C51 -86 45 -80 41 -86 C37 -94 29 -98 22 -92 C16 -102 4 -104 -3 -96 C-11 -102 -21 -96 -22 -84 C-25 -76 -28 -70 -36 -64 Z", c.hair, this.face);
+        P("M-22 -84 L-19 -60 L-14 -64 L-16 -86 Z", c.hair, this.face);
+        K.el("path", { d: "M-14 -122 C0 -130 16 -128 28 -120", stroke: "#4A3A30", "stroke-width": 3, fill: "none", "stroke-linecap": "round", opacity: 0.6 }, this.face);
+      } else if (hs === "crop") {
+        P("M-35 -68 C-40 -104 -20 -126 6 -126 C32 -126 47 -110 46 -88 C44 -84 41 -86 39 -92 C30 -104 8 -108 -10 -102 C-22 -96 -27 -84 -30 -70 Z", c.hair, this.face);
+        P("M-22 -86 L-20 -66 L-15 -68 L-17 -88 Z", c.hair, this.face);
+      } else if (hs === "curly") {
+        const pts = [[-30, -80], [-28, -100], [-16, -116], [0, -124], [16, -124], [30, -116], [40, -102], [-20, -92], [-4, -108], [14, -110], [28, -100]];
+        pts.forEach(([x, y], i) => K.el("circle", { cx: x, cy: y, r: 14 + (i % 3) * 2, fill: c.hair, stroke: ink, "stroke-width": 2.4 }, this.face));
+        pts.slice(7).forEach(([x, y]) => K.el("circle", { cx: x, cy: y + 2, r: 14, fill: c.hair }, this.face));
+      } else if (hs === "bald") {
+        P("M-34 -64 C-38 -80 -34 -92 -26 -98 L-21 -80 C-24 -74 -28 -68 -34 -64 Z", c.hair, this.face);
+        K.el("path", { d: "M-6 -114 C10 -120 26 -116 36 -106", stroke: "#fff", "stroke-width": 4, fill: "none", "stroke-linecap": "round", opacity: 0.18 }, this.face);
+      }
+      const fh = c.facialHair || "none";
+      if (fh === "full" || fh === "stubble") K.el("path", { d: "M-30 -60 C-28 -30 -12 -11 6 -10 C24 -10 37 -22 41 -38 C43 -46 41 -51 37 -52 C31 -40 21 -32 8 -32 C-6 -32 -16 -44 -22 -60 Z", fill: c.hair, stroke: fh === "full" ? ink : "none", "stroke-width": 2.4, opacity: fh === "full" ? 1 : 0.32 }, this.face);
+      if (fh === "full" || fh === "moustache") P("M15 -43 C21 -47 30 -47 36 -43 C30 -41 21 -41 15 -43 Z", c.hair, this.face, { "stroke-width": 1.6 });
+      this.rimH = K.el("path", { d: ({ crop: "M28 -122 C38 -117 45 -106 45 -94", bald: "M28 -112 C38 -106 43 -96 43 -86", curly: "M40 -114 C48 -106 52 -98 52 -90" })[c.hairStyle] || "M36 -126 C46 -118 51 -106 50 -96", stroke: c.cream, "stroke-width": 3, fill: "none", opacity: 0, "stroke-linecap": "round" }, this.face);
       // eyes, lids, brows, nose, mouth
       this.eyes = [[10, -72, 5.2], [31, -72, 4.4]].map(([x, y, r]) => {
         const g = K.el("g", {}, this.face);
@@ -235,8 +253,11 @@
       });
       this.browL = K.el("path", { d: "", stroke: c.hair, "stroke-width": 5, "stroke-linecap": "round", fill: "none" }, this.face);
       this.browR = K.el("path", { d: "", stroke: c.hair, "stroke-width": 4.5, "stroke-linecap": "round", fill: "none" }, this.face);
+      if (c.glasses) { const gl = K.el("g", {}, this.face);
+        [[10, -72, 11], [31, -72, 9]].forEach(([x, y, r]) => K.el("rect", { x: x - r, y: y - r * 0.8, width: r * 2, height: r * 1.6, rx: 5, fill: "#CFE3EA", "fill-opacity": 0.12, stroke: c.glasses === true ? ink : c.glasses, "stroke-width": 2.8 }, gl));
+        K.el("path", { d: "M21 -73 L22 -73 M-1 -74 L-30 -78", stroke: c.glasses === true ? ink : c.glasses, "stroke-width": 2.6, "stroke-linecap": "round" }, gl); }
       K.el("path", { d: "M37 -72 C40 -62 45 -55 41 -51 C39 -49 36 -50 34 -52", stroke: ink, "stroke-width": 2.6, fill: "none", "stroke-linecap": "round" }, this.face);
-      this.mouth = K.el("path", { d: "", stroke: ink, "stroke-width": 3, fill: "none", "stroke-linecap": "round" }, this.face);
+      this.mouth = K.el("path", { d: "", stroke: (c.facialHair === "full") ? "#E9C3A2" : ink, "stroke-width": 3, fill: "none", "stroke-linecap": "round" }, this.face);
       this.legF = leg(false); this.armF = arm(false);
       this.held = K.el("g", {}, this.armF.hd); this.heldB = K.el("g", {}, this.armB.hd);
       this.body.appendChild(this.legF.g); this.body.appendChild(this.armF.g);
@@ -253,10 +274,10 @@
       K.tf(this.body, 0, hipY);
       K.tf(this.shadow, (q.shadowX || 0), 4, 1, 0, 1 + (q.shadowW || 0));
       const L = (l, ox, a1, a2) => { K.tf(l.g, ox, -2); K.tf(l.up, 0, 0, 1, -a1); K.tf(l.lo, 0, l.a, 1, a2); K.tf(l.ft, 0, l.b, 1, -(a1 - a2) * 0.25 + (q.toe || 0)); };
-      L(this.legB, -10, q.hipB, q.kneeB); L(this.legF, 12, q.hipF, q.kneeF);
+      L(this.legB, -10 * this.build, q.hipB, q.kneeB); L(this.legF, 12 * this.build, q.hipF, q.kneeF);
       K.tf(this.torso, 0, 0, 1, q.lean);
       const A = (a, ox, a1, a2) => { K.tf(a.g, 0, 0, 1, q.lean); K.tf(a.up, ox, -156, 1, -a1); K.tf(a.lo, 0, a.a, 1, -a2); K.tf(a.hd, 0, a.b, 1, q.wrist || 0); };
-      A(this.armB, -40, q.shB, q.elB); A(this.armF, 40, q.shF, q.elF);
+      A(this.armB, -40 * this.build, q.shB, q.elB); A(this.armF, 40 * this.build, q.shF, q.elF);
       K.tf(this.head, 4, -178, 1, q.head);
       // rim light on the side facing the light (rim * facing > 0 → front edge)
       const rimOn = this.o.rim * f > 0 ? 0.75 : 0;
