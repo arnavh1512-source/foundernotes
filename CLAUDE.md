@@ -11,7 +11,7 @@ YouTube videos.
   `model: sonnet` and `effort: medium`; pass `model: "sonnet"`, `effort: "medium"` on any ad-hoc
   Agent call too.
 - Main skill: `/podcast-scout-skill` (research → briefs → script → male narration → scenes →
-  edit → QA → upload package). Companion skills: `/motion` (default HTML scene engine) and
+  edit → QA → upload package). Companion skills: `/motion` (default HTML scene engine), `/collage-director` (paper-collage motion graphics on MuAPI) and
   `/design-me` (design/motion router).
 - **Subtitles burned into every video** (assemble.py default). **Backgrounds rotate** and **every video gets a new cast** (CAST.md; no two adjacent scenes alike; kit in `.claude/skills/podcast-scout-skill/assets/ink-gold-kit`). Never credit or name source podcasts (see channel-profile.md).
 - Work goes in `studio-output/<slug>/` (gitignored). Never upload or publish; the owner uploads.

@@ -126,3 +126,18 @@ Match the backdrop's palette in the prompt ("flat painted gouache illustration, 
 
 Every asset gets an `<file>.json` sidecar (model, prompt, request id, date): copy it into CREDITS.
 Tick YouTube's "altered or synthetic content" disclosure when realistic AI imagery appears.
+
+## Collage motion graphics: `collage-director` skill (MuAPI)
+This is our adaptation of vox-ai-motion-graphics-generator (MIT): topic → beat map → torn-paper collage keyframes
+(Flux) → image-to-video motion (Veo/Kling) → voice, music and burned captions. Use it as a second visual language:
+whole collage-style explainers or Shorts, or collage B-roll inserts inside an Ink & Gold film.
+
+It needs MuAPI credit. Animation (Veo) is the costly step, so get the owner's go-ahead before animating a whole film.
+Guards built in:
+- male voices only;
+- voice cloning blocked;
+- no real likenesses;
+- the theme varies per film;
+- text in the posters must match the fact lock exactly.
+
+See `.claude/skills/collage-director/SKILL.md`.

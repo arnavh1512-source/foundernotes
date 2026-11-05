@@ -31,3 +31,4 @@ separately, never vendored) and adapts ideas and rules from these projects:
 | Kokoro-82M / [kokoro-onnx](https://github.com/thewh1teagle/kokoro-onnx) | Apache-2.0 / MIT | Default male narration (am_michael) |
 | [Piper](https://github.com/rhasspy/piper) voices | MIT (voice cards vary; check each) | Fallback male narration (en_US-ryan-high) |
 - Open Generative AI (Anil-matcha/Open-Generative-AI), MIT. `scripts/gen_media.py` follows its MuAPI client's request pattern (submit + poll); no code is copied. Generated assets are subject to MuAPI's and each model's terms.
+- vox-ai-motion-graphics-generator (Anil-matcha), MIT per its package.json/README (no LICENSE file upstream). Vendored as .claude/skills/collage-director with changes: male-voice allowlist, voice-cloning guard, proxy key support, channel rules.
