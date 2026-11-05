@@ -2,7 +2,8 @@
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import { mkdtemp, rm, realpath } from 'node:fs/promises';
-import { tmpdir } from 'node:os';
+import { tmpdir, homedir } from 'node:os';
+import { existsSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
@@ -21,7 +22,7 @@ Usage: node scripts/obscura-research.mjs [--binary PATH] URL [URL ...]
        node scripts/obscura-research.mjs --help
 
 Options:
-  --binary PATH  Obscura v0.2.6 executable (default: OBSCURA_BIN or obscura).
+  --binary PATH  Obscura v0.2.6 executable (default: OBSCURA_BIN, ~/studio-tools/obscura/obscura, or obscura on PATH).
   --check        Check the executable version; no page is opened.
   --help, -h     Show this help and allowed source hosts.
 
@@ -79,7 +80,9 @@ export function parsePage(stdout, requestedUrl) {
 
 export function parseArgs(args) {
   const urls = [];
-  let binary = process.env.OBSCURA_BIN || 'obscura';
+  // Default: OBSCURA_BIN, else the install_obscura.sh location, else PATH.
+  const installed = join(homedir(), 'studio-tools', 'obscura', process.platform === 'win32' ? 'obscura.exe' : 'obscura');
+  let binary = process.env.OBSCURA_BIN || (existsSync(installed) ? installed : 'obscura');
   let check = false;
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
