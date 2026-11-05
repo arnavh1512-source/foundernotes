@@ -20,5 +20,7 @@ separately, never vendored) and adapts ideas and rules from these projects:
 | [calesthio/OpenMontage](https://github.com/calesthio/OpenMontage) | AGPL-3.0 | Ideas only (stage gates, sample-first, budget approval, Shorts safe zone); no code or text copied |
 | [jamiepine/voicebox](https://github.com/jamiepine/voicebox) | MIT | Optional local TTS server with male presets |
 | [h4ckf0r0day/obscura](https://github.com/h4ckf0r0day/obscura) | Apache-2.0 | Research browser (downloaded separately) |
+| [acamposuribe/p5.brush](https://github.com/acamposuribe/p5.brush) | MIT | Painted background plates (standalone build vendored per film) |
+| [lemomo-ai/lemo-opuscar](https://github.com/lemomo-ai/lemo-opuscar) | MIT | Directing method ideas; sampler/sfx/ASR tools used from an installed copy; instrument samples CC0 / CC BY 3.0 (Salamander) |
 | Kokoro-82M / [kokoro-onnx](https://github.com/thewh1teagle/kokoro-onnx) | Apache-2.0 / MIT | Default male narration (am_michael) |
 | [Piper](https://github.com/rhasspy/piper) voices | MIT (voice cards vary; check each) | Fallback male narration (en_US-ryan-high) |

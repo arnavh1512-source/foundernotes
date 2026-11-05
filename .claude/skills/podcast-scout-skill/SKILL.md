@@ -74,7 +74,9 @@ Use [video-brief.md](assets/video-brief.md) for every selected topic. Return: so
 
 ## 7. Pre-production (Studio)
 
-Read [studio-crew.md](references/studio-crew.md) for roles, handoffs and the gate loop, and fill [production-plan.md](assets/production-plan.md).
+Read [studio-crew.md](references/studio-crew.md) for roles, handoffs and the gate loop, [craft-library.md](references/craft-library.md) for everything the studio learned, and fill [production-plan.md](assets/production-plan.md).
+
+0. **Benchmark + treatment** — pick 1–2 reference works for this topic (learn / never take), write `TREATMENT.md` with three candidate structures and the chosen one, the logline, the one native move at the peak, and how the ending rhymes with the opening. Run the swap-the-title test.
 
 1. **Script** — *studio-scriptwriter*. Beat-by-beat narration with `[ON SCREEN: …]` per beat, claim IDs on every factual sentence, 130–160 wpm target, word count within ±10 % of the runtime target. Score five hooks, keep the brief's chosen hook unless one scores clearly better. Structural audit: controlling idea, promise/payoff debts closed, first useful insight before 0:30.
 2. **Fact lock** — *studio-reality-checker* compares every claim ID with the source ledger. Unsupported sentences are qualified or cut, and the change is logged. Nothing is voiced before the fact lock passes.
@@ -90,11 +92,13 @@ Read [studio-crew.md](references/studio-crew.md) for roles, handoffs and the gat
 python3 scripts/narrate.py studio-output/<slug>/narration/script.json --out studio-output/<slug>/narration
 ```
 
-It writes `narration.wav`, per-segment takes, `timings.json` (the master clock) and `captions.srt/.vtt`. Picture is cut to the voice, never the reverse: do not stretch speech or insert pauses to fit an animation. Check pace (`wpm_speech` 130–165), re-take segments with mispronounced names (respell in `text`, keep `display` correct). One voice per video.
+It writes `narration.wav`, per-segment takes, `timings.json` (the master clock) and `captions.srt/.vtt`. Then run the speech-recognition round-trip (`--asr`, faster-whisper) and re-take any line whose words drop; respell names until they transcribe (small models mishear short names — confirm by listening and note it). Picture is cut to the voice, never the reverse: do not stretch speech or insert pauses to fit an animation. Check pace (`wpm_speech` 130–165), re-take segments with mispronounced names (respell in `text`, keep `display` correct). One voice per video.
 
 ## 9. Build scenes
 
 *studio-animator* (one subagent per scene or per engine batch, in parallel). Each scene is a separate clip `scenes/NN-<id>.mp4` whose duration equals its narration span from `timings.json` (+ transition handles). Draft first (black-and-white, timing only) for the whole film, check the contact sheet, then polish. Default engine is the bundled **motion** skill (worked example: [assets/example-scene.html](assets/example-scene.html) — a 21 s hook timed to `timings.json`, QC PASS)'s HTML render contract (`.claude/skills/motion`); other engines per the stack reference. Every scene: original or licensed assets only, readable on a phone, something alive during holds, numbers exactly as sourced, citations on screen when a claim is made.
+
+Score: compose an original cue sheet from the same timeline with real samples (lemo-opuscar `core/audio/sampler.py`, see production-stack.md): two real silences before the turns, insight chimes on the beats the storyboard names, foley on visible actions. Write `audio/score.py` → `music.wav`; record instrument licences in `CREDITS`.
 
 ## 10. Edit, mix, QA
 
@@ -111,6 +115,8 @@ python3 scripts/qc_video.py studio-output/<slug>/final/video.mp4 \
 ```
 
 Then run the full checklist in [production-qa.md](references/production-qa.md): look at the contact sheet and mid-transition stills yourself, verify claims on screen match the ledger, captions match speech. Verdict defaults to NEEDS WORK; max three fix loops per scene, then escalate to the owner with evidence.
+
+Deliver alongside the master: `TREATMENT.md`, `FACTS.md` (claim → source → quoted wording), `CREDITS` (voice engine, sample libraries with exact CC BY lines, fonts, code libraries), and `build.sh` that re-renders everything in one command.
 
 ## 11. Package (no upload)
 

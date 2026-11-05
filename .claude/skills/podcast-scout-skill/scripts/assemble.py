@@ -65,6 +65,7 @@ def main(argv=None):
     ap.add_argument("--crossfade", type=float, default=0.0)
     ap.add_argument("--keep-clip-audio", action="store_true")
     ap.add_argument("--lufs", type=float, default=-14.0)
+    ap.add_argument("--grain", type=float, default=0.0, help="film grain strength added at encode (0 = none; 4-8 subtle)")
     ap.add_argument("--out", required=True)
     a = ap.parse_args(argv)
 
@@ -128,7 +129,9 @@ def main(argv=None):
 
         # ---- audio mix
         inputs = ["-i", str(picture), "-i", a.narration]
-        voice_chain = "[1:a]aresample=48000,aformat=channel_layouts=stereo,apad[voice]"
+        # TTS has a high peak-to-average ratio: compress the voice before balancing it against music
+        voice_chain = ("[1:a]aresample=48000,aformat=channel_layouts=stereo,"
+                       "acompressor=threshold=0.1:ratio=3:attack=5:release=80:makeup=2,apad[voice]")
         if a.music:
             inputs += ["-stream_loop", "-1", "-i", a.music]
             fil = (f"{voice_chain};[voice]asplit=2[v1][vkey];"
@@ -140,11 +143,15 @@ def main(argv=None):
             fil = f"{voice_chain};[voice]loudnorm=I={a.lufs}:TP=-1.0:LRA=11[aout]"
 
         vmap = "0:v"
+        if a.grain > 0:
+            fil += f";[0:v]noise=alls={a.grain:g}:allf=t[vg]"
+            vmap = "[vg]"
         if a.captions and a.burn:
             style = ("FontName=DejaVu Sans,Fontsize=18,PrimaryColour=&H00FFFFFF,OutlineColour=&H00000000,"
                      "BorderStyle=3,Outline=2,Shadow=0,MarginV=60,Alignment=2")
             sub = Path(a.captions).resolve().as_posix().replace(":", r"\:")
-            fil += f";[0:v]subtitles='{sub}':force_style='{style}'[vout]"
+            src = "[vg]" if vmap == "[vg]" else "[0:v]"
+            fil += f";{src}subtitles='{sub}':force_style='{style}'[vout]"
             vmap = "[vout]"
 
         args = inputs[:]

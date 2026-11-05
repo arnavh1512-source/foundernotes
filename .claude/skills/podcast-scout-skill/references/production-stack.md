@@ -24,6 +24,8 @@ Reviewed 2026-11-04 at each repo's default-branch HEAD. Re-check a repo's README
 | Timing/easing polish on any engine | **LottieFiles motion-design** rules (in animation-craft.md) | — |
 | Script, hooks, titles, chapters, Shorts, retention review | **youtube-agent-skill** tools | packaging reference |
 | Whole-pipeline reference (stage manifests, reviewer, budget) | **OpenMontage** — AGPL-3.0: read for ideas, do not copy code into this repo | — |
+| Painted backgrounds (watercolour washes, charcoal, hatching) under SVG characters | **p5.brush** standalone (`K.paintPlate`) | anidoodle painted styles |
+| Original score from real instrument samples, procedural foley, ASR voice check, −14 LUFS two-pass master | **lemo-opuscar** `core/` | our assemble.py |
 | Male narration | `scripts/narrate.py` (Kokoro/Piper); **voicebox** for Qwen male presets | see voiceover.md |
 | Research page reading | **Obscura** | host reader |
 
@@ -72,6 +74,12 @@ Skills `yt-script, yt-package, yt-edit, yt-chapters, yt-seo, yt-shorts, yt-reten
 
 ### OpenMontage — [calesthio/OpenMontage](https://github.com/calesthio/OpenMontage) (AGPL-3.0)
 Reference architecture: YAML pipelines, per-stage director docs, reviewer and checkpoint protocols, budget caps ($0.50 per paid action needs approval), 10–15 s sample before full production, Shorts safe zone 984×1500 inside 1080×1920. Running it locally is fine; copying its code or docs into this repo would bring AGPL obligations — don't.
+
+### p5.brush — [acamposuribe/p5.brush](https://github.com/acamposuribe/p5.brush) (MIT)
+Natural media in WebGL2: pencils, charcoal, markers, watercolour fills that bleed and granulate, hatching, vector-field wobble. Use the **standalone** build (`dist/brush.js`, no p5 needed): `brush.createCanvas`, `brush.seed(n)`, draw, **`brush.render()`** every pass. Seeded = deterministic. Best as static painted plates under the SVG layers (render cost); light stays in SVG because pigment mixing turns gold-over-blue green. Read its `llms.txt` before use.
+
+### lemo-opuscar — [lemomo-ai/lemo-opuscar](https://github.com/lemomo-ai/lemo-opuscar) (MIT)
+A 66-style library of code-built films with a strong directing method (DIRECTOR.md: benchmark, treatment with three structures, one native move, silences, J/L cuts, reading-time rules, "not the demo again") and tools in `core/`: Kokoro TTS + faster-whisper check, **sampler.py** (97 real instruments; `sh tools/fetch.sh instruments vsco2ce|vcsl|salamander` — checksummed downloads), **sfx.py** procedural foley, `mux.sh` two-pass loudnorm, `readcheck.mjs`, `sheet.py`. Install under `~/studio-tools/lemo-opuscar`; its Python needs numpy, scipy, soundfile, soxr (+ faster-whisper for ASR). Learn from its styles; never rebuild its demo films. Credit Salamander piano exactly as INSTRUMENTS.md says.
 
 ### voicebox — [jamiepine/voicebox](https://github.com/jamiepine/voicebox) (MIT)
 Local voice studio (FastAPI :17493). Male presets without cloning. See voiceover.md.

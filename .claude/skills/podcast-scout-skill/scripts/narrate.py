@@ -281,6 +281,8 @@ def main(argv=None):
     ap.add_argument("--allow-non-male", action="store_true",
                     help="only when the channel owner explicitly asked for a non-male narrator")
     ap.add_argument("--list-voices", action="store_true")
+    ap.add_argument("--asr", nargs="?", const="base.en", metavar="MODEL",
+                    help="round-trip every segment through faster-whisper (default model base.en) and flag dropped words")
     a = ap.parse_args(argv)
 
     if a.list_voices:
@@ -366,6 +368,34 @@ def main(argv=None):
     (out / "timings.json").write_text(json.dumps(meta, indent=2), encoding="utf-8")
     write_captions(build_captions(timings), out)
     print(json.dumps({k: meta[k] for k in ("engine", "voice", "duration", "words", "wpm_speech")}))
+    if a.asr:
+        return asr_check(out, timings, a.asr)
+    return 0
+
+
+def asr_check(out: Path, timings, model_name: str) -> int:
+    """Transcribe each take and report segments whose displayed words are mostly missing.
+    Small models mishear short names: confirm flagged lines by listening before re-taking."""
+    try:
+        from faster_whisper import WhisperModel
+    except Exception:
+        print("narrate: --asr needs faster-whisper (pip install faster-whisper 'av<19'); check NOT run", file=sys.stderr)
+        return 0
+    model = WhisperModel(model_name, device="cpu", compute_type="int8")
+    norm = lambda s: re.sub(r"[^a-z0-9 ]", " ", s.lower()).split()
+    report, flagged = [], 0
+    for seg in timings:
+        res, _ = model.transcribe(str(out / "segments" / f"{seg['id']}.wav"), language="en", beam_size=5)
+        heard = " ".join(x.text for x in res).strip()
+        want = norm(seg["display"]); got = set(norm(heard))
+        missing = [w for w in want if w not in got]
+        bad = len(missing) > max(1, int(len(want) * 0.08))
+        flagged += bad
+        report.append({"id": seg["id"], "ok": not bad, "missing": missing, "heard": heard})
+        if bad:
+            print(f"  ASR CHECK {seg['id']}: missing {missing[:8]} | heard: {heard[:140]}", file=sys.stderr)
+    (out / "asr.json").write_text(json.dumps(report, indent=1), encoding="utf-8")
+    print(f"narrate: ASR round-trip {len(timings) - flagged}/{len(timings)} clean (report: {out / 'asr.json'})", file=sys.stderr)
     return 0
 
 
