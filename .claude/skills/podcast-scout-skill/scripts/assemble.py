@@ -109,12 +109,17 @@ def main(argv=None):
             inputs, chain, offset, last = [], [], 0.0, "[0:v]"
             for n in norm:
                 inputs += ["-i", str(n)]
+            alast = "[0:a]"
             for i in range(1, len(norm)):
                 offset += duration(norm[i - 1]) - a.crossfade
                 tag = f"[x{i}]"
                 chain.append(f"{last}[{i}:v]xfade=transition=fade:duration={a.crossfade}:offset={offset:.3f}{tag}")
                 last = tag
-            ff(inputs + ["-filter_complex", ";".join(chain), "-map", last, "-c:v", "libx264", "-crf", "16",
+                if a.keep_clip_audio:   # carry clip audio through the same transitions
+                    chain.append(f"{alast}[{i}:a]acrossfade=d={a.crossfade}:c1=tri:c2=tri[ax{i}]")
+                    alast = f"[ax{i}]"
+            amap = ["-map", alast, "-c:a", "aac", "-ar", "48000"] if a.keep_clip_audio else []
+            ff(inputs + ["-filter_complex", ";".join(chain), "-map", last, *amap, "-c:v", "libx264", "-crf", "16",
                          "-pix_fmt", "yuv420p", str(picture)])
         else:
             lst = td / "list.txt"

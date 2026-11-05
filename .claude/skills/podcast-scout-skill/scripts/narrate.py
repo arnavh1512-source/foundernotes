@@ -388,6 +388,46 @@ def main(argv=None):
     return 0
 
 
+NUM_WORDS = {"zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven",
+             "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen", "twenty",
+             "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety", "hundred", "thousand", "million",
+             "billion", "percent", "half", "quarter"}
+
+
+def critical_edits(want, heard, critical):
+    """Ordered alignment of script vs recognised tokens. Returns every insertion, deletion or substitution
+    that touches a meaning-critical token (negation or number) — catches moved negations and added numbers."""
+    import difflib
+    crit = lambda w: w in critical or w.isdigit() or w in NUM_WORDS
+    edits = []
+    for op, i1, i2, j1, j2 in difflib.SequenceMatcher(a=want, b=heard, autojunk=False).get_opcodes():
+        if op == "equal":
+            continue
+        a, b = want[i1:i2], heard[j1:j2]
+        if any(crit(w) for w in a + b):
+            edits.append({"op": op, "script": " ".join(a), "heard": " ".join(b), "at": i1})
+    # anchor check: a critical token must sit at the same place in the non-critical skeleton
+    # ("alpha is NOT valid / beta is valid" vs "alpha is valid / beta is NOT valid" keeps every word but moves 'not')
+    def anchored(tokens):
+        skel, marks = [], []
+        for w in tokens:
+            if crit(w):
+                marks.append((w, len(skel)))
+            else:
+                skel.append(w)
+        return skel, marks
+    sw, mw = anchored(want); sh, mh = anchored(heard)
+    m = difflib.SequenceMatcher(a=sw, b=sh, autojunk=False)
+    remap = {}
+    for blk in m.get_matching_blocks():
+        for k in range(blk.size + 1):
+            remap.setdefault(blk.a + k, blk.b + k)
+    expect = sorted((w, remap.get(k, -1)) for w, k in mw)
+    if expect != sorted(mh) and not edits:
+        edits.append({"op": "moved", "script": " ".join(w for w, _ in mw), "heard": " ".join(w for w, _ in mh), "at": -1})
+    return edits
+
+
 def missing_words(want, heard):
     """Script words not heard, counted with multiplicity (two 'not's scripted, one heard → one missing)."""
     from collections import Counter
@@ -422,9 +462,12 @@ def asr_check(out: Path, timings, model_name: str) -> int:
         # meaning-critical words: a dropped or added negation / number reverses or changes the claim
         neg_want = sum(w in critical for w in want); neg_got = sum(w in critical for w in got_list)
         crit_missing = [w for w in missing if w in critical or w.isdigit()]
-        bad = len(missing) > max(1, int(len(want) * 0.08)) or bool(crit_missing) or neg_want != neg_got
+        crit_edits = critical_edits(want, got_list, critical)
+        bad = (len(missing) > max(1, int(len(want) * 0.08)) or bool(crit_missing) or neg_want != neg_got
+               or bool(crit_edits))
         flagged += bad
         report.append({"id": seg["id"], "ok": not bad, "missing": missing, "critical_missing": crit_missing,
+                       "critical_edits": crit_edits,
                        "negations_script": neg_want, "negations_heard": neg_got, "heard": heard})
         if bad:
             print(f"  ASR CHECK {seg['id']}: missing {missing[:8]} | heard: {heard[:140]}", file=sys.stderr)

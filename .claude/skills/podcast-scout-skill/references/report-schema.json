@@ -11,7 +11,6 @@
     "created_at",
     "audience",
     "language",
-    "podcast",
     "capabilities",
     "summary",
     "topics",
@@ -29,13 +28,6 @@
     "podcast": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "title",
-        "url",
-        "coverage",
-        "transcript_source",
-        "coverage_note"
-      ],
       "properties": {
         "title": {
           "type": "string"
@@ -442,7 +434,6 @@
         "guest_claim",
         "angle",
         "viewer_benefit",
-        "moment",
         "findings",
         "sources",
         "scores",
@@ -858,5 +849,67 @@
         }
       }
     }
-  }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "input": {
+            "const": "topic"
+          }
+        },
+        "required": [
+          "input"
+        ]
+      },
+      "then": {
+        "properties": {
+          "podcast": {
+            "type": "object",
+            "required": [
+              "coverage"
+            ],
+            "properties": {
+              "coverage": {
+                "const": "not-applicable"
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "required": [
+          "podcast"
+        ],
+        "properties": {
+          "podcast": {
+            "required": [
+              "title",
+              "url",
+              "coverage",
+              "transcript_source",
+              "coverage_note"
+            ],
+            "properties": {
+              "coverage": {
+                "enum": [
+                  "complete",
+                  "unknown",
+                  "partial",
+                  "unavailable"
+                ]
+              }
+            }
+          },
+          "topics": {
+            "items": {
+              "required": [
+                "moment"
+              ]
+            }
+          }
+        }
+      }
+    }
+  ]
 }

@@ -16,7 +16,17 @@ have() { command -v "$1" >/dev/null 2>&1; }
 sudo_() { if [ "$(id -u 2>/dev/null || echo 0)" = 0 ]; then "$@"; elif have sudo; then sudo "$@"; else "$@"; fi; }
 
 pw_found() { (cd "$here" && node -e 'require("playwright")' 2>/dev/null) || node -e 'require(require("child_process").execSync("npm root -g").toString().trim()+"/playwright")' 2>/dev/null; }
-chromium_found() { (cd "$here" && node -e 'const {chromium}=require("playwright");require("fs").accessSync(chromium.executablePath())' 2>/dev/null) || [ -n "${MOTION_CHROMIUM:-}" ]; }
+# resolve Playwright exactly like render.mjs does: local install first, then the global npm root
+chromium_found() {
+  [ -n "${MOTION_CHROMIUM:-}" ] && return 0
+  (cd "$here" && node -e '
+    const p = require("path"), cp = require("child_process");
+    const tries = [() => require("playwright"),
+      () => require(p.join(cp.execFileSync("npm", ["root", "-g"], { shell: process.platform === "win32" }).toString().trim(), "playwright")),
+      () => require("playwright-core")];
+    for (const t of tries) { try { const { chromium } = t(); require("fs").accessSync(chromium.executablePath()); process.exit(0); } catch {} }
+    process.exit(1);' 2>/dev/null)
+}
 
 install_ffmpeg() {
   if have apt-get; then sudo_ apt-get update -qq && sudo_ apt-get install -y -qq ffmpeg

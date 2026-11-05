@@ -131,3 +131,66 @@ class M8M9RenderScript(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class RecheckH2Schema(unittest.TestCase):
+    def setUp(self):
+        try:
+            import jsonschema  # noqa: F401
+        except ImportError:
+            self.skipTest("jsonschema not installed")
+
+    def test_topic_report_passes_schema_and_checker(self):
+        import jsonschema
+        S = json.loads((ROOT / "references" / "report-schema.json").read_text())
+        F = json.loads((ROOT / "tests" / "provisional-report.json").read_text(encoding="utf-8-sig"))
+        T = copy.deepcopy(F); T["input"] = "topic"; T["podcast"] = {"coverage": "not-applicable"}
+        for t in T["topics"]:
+            t.pop("moment", None)
+        V = jsonschema.Draft202012Validator(S)
+        self.assertEqual([e.message for e in V.iter_errors(T)], [])
+        self.assertEqual(validator.validate(T), [])
+        P = copy.deepcopy(F); P["topics"][0].pop("moment", None)
+        self.assertTrue(list(V.iter_errors(P)))
+
+
+class RecheckM1Alignment(unittest.TestCase):
+    CRIT = {"not", "no", "never"}
+
+    def test_relocated_negation_is_flagged(self):
+        want = "alpha is not valid beta is valid".split()
+        heard = "alpha is valid beta is not valid".split()
+        self.assertTrue(narrate.critical_edits(want, heard, self.CRIT))
+
+    def test_inserted_number_is_flagged(self):
+        self.assertTrue(narrate.critical_edits("use 5 units".split(), "use 50 to 5 units".split(), self.CRIT))
+
+    def test_clean_line_has_no_edits(self):
+        w = "it is not luck".split()
+        self.assertEqual(narrate.critical_edits(w, list(w), self.CRIT), [])
+
+
+@unittest.skipUnless(FF, "ffmpeg missing")
+class RecheckM3Crossfade(unittest.TestCase):
+    def test_clip_audio_survives_crossfades(self):
+        with tempfile.TemporaryDirectory() as td:
+            td = Path(td)
+            for n in ("a", "b"):
+                ff("-f", "lavfi", "-i", "testsrc2=size=1280x720:rate=30", "-f", "lavfi", "-i", "sine=f=1000:sample_rate=48000",
+                   "-t", "3", "-c:v", "libx264", "-pix_fmt", "yuv420p", "-c:a", "aac", "-shortest", str(td / f"{n}.mp4"))
+            ff("-f", "lavfi", "-i", "anullsrc=r=48000:cl=mono", "-t", "5.8", str(td / "n.wav"))
+            r = subprocess.run([sys.executable, str(SCRIPTS / "assemble.py"), "--scenes", str(td / "a.mp4"), str(td / "b.mp4"),
+                                "--crossfade", "0.2", "--keep-clip-audio", "--narration", str(td / "n.wav"),
+                                "--out", str(td / "o.mp4")], capture_output=True, text=True)
+            self.assertEqual(r.returncode, 0, r.stderr)
+            vol = subprocess.run(["ffmpeg", "-hide_banner", "-i", str(td / "o.mp4"), "-af", "volumedetect", "-f", "null", "-"],
+                                 capture_output=True, text=True).stderr
+            self.assertGreater(float(vol.split("mean_volume:")[1].split("dB")[0]), -40)
+
+
+class RecheckM9Setup(unittest.TestCase):
+    def test_setup_resolves_playwright_like_renderer(self):
+        src = (ROOT.parent / "motion" / "scripts" / "setup.sh").read_text()
+        body = src[src.index("chromium_found()"):]
+        self.assertIn('"root", "-g"', body)
+        self.assertIn("playwright-core", body)
