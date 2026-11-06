@@ -539,6 +539,10 @@ def main(argv=None):
                 st_ = seg_dir / f"{s_['id']}.key"
                 if not ((seg_dir / f"{s_['id']}.wav").exists() and st_.exists() and st_.read_text() == k_):
                     jobs.append({"id": s_["id"], "text": t_, "out": str(td / f"{s_['id']}.raw.wav"), "seed": 42 + 7 * takes[s_["id"]]})
+            # remember what THIS run generated: auto re-takes may only touch these, never approved earlier takes
+            gen_file = out / "_generated_this_run.json"
+            prev = json.loads(gen_file.read_text()) if (gen_file.exists() and os.environ.get("NARRATE_RETAKE_CHAIN")) else []
+            gen_file.write_text(json.dumps(sorted(set(prev) | {j["id"] for j in jobs})))
             if jobs:
                 print(f"  [parler] generating {len(jobs)} segment(s) (about 5x real time on CPU)…", file=sys.stderr)
                 jf = td / "parler_jobs.json"
@@ -615,8 +619,9 @@ def main(argv=None):
             rep = json.loads((out / "asr.json").read_text())
             rep = rep if isinstance(rep, list) else rep.get("segments", rep.get("report", []))
             NUMW = re.compile(r"^(\d+|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety|hundred|thousand|percent)$")
-            bad = [r["id"] for r in rep if r.get("critical_missing") or
-                   len([m for m in (r.get("missing") or []) if not NUMW.match(str(m).lower())]) >= 2]
+            fresh = set(json.loads((out / "_generated_this_run.json").read_text())) if (out / "_generated_this_run.json").exists() else set()
+            bad = [r["id"] for r in rep if r["id"] in fresh and (r.get("critical_missing") or
+                   len([m for m in (r.get("missing") or []) if not NUMW.match(str(m).lower())]) >= 2)]
             if bad:
                 for sid in bad:
                     f = seg_dir / f"{sid}.take"; f.write_text(str((int(f.read_text()) if f.exists() else 0) + 1))
@@ -626,7 +631,7 @@ def main(argv=None):
                     j = argv.index("--retake"); argv[j + 1] = str(a.retake - 1)
                 else:
                     argv += ["--retake", str(a.retake - 1)]
-                return subprocess.run([sys.executable, __file__, *argv]).returncode
+                return subprocess.run([sys.executable, __file__, *argv], env=dict(os.environ, NARRATE_RETAKE_CHAIN="1")).returncode
         return rc
     return 0
 

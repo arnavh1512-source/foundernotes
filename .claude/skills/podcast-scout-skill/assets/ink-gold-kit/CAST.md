@@ -21,3 +21,5 @@ Rig options for `new K.Hunter(layer, { colors: {...} })`:
 | After the Win (2026-11) | the hunter (lead) | medium `#B9774F` | wavy | none | no | 1.0 | teal jacket, cream tee, charcoal jeans |
 | One Year, Twenty Times (2026-11) | Climber | deep `#7B4A2E` | crop | none | yes | 0.94 | navy jacket, olive trousers |
 | One Year, Twenty Times (2026-11) | Looper | light-olive `#D7A47C` | curly | full beard | no | 1.1 | rust jacket, grey trousers |
+| Phone Brain Drain (2026-11) | Student | medium-brown `#A86B45` | long | none | no | 0.92 | coral jacket, denim trousers |
+| Phone Brain Drain (2026-11) | Researcher | light `#E3B48E` | bald | moustache | yes | 1.05 | white lab coat, charcoal trousers |
