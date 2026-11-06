@@ -61,3 +61,6 @@ Values left as `TBD` fall back to the defaults shown.
   - the **closing narration line** asks viewers to subscribe and asks the comment question, e.g. "…subscribe to Founder Notes. And tell us in the comments: what topic should we cover next?";
   - the **end card** is `K.endCard(S)`: logo, "Subscribe to FOUNDER NOTES", a cursor clicking the subscribe button, then the question card "What topic should we cover next? / Tell us in the comments".
 - **The package:** the description ends with the subscribe link plus the question, and the pinned comment opens with the question.
+
+## Length (owner rule, 2026-11-06)
+Every long-form video runs **at least 5 minutes**. Script for ~880+ spoken words at the narrator's pace (voicebox narrator at speed 0.94, ~168 wpm). Add researched beats (evidence detail, how-to-judge-it checklists, counter-arguments), never filler.
