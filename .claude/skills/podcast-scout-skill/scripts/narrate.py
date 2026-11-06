@@ -60,6 +60,7 @@ PARLER_DESC = ("A male speaker with a warm, expressive and animated voice tells 
                "natural pauses, at a moderate pace. The recording is very clear and close-sounding, with almost no "
                "background noise.")
 PARLER_MODEL = os.environ.get("PARLER_MODEL", "parler-tts/parler-tts-mini-v1")
+PARLER_VOICE_V = "anchor1"   # one channel voice: anchor take + best-of-N speaker match + pitch settling (parler_worker.py)
 
 
 def parler_python():
@@ -535,7 +536,7 @@ def main(argv=None):
             jobs = []
             for s_ in data["segments"]:
                 t_ = " ".join(str(s_["text"]).split())
-                k_ = hashlib.sha256(f"parler|{voice}|{speed}|{t_}|{PARLER_MODEL}|take{takes[s_['id']]}".encode()).hexdigest()[:16]
+                k_ = hashlib.sha256(f"parler|{voice}|{speed}|{t_}|{PARLER_MODEL}|{PARLER_VOICE_V}|take{takes[s_['id']]}".encode()).hexdigest()[:16]
                 st_ = seg_dir / f"{s_['id']}.key"
                 if not ((seg_dir / f"{s_['id']}.wav").exists() and st_.exists() and st_.read_text() == k_):
                     jobs.append({"id": s_["id"], "text": t_, "out": str(td / f"{s_['id']}.raw.wav"), "seed": 42 + 7 * takes[s_["id"]]})
@@ -547,7 +548,9 @@ def main(argv=None):
                 print(f"  [parler] generating {len(jobs)} segment(s) (about 5x real time on CPU)…", file=sys.stderr)
                 jf = td / "parler_jobs.json"
                 jf.write_text(json.dumps({"model": PARLER_MODEL, "description": voice, "jobs": jobs}))
-                subprocess.run([parler_python(), str(Path(__file__).with_name("parler_worker.py")), str(jf)], check=True)
+                env_ = dict(os.environ)
+                env_.setdefault("PARLER_ANCHOR", str(VOICES_DIR / "parler_anchor.wav"))   # the channel voice, reused
+                subprocess.run([parler_python(), str(Path(__file__).with_name("parler_worker.py")), str(jf)], check=True, env=env_)
         for i, s in enumerate(data["segments"]):
             text = " ".join(str(s["text"]).split())
             extra = ""
@@ -559,7 +562,7 @@ def main(argv=None):
             if perform:
                 extra += "|" + PERFORM_VERSION + perform_mode
             if engine == "parler":
-                extra = f"{PARLER_MODEL}|take{takes.get(s['id'], 0)}"
+                extra = f"{PARLER_MODEL}|{PARLER_VOICE_V}|take{takes.get(s['id'], 0)}"
             key = hashlib.sha256(f"{engine}|{voice}|{speed}|{text}|{extra}".encode()).hexdigest()[:16]
             wav = seg_dir / f"{s['id']}.wav"
             stamp = seg_dir / f"{s['id']}.key"
