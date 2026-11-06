@@ -4,8 +4,8 @@ This repo holds the skills and subagents used to research and produce animated e
 YouTube videos.
 
 ## Standing defaults for every session
-- **Narration is always a male voice.** Default Kokoro `am_michael` (speed 0.88) with the earshot-tuned **studio chain** (room, warm mic, compression, room tone; checked by listening with earshot) via
-  `.claude/skills/podcast-scout-skill/scripts/narrate.py`; fallback Piper `en_US-ryan-high`.
+- **Narration is always a male voice.** Default **Parler-TTS** (a described male narrator, expressive delivery; owner-picked by ear), with the earshot-tuned **studio chain** (room, warm mic, compression, room tone; checked by listening with earshot) via
+  `.claude/skills/podcast-scout-skill/scripts/narrate.py`; fallbacks Kokoro `am_michael` + studio chain, then Piper `en_US-ryan-high`.
   Use a non-male voice only if the channel owner asks for it in their own words.
 - **Subagents run on Sonnet at medium effort.** The crew in `.claude/agents/studio-*.md` sets
   `model: sonnet` and `effort: medium`; pass `model: "sonnet"`, `effort: "medium"` on any ad-hoc

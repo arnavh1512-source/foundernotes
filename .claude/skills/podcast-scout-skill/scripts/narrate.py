@@ -54,6 +54,25 @@ MALE_VOICES = {
 }
 DEFAULT_VOICE = {"kokoro": "am_michael", "piper": "en_US-ryan-high", "edge": "en-US-AndrewNeural"}
 ENGINE_ORDER = ["kokoro", "piper", "edge"]
+# Parler-TTS: the voice is a written DESCRIPTION (no reference recording, no cloning). Chosen by the owner after an
+# A/B listen (2026-11): pitch movement 8.6 st vs 3.8 st for Kokoro, earshot "Speech synthesizer" 0.71 vs 0.89.
+PARLER_DESC = ("A male speaker with a warm, expressive and animated voice tells a story with varied intonation and "
+               "natural pauses, at a moderate pace. The recording is very clear and close-sounding, with almost no "
+               "background noise.")
+PARLER_MODEL = os.environ.get("PARLER_MODEL", "parler-tts/parler-tts-mini-v1")
+
+
+def parler_python():
+    return os.environ.get("PARLER_PYTHON") or str(Path.home() / ".cache" / "venv-parler" / "bin" / "python")
+
+
+def have_parler() -> bool:
+    return Path(parler_python()).exists()
+
+
+def parler_is_male(desc: str) -> bool:
+    d = desc.lower()
+    return bool(re.search(r"\bmale\b|\bman\b|\bmale's\b", d)) and not re.search(r"female|woman|girl|\blady\b", d)
 
 
 def die(msg: str, code: int = 2):
@@ -430,6 +449,8 @@ def write_captions(cues, out_dir: Path):
 def pick_engine(requested, voice):
     if requested:
         return requested
+    if have_parler():                       # owner's choice (2026-11): the expressive engine first
+        return "parler"
     for eng in ENGINE_ORDER:
         v = voice or DEFAULT_VOICE[eng]
         if eng == "kokoro" and have_kokoro():
@@ -445,10 +466,12 @@ def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("script", nargs="?")
     ap.add_argument("--out")
-    ap.add_argument("--engine", choices=["kokoro", "piper", "edge", "voicebox", "files"])
+    ap.add_argument("--engine", choices=["parler", "kokoro", "piper", "edge", "voicebox", "files"])
     ap.add_argument("--voice")
     ap.add_argument("--speed", type=float)
     ap.add_argument("--files-dir", help="for --engine files: folder of <segment-id>.wav recordings")
+    ap.add_argument("--retake", type=int, default=2,
+                    help="parler: with --asr, re-generate segments whose words dropped (new seed) up to N times")
     ap.add_argument("--no-perform", action="store_true",
                     help="read flat (one take per segment) instead of the human-explainer performance layer")
     ap.add_argument("--allow-non-male", action="store_true",
@@ -474,7 +497,13 @@ def main(argv=None):
     engine = a.engine or vcfg.get("engine")
     voice = a.voice or vcfg.get("name")
     engine = pick_engine(engine, voice)
-    if engine in DEFAULT_VOICE:
+    if engine == "parler":
+        voice = voice or PARLER_DESC
+        if not parler_is_male(voice) and not a.allow_non_male:
+            die("parler: the voice description must describe a MALE speaker (channel rule)")
+        if not have_parler():
+            die(f"parler: no Parler venv at {parler_python()} (set PARLER_PYTHON; pip install parler-tts there)")
+    elif engine in DEFAULT_VOICE:
         voice = voice or DEFAULT_VOICE[engine]
         parts_ = [v.split(":")[0] for v in voice.split("+")] if engine == "kokoro" else [voice]
         if any(p_ not in MALE_VOICES[engine] for p_ in parts_) and not a.allow_non_male:
@@ -499,6 +528,22 @@ def main(argv=None):
         silence(lead, lead_wav)
         parts.append(lead_wav)
         clock = wav_seconds(lead_wav)
+        takes = {}
+        if engine == "parler":
+            takes = {s_["id"]: int((seg_dir / f"{s_['id']}.take").read_text()) if (seg_dir / f"{s_['id']}.take").exists() else 0
+                     for s_ in data["segments"]}
+            jobs = []
+            for s_ in data["segments"]:
+                t_ = " ".join(str(s_["text"]).split())
+                k_ = hashlib.sha256(f"parler|{voice}|{speed}|{t_}|{PARLER_MODEL}|take{takes[s_['id']]}".encode()).hexdigest()[:16]
+                st_ = seg_dir / f"{s_['id']}.key"
+                if not ((seg_dir / f"{s_['id']}.wav").exists() and st_.exists() and st_.read_text() == k_):
+                    jobs.append({"id": s_["id"], "text": t_, "out": str(td / f"{s_['id']}.raw.wav"), "seed": 42 + 7 * takes[s_["id"]]})
+            if jobs:
+                print(f"  [parler] generating {len(jobs)} segment(s) (about 5x real time on CPU)…", file=sys.stderr)
+                jf = td / "parler_jobs.json"
+                jf.write_text(json.dumps({"model": PARLER_MODEL, "description": voice, "jobs": jobs}))
+                subprocess.run([parler_python(), str(Path(__file__).with_name("parler_worker.py")), str(jf)], check=True)
         for i, s in enumerate(data["segments"]):
             text = " ".join(str(s["text"]).split())
             extra = ""
@@ -509,12 +554,17 @@ def main(argv=None):
                 extra = "|".join(os.environ.get(k, "") for k in ("VOICEBOX_URL", "VOICEBOX_ENGINE", "VOICEBOX_INSTRUCT"))
             if perform:
                 extra += "|" + PERFORM_VERSION + perform_mode
+            if engine == "parler":
+                extra = f"{PARLER_MODEL}|take{takes.get(s['id'], 0)}"
             key = hashlib.sha256(f"{engine}|{voice}|{speed}|{text}|{extra}".encode()).hexdigest()[:16]
             wav = seg_dir / f"{s['id']}.wav"
             stamp = seg_dir / f"{s['id']}.key"
             if not (wav.exists() and stamp.exists() and stamp.read_text() == key):
                 print(f"  [{engine}:{voice}] {s['id']}: {text[:60]}{'…' if len(text) > 60 else ''}", file=sys.stderr)
-                if engine == "kokoro" and perform:
+                if engine == "parler":
+                    raw = td / f"{s['id']}.raw.wav"
+                    to_master_format(raw, wav, speed=speed)
+                elif engine == "kokoro" and perform:
                     synth_kokoro_performed(text, voice, speed, wav, mode=perform_mode)
                 elif engine == "kokoro":
                     synth_kokoro(text, voice, speed, wav)
@@ -560,7 +610,24 @@ def main(argv=None):
     write_captions(build_captions(timings), out)
     print(json.dumps({k: meta[k] for k in ("engine", "voice", "duration", "words", "wpm_speech")}))
     if a.asr:
-        return asr_check(out, timings, a.asr)
+        rc = asr_check(out, timings, a.asr)
+        if engine == "parler" and a.retake > 0:
+            rep = json.loads((out / "asr.json").read_text())
+            rep = rep if isinstance(rep, list) else rep.get("segments", rep.get("report", []))
+            NUMW = re.compile(r"^(\d+|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety|hundred|thousand|percent)$")
+            bad = [r["id"] for r in rep if r.get("critical_missing") or
+                   len([m for m in (r.get("missing") or []) if not NUMW.match(str(m).lower())]) >= 2]
+            if bad:
+                for sid in bad:
+                    f = seg_dir / f"{sid}.take"; f.write_text(str((int(f.read_text()) if f.exists() else 0) + 1))
+                print(f"narrate: re-taking {len(bad)} parler segment(s) with a new seed: {', '.join(bad)}", file=sys.stderr)
+                argv = [x for x in sys.argv[1:]]
+                if "--retake" in argv:
+                    j = argv.index("--retake"); argv[j + 1] = str(a.retake - 1)
+                else:
+                    argv += ["--retake", str(a.retake - 1)]
+                return subprocess.run([sys.executable, __file__, *argv]).returncode
+        return rc
     return 0
 
 

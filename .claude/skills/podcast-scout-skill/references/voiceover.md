@@ -101,3 +101,25 @@ What makes it human is the writing, so write for the ear:
 - use commas where a speaker would breathe.
 
 **Always listen before shipping:** `earshot describe`/`match` the narration and the final mix, and compare against the previous film.
+
+## Parler-TTS: the default engine since 2026-11-06 (owner's choice after an A/B listen)
+**The voice is a written description, so no one is cloned** (`PARLER_DESC` in narrate.py). It must describe a male
+speaker; `narrate.py` refuses anything else.
+
+**Engine checks:**
+- Same three lines: pitch movement 8.6 st against 3.8 st for Kokoro, and it was the owner's pick by ear.
+- Earshot on Parler's own output: AI-voice score 0.93 raw, 0.59 with `"chain": "studio"`; narration score 0.07 → 0.32. So the chain stays on.
+
+**How generation works:**
+- `scripts/parler_worker.py` runs in its own venv (`PARLER_PYTHON`; setup_studio.sh installs it).
+- It voices each sentence separately with a fixed seed and adds natural pauses.
+- It runs at about 5× real time on CPU, so allow about 30 minutes for a 5-minute film.
+
+**Re-takes:** with `--asr --retake 2`, any segment that loses a negation or two or more words is re-generated on a new
+seed. Word-versus-digit mismatches don't count.
+
+**Writing for it:**
+- Respell accented and unusual words in `text`, e.g. "résumé" → "resume"; it garbles them.
+- Keep the correct spelling in `display`.
+
+Kokoro (`"engine": "kokoro"`) stays the fast fallback.

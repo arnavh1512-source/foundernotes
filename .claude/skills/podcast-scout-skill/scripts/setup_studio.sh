@@ -67,7 +67,23 @@ if $want_manim; then
   fi
 fi
 
+# Parler-TTS: the expressive narration engine (default when present). Separate venv so its torch pins
+# don't fight the studio venv. CPU wheels; torch and torchaudio must match (2.11 CPU tested).
+PARLER_VENV="${PARLER_VENV:-$HOME/.cache/venv-parler}"
+if [ "${SKIP_PARLER:-0}" != 1 ]; then
+  if [ ! -x "$PARLER_VENV/bin/python" ]; then python3 -m venv "$PARLER_VENV"; fi
+  "$PARLER_VENV/bin/pip" install -q --upgrade pip >/dev/null 2>&1
+  "$PARLER_VENV/bin/pip" install -q parler-tts soundfile >/dev/null 2>&1
+  "$PARLER_VENV/bin/pip" install -q --force-reinstall --no-deps "torch==2.11.0+cpu" "torchaudio==2.11.0+cpu" \
+      --index-url https://download.pytorch.org/whl/cpu >/dev/null 2>&1
+  if "$PARLER_VENV/bin/python" -c "import parler_tts, torchaudio" >/dev/null 2>&1; then
+    ok "parler-tts (expressive male narrator; first run downloads ~3.5 GB model)"
+  else
+    echo "  note  parler-tts not available: narration falls back to Kokoro"
+  fi
+fi
+
 echo
-export_line="export STUDIO_VOICES_DIR=\"$VOICES\"; . \"$VENV/bin/activate\""
+export_line="export STUDIO_VOICES_DIR=\"$VOICES\" PARLER_PYTHON=\"$PARLER_VENV/bin/python\"; . \"$VENV/bin/activate\""
 if [ "$missing" = 0 ]; then echo "studio ready. Before narrating run:"; echo "  $export_line"; else echo "NOT ready: fix the MISS lines above"; fi
 exit "$missing"
