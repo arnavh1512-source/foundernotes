@@ -387,3 +387,50 @@
     return { z, x, y };
   };
 })();
+
+/* ---------- chapter tracker, bookmark pin (from the phone film) ---------- */
+
+/* ---------- retention helpers for this film ---------- */
+(function () {
+  const K = window.K;
+  // chapter tracker, top-left: "2/4 · THE SPREAD" (gold number, fog title); fades in over 0.5 s
+  K.chapter = (S, n, title, total = 4) => {
+    const g = K.g(S.ui, 64, 70); const L = S.look || {};
+    const a = K.text(g, `${n}/${total}`, 0, 0, { size: 26, weight: 700, anchor: "start", fill: K.C.gold, ls: 2 });
+    const b = K.text(g, "·  " + title.toUpperCase(), 62, 0, { size: 24, weight: 700, anchor: "start", fill: L.sub || K.C.fog, ls: 5 });
+    const bar = K.el("rect", { x: 0, y: 14, width: 0, height: 3, rx: 1.5, fill: K.C.gold, opacity: 0.8 }, g);
+    g._tick = (t) => { const k = K.eo(K.prog(t, 0.1, 0.5)); K.op(g, k); bar.setAttribute("width", (200 * n / total * k).toFixed(1)); };
+    return g;
+  };
+  // the "remember this" bookmark pin that rides in the top-right corner from sc06 to sc12
+  K.pin = (parent, x = 1840, y = 70, s = 1) => {
+    const g = K.g(parent, x, y);
+    K.el("path", { d: "M-16 -24 H16 V22 L0 10 L-16 22 Z", fill: K.C.gold, stroke: "#0E1822", "stroke-width": 2.5, "stroke-linejoin": "round" }, g);
+    K.el("circle", { cx: 0, cy: -8, r: 5, fill: "#0E1822" }, g);
+    K.tf(g, x, y, s); return g;
+  };
+})();
+/* ---------- word cues ----------
+ * K.word(S, "nothing", { seg: "s10-nothing", n: 0, edge: "start" }) -> scene-local time of that spoken word.
+ * Reads window.WORDS (film/words.js, rebuilt by make_words.py after every re-voice) and window.TIMING.
+ * Use it for every punch, stamp, hit and reveal that should land ON a word. Never hard-code seconds for those.
+ */
+(function () {
+  const K = window.K;
+  K.word = (S, word, o = {}) => {
+    const W = window.WORDS || {}, T = window.TIMING, name = S.name || S;
+    const sc = T.scenes[name], want = word.toLowerCase().replace(/[^a-z0-9' ]/g, "").split(" ");
+    const segs = o.seg ? [o.seg] : Object.keys(W).filter((k) => { const g = T.seg[k]; return g && g[0] >= sc.start - 0.05 && g[1] <= sc.end + 0.05; });
+    let hits = 0;
+    for (const k of segs) {
+      const ws = W[k] || [];
+      for (let i = 0; i + want.length <= ws.length; i++) {
+        if (want.every((w, j) => ws[i + j][0] === w)) {
+          if (hits++ === (o.n || 0)) return (o.edge === "end" ? ws[i + want.length - 1][2] : ws[i][1]) - sc.start;
+        }
+      }
+    }
+    console.warn("K.word: not found", word, name);
+    return (o.fallback ?? 0);
+  };
+})();

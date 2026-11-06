@@ -301,6 +301,33 @@ def voicebox_channel_profile():
     return pid
 
 
+def trim_tail(path: Path, drop_db=15.0, keep=0.25):
+    """Cut what follows the last real speech. Chatterbox sometimes adds a low growl/mumble after the final word
+    (measured: up to 6 s at -35 dB, ~64 Hz). Speech end = last 20 ms frame within drop_db of the segment's typical
+    voiced level; keep a short natural tail after it."""
+    try:
+        import numpy as np, soundfile as sf
+    except ImportError:
+        return
+    y, sr = sf.read(str(path), dtype="float32")
+    mono = y.mean(axis=1) if y.ndim > 1 else y
+    hop = int(0.02 * sr); n = len(mono) // hop
+    if n < 10:
+        return
+    rms = np.sqrt((mono[: n * hop].reshape(n, hop) ** 2).mean(1)) + 1e-9
+    db = 20 * np.log10(rms); voiced = db[db > db.max() - 40]
+    ref = np.median(voiced) if voiced.size else db.max()
+    loud = np.flatnonzero(db > ref - drop_db)
+    if not loud.size:
+        return
+    end = min(len(mono), (loud[-1] + 1) * hop + int(keep * sr))
+    if len(mono) - end > int(0.3 * sr):
+        y = y[:end]
+        fade = min(len(y), int(0.03 * sr)); w = np.linspace(1, 0, fade, dtype="float32")
+        y[-fade:] = (y[-fade:].T * w).T if y.ndim > 1 else y[-fade:] * w
+        sf.write(str(path), y, sr)
+
+
 def synth_voicebox(text, voice, speed, out: Path, seed=42, engine=None):
     """voicebox (github.com/jamiepine/voicebox) running locally; voice = profile id (the channel narrator by default).
     Each segment is generated in ONE pass, so the voice cannot switch mid-segment."""
@@ -327,6 +354,7 @@ def synth_voicebox(text, voice, speed, out: Path, seed=42, engine=None):
             time.sleep(2)
     to_master_format(tmp, out, speed=speed)
     tmp.unlink(missing_ok=True)
+    trim_tail(out)
 
 
 def synth_files(seg_id, voice_dir: Path, out: Path, speed):
