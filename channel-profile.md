@@ -63,4 +63,4 @@ Values left as `TBD` fall back to the defaults shown.
 - **The package:** the description ends with the subscribe link plus the question, and the pinned comment opens with the question.
 
 ## Length (owner rule, 2026-11-06)
-Every long-form video runs **at least 5 minutes**. Script for ~880+ spoken words at the narrator's pace (voicebox narrator at speed 0.94, ~168 wpm). Add researched beats (evidence detail, how-to-judge-it checklists, counter-arguments), never filler.
+Every long-form video runs **at least 5 minutes**. Keep the narration exactly as approved (voicebox narrator, speed 1.0, ~179 wpm; never slowed down). Script ~900+ spoken words. Add researched beats (evidence detail, how-to-judge-it checklists, counter-arguments), never filler.
