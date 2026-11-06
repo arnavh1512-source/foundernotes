@@ -191,3 +191,72 @@
     return Object.assign({}, keys[keys.length - 1][1]);
   };
 })();
+
+/* ---------- channel end card (owner rule: EVERY video ends with it) ----------
+ * K.endCard(S, { name, handle, logo, question, sub }) builds it in S.ui; call card.draw(t, t0, tq) from draw():
+ *   t0 = when the card starts (start of the closing CTA line), tq = when the question is spoken.
+ * Logo (channel/logo.png, the channel's own avatar), "Subscribe to FOUNDER NOTES", a subscribe button that a cursor
+ * clicks (hit-stop pop → "SUBSCRIBED ✓" + bell), then the comment question card. Everything stays above y = 900.
+ */
+(function () {
+  const K = window.K;
+  K.CHANNEL = { name: "FOUNDER NOTES", handle: "@FounderNotesin", logo: "channel/logo.png",
+                question: "What topic should we cover next?", sub: "Tell us in the comments" };
+  K.endCard = (S, o = {}) => {
+    const c = Object.assign({}, K.CHANNEL, o), ui = S.ui, C = K.C, id = K.id("logoclip");
+    const g = K.g(ui, 0, 0); K.op(g, 0);
+    // a dark backdrop so the card reads over any scene (the scene stays faintly visible behind it)
+    K.el("rect", { x: -20, y: -20, width: 1960, height: 1120, fill: "#081018", opacity: 0.8 }, g);
+    K.el("ellipse", { cx: 960, cy: 470, rx: 760, ry: 330, fill: "#16283A", opacity: 0.55, filter: "url(#soft)" }, g);
+    K.el("clipPath", { id }, K.defs).innerHTML = `<circle cx="0" cy="0" r="128"/>`;
+    const lg = K.g(g, 610, 400);
+    const ring = K.el("circle", { cx: 0, cy: 0, r: 140, fill: "none", stroke: C.gold, "stroke-width": 4, opacity: 0.9 }, lg);
+    K.el("circle", { cx: 0, cy: 0, r: 131, fill: "#000" }, lg);
+    K.el("image", { href: c.logo, x: -128, y: -128, width: 256, height: 256, "clip-path": `url(#${id})`, preserveAspectRatio: "xMidYMid slice" }, lg);
+    const halo = K.el("circle", { cx: 0, cy: 0, r: 150, fill: "none", stroke: C.goldLt, "stroke-width": 3, opacity: 0 }, lg);
+    const t1 = K.text(g, "Subscribe to", 800, 330, { size: 40, weight: 400, anchor: "start", fill: C.cream });
+    const t2 = K.text(g, c.name, 800, 410, { size: 74, weight: 700, anchor: "start", ls: 6, fill: C.cream });
+    const t3 = K.text(g, c.handle, 802, 456, { size: 28, weight: 400, anchor: "start", fill: C.fog });
+    // button
+    const btn = K.g(g, 930, 532);
+    const pill = K.el("rect", { x: -130, y: -36, width: 260, height: 72, rx: 36, fill: "#E8353B" }, btn);
+    const bl = K.text(btn, "SUBSCRIBE", 0, 12, { size: 30, weight: 700, ls: 3, fill: "#FFFFFF" });
+    const bell = K.g(g, 1100, 532);
+    K.el("path", { d: "M-16 10 C-16 -4 -12 -16 0 -18 C12 -16 16 -4 16 10 L20 14 L-20 14 Z M-5 18 C-4 24 4 24 5 18 Z", fill: C.cream }, bell);
+    // cursor (an arrow pointer)
+    const cur = K.g(g, 0, 0);
+    K.el("path", { d: "M0 0 L0 38 L10 29 L17 45 L24 42 L17 26 L30 26 Z", fill: "#FFFFFF", stroke: "#0E1822", "stroke-width": 2.5, "stroke-linejoin": "round" }, cur);
+    const click = K.el("circle", { cx: 930, cy: 532, r: 10, fill: "none", stroke: "#FFFFFF", "stroke-width": 3, opacity: 0 }, g);
+    // question card
+    const qc = K.card(g, 960, 760, 1060, 170); K.op(qc, 0);
+    const bub = K.g(qc, -440, 0);
+    K.el("path", { d: "M-46 -34 H46 A14 14 0 0 1 60 -20 V16 A14 14 0 0 1 46 30 H-6 L-30 50 L-24 30 H-46 A14 14 0 0 1 -60 16 V-20 A14 14 0 0 1 -46 -34 Z", fill: C.gold }, bub);
+    [-24, 0, 24].forEach((x) => K.el("circle", { cx: x, cy: -2, r: 6, fill: "#1A2D3E" }, bub));
+    const q1 = K.text(qc, c.question, 60, -12, { font: "serif", size: 50, fill: C.cream });
+    const q2 = K.text(qc, c.sub + " ↓", 60, 44, { size: 32, weight: 400, fill: C.gold });
+    const card = { g };
+    card.draw = (t, t0, tq) => {
+      tq = tq ?? t0 + 3.2;
+      K.op(g, K.eo(K.prog(t, t0, 0.6)));
+      const lk = K.settle(t, t0 + 0.1, 0.7, 0.08); K.tf(lg, 610, 400, 0.85 + 0.15 * lk);
+      K.op(halo, 0.5 * (1 - K.prog(t, t0 + 0.3, 1.2)) * (t > t0 + 0.3 ? 1 : 0)); K.attr(halo, { r: 140 + 60 * K.eo(K.prog(t, t0 + 0.3, 1.2)) });
+      [t1, t2, t3].forEach((e, i) => K.rise(e, K.eo(K.prog(t, t0 + 0.3 + i * 0.15, 0.6)), 22));
+      // cursor glides in, presses on the button (hit-stop + pop), button flips to SUBSCRIBED
+      const tc = t0 + 1.9, h = K.act(t, [{ t: tc, stop: 0.1, shake: 0.18, amp: 3 }]);
+      const mv = K.eio(K.prog(h.t, t0 + 0.8, 1.1)), cx = K.lerp(1500, 940, mv), cy = K.lerp(820, 540, mv);
+      const press = t >= tc && t < tc + 0.16 ? 0.85 : 1;
+      K.tf(cur, cx + h.sx, cy + h.sy, press); K.op(cur, K.eo(K.prog(t, t0 + 0.7, 0.3)) * (1 - K.prog(t, tc + 0.9, 0.4)));
+      const on = t >= tc;
+      K.op(btn, K.eo(K.prog(t, t0 + 0.5, 0.5)));
+      K.tf(btn, 930 + h.sx, 532 + h.sy, on ? K.settle(t, tc, 0.45, 0.12) * 0.12 + 0.88 + (t < tc + 0.1 ? 0 : 0) : 1);
+      pill.setAttribute("fill", on ? "#3A4A58" : "#E8353B"); bl._t.textContent = on ? "SUBSCRIBED ✓" : "SUBSCRIBE";
+      K.op(click, on ? 1 - K.prog(t, tc, 0.5) : 0); K.attr(click, { r: 10 + 50 * K.eo(K.prog(t, tc, 0.5)) });
+      K.op(bell, on ? K.eo(K.prog(t, tc + 0.1, 0.3)) : 0); K.tf(bell, 1100, 532, 1, on ? 18 * Math.sin((t - tc) * 22) * Math.exp(-(t - tc) * 3) : 0);
+      // the question arrives when it is spoken, the bubble dots bounce like typing
+      const qk = K.eo(K.prog(t, tq - 0.3, 0.7)); K.op(qc, qk); K.tf(qc, 960, 760 + (1 - qk) * 30);
+      bub._x = -440; K.tf(bub, -440, 0, 1 + 0.04 * Math.sin(t * 3));
+      Array.from(bub.querySelectorAll("circle")).forEach((d, i) => d.setAttribute("cy", (-2 - 5 * Math.max(0, Math.sin(t * 6 - i * 0.7))).toFixed(1)));
+    };
+    return card;
+  };
+})();

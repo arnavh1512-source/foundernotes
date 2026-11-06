@@ -3,7 +3,7 @@
 Values left as `TBD` fall back to the defaults shown.
 
 ## Identity
-- **Channel name:** Hunting Titles
+- **Channel name:** Founder Notes (@FounderNotesin, https://www.youtube.com/@FounderNotesin)
 - **Niche / promise:** TBD (e.g. "the mechanisms behind ideas experts argue about, in under 10 minutes")
 - **Audience:** English-speaking, global, curious non-specialists; no assumed prior knowledge
 - **What we never do:** clickbait we can't pay off; medical/financial advice; reuse of podcast footage or voices
@@ -52,3 +52,12 @@ Values left as `TBD` fall back to the defaults shown.
 - New characters in every video. Check `assets/ink-gold-kit/CAST.md` and differ from every earlier lead in
   at least 4 of: skin tone, hair style, facial hair, glasses, build, outfit colours. Log the new cast there.
 - Real people are never drawn.
+
+## Channel identity and the ending (owner rule)
+- **The channel:** Founder Notes, at https://www.youtube.com/@FounderNotesin. The tagline is "One big idea from every founder story".
+  Note that @FounderNotes is a different channel.
+- **The logo:** the channel's own avatar, in `assets/ink-gold-kit/channel/logo.png`.
+- **The ending of every video:**
+  - the **closing narration line** asks viewers to subscribe and asks the comment question, e.g. "…subscribe to Founder Notes. And tell us in the comments: what topic should we cover next?";
+  - the **end card** is `K.endCard(S)`: logo, "Subscribe to FOUNDER NOTES", a cursor clicking the subscribe button, then the question card "What topic should we cover next? / Tell us in the comments".
+- **The package:** the description ends with the subscribe link plus the question, and the pinned comment opens with the question.

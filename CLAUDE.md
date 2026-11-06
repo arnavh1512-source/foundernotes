@@ -13,7 +13,7 @@ YouTube videos.
 - Main skill: `/podcast-scout-skill` (research → briefs → script → male narration → scenes →
   edit → QA → upload package). Companion skills: `/motion` (default HTML scene engine), `/collage-director` (paper-collage motion graphics on MuAPI), `/animation-styles` (10 named looks drawn in code) and
   `/design-me` (design/motion router).
-- **Subtitles burned into every video** (assemble.py default). **Backgrounds rotate** and **every video gets a new cast** (CAST.md; no two adjacent scenes alike; kit in `.claude/skills/podcast-scout-skill/assets/ink-gold-kit`). Never credit or name source podcasts (see channel-profile.md).
+- **Subtitles burned into every video** (assemble.py default). **Backgrounds rotate** and **every video gets a new cast** (CAST.md; no two adjacent scenes alike; kit in `.claude/skills/podcast-scout-skill/assets/ink-gold-kit`). Never credit or name source podcasts. **Every video ends with the Founder Notes end card** (logo, subscribe, "What topic should we cover next?" comment question; `K.endCard`) and a closing CTA line (see channel-profile.md).
 - Work goes in `studio-output/<slug>/` (gitignored). Never upload or publish; the owner uploads.
 - Channel settings live in `channel-profile.md` at the repo root (template in
   `.claude/skills/podcast-scout-skill/assets/channel-profile.md`).
