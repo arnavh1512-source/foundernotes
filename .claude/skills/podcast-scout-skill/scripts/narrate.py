@@ -26,7 +26,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
-import json
+import json, time
 import os
 import re
 import shutil
@@ -311,11 +311,20 @@ def synth_voicebox(text, voice, speed, out: Path, seed=42, engine=None):
         body["engine"] = eng
     if os.environ.get("VOICEBOX_INSTRUCT"):
         body["instruct"] = os.environ["VOICEBOX_INSTRUCT"]
-    req = urllib.request.Request(f"{base}/generate/stream", data=json.dumps(body).encode(),
-                                 headers={"Content-Type": "application/json"})
     tmp = out.with_suffix(".raw.wav")
-    with urllib.request.urlopen(req, timeout=1800) as r:
-        tmp.write_bytes(r.read())
+    for attempt in range(3):                 # an engine error on one seed: try again with the next seed
+        req = urllib.request.Request(f"{base}/generate/stream", data=json.dumps(body).encode(),
+                                     headers={"Content-Type": "application/json"})
+        try:
+            with urllib.request.urlopen(req, timeout=1800) as r:
+                tmp.write_bytes(r.read())
+            break
+        except urllib.error.HTTPError as e:
+            if e.code < 500 or attempt == 2:
+                raise
+            print(f"  voicebox: server error {e.code}, retrying with seed {body['seed'] + 1}", file=sys.stderr)
+            body["seed"] = int(body["seed"]) + 1
+            time.sleep(2)
     to_master_format(tmp, out, speed=speed)
     tmp.unlink(missing_ok=True)
 
