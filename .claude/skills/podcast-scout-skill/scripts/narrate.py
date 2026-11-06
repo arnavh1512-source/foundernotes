@@ -56,11 +56,11 @@ DEFAULT_VOICE = {"kokoro": "am_michael", "piper": "en_US-ryan-high", "edge": "en
 ENGINE_ORDER = ["kokoro", "piper", "edge"]
 # Parler-TTS: the voice is a written DESCRIPTION (no reference recording, no cloning). Chosen by the owner after an
 # A/B listen (2026-11): pitch movement 8.6 st vs 3.8 st for Kokoro, earshot "Speech synthesizer" 0.71 vs 0.89.
-PARLER_DESC = ("A male speaker with a warm, expressive and animated voice tells a story with varied intonation and "
-               "natural pauses, at a moderate pace. The recording is very clear and close-sounding, with almost no "
-               "background noise.")
+PARLER_DESC = ("A man with a warm, low-pitched voice speaks in a calm, friendly, conversational tone, like a teacher "
+               "explaining something interesting, with natural pauses at a moderate pace. The recording is very clear and "
+               "close-sounding, with almost no background noise.")   # owner-approved channel voice ("C"), 2026-11-06
 PARLER_MODEL = os.environ.get("PARLER_MODEL", "parler-tts/parler-tts-mini-v1")
-PARLER_VOICE_V = "anchor1"   # one channel voice: anchor take + best-of-N speaker match + pitch settling (parler_worker.py)
+PARLER_VOICE_V = "anchor-c1"   # one channel voice: anchor take + best-of-N speaker match + pitch settling (parler_worker.py)
 
 
 def parler_python():
@@ -549,7 +549,7 @@ def main(argv=None):
                 jf = td / "parler_jobs.json"
                 jf.write_text(json.dumps({"model": PARLER_MODEL, "description": voice, "jobs": jobs}))
                 env_ = dict(os.environ)
-                env_.setdefault("PARLER_ANCHOR", str(VOICES_DIR / "parler_anchor.wav"))   # the channel voice, reused
+                env_.setdefault("PARLER_ANCHOR", str(Path(__file__).resolve().parent.parent / "assets" / "voice" / "founder-notes-narrator.wav"))   # the channel voice, kept in the repo
                 subprocess.run([parler_python(), str(Path(__file__).with_name("parler_worker.py")), str(jf)], check=True, env=env_)
         for i, s in enumerate(data["segments"]):
             text = " ".join(str(s["text"]).split())
