@@ -276,3 +276,40 @@ the user runs; our channel draws in code, so we take the grammar, not the pipeli
   `K.camera`; the ui layer stays still, so put zoomed annotations in `S.world`.
 - **Open on motion, never a still** ("NEGATIVE: static freeze at start"); their first shot is a 0.6 s macro whip.
 - **Characters emote, they don't lip-sync** in narrated films: acting and gesture carry the beat; the narrator talks.
+
+## 17. Lessons from four prompt-pack skills (documentary, commercial pipeline, creative formats, paper-cut motion)
+All four write prompts for paid image/video generators the user runs (Seedance, Nano Banana, GPT Image). We draw in
+code, so the generation steps don't apply. The craft does, read in full and restated in our own words:
+- **Documentary (case file).** Tell a myth test as a reconstructed TIMELINE: every scene carries a small monospaced
+  stamp in a corner ("FILE · 2017 · N = 520", "2022 · REPLICATION", "2024 · 33 STUDIES") and the narration cites it.
+  One accent colour per film marks what matters. **Withhold, then name** (call it "the result" until the reveal).
+  Every non-final scene ends on an open loop; the last one closes the big loop and stamps it shut with a flat kicker.
+  Narration for a clinical read runs ~2.4 words/s; budget under, never over ("the edit can breathe; it can't
+  compress"). **Voice calibration sentence:** pick the most case-file line of the script and render it 3-5 ways,
+  changing one dial at a time, before voicing the whole film. Our narrator stays warm (owner's pick), but the
+  calibration habit applies to Parler descriptions. Real events: verified facts only, no lingering on victims.
+- **Commercial pipeline (locks).** *If something keeps breaking between shots, stop describing it better inside
+  every shot; give it its own lock.* For animators: anything that must hold across scenes (the desk position, the
+  phone's facing, the Student's colours, the pin's corner) is a named rule in ANIMATOR-BRIEF, not repeated prose.
+  **Lighting as named states** tagged per scene (our chapter looks), switching ON the word, not after it.
+  **Edit acceleration:** cut-ins get faster toward the climax while the subject stays slow, with the two or three
+  beats that must breathe named as exceptions (here: the held silence before "nothing"). **Start every segment on
+  the action**; delete run-ups rather than shortening them. **Complexity budget:** once a scene reads clean, stop;
+  revert rather than fixing forward. Judge each render on 3-4 named checks, never "looks nice".
+- **Paper animation (5 lanes + transitions).** Paper reads as paper through grain, cast shadows, imperfect edges,
+  PLANAR motion and stepped 12 fps timing; smooth easing kills it (our `K.onTwos` + `K.paper`). Paper's superpower
+  is the **material as the transition**: page turn, layer peel, torn reveal, cut-through push into an opening,
+  foreground wipe past a big paper element. Use one where the film changes setting; hard cuts inside a setting.
+- **Paper-cut motion (assembly grammar).** Build back-to-front (backdrop from above/sides → ground from below → set
+  pieces → crowd row by row → props → hero LAST, part by part, base-up), each piece with its hard shadow; one
+  cause→effect action beat after assembly with a payoff of tiny scattered paper flecks; paper-only foley.
+  Its bundled style reference shows a real footballer and real logos: not used.
+- **Claymation (start/end frame transitions).** A **shared anchor object** sits at the same place and scale in
+  the last frame of scene A and the first of scene B, and ONE physical action carries one into the other; anything
+  that leaves must be removed by that action. A **carrier element** can travel the whole film (here: the phone).
+- **Talking object (three-layer rule).** Every beat moves on at least two of three layers: camera, character,
+  environment reacting. **The visual is the proof of the line**: with the sound off, the viewer still follows.
+- **Skeleton ads (escalating spine).** One recurring character, a curiosity-gap question, rungs that escalate
+  (Day 1 → Day 30 → Day 365; 1 → 5 → 25), one line = one beat = one rung. Good shape for Shorts and for myth
+  escalation scenes (our sc07 retelling chain is exactly this ladder).
+- **Song-style ad:** a music-video ad format; not used on this channel (no lip-sync, narrator-led).
