@@ -9,6 +9,8 @@
 // --alpha   transparent ProRes 4444 .mov (the page must not paint a background)
 // --poster  frame 0 shows the frame at this time, so thumbnails show a settled frame
 // --audio   use this file instead of the page's window.motionAudio()
+// --blur N  real motion blur: N sub-frames per frame across a 180° shutter (half the frame interval), averaged
+//           (idea from the code-animation community's "average 6 subframes"). Costs N× render time; 3–4 is plenty.
 // MOTION_CHROMIUM=/path/to/chrome overrides the browser Playwright would launch.
 import { spawn, execFileSync } from "node:child_process";
 import { createRequire } from "node:module";
@@ -111,13 +113,15 @@ async function video(page, spec, opts) {
     writeFileSync(audio, Buffer.from(await page.evaluate(() => window.motionAudio()), "base64"));
   }
 
-  const args = ["-f", "image2pipe", "-framerate", String(fps), "-i", "-"];
+  const blur = opts.draft ? 1 : Math.max(1, parseInt(opts.blur || "1", 10));
+  const args = ["-f", "image2pipe", "-framerate", String(fps * blur), "-i", "-"];
   if (audio) args.push("-i", audio, "-af", "loudnorm=I=-14:LRA=11:TP=-1", "-t", String(spec.duration));
   if (opts.alpha) {
     args.push("-c:v", "prores_ks", "-profile:v", "4444", "-pix_fmt", "yuva444p10le");
     if (audio) args.push("-c:a", "pcm_s16le");
   } else {
-    args.push("-vf", "scale=trunc(iw/2)*2:trunc(ih/2)*2", "-c:v", "libx264", "-pix_fmt", "yuv420p",
+    const vf = (blur > 1 ? `tmix=frames=${blur},framestep=${blur},` : "") + "scale=trunc(iw/2)*2:trunc(ih/2)*2";
+    args.push("-vf", vf, "-r", String(fps), "-c:v", "libx264", "-pix_fmt", "yuv420p",
       "-crf", opts.draft ? "26" : "16", "-preset", opts.draft ? "veryfast" : "slow", "-movflags", "+faststart");
     if (audio) args.push("-c:a", "aac", "-b:a", "192k");
   }
@@ -127,8 +131,11 @@ async function video(page, spec, opts) {
   const started = Date.now();
   for (let i = 0; i < frames; i++) {
     const t = i === 0 && opts.poster !== undefined ? Number(opts.poster) : i / fps;
-    if (!enc.stdin.write(await shoot(page, t, !!opts.alpha))) {
-      await new Promise((resolve) => enc.stdin.once("drain", resolve));
+    for (let k = 0; k < blur; k++) {           // sub-frames end on t, so the last one is the sharp "real" frame
+      const tk = Math.max(0, t - ((blur - 1 - k) / blur) * (0.5 / fps));
+      if (!enc.stdin.write(await shoot(page, tk, !!opts.alpha))) {
+        await new Promise((resolve) => enc.stdin.once("drain", resolve));
+      }
     }
     if (i % fps === 0) process.stdout.write(`\r${i}/${frames} frames`);
   }

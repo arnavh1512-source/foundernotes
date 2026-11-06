@@ -197,3 +197,46 @@ Most of this costs nothing. It changes how we plan and direct, whatever the engi
   and the channel rules: no podcast names, a source line on numbers, the caption zone, rotating backdrops, and the film's cast.
 - pixelfx itself (244 pixel-art effects, sprite sheets) suits a pixel-art or game-themed film. Running its code needs the
   owner's OK in this environment (external code).
+
+## 14. Lessons from 703 viral code-made videos and a step-by-step motion tutorial
+Sources: yihui-dev/awesome-opus5-5-videos (prompts and categories, analysed in full), and @janustiu's
+"Claude motion videos, step by step" (7 styles, a base block, a fix table).
+
+**What the best briefs have in common** (counts out of 703 prompts):
+| Technique | Prompts |
+|---|---|
+| A beat grid ("something happens on every beat") | 49 |
+| Springs with a tiny overshoot | 33 |
+| A cursor or hand that drives the action | 31 |
+| One continuous shot ("one shape, never cut") or match cuts | 31 |
+| Morphing the same element between states | 29 |
+| Real motion blur from averaged sub-frames | 28 |
+| Sound synced to every action | 23 |
+| Real data or a real simulation | 17 |
+
+**How to apply them:**
+- **One strong formal idea per scene, and one device for the film.** A recurring object or line carries every shot: our gold thread, or one ball. That object is what makes a film feel authored rather than like a list of effects.
+- **Simulate the real thing where we can:** a random walk is an actual random walk, a distribution is drawn from data. State the uncertainty honestly.
+- **Keep attention** with small gags, onomatopoeia and **callbacks** (an early image paying off late). A parallel timeline helps where it fits ("meanwhile on Earth…").
+- **Transition grammar:**
+  - content enters after its container starts moving, and leaves before the next move, so text never overlaps;
+  - a short blur on transitions;
+  - never fade black straight into the accent colour; move an accent element between states instead;
+  - the camera zooms so each state fills the frame;
+  - loops end on their first frame.
+- **Springs:** closed-form, tiny overshoot. When a target changes again, add one spring per change rather than restarting.
+- **Motion blur:** `motion/scripts/render.mjs --blur 3` renders 3 sub-frames across a 180° shutter and averages them. Use it on fast camera cut-ins, impacts and flights. It costs about 3× render time, so use it per scene, not by habit.
+- **Write every style recipe the same way:**
+  - **opening line:** what it is, its length and format;
+  - **IDEA:** the one device;
+  - **BEATS:** time ranges, what's on screen, the exact words;
+  - **LOOK:** hex codes, type, texture;
+  - **MOTION:** where it's fast, where it holds, how scenes hand over;
+  - **SOUND:** tempo, instruments, and one sound per action.
+- **Storyboard gate:** a beat map with timestamps plus 4 key stills before any build. Approve, then build.
+- **Fix by timestamp, specifically:**
+  - "Text at least 60 px tall at 1080 wide."
+  - "Re-time the score so every hit lands on the exact frame."
+  - "At 3 s only the top half is used: fill the frame."
+  - "Too digital: add grain, line wobble and frame-to-frame jitter."
+- **Before delivery:** watch on a phone; check the first second works with the sound off; make sure no text sits under the platform's buttons.

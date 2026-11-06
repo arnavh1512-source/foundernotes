@@ -1,6 +1,6 @@
 ---
 name: animation-styles
-description: Turns a script, a podcast-scout brief or a one-line idea into an animated video in one of 10 looks - Pixel Art, Chalkboard, Glow Sketch, PS2, Comic Art, Flat Vector, Dan Koe style, CGI Motion, Lego style or ZackD Films style. Use when someone names one of these styles (or /pixelart, /chalkboard, /glowsketch, /ps2, /comicart, /flatvector, /dankoe, /cgimotion, /lego, /zackd), or asks to animate a script, story or idea in a named look.
+description: Turns a script, a podcast-scout brief or a one-line idea into an animated video in one of 17 looks - Pixel Art, Chalkboard, Glow Sketch, PS2, Comic Art, Flat Vector, Dan Koe style, CGI Motion, Lego style or ZackD Films style. Use when someone names one of these styles (or /pixelart, /chalkboard, /glowsketch, /ps2, /comicart, /flatvector, /dankoe, /cgimotion, /lego, /zackd), or asks to animate a script, story or idea in a named look.
 ---
 
 # Animation Styles
@@ -22,6 +22,13 @@ Match the user's words to a style file in `references/styles/` (case doesn't mat
 | CGI Motion, /cgimotion, cinematic 3D | `cgi-motion.md` |
 | Lego, /lego, toy bricks, brick-built | `lego.md` |
 | ZackD Films, /zackd, clay 3D, 3D explainer | `zackd-films.md` |
+| One line, /oneline, continuous line, pen never lifts | `one-line-graph.md` |
+| Showreel, /showreel, one object through every technique | `one-ball-showreel.md` |
+| ASCII, /ascii, terminal, text-mode 3D | `ascii-terminal.md` |
+| Dither, /dither, handheld console, 4-colour pixels | `pixel-dither.md` |
+| Risograph, /riso, cut-out stop motion | `risograph-cutout.md` |
+| Codex, /codex, inventor's notebook, parchment | `renaissance-codex.md` |
+| Ink in water, /ink, particle bloom | `ink-in-water.md` |
 
 No style named? Ask one short question: "Which style should I use: Pixel Art, Chalkboard, Glow Sketch, PS2, Comic Art, Flat Vector, Dan Koe, CGI Motion, Lego or ZackD Films?" If a style was already chosen earlier in the chat, reuse it.
 
