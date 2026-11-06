@@ -240,3 +240,39 @@ Sources: yihui-dev/awesome-opus5-5-videos (prompts and categories, analysed in f
   - "At 3 s only the top half is used: fill the frame."
   - "Too digital: add grain, line wobble and frame-to-frame jitter."
 - **Before delivery:** watch on a phone; check the first second works with the sound off; make sure no text sits under the platform's buttons.
+
+## 15. Lessons from "Claude Creative Skill Library Vol. 2" (landing page only; the skills themselves weren't included)
+The six skills (3D animation, cartoon episodes, documentary, ad formats, paper-cut motion, commercial pipeline) drive
+AI image and video generators. Their methods transfer to our code-made films:
+- **Close a loop the brain needs closed.** Open a question in the first seconds and pay it off late. Plant one "remember this" mid-film.
+- **Define the world once, then build every scene on it.** A series bible covers the channel's cast policy, palette, type,
+  motifs, sound identity, chapter tracker and end card. The bible is `channel-profile.md` plus the kit; the per-film cast goes in CAST.md.
+  Never redesign a character mid-film.
+- **The documentary "case file":** chapters, an asset sheet for every character and location, one plan per scene *with its
+  sound design*, and the narrator script. Our STORYBOARD rows should name each scene's sounds as well as its picture.
+- **Lock one style and one character across every beat** of a format. A style change is a chapter-level decision, never a whim.
+- **Paper-cut motion:** the scene assembles itself piece by piece (torn paper sliding in, layering, settling). `collage-director` covers this.
+- **Lock every reference before assembling** (5–8 key frames). When something breaks, rewrite only that section; don't regenerate the whole film.
+- **Finishing moves** in the cut: zoom-ins on the line that matters, and a small shake on impacts (`K.act`).
+
+## 16. Lessons from two "studio-in-a-folder" packs (3D myth-buster shorts; cartoon episodes)
+The owner shared each pack's CLAUDE.md, README and EXPLAINER, plus one finished production pack (a 30 s Trojan Horse
+myth-buster). The skills themselves weren't included. Both packs write prompts for paid image/video generators that
+the user runs; our channel draws in code, so we take the grammar, not the pipeline.
+- **Four-beat myth script: MYTH → TWIST → MECHANISM (A, B) → KICKER.** 85 words carry a whole short. The kicker
+  restates the myth's own words, turned ("Troy didn't fall to a horse. It fell to one silent night"). Use it for every
+  Shorts cut, and as the spine of a long video's cold open.
+- **Define once, reuse forever** ("whatever you don't define, the AI invents"). Their asset sheets are our CAST.md
+  rigs, `K.FILM_BACKDROPS` and props built once in kit-loop.js. A **style formula pasted byte-identical** everywhere
+  is our shared kit + palette; never restyle a prop per scene.
+- **Shot lists with hard timecodes.** 9 hard cuts per 10 s, each ~0.6–1.4 s: macro → wide → low angle → close-up →
+  x-ray → macro eye → POV pull-back. In our scenes that means a camera move or reframe every ~1 s inside a 5–8 s
+  scene, not one static layout per sentence.
+- **Glowing annotation that draws itself** around the hidden thing (the seam, the bar, the zero line), in ONE
+  meaning-colour (green = "look here / evidence"), and a **red dashed path** for routes and sightlines →
+  `K.trace(layer, d, {at})` and `K.dashPath(layer, d, {at})`.
+- **Edit map: punch-ins and shakes on WORDS.** A draft map is written before voicing, then every punch moves to the
+  twist/kicker word's timestamp once the narration exists → `K.punch(t, [{t: wordTime, z: 1.12}])` feeding
+  `K.camera`; the ui layer stays still, so put zoomed annotations in `S.world`.
+- **Open on motion, never a still** ("NEGATIVE: static freeze at start"); their first shot is a 0.6 s macro whip.
+- **Characters emote, they don't lip-sync** in narrated films: acting and gesture carry the beat; the narrator talks.

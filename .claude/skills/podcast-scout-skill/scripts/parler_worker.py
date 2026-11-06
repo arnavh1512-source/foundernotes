@@ -18,11 +18,39 @@ from transformers import AutoTokenizer, logging as hf_logging
 hf_logging.set_verbosity_error()
 
 
+MAX_WORDS = 14   # Parler skips clauses on long inputs (ASR caught whole phrases missing): keep chunks short
+
+
 def sentences(text):
-    return [s for s in re.split(r"(?<=[.!?])\s+", text.strip()) if s.strip()]
+    """Sentences, then long ones split at colons/semicolons, then at the comma nearest the middle, until every chunk
+    is <= MAX_WORDS words. Chunks inside a sentence get a short breath, between sentences a full pause."""
+    out = []
+    for snt in [s for s in re.split(r"(?<=[.!?])\s+", text.strip()) if s.strip()]:
+        parts = [snt]
+        changed = True
+        while changed:
+            changed = False
+            nxt = []
+            for p in parts:
+                w = p.split()
+                if len(w) <= MAX_WORDS:
+                    nxt.append(p); continue
+                cut = None
+                m = [mm.end() for mm in re.finditer(r"[:;]\s", p)] or [mm.end() for mm in re.finditer(r",\s", p)]
+                if m:
+                    mid = len(p) / 2
+                    cut = min(m, key=lambda c: abs(c - mid))
+                if cut is None or cut <= 0 or cut >= len(p):
+                    nxt.append(p); continue
+                nxt += [p[:cut].strip(), p[cut:].strip()]; changed = True
+            parts = nxt
+        out += parts
+    return out
 
 
 def pause_after(s, nxt):
+    if not re.search(r"[.!?]$", s.strip()):          # a clause break inside a sentence: a short breath
+        return 0.16 if s.strip().endswith(",") else 0.24
     p = 0.38
     if s.rstrip().endswith("?"):
         p += 0.18

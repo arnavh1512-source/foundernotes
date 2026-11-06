@@ -260,3 +260,130 @@
     return card;
   };
 })();
+
+/* ---------- paper-cut self-assembly (our own code; grammar adapted from a paper-cut motion prompt kit) ----------
+ * Every piece is a flat pre-cut torn-paper shape with a hard drop shadow that ENTERS FROM OUTSIDE THE FRAME and locks
+ * into place. Build far-to-near: backdrop → ground → set pieces → crowd → props → hero (base-up: feet … head, hair last).
+ * Motion is stop-motion: stepped "on threes" (~10 fps) with tiny per-piece misalignment, then settles with micro-adjusts.
+ * Allowed verbs: slide, drop, rotate, tumble, lift, scatter, tip, snap. Never morph, fold or bend.
+ * Sound: paper-only foley on each landing (slides, taps, drops).
+ *
+ *   const P = K.paper(S, layer)                       // one assembler per scene
+ *   P.piece(svgOrPathD, { fill, from: "top|bottom|left|right|tl|tr|bl|br", at: t0, dur: 0.5, x, y, rot })
+ *   P.text("CHAPTER 2 · THE SPREAD", x, y, { size, fill, from, at })   // a torn-paper label strip with text
+ *   P.draw(t)                                         // call every frame; returns landing times for foley
+ */
+(function () {
+  const K = window.K;
+  let fid = 0;
+  K.paper = (S, layer) => {
+    const id = "torn" + (++fid);
+    // rough torn edge: displace the shape's outline with turbulence; paper grain via a second noise
+    K.el("filter", { id, x: "-10%", y: "-10%", width: "120%", height: "120%" }, K.defs).innerHTML =
+      `<feTurbulence type="fractalNoise" baseFrequency="0.045" numOctaves="2" seed="${fid * 7}" result="n"/>
+       <feDisplacementMap in="SourceGraphic" in2="n" scale="7" xChannelSelector="R" yChannelSelector="G" result="d"/>
+       <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="1" seed="${fid * 3}" result="g"/>
+       <feColorMatrix in="g" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.10 0" result="ga"/>
+       <feComposite in="ga" in2="d" operator="in" result="gr"/>
+       <feMerge><feMergeNode in="d"/><feMergeNode in="gr"/></feMerge>`;
+    const pieces = [];
+    const FROM = { top: [0, -1], bottom: [0, 1], left: [-1, 0], right: [1, 0], tl: [-1, -1], tr: [1, -1], bl: [-1, 1], br: [1, 1] };
+    const P = {
+      piece(d, o = {}) {
+        const g = K.g(layer, 0, 0);
+        const sh = K.el("path", { d, fill: "#000", opacity: 0.32, transform: "translate(7 9)" }, g);      // hard shadow
+        const p = K.el("path", { d, fill: o.fill || "#E9DFC9", filter: `url(#${id})`, stroke: "#FFFFFF", "stroke-width": o.edge ?? 3, "stroke-opacity": 0.55 }, g);
+        const n = pieces.length;
+        pieces.push(Object.assign({ g, p, sh, n, x: o.x || 0, y: o.y || 0, rot: o.rot || 0, from: FROM[o.from || "top"], at: o.at || 0, dur: o.dur || 0.5,
+          jx: (K.rand(n * 3.1 + fid) - 0.5) * 5, jr: (K.rand(n * 5.7 + fid) - 0.5) * 3 }));
+        return g;
+      },
+      text(str, x, y, o = {}) {
+        const w = (o.size || 44) * 0.62 * str.length + 60, h = (o.size || 44) * 1.6;
+        const g = P.piece(`M${-w / 2} ${-h / 2} H${w / 2} V${h / 2} H${-w / 2} Z`, Object.assign({ x, y }, o, { fill: o.bg || "#F1E7D2" }));
+        K.text(g, str, 0, (o.size || 44) * 0.36, { size: o.size || 44, weight: 700, fill: o.fill || "#1B2630", ls: o.ls ?? 4 });
+        return g;
+      },
+      draw(t) {
+        const land = [];
+        pieces.forEach((q) => {
+          const ts = Math.floor((t - q.at) * 10) / 10;                // stepped on threes (~10 fps)
+          const k = K.clamp(ts / q.dur), e = K.eo(k);
+          const off = (1 - e) * 1300;                                  // starts outside the frame
+          const settle = k >= 1 ? K.settle(t, q.at + q.dur, 0.35, 0.06) : 1;
+          const mis = (1 - K.clamp((t - q.at - q.dur) / 0.4)) * (k >= 1 ? 1 : 0);   // tiny misalignment then lock
+          K.tf(q.g, q.x + q.from[0] * off + q.jx * mis, q.y + q.from[1] * off + q.jr * mis, 0.98 + 0.02 * settle, q.rot + q.jr * (1 - e) * 4 + q.jr * mis);
+          K.op(q.g, t >= q.at ? 1 : 0);
+          land.push(q.at + q.dur);
+        });
+        return land;
+      },
+    };
+    return P;
+  };
+})();
+
+/* ---------- annotations + punch-ins (from the 3D myth-buster pack's edit grammar, our own code) ----------
+ * K.trace(layer, d, { color, width, at, dur, glow })  a glowing outline that DRAWS ITSELF around the thing that
+ *   matters (the hidden seam, the zero line, the one number). Call tr.draw(t). Default neon green = "look here".
+ * K.dashPath(layer, d, { color, at, dur })  a red dashed route/sightline that extends, then marches. dp.draw(t).
+ * K.punch(t, punches)  -> zoom factor for K.camera. punches: [{ t, z = 1.12, hold = 0.5, x, y }]; snaps in over
+ *   2 frames on the twist WORD (take t from timings.json word times), holds, eases back. Returns { z, x, y }.
+ * Rule: one annotation colour per meaning across a film (green = evidence/look here, red = path/claim).
+ */
+(function () {
+  const K = window.K;
+  const NS = "http://www.w3.org/2000/svg";
+  let fid = 0;
+  const glowFilter = (layer, color) => {
+    const svg = layer.ownerSVGElement || layer;
+    let defs = svg.querySelector("defs") || svg.insertBefore(document.createElementNS(NS, "defs"), svg.firstChild);
+    const id = "kglow" + (++fid);
+    const f = document.createElementNS(NS, "filter");
+    f.setAttribute("id", id); f.setAttribute("x", "-50%"); f.setAttribute("y", "-50%");
+    f.setAttribute("width", "200%"); f.setAttribute("height", "200%");
+    f.innerHTML = `<feGaussianBlur stdDeviation="7" result="b"/><feFlood flood-color="${color}" flood-opacity="0.9"/>` +
+      `<feComposite in2="b" operator="in" result="g"/><feMerge><feMergeNode in="g"/><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge>`;
+    defs.appendChild(f);
+    return id;
+  };
+  K.trace = (layer, d, o = {}) => {
+    const color = o.color || "#39FF88", at = o.at ?? 0, dur = o.dur ?? 0.6;
+    const p = K.el("path", { d, fill: "none", stroke: color, "stroke-width": o.width || 6,
+      "stroke-linecap": "round", "stroke-linejoin": "round", opacity: 0 }, layer);
+    if (o.glow !== false) p.setAttribute("filter", `url(#${glowFilter(layer, color)})`);
+    const L = p.getTotalLength ? p.getTotalLength() : 1000;
+    p.setAttribute("stroke-dasharray", L);
+    return { el: p, draw(t) {
+      const k = Math.max(0, Math.min(1, (t - at) / dur)), e = 1 - Math.pow(1 - k, 3);
+      p.setAttribute("opacity", t < at ? 0 : 1);
+      p.setAttribute("stroke-dashoffset", L * (1 - e));
+      // a soft pulse once drawn, so the eye keeps returning to it
+      if (k >= 1) p.setAttribute("stroke-width", (o.width || 6) * (1 + 0.12 * Math.sin((t - at - dur) * 6)));
+    } };
+  };
+  K.dashPath = (layer, d, o = {}) => {
+    const color = o.color || "#E8353B", at = o.at ?? 0, dur = o.dur ?? 0.8;
+    const g = K.el("g", {}, layer);
+    const mask = K.el("path", { d, fill: "none", stroke: color, "stroke-width": o.width || 6, "stroke-linecap": "round",
+      "stroke-dasharray": "18 14", opacity: 0 }, g);
+    const L = mask.getTotalLength ? mask.getTotalLength() : 1000;
+    return { el: mask, draw(t) {
+      const k = Math.max(0, Math.min(1, (t - at) / dur)), e = 1 - Math.pow(1 - k, 3);
+      mask.setAttribute("opacity", t < at ? 0 : 1);
+      // reveal by growing the visible length, then let the dashes march
+      mask.setAttribute("stroke-dasharray", k < 1 ? `${(L * e).toFixed(1)} ${L}` : "18 14");
+      mask.setAttribute("stroke-dashoffset", k < 1 ? 0 : -((t - at - dur) * 60) % 32);
+    } };
+  };
+  K.punch = (t, punches = []) => {
+    let z = 1, x = 960, y = 540;
+    for (const p of punches) {
+      const s = t - p.t, hold = p.hold ?? 0.5, zz = p.z ?? 1.12;
+      if (s < 0 || s > hold + 0.5) continue;
+      const k = s < 0.066 ? s / 0.066 : s < hold ? 1 : 1 - K.eio((s - hold) / 0.5);
+      if (k * (zz - 1) + 1 > z) { z = 1 + k * (zz - 1); x = p.x ?? 960; y = p.y ?? 540; }
+    }
+    return { z, x, y };
+  };
+})();
