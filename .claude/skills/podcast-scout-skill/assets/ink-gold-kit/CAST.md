@@ -23,3 +23,5 @@ Rig options for `new K.Hunter(layer, { colors: {...} })`:
 | One Year, Twenty Times (2026-11) | Looper | light-olive `#D7A47C` | curly | full beard | no | 1.1 | rust jacket, grey trousers |
 | Phone Brain Drain (2026-11) | Student | medium-brown `#A86B45` | long | none | no | 0.92 | coral jacket, denim trousers |
 | Phone Brain Drain (2026-11) | Researcher | light `#E3B48E` | bald | moustache | yes | 1.05 | white lab coat, charcoal trousers |
+| After the Win, film2 re-animation (2026-11) | Founder (lead, "you") | fair `#F0C6A4` | wavy, auburn `#8A3B1E` | stubble | yes (round) | 1.14 | plum jacket, cream tee, ink-navy trousers |
+| After the Win, film2 re-animation (2026-11) | Friend / co-founder | deep umber `#5A3425` | curly, black | stubble | no | 0.9 | sage jacket, white tee, charcoal trousers |
