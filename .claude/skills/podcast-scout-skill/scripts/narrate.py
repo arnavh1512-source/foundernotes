@@ -265,19 +265,56 @@ def synth_edge(text, voice, speed, out: Path):
     tmp.unlink(missing_ok=True)
 
 
-def synth_voicebox(text, voice, speed, out: Path):
-    """voicebox (github.com/jamiepine/voicebox) running locally; voice = profile id of a
-    MALE preset profile (e.g. kokoro am_michael or Qwen CustomVoice Ryan/Aiden)."""
-    base = os.environ.get("VOICEBOX_URL", "http://127.0.0.1:17493")
-    body = {"profile_id": voice, "text": text, "language": "en"}
-    if os.environ.get("VOICEBOX_ENGINE"):
-        body["engine"] = os.environ["VOICEBOX_ENGINE"]
+VOICE_DIR_REPO = Path(__file__).resolve().parent.parent / "assets" / "voice"
+CHANNEL_NARRATOR = "founder-notes"          # alias: the owner-approved channel narrator on voicebox (Chatterbox)
+CHANNEL_NARRATOR_NAME = "Founder Notes Narrator"
+CHANNEL_NARRATOR_ENGINE = "chatterbox"
+
+
+def voicebox_url():
+    return os.environ.get("VOICEBOX_URL", "http://127.0.0.1:17493")
+
+
+def voicebox_channel_profile():
+    """Find (or create once) the channel narrator profile in the local voicebox server. The voice is cloned from a
+    SYNTHETIC reference kept in the repo (assets/voice/founder-notes-narrator-ref.wav, a Parler take; not a real
+    person), so every video, on every machine, gets the same narrator."""
+    base = voicebox_url()
+    with urllib.request.urlopen(f"{base}/profiles", timeout=30) as r:
+        for p in json.loads(r.read()):
+            if p.get("name") == CHANNEL_NARRATOR_NAME and p.get("sample_count", 1):
+                return p["id"]
+    req = urllib.request.Request(f"{base}/profiles", headers={"Content-Type": "application/json"}, data=json.dumps(
+        {"name": CHANNEL_NARRATOR_NAME, "language": "en", "voice_type": "cloned",
+         "description": "Synthetic channel narrator (owner-approved). Not a real person."}).encode())
+    with urllib.request.urlopen(req, timeout=30) as r:
+        pid = json.loads(r.read())["id"]
+    ref, txt = VOICE_DIR_REPO / "founder-notes-narrator-ref.wav", (VOICE_DIR_REPO / "founder-notes-narrator-ref.txt").read_text().strip()
+    bnd = "----narrate" + hashlib.sha1(txt.encode()).hexdigest()[:12]
+    body = (f"--{bnd}\r\nContent-Disposition: form-data; name=\"reference_text\"\r\n\r\n{txt}\r\n"
+            f"--{bnd}\r\nContent-Disposition: form-data; name=\"file\"; filename=\"ref.wav\"\r\nContent-Type: audio/wav\r\n\r\n").encode() \
+        + ref.read_bytes() + f"\r\n--{bnd}--\r\n".encode()
+    req = urllib.request.Request(f"{base}/profiles/{pid}/samples", data=body,
+                                 headers={"Content-Type": f"multipart/form-data; boundary={bnd}"})
+    urllib.request.urlopen(req, timeout=60).read()
+    print(f"narrate: created the voicebox profile '{CHANNEL_NARRATOR_NAME}' from the repo reference", file=sys.stderr)
+    return pid
+
+
+def synth_voicebox(text, voice, speed, out: Path, seed=42, engine=None):
+    """voicebox (github.com/jamiepine/voicebox) running locally; voice = profile id (the channel narrator by default).
+    Each segment is generated in ONE pass, so the voice cannot switch mid-segment."""
+    base = voicebox_url()
+    body = {"profile_id": voice, "text": text, "language": "en", "seed": int(seed)}
+    eng = os.environ.get("VOICEBOX_ENGINE") or engine
+    if eng:
+        body["engine"] = eng
     if os.environ.get("VOICEBOX_INSTRUCT"):
         body["instruct"] = os.environ["VOICEBOX_INSTRUCT"]
     req = urllib.request.Request(f"{base}/generate/stream", data=json.dumps(body).encode(),
                                  headers={"Content-Type": "application/json"})
     tmp = out.with_suffix(".raw.wav")
-    with urllib.request.urlopen(req, timeout=600) as r:
+    with urllib.request.urlopen(req, timeout=1800) as r:
         tmp.write_bytes(r.read())
     to_master_format(tmp, out, speed=speed)
     tmp.unlink(missing_ok=True)
@@ -510,8 +547,16 @@ def main(argv=None):
         if any(p_ not in MALE_VOICES[engine] for p_ in parts_) and not a.allow_non_male:
             die(f"voice '{voice}' is not on the male allowlist for {engine}. "
                 f"Male options: {', '.join(MALE_VOICES[engine])}")
-    elif engine == "voicebox" and not voice:
-        die("voicebox needs --voice <profile id of a male preset profile>")
+    elif engine == "voicebox":
+        voice = voice or CHANNEL_NARRATOR
+    vb_engine = None
+    voice_key = voice
+    if engine == "voicebox" and voice == CHANNEL_NARRATOR:
+        try:
+            voice = voicebox_channel_profile()
+        except Exception as e:
+            die(f"voicebox: server not reachable at {voicebox_url()} ({e}); start it with scripts/voicebox_server.sh")
+        vb_engine = CHANNEL_NARRATOR_ENGINE
     speed = a.speed or vcfg.get("speed", 1.0)
     pv = vcfg.get("perform", False)      # earshot: sentence-split takes read MORE synthetic; opt-in only
     perform = engine == "kokoro" and not a.no_perform and pv not in (False, "flat", "off")
@@ -530,6 +575,10 @@ def main(argv=None):
         parts.append(lead_wav)
         clock = wav_seconds(lead_wav)
         takes = {}
+        if engine == "voicebox":
+            takes = {s_["id"]: int((seg_dir / f"{s_['id']}.take").read_text()) if (seg_dir / f"{s_['id']}.take").exists() else 0
+                     for s_ in data["segments"]}
+        vb_made = []
         if engine == "parler":
             takes = {s_["id"]: int((seg_dir / f"{s_['id']}.take").read_text()) if (seg_dir / f"{s_['id']}.take").exists() else 0
                      for s_ in data["segments"]}
@@ -558,12 +607,12 @@ def main(argv=None):
                 src = Path(a.files_dir or "recordings") / f"{s['id']}.wav"
                 extra = hashlib.sha256(src.read_bytes()).hexdigest() if src.exists() else "missing"
             elif engine == "voicebox":
-                extra = "|".join(os.environ.get(k, "") for k in ("VOICEBOX_URL", "VOICEBOX_ENGINE", "VOICEBOX_INSTRUCT"))
+                extra = "|".join(os.environ.get(k, "") for k in ("VOICEBOX_ENGINE", "VOICEBOX_INSTRUCT")) + f"|{vb_engine}|take{takes.get(s['id'], 0)}"
             if perform:
                 extra += "|" + PERFORM_VERSION + perform_mode
             if engine == "parler":
                 extra = f"{PARLER_MODEL}|{PARLER_VOICE_V}|take{takes.get(s['id'], 0)}"
-            key = hashlib.sha256(f"{engine}|{voice}|{speed}|{text}|{extra}".encode()).hexdigest()[:16]
+            key = hashlib.sha256(f"{engine}|{voice_key if engine == 'voicebox' else voice}|{speed}|{text}|{extra}".encode()).hexdigest()[:16]
             wav = seg_dir / f"{s['id']}.wav"
             stamp = seg_dir / f"{s['id']}.key"
             if not (wav.exists() and stamp.exists() and stamp.read_text() == key):
@@ -580,7 +629,8 @@ def main(argv=None):
                 elif engine == "edge":
                     synth_edge(text, voice, speed, wav)
                 elif engine == "voicebox":
-                    synth_voicebox(text, voice, speed, wav)
+                    synth_voicebox(text, voice, speed, wav, seed=42 + 7 * takes.get(s["id"], 0), engine=vb_engine)
+                    vb_made.append(s["id"])
                 else:
                     synth_files(s["id"], Path(a.files_dir or "recordings"), wav, speed)
                 stamp.write_text(key)
@@ -618,7 +668,11 @@ def main(argv=None):
     print(json.dumps({k: meta[k] for k in ("engine", "voice", "duration", "words", "wpm_speech")}))
     if a.asr:
         rc = asr_check(out, timings, a.asr)
-        if engine == "parler" and a.retake > 0:
+        if engine == "voicebox":            # remember what THIS run generated (auto re-takes only touch these)
+            gen_file = out / "_generated_this_run.json"
+            prev = json.loads(gen_file.read_text()) if (gen_file.exists() and os.environ.get("NARRATE_RETAKE_CHAIN")) else []
+            gen_file.write_text(json.dumps(sorted(set(prev) | set(vb_made))))
+        if engine in ("parler", "voicebox") and a.retake > 0:
             rep = json.loads((out / "asr.json").read_text())
             rep = rep if isinstance(rep, list) else rep.get("segments", rep.get("report", []))
             NUMW = re.compile(r"^(\d+|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety|hundred|thousand|percent)$")
@@ -628,7 +682,7 @@ def main(argv=None):
             if bad:
                 for sid in bad:
                     f = seg_dir / f"{sid}.take"; f.write_text(str((int(f.read_text()) if f.exists() else 0) + 1))
-                print(f"narrate: re-taking {len(bad)} parler segment(s) with a new seed: {', '.join(bad)}", file=sys.stderr)
+                print(f"narrate: re-taking {len(bad)} {engine} segment(s) with a new seed: {', '.join(bad)}", file=sys.stderr)
                 argv = [x for x in sys.argv[1:]]
                 if "--retake" in argv:
                     j = argv.index("--retake"); argv[j + 1] = str(a.retake - 1)
