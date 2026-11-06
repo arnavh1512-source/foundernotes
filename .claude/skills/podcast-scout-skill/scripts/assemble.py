@@ -66,6 +66,8 @@ def main(argv=None):
     ap.add_argument("--no-burn", dest="burn", action="store_false", help="soft captions only (mov_text track)")
     ap.add_argument("--sub-font", default="DejaVu Sans", help="font family for burned subtitles")
     ap.add_argument("--sub-fonts-dir", default=None, help="folder with the subtitle font files (e.g. film/fonts)")
+    ap.add_argument("--sub-karaoke", action="store_true",
+                    help="captions are a karaoke .ass from karaoke_ass.py: words turn gold as they are spoken")
     ap.add_argument("--sub-size", type=int, default=13, help="subtitle size in libass units (13 ≈ 49 px at 1080p)")
     ap.add_argument("--format", choices=FORMATS, default="landscape")
     ap.add_argument("--fps", type=int, default=30)
@@ -177,9 +179,13 @@ def main(argv=None):
             vmap = "[vg]"
         if a.captions and a.burn:
             # cream text on a translucent ink box, bottom centre (ASS colours are &HAABBGGRR)
-            style = (f"FontName={a.sub_font},Fontsize={a.sub_size},Bold=1,PrimaryColour=&H00D2E8F3,"
+            colours = ("PrimaryColour=&H0047B8E8,SecondaryColour=&H00D2E8F3," if a.sub_karaoke
+                       else "PrimaryColour=&H00D2E8F3,")
+            style = (f"FontName={a.sub_font},Fontsize={a.sub_size},Bold=1,{colours}"
                      "OutlineColour=&H5022180E,BackColour=&H5022180E,BorderStyle=3,Outline=6,Shadow=0,"
                      "MarginV=22,MarginL=40,MarginR=40,Alignment=2")
+            if a.sub_karaoke:                       # per-word boxes overlap: a near-opaque box hides the seams
+                style = style.replace("OutlineColour=&H5022180E,BackColour=&H5022180E", "OutlineColour=&H1022180E,BackColour=&H1022180E")
             sub = Path(a.captions).resolve().as_posix().replace(":", r"\:")
             src = "[vg]" if vmap == "[vg]" else "[0:v]"
             fdir = ""

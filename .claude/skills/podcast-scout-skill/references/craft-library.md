@@ -313,3 +313,34 @@ code, so the generation steps don't apply. The craft does, read in full and rest
   (Day 1 → Day 30 → Day 365; 1 → 5 → 25), one line = one beat = one rung. Good shape for Shorts and for myth
   escalation scenes (our sc07 retelling chain is exactly this ladder).
 - **Song-style ad:** a music-video ad format; not used on this channel (no lip-sync, narrator-led).
+
+## 18. Lessons from five repos (claude-youtube, Hypit, MoneyPrinterTurbo, yt-dlp, youtube-transcript-api)
+Read the code and docs; nothing from them runs in our pipeline except the two PyPI tools named below.
+- **claude-youtube (AgriciDaniel, MIT): packaging and retention rules.**
+  - **Hook:** the first 5 s is now an extension of the thumbnail (home-feed autoplay), so it must answer the
+    thumbnail's visual question at once. A value promise lands by 15 s. Never open on the channel.
+  - **Open loops ("suspension bridge"):** these give the largest completion gain, so plant one early and pay it off
+    late (our bookmark pin).
+  - **Interrupts:** at least every 30 s in long-form, and every 2–3 s in Shorts.
+  - **Dual CTA:** only ~16% of viewers reach the last 10%, so add an embedded visual CTA after the first payoff
+    (~1 min) as well as the end card. Visual + verbal beats verbal-only.
+  - **Thumbnail:** ≤3 words; one focal point; 30–40% empty space; strong emotion on any face. Never repeat the title's
+    words on the thumbnail: the thumbnail is the emotion, the title the keyword + promise.
+  - **Title:** keyword + hook inside the first 40–50 chars (mobile cut). Under 50 chars is safest.
+  - **Description:** keyword in the first 25 words; 0:00 chapters (≥3, ≥10 s each); 3 hashtags; ends with subscribe +
+    the comment question. Ship a manual SRT (better indexed than auto-captions).
+  - **Shorts:** 15–30 s, hook in 1–3 s, a change every 3 s, a loopable ending, title 4–6 words.
+  - **Synthetic voices:** the guide cites a big retention drop for AI narration. That is why we tuned Parler with
+    earshot and why every word is animated; keep the delivery human-paced.
+- **Hypit (Apache-2.0 with conditions; ideas only): anchor edits to WORDS, not seconds.** Every reveal, cut and caption
+  change points at a spoken word, so a re-voice never breaks the edit. We have this as `K.word` + `film/words.js` and
+  `make_words.py`. Its caption family keeps a whole readable phrase on screen while the CURRENT word changes colour:
+  → `scripts/karaoke_ass.py` + `assemble.py --sub-karaoke` (cream → gold as each word is said). Review with
+  frame grids as well as single frames, so handoffs and motion are judged, not just poses.
+- **MoneyPrinterTurbo (MIT): stock-clip + TTS short generator.** Mostly paid-model plumbing; not our look. One piece
+  taken: the **caption spring** (each line pops in at 86 % → 104 % → 100 % over 0.22 s), done as ASS transforms
+  in `karaoke_ass.py`.
+- **yt-dlp / youtube-transcript-api:** the right tools for the scout's transcript step, now installed in the studio
+  venv. From this cloud machine YouTube blocks both ("sign in to confirm you're not a bot" / IpBlocked). The fix is
+  the owner's own exported cookies file (`yt-dlp --cookies`), never pasted into chat, or the owner uploading the
+  audio/transcript. Without it the scout falls back to uploaded files or the episode's own show notes.
