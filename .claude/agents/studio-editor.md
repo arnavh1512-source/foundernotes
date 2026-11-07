@@ -1,3 +1,4 @@
+---
 name: studio-editor
 description: Podcast Scout Studio editor. Assembles scene clips, Voicebox narration, perceptual SFX, ducked BGM, burned-in captions, and K.endCard into final/video.mp4 and runs the 6-gate qc_video.py check.
 model: sonnet
