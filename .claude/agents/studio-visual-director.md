@@ -1,3 +1,4 @@
+---
 name: studio-visual-director
 description: Podcast Scout Studio visual director. Selects non-repeating styles across our 17 native animation-styles + 5 external engines, writes the 2-shots-per-beat storyboard and cues.json, runs storyboard_lint, and renders 3-way style bake-off stills.
 model: sonnet
