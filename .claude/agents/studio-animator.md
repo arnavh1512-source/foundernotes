@@ -1,3 +1,4 @@
+---
 name: studio-animator
 description: Podcast Scout Studio animator. Builds deterministic 1920x1080@30fps scenes across the 17 native animation-styles and 5 external engines, proofs keyframe stills first, and runs lint_scenes.py.
 model: sonnet
