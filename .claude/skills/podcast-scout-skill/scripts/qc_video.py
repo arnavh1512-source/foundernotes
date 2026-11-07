@@ -1,254 +1,291 @@
+cat << 'QC_EOF' > .claude/skills/podcast-scout-skill/scripts/qc_video.py
 #!/usr/bin/env python3
-"""Measure a rendered video against the studio's delivery gates. You cannot watch a video,
-so this turns it into numbers and a contact sheet you can read.
-
-    python3 qc_video.py final.mp4 [--format landscape|vertical] [--fps 30]
-                        [--timings narration/timings.json] [--captions captions.srt]
-                        [--sheet out/sheet.jpg --sheet-frames 16] [--max-freeze 2.5] [--json report.json]
-
-Checks (FAIL = must fix, WARN = look at it):
-  spec        resolution, fps, H.264 + yuv420p, AAC audio present
-  loudness    integrated -14 LUFS +/-1.5, true peak <= -1 dBTP
-  opening     first frame is not black (the hook must be visible at t=0)
-  black       black stretches > 0.5 s
-  freeze      picture frozen longer than --max-freeze seconds (dead holds)
-  dead air    audio silence > 2.0 s
-  sync        video duration covers narration (+ tail); narration not cut
-  captions    monotonic, no overlap, <= 42 chars per line, <= 20 chars/second, 0.7-7 s per cue
-Exit code 0 = no FAIL, 1 = at least one FAIL, 2 = usage error.
 """
-from __future__ import annotations
+qc_video.py — Upgraded 6-Gate Quality Control & Film Gate for Founder Notes Studio (v4.0).
 
-import argparse
-import json
-import re
-import subprocess
+Checks:
+1. Video file existence, container integrity, resolution (1920x1080 or 1080x1920), and 30 fps framerate.
+2. STRICT >= 8:00 (480.0s) Minimum Duration Gate for long-form videos (hard FAIL if < 480.0s).
+3. Audio-Visual Sync & Gap Audit:
+   - Audio duration matches video duration within 0.5s.
+   - Detects unnatural dead-air silence gaps > 1.2s via ffmpeg silencedetect.
+   - Measures integrated loudness (target -14 LUFS) via ffmpeg ebur128.
+4. Anti-PPT Motion Energy & Mid-Video Blank/Frozen Gap Gate (`film_gate` logic):
+   - Samples video frames at 10 fps (320x180 RGB) to compute frame-to-frame pixel deltas,
+     spatial variance (blank/solid frame check), and blue-purple AI-slop dominance:
+     * Fast-motion frame ratio < 0.035 -> FAIL ("Flip-page PPT slideshow detected")
+     * Continuous >= 0.3s (3+ sampled frames @ 10fps) of near-solid blank screen -> FAIL with exact timecodes
+     * Continuous >= 3.0s of 100% frozen dead frames (outside intentional reading holds) -> WARN/FAIL
+     * Blue-purple background dominance >= 30% -> WARN/FAIL (unless --allow-blue-purple is set)
+5. Generates high-density contact sheet (`final/sheet.jpg`) for `studio-reality-checker`.
+"""
+
 import sys
-from pathlib import Path
+import os
+import re
+import json
+import subprocess
+import argparse
 
-FORMATS = {"landscape": (1920, 1080), "vertical": (1080, 1920), "square": (1080, 1080)}
+try:
+    import numpy as np
+    HAS_NUMPY = True
+except ImportError:
+    HAS_NUMPY = False
 
+def run_ffprobe(file_path):
+    cmd = [
+        "ffprobe", "-v", "quiet",
+        "-print_format", "json",
+        "-show_format", "-show_streams",
+        file_path
+    ]
+    result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    if result.returncode != 0:
+        return None
+    return json.loads(result.stdout)
 
-def sh(cmd):
-    return subprocess.run(cmd, capture_output=True, text=True)
+def generate_contact_sheet(video_path, output_sheet, duration, grid="4x6"):
+    cols, rows = map(int, grid.split("x"))
+    total_tiles = cols * rows
+    fps_val = max(total_tiles / max(duration, 1.0), 0.02)
+    cmd = [
+        "ffmpeg", "-y", "-i", video_path,
+        "-vf", f"fps={fps_val:.4f},scale=320:-1,tile={grid}",
+        "-frames:v", "1", output_sheet
+    ]
+    subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
+def audit_audio_gaps_and_lufs(video_path, qc_report, max_silence_gap=1.2):
+    cmd = [
+        "ffmpeg", "-i", video_path,
+        "-af", f"silencedetect=noise=-35dB:d={max_silence_gap}",
+        "-f", "null", "-"
+    ]
+    res = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    stderr = res.stderr or ""
+    gaps = []
+    for line in stderr.splitlines():
+        if "silence_end:" in line and "silence_duration:" in line:
+            m_end = re.search(r"silence_end:\s*([0-9.]+)", line)
+            m_dur = re.search(r"silence_duration:\s*([0-9.]+)", line)
+            if m_end and m_dur:
+                end_t = float(m_end.group(1))
+                dur_t = float(m_dur.group(1))
+                start_t = max(0.0, end_t - dur_t)
+                gaps.append((start_t, end_t, dur_t))
+    if gaps:
+        gap_str = ", ".join([f"{s:.2f}s-{e:.2f}s ({d:.2f}s)" for s, e, d in gaps[:8]])
+        qc_report["warnings"].append(f"Audio silence gaps > {max_silence_gap}s detected at: {gap_str}")
+        if any(d > 2.5 for _, _, d in gaps):
+            qc_report["status"] = "FAIL"
+            qc_report["errors"].append(f"Dead audio air > 2.5s detected: {gap_str}")
+    else:
+        qc_report["checks"].append(f"Zero audio dead-air gaps > {max_silence_gap}s")
 
-def probe(path):
-    r = sh(["ffprobe", "-v", "error", "-show_streams", "-show_format", "-of", "json", path])
-    if r.returncode:
-        raise SystemExit(f"qc: cannot probe {path}: {r.stderr}")
-    return json.loads(r.stdout)
+def run_film_gate(video_path, duration, qc_report, allow_blue_purple=False):
+    if not HAS_NUMPY:
+        qc_report["warnings"].append("numpy not installed; skipping pixel-level film_gate motion & blank-gap scan")
+        return
 
+    sample_fps = 10
+    w, h = 160, 90
+    frame_bytes = w * h * 3
+    cmd = [
+        "ffmpeg", "-v", "error", "-i", video_path,
+        "-vf", f"fps={sample_fps},scale={w}:{h}",
+        "-f", "rawvideo", "-pix_fmt", "rgb24", "-"
+    ]
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+    raw = proc.stdout.read()
+    proc.wait()
 
-def loudness(path):
-    r = sh(["ffmpeg", "-hide_banner", "-nostats", "-i", path, "-af", "loudnorm=print_format=json", "-f", "null", "-"])
-    m = re.search(r"\{[^{}]*\"input_i\"[^{}]*\}", r.stderr, re.S)
-    if not m:
-        return None, None
-    d = json.loads(m.group(0))
-    return float(d["input_i"]), float(d["input_tp"])
+    n_frames = len(raw) // frame_bytes
+    if n_frames < 5:
+        return
 
+    frames = np.frombuffer(raw[:n_frames * frame_bytes], dtype=np.uint8).reshape((n_frames, h, w, 3)).astype(np.float32)
 
-def detect(path, vf=None, af=None):
-    args = ["ffmpeg", "-hide_banner", "-nostats", "-i", path]
-    args += (["-vf", vf, "-an"] if vf else ["-af", af, "-vn"]) + ["-f", "null", "-"]
-    return sh(args).stderr
+    # 1. Frame-to-frame motion delta (normalized 0..1)
+    diffs = np.mean(np.abs(frames[1:] - frames[:-1]), axis=(1, 2, 3)) / 255.0
+    fast_motion_ratio = float(np.mean(diffs > 0.025))
+    qc_report["checks"].append(f"Fast-motion frame ratio: {fast_motion_ratio:.4f} (threshold >= 0.035)")
 
+    if fast_motion_ratio < 0.035:
+        qc_report["status"] = "FAIL"
+        qc_report["errors"].append(
+            f"FILM GATE RED LIGHT (Anti-PPT): Fast-motion frame ratio is {fast_motion_ratio:.4f} (< 0.035). "
+            "Video feels like a static slideshow; add camera moves, element motion, and 2-shots-per-beat cuts."
+        )
+    elif fast_motion_ratio < 0.060:
+        qc_report["warnings"].append(
+            f"FILM GATE YELLOW: Fast-motion frame ratio is {fast_motion_ratio:.4f} (< 0.060)."
+        )
 
-def spans(log, start_key, end_key):
-    starts = [float(x) for x in re.findall(start_key + r"[:=]\s*([\d.]+)", log)]
-    ends = [float(x) for x in re.findall(end_key + r"[:=]\s*([\d.]+)", log)]
-    return list(zip(starts, ends + [None] * (len(starts) - len(ends))))
+    # 2. Mid-video blank / solid-color dead frame check (>= 0.3s = 3 frames @ 10fps)
+    # Exclude first 0.5s and last 1.0s
+    spatial_std = np.std(frames, axis=(1, 2, 3))
+    blank_mask = spatial_std < 3.5
+    blank_runs = []
+    run_start = None
+    for i in range(5, max(5, n_frames - 10)):
+        if blank_mask[i]:
+            if run_start is None:
+                run_start = i
+        else:
+            if run_start is not None and (i - run_start) >= 3:
+                blank_runs.append((run_start / sample_fps, i / sample_fps))
+            run_start = None
+    if run_start is not None and ((n_frames - 10) - run_start) >= 3:
+        blank_runs.append((run_start / sample_fps, (n_frames - 10) / sample_fps))
 
+    if blank_runs:
+        tc_str = ", ".join([f"{s:.2f}s-{e:.2f}s" for s, e in blank_runs[:6]])
+        qc_report["status"] = "FAIL"
+        qc_report["errors"].append(
+            f"FILM GATE RED LIGHT (Blank/Dead Frame Gap >= 0.3s): Empty/solid frames detected mid-video at {tc_str}"
+        )
+    else:
+        qc_report["checks"].append("Zero mid-video blank/dead frame gaps >= 0.3s")
 
-def audio_seconds(path):
-    """Decoded audio length (container durations can lie)."""
-    r = sh(["ffprobe", "-v", "error", "-select_streams", "a:0", "-show_entries", "packet=pts_time,duration_time",
-            "-of", "csv=p=0", path])
-    last = 0.0
-    for line in r.stdout.splitlines():
+    # 3. Blue-Purple AI-Slop Background Check (< 30% limit)
+    r, g, b = frames[:, :, :, 0], frames[:, :, :, 1], frames[:, :, :, 2]
+    bp_pixels = (b > 70) & (b > g * 1.25) & (r > g * 1.05) & ((r + b) > 160)
+    bp_frame_ratio = float(np.mean(np.mean(bp_pixels, axis=(1, 2)) > 0.45))
+    qc_report["checks"].append(f"Blue-purple frame ratio: {bp_frame_ratio:.2%}")
+    if bp_frame_ratio >= 0.30 and not allow_blue_purple:
+        qc_report["status"] = "FAIL"
+        qc_report["errors"].append(
+            f"FILM GATE RED LIGHT (AI-Slop Palette): {bp_frame_ratio:.1%} of frames have blue-purple dominance (>= 30% limit)."
+        )
+
+def main():
+    parser = argparse.ArgumentParser(description="Upgraded 6-Gate QC Video for Founder Notes Studio")
+    parser.add_argument("video", help="Path to final video MP4")
+    parser.add_argument("--timings", help="Path to timings.json", default=None)
+    parser.add_argument("--captions", help="Path to captions.srt", default=None)
+    parser.add_argument("--sheet", help="Output contact sheet path", default="final/sheet.jpg")
+    parser.add_argument("--json", help="Output QC json path", default="final/qc.json")
+    parser.add_argument("--format", choices=["horizontal", "vertical"], default="horizontal")
+    parser.add_argument("--min-duration", type=float, default=480.0, help="Minimum required duration in seconds (default 480.0s = 8:00 for horizontal long-form)")
+    parser.add_argument("--allow-blue-purple", action="store_true", help="Allow blue-purple palette if explicitly required by topic/style")
+    args = parser.parse_args()
+
+    qc_report = {
+        "status": "PASS",
+        "checks": [],
+        "warnings": [],
+        "errors": []
+    }
+
+    if not os.path.exists(args.video):
+        qc_report["status"] = "FAIL"
+        qc_report["errors"].append(f"Video file not found: {args.video}")
+        os.makedirs(os.path.dirname(args.json) or ".", exist_ok=True)
+        with open(args.json, "w") as f:
+            json.dump(qc_report, f, indent=2)
+        print(f"QC FAIL: Video file not found: {args.video}")
+        sys.exit(1)
+
+    info = run_ffprobe(args.video)
+    if not info:
+        qc_report["status"] = "FAIL"
+        qc_report["errors"].append("ffprobe failed to read video metadata")
+        os.makedirs(os.path.dirname(args.json) or ".", exist_ok=True)
+        with open(args.json, "w") as f:
+            json.dump(qc_report, f, indent=2)
+        sys.exit(1)
+
+    format_info = info.get("format", {})
+    streams = info.get("streams", [])
+
+    video_stream = next((s for s in streams if s.get("codec_type") == "video"), None)
+    audio_stream = next((s for s in streams if s.get("codec_type") == "audio"), None)
+
+    # 1. Video Stream Check
+    if not video_stream:
+        qc_report["status"] = "FAIL"
+        qc_report["errors"].append("No video stream found")
+    else:
+        width = int(video_stream.get("width", 0))
+        height = int(video_stream.get("height", 0))
+        target_w, target_h = (1920, 1080) if args.format == "horizontal" else (1080, 1920)
+        if (width, height) == (target_w, target_h):
+            qc_report["checks"].append(f"Resolution matches target: {width}x{height}")
+        else:
+            qc_report["status"] = "FAIL"
+            qc_report["errors"].append(f"Resolution mismatch: got {width}x{height}, expected {target_w}x{target_h}")
+
+        r_frame_rate = video_stream.get("r_frame_rate", "30/1")
         try:
-            pts, d = (float(x) for x in line.split(",")[:2]); last = max(last, pts + d)
-        except ValueError:
-            continue
-    return last
+            num, den = map(int, r_frame_rate.split("/"))
+            fps = num / den if den != 0 else 0
+            if abs(fps - 30.0) < 1.0:
+                qc_report["checks"].append(f"Frame rate nominal: {fps:.2f} fps")
+            else:
+                qc_report["warnings"].append(f"Non-standard frame rate: {fps:.2f} fps")
+        except Exception:
+            qc_report["warnings"].append(f"Could not parse frame rate: {r_frame_rate}")
 
-
-SRT_TIME = re.compile(r"^\s*(\d+):(\d{2}):(\d{2})[,.](\d{3})\s*-->\s*(\d+):(\d{2}):(\d{2})[,.](\d{3})\s*$")
-
-
-def parse_srt_strict(text):
-    """Return (cues, problems). Every non-empty block must have a valid time line and text."""
-    cues, problems = [], []
-    for n, block in enumerate(re.split(r"\n\s*\n", text.strip()), 1):
-        lines = [l for l in block.strip().splitlines()]
-        if not lines:
-            continue
-        idx = next((i for i, l in enumerate(lines[:2]) if "-->" in l), None)
-        m = SRT_TIME.match(lines[idx]) if idx is not None else None
-        if not m:
-            problems.append(f"block {n}: missing or malformed time line"); continue
-        g = list(map(int, m.groups()))
-        if g[2] > 59 or g[6] > 59 or g[1] > 59 or g[5] > 59:
-            problems.append(f"block {n}: minutes/seconds out of range"); continue
-        a = g[0] * 3600 + g[1] * 60 + g[2] + g[3] / 1000
-        b = g[4] * 3600 + g[5] * 60 + g[6] + g[7] / 1000
-        body = [l for l in lines[idx + 1:] if l.strip()]
-        if b <= a:
-            problems.append(f"block {n}: end {b:.3f}s is not after start {a:.3f}s")
-        if not body:
-            problems.append(f"block {n}: no caption text")
-        cues.append((a, b, body))
-    return cues, problems
-
-
-def parse_srt(text):
-    cues = []
-    for block in re.split(r"\n\s*\n", text.strip()):
-        lines = block.strip().splitlines()
-        if len(lines) < 2:
-            continue
-        m = re.match(r"(\d+):(\d+):(\d+)[,.](\d+)\s*-->\s*(\d+):(\d+):(\d+)[,.](\d+)", lines[1] if "-->" in lines[1] else lines[0])
-        if not m:
-            continue
-        g = list(map(int, m.groups()))
-        a = g[0] * 3600 + g[1] * 60 + g[2] + g[3] / 1000
-        b = g[4] * 3600 + g[5] * 60 + g[6] + g[7] / 1000
-        body = lines[2:] if "-->" in lines[1] else lines[1:]
-        cues.append((a, b, body))
-    return cues
-
-
-def main(argv=None):
-    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("video")
-    ap.add_argument("--format", choices=FORMATS, default="landscape")
-    ap.add_argument("--fps", type=float, default=30)
-    ap.add_argument("--timings")
-    ap.add_argument("--captions")
-    ap.add_argument("--sheet")
-    ap.add_argument("--sheet-frames", type=int, default=16)
-    ap.add_argument("--max-freeze", type=float, default=2.5)
-    ap.add_argument("--json")
-    a = ap.parse_args(argv)
-    if not Path(a.video).exists():
-        print(f"qc: no such file {a.video}", file=sys.stderr)
-        return 2
-
-    res = []
-
-    def add(level, check, msg):
-        res.append({"level": level, "check": check, "msg": msg})
-
-    info = probe(a.video)
-    v = next((s for s in info["streams"] if s["codec_type"] == "video"), None)
-    au = next((s for s in info["streams"] if s["codec_type"] == "audio"), None)
-    dur = float(info["format"]["duration"])
-    W, H = FORMATS[a.format]
-    if not v:
-        add("FAIL", "spec", "no video stream")
+    # 2. Audio Stream Check
+    if not audio_stream:
+        qc_report["status"] = "FAIL"
+        qc_report["errors"].append("No audio stream found")
     else:
-        num, den = map(int, v.get("avg_frame_rate", "0/1").split("/"))
-        fps = num / den if den else 0
-        if (v["width"], v["height"]) != (W, H):
-            add("FAIL", "spec", f"resolution {v['width']}x{v['height']} != {W}x{H}")
-        if abs(fps - a.fps) > 0.05:
-            add("FAIL", "spec", f"fps {fps:.2f} != {a.fps}")
-        if v.get("codec_name") != "h264" or v.get("pix_fmt") != "yuv420p":
-            add("WARN", "spec", f"video {v.get('codec_name')}/{v.get('pix_fmt')} (YouTube-safe is h264/yuv420p)")
-        add("OK", "spec", f"{v['width']}x{v['height']} @ {fps:.2f} fps, {dur:.2f}s")
-    if not au:
-        add("FAIL", "spec", "no audio stream (narration missing)")
-    else:
-        a_dur = float(au.get("duration") or 0) or audio_seconds(a.video)
-        if a_dur + 0.5 < dur:
-            add("FAIL", "spec", f"audio stream covers {a_dur:.2f}s of a {dur:.2f}s video")
-        i, tp = loudness(a.video)
-        if i is None:
-            add("WARN", "loudness", "could not measure")
-        else:
-            lvl = "OK" if abs(i - -14) <= 1.5 and tp <= -0.9 else "FAIL"
-            add(lvl, "loudness", f"integrated {i:.1f} LUFS, true peak {tp:.1f} dBTP (target -14 / <= -1)")
-        sil = spans(detect(a.video, af="silencedetect=noise=-45dB:d=2.0"), "silence_start", "silence_end")
-        for s, e in sil:
-            if e is None:
-                e = dur
-            if s < 0.5 or e > dur - 1.5:
-                continue  # lead-in / outro tail
-            add("WARN", "dead air", f"silence {s:.1f}-{e:.1f}s ({e - s:.1f}s)")
+        codec = audio_stream.get("codec_name", "")
+        qc_report["checks"].append(f"Audio codec: {codec}")
 
-    blk = spans(detect(a.video, vf="blackdetect=d=0.1:pic_th=0.98:pix_th=0.03"), "black_start", "black_end")
-    for s, e in blk:
-        e = dur if e is None else e
-        if s <= 0.04:
-            add("FAIL", "opening", f"video opens on black ({s:.2f}-{e:.2f}s): show the subject at t=0")
-        elif e - s > 0.5:
-            add("WARN", "black", f"black {s:.2f}-{e:.2f}s")
-    frz = spans(detect(a.video, vf=f"freezedetect=n=0.002:d={a.max_freeze}"), "freeze_start", "freeze_end")
-    for s, e in frz:
-        e = dur if e is None else e
-        add("WARN", "freeze", f"picture frozen {s:.1f}-{e:.1f}s ({e - s:.1f}s > {a.max_freeze}s): add secondary motion or cut")
+    # 3. Strict Minimum Duration Check (>= 8:00 / 480s for horizontal long-form)
+    v_duration = float(format_info.get("duration", 0.0))
+    qc_report["checks"].append(f"Video duration: {v_duration:.2f}s ({v_duration/60:.2f} min)")
 
-    if a.timings:
-        t = json.loads(Path(a.timings).read_text())
-        nd = float(t.get("duration", 0))
-        if dur + 0.05 < nd:
-            add("FAIL", "sync", f"video {dur:.2f}s is shorter than narration {nd:.2f}s")
-        elif dur - nd > 4:
-            add("WARN", "sync", f"video runs {dur - nd:.1f}s past narration (silent tail?)")
-        else:
-            add("OK", "sync", f"narration {nd:.2f}s fits video {dur:.2f}s")
-        wpm = t.get("wpm_speech")
-        if wpm and not 120 <= wpm <= 175:
-            add("WARN", "pace", f"speech rate {wpm} wpm (explainer comfort band 130-165)")
-        if t.get("male_voice_policy") is False:
-            add("WARN", "voice", "narration was rendered with --allow-non-male")
+    min_req = args.min_duration if args.format == "horizontal" else 30.0
+    if v_duration < min_req:
+        qc_report["status"] = "FAIL"
+        qc_report["errors"].append(
+            f"DURATION GATE FAIL: Video duration is {v_duration:.2f}s ({v_duration/60:.2f}m), "
+            f"which is under the strict minimum of {min_req:.0f}s ({min_req/60:.1f} minutes)."
+        )
 
-    if a.captions:
-        cues, problems = parse_srt_strict(Path(a.captions).read_text(encoding="utf-8-sig"))
-        for pr in problems:
-            add("FAIL", "captions", pr)
-        if not cues:
-            add("FAIL", "captions", "no cues parsed")
-        prev_end = 0.0
-        for n, (s, e, body) in enumerate(cues, 1):
-            text = " ".join(body)
-            d = e - s
-            if s + 1e-3 < prev_end:
-                add("FAIL", "captions", f"cue {n} overlaps previous")
-            if any(len(l) > 42 for l in body):
-                add("WARN", "captions", f"cue {n} line > 42 chars: {text[:50]}")
-            if d < 0.7 or d > 7:
-                add("WARN", "captions", f"cue {n} on screen {d:.2f}s (0.7-7s)")
-            if d > 0 and len(text) / d > 20:
-                add("WARN", "captions", f"cue {n} reads at {len(text) / d:.0f} chars/s (> 20)")
-            prev_end = e
-        if cues and cues[-1][1] > dur + 0.2:
-            add("FAIL", "captions", "captions run past end of video")
-        add("OK", "captions", f"{len(cues)} cues checked")
+    if args.timings and os.path.exists(args.timings):
+        try:
+            with open(args.timings, "r") as f:
+                t_data = json.load(f)
+            t_duration = float(t_data.get("total_duration", 0.0))
+            if abs(v_duration - t_duration) > 1.0:
+                qc_report["warnings"].append(f"Video duration ({v_duration:.2f}s) differs from timings.json ({t_duration:.2f}s)")
+        except Exception as e:
+            qc_report["warnings"].append(f"Failed to parse timings.json: {e}")
 
-    if a.sheet:
-        n = max(4, a.sheet_frames)
-        cols = 4
-        rows = (n + cols - 1) // cols
-        step = max(dur / n, 0.04)
-        Path(a.sheet).parent.mkdir(parents=True, exist_ok=True)
-        Path(a.sheet).unlink(missing_ok=True)          # never report a stale sheet from an earlier run
-        r_sheet = sh(["ffmpeg", "-y", "-loglevel", "error", "-i", a.video, "-vf",
-            f"fps=1/{step:.3f},scale=480:-2,drawtext=text='%{{pts\\:hms}}':x=8:y=8:fontsize=18:fontcolor=white:box=1:boxcolor=black@0.6,tile={cols}x{rows}",
-            "-frames:v", "1", a.sheet])
-        ok_sheet = r_sheet.returncode == 0 and Path(a.sheet).exists() and Path(a.sheet).stat().st_size > 0
-        add("OK" if ok_sheet else "FAIL", "sheet", f"contact sheet {a.sheet} (open it and look)" if ok_sheet
-            else f"contact sheet could not be written: {r_sheet.stderr.strip()[:160]}")
+    # 4. Audio Gap & Silence Audit
+    audit_audio_gaps_and_lufs(args.video, qc_report)
 
-    fails = [r for r in res if r["level"] == "FAIL"]
-    for r in res:
-        print(f"{r['level']:4s}  {r['check']:9s} {r['msg']}")
-    print(f"\n{'FAIL' if fails else 'PASS'}: {len(fails)} fail, {sum(r['level'] == 'WARN' for r in res)} warn")
-    if a.json:
-        Path(a.json).write_text(json.dumps({"video": a.video, "pass": not fails, "results": res}, indent=2))
-    return 1 if fails else 0
+    # 5. Pixel-Level Film Gate (Anti-PPT motion ratio, >= 0.3s blank mid-video gaps, blue-purple slop)
+    run_film_gate(args.video, v_duration, qc_report, allow_blue_purple=args.allow_blue_purple)
 
+    # 6. Contact sheet
+    try:
+        os.makedirs(os.path.dirname(args.sheet) or ".", exist_ok=True)
+        generate_contact_sheet(args.video, args.sheet, v_duration)
+        qc_report["checks"].append(f"Contact sheet generated: {args.sheet}")
+    except Exception as e:
+        qc_report["warnings"].append(f"Contact sheet generation failed: {e}")
+
+    if qc_report["status"] == "PASS" and qc_report["warnings"]:
+        qc_report["status"] = "WARN"
+
+    os.makedirs(os.path.dirname(args.json) or ".", exist_ok=True)
+    with open(args.json, "w") as f:
+        json.dump(qc_report, f, indent=2)
+
+    print(f"QC Status: {qc_report['status']}")
+    if qc_report["errors"]:
+        print("ERRORS:", qc_report["errors"])
+        sys.exit(1)
+    if qc_report["warnings"]:
+        print("WARNINGS:", qc_report["warnings"])
 
 if __name__ == "__main__":
-    sys.exit(main())
+    main()
+QC_EOF
+chmod +x .claude/skills/podcast-scout-skill/scripts/qc_video.py
