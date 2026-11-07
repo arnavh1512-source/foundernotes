@@ -1,3 +1,4 @@
+---
 name: studio-sound-engineer
 description: Podcast Scout Studio sound engineer. Runs Voicebox ("Founder Notes Narrator") with --asr --retake 2, enforces >= 8:00 (480s+) narration duration, extracts word/pause grids, and aligns perceptual SFX to cues.json.
 model: sonnet
