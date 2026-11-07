@@ -1,0 +1,221 @@
+Founder Notes God-Tier Animation & Self-Improving Production System Playbook (v3.0)
+
+This playbook diagnoses the exact architectural bottlenecks in arnavh1512-source/foundernotes (hunting-titles — Founder Notes YouTube Video Studio for @FounderNotesin) and integrates the five external animation engines into a unified, self-improving production system:
+
+Current Studio Baseline: arnavh1512-source/foundernotes (CLAUDE.md, channel-profile.md, .claude/agents/, .claude/skills/podcast-scout-skill, .claude/skills/animation-styles, .claude/skills/motion, .claude/skills/collage-director)
+
+Bang Motion (v1.19.0): bangtutorial/bang-motion (SKILL.md, references/anti-ppt.md, references/techniques.md, references/explainer.md, references/kartun-panggung.md)
+
+Vox Director: Alisa0808/vox-director (SKILL.md, TypingMind Bundled Reference)
+
+Huashu Art Motion (v1.2.0): alchaincyf/huashu-art-motion (SKILL.md, README.md, Tenten Skills Atlas Guide)
+
+Claude Drawing Skill: cloveric/claude-drawing-skill (SKILL.md, lib/core.py, lib/ 77-Style Modules)
+
+Code Animation Prompts: XiaoyeCodes/code-animation-prompts (SKILL.md, references/rendering.md, Tenten Manual, and upstream Vincentwei1021/mg-styles-15)
+
+1. Root-Cause Diagnosis: Why Current foundernotes Animations Feel Repetitive & "AI-Generated"
+
+Inspecting CLAUDE.md, channel-profile.md, and .claude/skills/podcast-scout-skill inside arnavh1512-source/foundernotes reveals 7 specific bottlenecks that make the current animations look flat and repetitive—alongside what works well and must be preserved:
+
+What Works Well in foundernotes (Keep & Lock In)
+
+Voicebox (Chatterbox) Narration Pipeline: bash .claude/skills/podcast-scout-skill/scripts/voicebox_server.sh using "Founder Notes Narrator" (assets/voice/founder-notes-narrator-ref.wav, speed 1.0 ~179 wpm, "chain": "studio") with narrate.py --asr --retake 2 (which automatically catches dropped words via ASR alignment and re-voices failed segments with a new seed) (foundernotes/CLAUDE.md).
+
+8-Agent Crew Architecture on Sonnet Medium: The division of labor across .claude/agents/ (studio-researcher, studio-scriptwriter, studio-sound-engineer, studio-visual-director, studio-animator, studio-editor, studio-reality-checker, studio-packager all running on model: "sonnet", effort: "medium") (foundernotes/.claude/agents/).
+
+Channel Non-Negotiables (channel-profile.md): 1920x1080 @ 30fps, >= 5:00 duration (900+ words), strict no-podcast/guest attribution rule, primary source fact-locking, bottom 180px subtitle safe zone (karaoke_ass.py + assemble.py), and closing K.endCard(S) subscribe/comment CTA (foundernotes/channel-profile.md).
+
+The 7 Visual & Choreography Flaws in foundernotes (What We Must Reform)
+
+Bottleneck in foundernotes
+
+Why It Looks Boring / "AI-Generated"
+
+How the 5 New Repositories Solve It
+
+1. Single Locked Palette & Font Across Every Scene (channel-profile.md)
+
+Locking every scene to #101418 background, #F2EFE9 ink, #F2B134 gold, #4E79A7 blue, and Inter / Space Grotesk makes every video look like the exact same dark corporate slide deck. Meanwhile, bang-motion/SKILL.md explicitly bans Inter as a display font because it screams generic AI UI.
+
+Keep #F2B134 / #101418 for the brand frame/end-card (K.endCard), but unlock topic-driven palettes & expressive typography from vox-director (9 themes), huashu-art-motion (8 palettes + 53 art cards), and code-animation-prompts (12 H-series editorial pairings).
+
+2. Single Symmetric Easing Curve (cubic-bezier(0.4, 0, 0.2, 1))
+
+channel-profile.md uses a single Material-Design curve (cubic-bezier(0.4, 0, 0.2, 1)) at fixed 0.4s / 0.7s / 1.2s durations for everything. Real motion design never uses one symmetric ease for every action.
+
+Replace with asymmetric role-based physics: expo.out (cubic-bezier(0.16, 1, 0.3, 1)) for slams, back.out(1.4) (cubic-bezier(0.34, 1.56, 0.64, 1)) for sticker/card pops, MO.step(12) for stop-motion collage, power2.in (0.3s) for fast exits, and MO.spring for UI elements (bang-motion/references/techniques.md, Tenten Huashu Guide).
+
+3. Over-Reliance on ink-gold-kit (K.backdrop, K.pin, K.word)
+
+Calling K.backdrop(name) to swap static backgrounds behind flat K.pin labels turns a 6-minute video into a glorified slideshow ("翻页式 PPT" in huashu-art-motion/SKILL.md and bang-motion/references/anti-ppt.md).
+
+Replace static backdrop swapping with continuous 2D/3D camera worlds (#world / CAM.track) where the camera pans, zooms, and cuts across an interconnected spatial canvas (into, settle, look, camTo, zlerp).
+
+4. Missing 2-Shots-Per-Beat Visual Cut Rule
+
+Scenes in storyboard.md often hold one layout for an entire 8–12s narration paragraph, causing viewer drop-off.
+
+Enforce vox-director/SKILL.md's 3–6s shot cadence rule (<= 8s max in huashu-art-motion): every 8–10s narration beat splits into Shot A (Wide establishing + title) and Shot B (Close detail cut-in, no title) cutting mid-sentence.
+
+5. Weak Visual QA (lint_scenes.py & qc_video.py Only Check Container Specs)
+
+Currently, lint_scenes.py checks the 180px bottom zone, <= 7 words per label, and backdrop names, while qc_video.py checks 1920x1080@30fps, >= 5:00 duration, and K.endCard. Neither script measures motion energy, dead mid-scene gaps, text overlap every 0.25s, or visual ugliness.
+
+Upgrade lint_scenes.py and qc_video.py with huashu-art-motion's render.py --audit (0.25s bounding-box overlap check), film_gate.py (rejects if fast-motion frames < 3.5% or if any >= 0.3s dead/blank gap exists), and mg-styles-15's 7-dimension Blind Critic Jury (rubric.md).
+
+6. Coarse SFX Sync (fetch_sfx.py) vs. Frame-Exact Perceptual Sync
+
+Dropping generic SFX without perceptual peak alignment makes transitions feel disconnected from the motion.
+
+Integrate cues.json + mg-styles-15's mgaudio perceptual sync point model (whoosh peak at screen center, riser climax at cut frame, impact transient at slam frame) verified via spectrogram (--hits).
+
+7. Zero Post-Video Learning Memory
+
+When an animation looks bad or a mistake is fixed in one video, studio-animator and studio-visual-director start the next video with zero memory of past mistakes or winning recipes.
+
+Implement huashu-art-motion/SKILL.md's 回流 (Experience Reflow) Protocol: after every video, write lessons to .claude/memory/mistakes_and_pitfalls.md and .claude/memory/positive_recipes.md, and auto-inject them into the agents' prompts before the next video starts.
+
+2. Mastering the 5 External Animation Engines Inside foundernotes
+
+Note that foundernotes already has starter folders for .claude/skills/motion, .claude/skills/collage-director (an early fork of vox-director), and .claude/skills/animation-styles (17 markdown style guides: ascii-terminal, cgi-motion, chalkboard, comic-art, dan-koe, flat-vector, glow-sketch, ink-in-water, lego, one-ball-showreel, one-line-graph, pixel-art, pixel-dither, ps2, renaissance-codex, risograph-cutout, zackd-films) (foundernotes/.claude/skills/animation-styles). By upgrading these with the 5 repositories you provided, our studio gains 5 distinct, master-level animation engines:
+
+Style Engine 1: Bang-Motion Continuous Camera Worlds & Stage Cartoons (bangtutorial/bang-motion v1.19.0)
+
+Best For: High-retention hooks (first 30s), SaaS/product mechanism breakdowns, and continuous-journey explainers.
+
+Core Mechanics to Use:
+
+6 Explainer Worlds: Aksi kontinu (continuous vector strip where the hero never stops), Kartun kolase (cream paper #F4E9D3 + Bricolage Grotesque + Caveat cutouts), Jurnalisme visual (black ground + cited archival photos + yellow/red highlighters + dashed SVG draw() lines), Katalog putih, Sketsa vintage, and Kartun panggung (zero-caption stage cartoon with 1.08 <= zoom <= 1.95, 96px whip shifts, and J(el, tx, ty) SVG joint proxy) (bang-motion/references/explainer.md, bang-motion/references/kartun-panggung.md).
+
+Live DOM UI Rebuilds + camTo(): Never pan across a static screenshot; rebuild interfaces as live HTML/SVG DOM and track clicks with camTo(ui, target, at, { s: 1.8, dur: 0.8 }) (bang-motion/references/techniques.md).
+
+Style Engine 2: Vox-Director Tactile Paper Collage (Alisa0808/vox-director — Upgrading .claude/skills/collage-director)
+
+Best For: Founder biographies, historical timelines, market breakdowns, and archival documentary segments.
+
+Core Mechanics to Use:
+
+Upgrade .claude/skills/collage-director with Upstream Alisa0808/vox-director Features:
+
+9 Theme Presets & style_bakeoff.py: american-retro, swiss-modern, punk-zine, soviet-constructivist, wpa-propaganda, 70s-groovy, chinese-ink, atomic-age, newsprint-editorial (vox-director/SKILL.md).
+
+Local Element-Level Motion Engine (references/local-engine.md): Use scripts/extract_elements.py + scripts/motion.py to cut collage posters into independent layers and animate them locally with fly_in, slap, drop, pop_settle easings, scripts/confetti.py starbursts, and camera zoom + shake + whip—giving 100% deterministic control with zero API content-filter blocks (TypingMind Vox Reference).
+
+C-Roll Product/Founder Sticker Anchoring (scripts/croll_keyframes.py): Lock real product shots or historical artifacts with anchor_freeze so text labels never warp and halftone dots stay strictly on the background (vox-director/SKILL.md).
+
+Style Engine 3: Huashu 9-Grammar Explainer & 53 Living Art Recipes (alchaincyf/huashu-art-motion v1.2.0)
+
+Best For: Structuring a 5–12 minute Founder Notes video so every conceptual beat uses the exact visual grammar designed for that type of information.
+
+Core Mechanics to Use:
+
+17 JS Drawing Libraries (scripts/engine/lib/): MO (motion/easing: PULSE, slam, step(12), smooth, k75, appleOut, spring, onBeat), CAM (zlerp, coverZoom, track), DG (drawPartial, hand, morph, write, board), CH (grid, bars, candles, callout), TY/UI (fit, charsIn, typed, count, mesh, glass, sheen, persp), CL/MD (fillPaper, tornRect, halftone, string, highlight, cover, print) (Tenten Huashu Guide).
+
+9 Explainer Grammars: Route mental models to y3_whiteboard (0.5s delayed stroke reveal) or t1_3b1b (Manim concept morphing); route financials/metrics to t3_finance_chart (axes first -> bars from 0 -> single callout); route macro industry systems to y1_kurzgesagt; route evidence/documents to y2_vox (12fps stepped red string & highlighter); route punchy listicles/quotes to y5_kinetic_type (Tenten Huashu Guide).
+
+Style Engine 4: Claude-Drawing 77 CPU Physical Media Renderers (cloveric/claude-drawing-skill)
+
+Best For: Custom bespoke illustrations, historical/scientific plates (lib/codex.py, lib/blueprint.py), note-taking/whiteboard diagrams (lib/obsidianui.py, lib/canvasboard.py, lib/flexoki.py, lib/notebook.py), and authentic stroke-by-stroke draw-on sequences (--stages).
+
+Core Mechanics to Use:
+
+Zero-API CPU Rendering (numpy + Pillow): Generates 1920x1080 physical media frames with authentic paper tooth, Beer–Lambert ink density, risograph misregistration (lib/editorial.py), 256-point FFT-aligned OKLab shape morphing (lib/morph.py), and time-map character/world reveals (lib/storybook.py, lib/lineart.py) (claude-drawing-skill/SKILL.md).
+
+Built-In "Accidental Read" Checklists (毛病清单): Prevents procedural drawing bugs through 2–4 mandatory visual self-critique rounds (_v1, _v2, _v3) (claude-drawing-skill/SKILL.md).
+
+Style Engine 5: Code-Animation-Prompts 341 Catalog & mg-styles-15 Harness (XiaoyeCodes/code-animation-prompts)
+
+Best For: Selecting fresh visual + motion + layout combinations per video without repeating styles, and synthesizing frame-exact procedural audio (mgaudio).
+
+Core Mechanics to Use:
+
+Orthogonal 3-Role Selection (styles.py): Query references/catalog.json to pick 1 Visual Style (K / Z / R / L) + 1 Motion/Editing Structure (M) + 1 Editorial Palette/Typography (H) (code-animation-prompts/SKILL.md).
+
+Deterministic window.renderAt(t) + Sub-Frame Motion Blur (--mb 4 --shutter 0.5): Eliminates jitter and adds cinematic shutter blur to fast whip pans and kinetic type slams (code-animation-prompts/references/rendering.md, Tenten mg-styles-15 Manual).
+
+3. Reformed foundernotes 8-Agent Workflow & Self-Improving Loop (Sonnet Medium)
+
+Here is how we reform the .claude/agents/ crew and scripts inside arnavh1512-source/foundernotes so every single video gets better automatically:
+
+Step 1: Pre-Production Memory Load (studio-visual-director & studio-animator)
+
+Before planning a new video, both agents must read:
+
+.claude/memory/mistakes_and_pitfalls.md (every visual/timing/audio bug caught in past videos and its exact fix).
+
+.claude/memory/positive_recipes.md (07-正面经验 — proven high-performing scene recipes, camera curves, and style pairings).
+
+.claude/memory/production_ledger.json (fingerprints of the last 5 videos—enforcing bang-motion/SKILL.md's rule that at least 3 of 5 structural elements and 3 of 4 skin dimensions must change from the prior video).
+
+Step 2: Voicebox Narration & Word/Pause Grid Extraction (studio-sound-engineer)
+
+Run voicebox_server.sh + narrate.py --asr --retake 2 with the "Founder Notes Narrator" profile (speed=1.0, ~179 wpm, >= 8:00 (480.0s+) total duration) (foundernotes/CLAUDE.md).
+
+Extract exact word-level ASR timestamps (asr_beats.py) and sentence/paragraph pause arrays (SEG >= 0.45s, PARA >= 0.80s at -30 dB via vo-pauses logic) into studio-output/<slug>/cues.json.
+
+Step 3: Storyboard & Pre-Code Lint Gate (studio-visual-director + storyboard_lint.py)
+
+studio-visual-director writes storyboard.md and beats.json:
+
+3–6s Shot Cadence (<= 8s hard cap): Every 8–10s narration sentence is split into Shot A (Wide + Headline <= 7 words) + Shot B (Detail Cut-In, No Headline) cutting mid-sentence (vox-director/SKILL.md).
+
+Concrete Noun + Verb Mandate: Every shot row must name a physical Object (Noun) + Action (Verb) + Camera Move (push, pull, glide, static, snap 0.28s, slam 0.17s, cut). Abstract buzzwords with icons are rejected (huashu-art-motion/SKILL.md).
+
+3-Direction Style Bake-Off: Proposes 3 distinct visual compositions/styles for the key frame before full scene coding begins (huashu-art-motion/SKILL.md, vox-director/SKILL.md).
+
+Automated storyboard_lint.py Check: Blocks coding if:
+
+First 3 seconds is a static title card instead of an active object/hand scene.
+
+Camera pushes in 3 shots in a row without a pull-out, glide, or angle cut.
+
+Text-dominant shots exceed 30% of total shots or any label exceeds 7 words.
+
+On-screen numbers do not match the spoken script in script.md (huashu-art-motion/SKILL.md).
+
+Step 4: Poster-First Keyframe Proofing & Scene Rendering (studio-animator)
+
+"Keyframes Before Motion" (--stills): For every scene, studio-animator first renders static keyframe PNGs at peak timestamps (--stills 0.5,2.0,4.5) and audits them against:
+
+180px bottom subtitle safe zone (foundernotes/channel-profile.md) and 5% outer frame margin (Tenten mg-styles-15 Manual).
+
+Grayscale contrast check (<= 25% dark pocket or >= 80% light pocket behind text per bang-motion/SKILL.md).
+
+The style's specific "Accidental Read" failure checklist from claude-drawing-skill/SKILL.md.
+
+Deterministic Motion & Sub-Frame Motion Blur: Scenes implement window.renderAt(t) (?export=1) and render at 1920x1080 @ 30fps with sub-frame motion blur (--mb 4 --shutter 0.5) on fast camera whip pans and slams (Tenten mg-styles-15 Manual).
+
+Step 5: Perceptual SFX Synthesis & Audio Mastering (studio-sound-engineer + studio-editor)
+
+Synthesize and place SFX (mgaudio / fetch_sfx.py) locked to cues.json perceptual sync points:
+
+whoosh amplitude peak aligned to camera pan midpoint.
+
+impact / thud transient aligned to frame 0 of MO.expoOut / slam text hits.
+
+scribble / tick stepped at 12fps (MO.step(12)) during whiteboard/Vox annotations.
+
+Duck ambient BGM (0.6 ratio) under Voicebox narration (1.25 ratio), burn karaoke .ass subtitles in the bottom 180px safe zone (karaoke_ass.py + assemble.py), append K.endCard(S), and normalize master audio to -14 LUFS / <= -1 dBTP (foundernotes/CLAUDE.md, Tenten mg-styles-15 Manual).
+
+Step 6: Upgraded 5-Gate Automated QA + Blind Critic Jury (studio-reality-checker)
+
+Upgrade lint_scenes.py, qc_video.py, and studio-reality-checker.md so no video can pass without clearing all 5 quantitative gates:
+
+Gate 1 — 0.25s Bounding-Box & Safe-Zone Audit (lint_scenes.py + render.py --audit + subzone_gate.py): Scans every 0.25s across every scene to confirm zero text clipping, zero overlapping labels, zero critical graphics entering the bottom 180px subtitle zone, and <= 7 words per label (foundernotes/channel-profile.md, huashu-art-motion/SKILL.md).
+
+Gate 2 — Anti-PPT & Motion Energy Gate (film_gate.py in qc_video.py): Measures optical flow / frame-to-frame delta across the assembled MP4. If fast-motion frames are < 3.5% (< 0.035), it triggers a RED LIGHT rejection for static slideshow feel (huashu-art-motion/SKILL.md).
+
+Gate 3 — Mid-Scene Blank / Dead-Gap Detector (film_gate.py in qc_video.py): Scans every frame of the assembled MP4 for any continuous >= 0.3s (>= 9 frames @ 30fps) window of near-solid color, low edge density, or frozen dead air between narration beats. Any gap >= 0.3s triggers a RED LIGHT with exact timecodes (huashu-art-motion/SKILL.md).
+
+Gate 4 — Acoustic Sync & Gap Check (mgaudio --hits + qc_video.py): Verifies 1920x1080@30fps, >= 5:00 duration, -14 LUFS loudness, zero dropped ASR words, and <= 1 frame (33ms) alignment between visual transients and SFX hits on the spectrogram (Tenten mg-styles-15 Manual).
+
+Gate 5 — 2-Round Blind Critic Jury (studio-reality-checker + rubric.md): studio-reality-checker (which never writes code) inspects the 0.5s contact sheet and grades 7 dimensions (style_fidelity, concept_wow, motion_craft, typography_hierarchy, camera_rhythm, audio_sync, anti_ai_slop) on a 1–10 scale, issuing 5–10 timestamped numerical fix instructions across 2 mandatory revision rounds until the score is >= 8.0/10 (foundernotes/.claude/agents/studio-reality-checker.md, Tenten mg-styles-15 Manual).
+
+Step 7: Post-Video Self-Improvement Reflow (deliver.py + Memory Update)
+
+At the end of every video (and whenever you point out a flaw), studio-reality-checker updates:
+
+.claude/memory/mistakes_and_pitfalls.md: Adds the exact failure mode, timecode, root cause, and the new automated check added to lint_scenes.py or qc_video.py so it is mechanically impossible to repeat in future videos.
+
+.claude/memory/positive_recipes.md: Saves the highest-scoring scene code patterns and camera curves (07-正面经验) so the baseline quality ratchets up after every single video.
