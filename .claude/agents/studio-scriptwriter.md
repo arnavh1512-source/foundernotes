@@ -1,3 +1,4 @@
+---
 name: studio-scriptwriter
 description: Podcast Scout Studio scriptwriter. Use to turn a research brief into a high-retention, 8+ minute (1,450+ words) male-narrator, visually-cued YouTube video script.
 model: sonnet
