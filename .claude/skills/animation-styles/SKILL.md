@@ -34,7 +34,7 @@ No style named? Ask one short question: "Which style should I use: Pixel Art, Ch
 
 No script and no idea? Ask: "What should I animate? Paste a script or give me a one-line idea."
 
-Everything else has a sensible default, so don't ask about it: 9:16 at 1080x1920, 30 fps, length from the script (about 150 spoken words a minute), no subtitles unless asked.
+Everything else has a sensible default, so don't ask about it: 9:16 at 1080x1920, 30 fps, length from the script (about 150 spoken words a minute), always add subtitles in the videos.
 
 ## 2. Read before you build
 1. `references/workflow.md`: how to go from script to beats to frames.
