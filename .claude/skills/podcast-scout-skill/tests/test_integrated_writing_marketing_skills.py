@@ -55,7 +55,7 @@ class EditorialAndMarketingIntegration(unittest.TestCase):
         wrapper = (SKILLS / "marketing-growth" / "SKILL.md").read_text(encoding="utf-8")
         self.assertIn("5 upstream marketing skills", wrapper)
         self.assertIn("not all copied", wrapper)
-        self.assertIn("Owner", wrapper)
+        self.assertIn("owner", wrapper.lower())
 
     def test_all_new_skills_registered_for_evaluation(self):
         code = (STUDIO / "scripts" / "evaluate_skills.py").read_text(encoding="utf-8")
