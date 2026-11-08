@@ -1,4 +1,4 @@
-cat << 'QC_EOF' > .claude/skills/podcast-scout-skill/scripts/qc_video.py
+ .claude/skills/podcast-scout-skill/scripts/qc_video.py
 #!/usr/bin/env python3
 """
 qc_video.py — Upgraded 6-Gate Quality Control & Film Gate for Founder Notes Studio (v4.0).
@@ -311,5 +311,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-QC_EOF
 chmod +x .claude/skills/podcast-scout-skill/scripts/qc_video.py
