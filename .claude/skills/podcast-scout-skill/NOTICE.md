@@ -19,7 +19,15 @@ separately, never vendored) and adapts ideas and rules from these projects:
 | [Jakeschincariol/youtube-agent-skill](https://github.com/Jakeschincariol/youtube-agent-skill) | MIT | Title/thumbnail/chapter/hook rules re-implemented in package_lint.py and the scriptwriter role |
 | [calesthio/OpenMontage](https://github.com/calesthio/OpenMontage) | AGPL-3.0 | Ideas only (stage gates, sample-first, budget approval, Shorts safe zone); no code or text copied |
 | [jamiepine/voicebox](https://github.com/jamiepine/voicebox) | MIT | Optional local TTS server with male presets |
-| [h4ckf0r0day/obscura](https://github.com/h4ckf0r0day/obscura) | Apache-2.0 | Research browser (downloaded separately) |
+| [Panniantong/Agent-Reach](https://github.com/Panniantong/Agent-Reach) | MIT | Preferred optional research channel integration (not vendored or installed by this repository) |
+| [h4ckf0r0day/obscura](https://github.com/h4ckf0r0day/obscura) | Apache-2.0 | Legacy bundled research-helper references only; no distributed browser binary |
+| [HeyGen-com/hyperframes](https://github.com/HeyGen-com/hyperframes) | Apache-2.0 | Documented optional agent-first HTML animation renderer, not installed |
+| [feitangyuan/onetake](https://github.com/feitangyuan/onetake) | PolyForm Noncommercial 1.0.0 | Continuity ideas only; **do not vendor/use source commercially without license** |
+| [Anil-matcha/vox-ai-motion-graphics-generator](https://github.com/Anil-matcha/vox-ai-motion-graphics-generator) | MIT indicated by upstream README | Existing collage-director adaptation; verify per-component rights |
+| [patch-gg/pixelfx](https://github.com/patch-gg/pixelfx) | MIT indicated by upstream README | Procedural pixel effect and action-pose ideas, not copied |
+| [opentoonz/opentoonz](https://github.com/opentoonz/opentoonz) | Check upstream component notices | Optional external desktop 2D suite, not vendored |
+| [synfig/synfig](https://github.com/synfig/synfig) | Check upstream component notices | Optional external vector animation app, not vendored |
+| [pencil2d/pencil](https://github.com/pencil2d/pencil) | Check upstream component notices | Optional external frame-by-frame animator, not vendored |
 | [acamposuribe/p5.brush](https://github.com/acamposuribe/p5.brush) | MIT | Painted background plates (standalone build vendored per film) |
 | [lemomo-ai/lemo-opuscar](https://github.com/lemomo-ai/lemo-opuscar) | MIT | Directing method ideas; sampler/sfx/ASR tools used from an installed copy; instrument samples CC0 / CC BY 3.0 (Salamander) |
 | [WordPress/openverse](https://github.com/WordPress/openverse) | MIT (API); media per file | `fetch_sfx.py` searches CC0 sound effects and records each file's licence |

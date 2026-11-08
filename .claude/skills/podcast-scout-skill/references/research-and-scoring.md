@@ -4,7 +4,7 @@ Use this reference to turn a podcast into original educational video briefs for 
 
 ## 1. Establish what you can actually access
 
-1. Inventory available capabilities: supplied files, transcript retrieval, web search, webpage reading, optional video understanding, and optional YouTube analytics. Use tools present in the current host; never assume a Claude, ChatGPT, OpenAI, vidIQ, or Obscura integration exists.
+1. Inventory available capabilities: supplied files, transcript retrieval, web search, webpage reading, optional video understanding, and optional YouTube analytics. Use tools present in the current host; never assume a Claude, ChatGPT, OpenAI, vidIQ, or Agent-Reach integration exists.
 2. Prefer a transcript with timestamps. Accept pasted text, TXT, SRT, VTT, or a transcription of the supplied media. For a link, retrieve its actual transcript before extracting topics. Descriptions, chapters, search snippets, and a title are not substitutes for the episode.
 3. Record the source title, URL when available, access method, transcript language, whether timestamps exist, and whether coverage is complete, partial, unknown, or unavailable. If coverage is partial or unknown, explain the range or limitation in coverage_note. Do not silently truncate long episodes; segment them, extract candidates from every available segment, then deduplicate.
 4. When video understanding is unavailable, say the analysis is transcript-based. Do not claim to have watched visuals, judged delivery, or measured retention.
@@ -119,4 +119,4 @@ If the host supports JSON export, validate against `report-schema.json`. Use sch
 
 ## Export capability names
 
-Use canonical strings in capabilities: `transcript-reading`, `transcript-retrieval`, `web-search`, `webpage-reading`, `video-understanding`, `youtube-analytics`, `keyword-research`, and `obscura`. List only capabilities actually available in the host. A source-grounded offline report lists `transcript-reading` and mode `provisional`; an accessible link to a source alone is not `webpage-reading`. Research normally requires `web-search` and `webpage-reading`; source documents supplied by the user can still be evaluated as sources, but describe that narrower basis in warnings and keep mode provisional if independent corroboration is unavailable.
+Use canonical strings in capabilities: `transcript-reading`, `transcript-retrieval`, `web-search`, `webpage-reading`, `video-understanding`, `youtube-analytics`, `keyword-research`, and `agent-reach`. List only capabilities actually available in the host. A source-grounded offline report lists `transcript-reading` and mode `provisional`; an accessible link to a source alone is not `webpage-reading`. Research normally requires `web-search` and `webpage-reading`; source documents supplied by the user can still be evaluated as sources, but describe that narrower basis in warnings and keep mode provisional if independent corroboration is unavailable.

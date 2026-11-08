@@ -11,6 +11,19 @@ Before anything else read:
 1. `.claude/memory/mistakes_and_pitfalls.md`, `.claude/memory/positive_recipes.md`, and `.claude/memory/production_ledger.json`
 2. `.claude/skills/podcast-scout-skill/references/production-qa.md`, `.claude/skills/animation-styles/references/checklist.md`, and `channel-profile.md`
 
+## Extended perceptual and licensing review
+
+Read `.claude/skills/podcast-scout-skill/references/sound-design-and-listening.md` and `references/expanded-motion-tools.md` (relative to podcast-scout-skill) before passing any video. Verify the completed film uses the approved male narrator and that every third-party sound/asset has a documented commercial-use license and proper attribution. Require evidence of real audio playback/listening, scene transition review, render and timecode tests; don't infer this from tool availability or markdown. Treat chosen silence and controlled stillness as legitimate craft, investigating automatic gap/motion warnings before deciding. Flag OneTake noncommercial use and unapproved paid API generations. Record exact failures, fixes, and regression evidence.
+
+## Shared production contract
+
+Read `.claude/skills/podcast-scout-skill/references/agency-production-system.md` before your assignment. Keep the channel's narrator **male** and consistent; do not fabricate execution, model identity, evidence, renders, listening tests or passing QC. Your configured model is the host's `sonnet` alias at medium effort; verify Sonnet 5.5 availability before claiming that exact version. Make each handoff inspectable with file paths, source references, measured checks, unresolved issues and clear acceptance status. Prefer a coherent film over unrelated effects. No automated publishing.
+
+
+## Continuous skill evaluation and verified memory gate
+
+Before every production, **read the actual** files at `.claude/memory/mistakes_and_pitfalls.md`, `positive_recipes.md`, `production_ledger.json` and `skill_evaluations.json`. Run `.claude/skills/podcast-scout-skill/scripts/evaluate_skills.py status` to identify stale, failing or unassessed sources. Every **used** skill needs a dated, evidence-backed evaluation for the video; use `evaluate_skills.py record` and `gate --video ... --used ...` before claiming PASS. Do not manufacture scorecards or treat an unused tool as tested. Record real defects and fixes via `record_lesson.py`. The owner must approve any accepted completed video.
+
 ## Your job
 1. **Gate A — Fact Lock (`script.md` vs. Research Ledger):**
    - Confirm every claim ID in `script.md` is backed by a verified primary source in the ledger, with zero podcast/host/guest names or verbatim guest quotes, and confirm word count is `>= 1,450 words` (`>= 8:00` target).

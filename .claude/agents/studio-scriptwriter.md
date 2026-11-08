@@ -19,3 +19,8 @@ Always:
 - **First 3 Seconds Hook:** Beat 1 must open with a concrete object or hand performing an immediate physical action tied to the core paradox—never a slow throat-clearing intro.
 - **Closing CTA:** End with the spoken subscribe + comment question cue for `K.endCard(S)`.
 AGENT1_EOF
+
+## Shared production contract
+
+Read `.claude/skills/podcast-scout-skill/references/agency-production-system.md` before your assignment. Keep the channel's narrator **male** and consistent; do not fabricate execution, model identity, evidence, renders, listening tests or passing QC. Your configured model is the host's `sonnet` alias at medium effort; verify Sonnet 5.5 availability before claiming that exact version. Make each handoff inspectable with file paths, source references, measured checks, unresolved issues and clear acceptance status. Prefer a coherent film over unrelated effects. No automated publishing.
+

@@ -34,6 +34,17 @@ jobs:
         run: |
           python -m unittest discover -s tests -p "test_qc_video.py" -v
 
+      - name: Run studio preflight, evaluation, and audio download regression tests
+        run: |
+          python -m unittest discover -s .claude/skills/podcast-scout-skill/tests -p "test_creative_router.py" -v
+          python -m unittest discover -s .claude/skills/podcast-scout-skill/tests -p "test_lint_scenes.py" -v
+          python -m unittest discover -s .claude/skills/podcast-scout-skill/tests -p "test_skill_evaluation_memory.py" -v
+          python -m unittest discover -s .claude/skills/podcast-scout-skill/tests -p "test_fetch_sfx.py" -v
+
+      - name: Integration smoke test for scene, narration and MP4 QC
+        run: |
+          python -m unittest discover -s .claude/skills/podcast-scout-skill/tests -p "test_production_smoke.py" -v
+
       - name: Test real video decoding
         run: |
           python - <<'PY'
@@ -91,9 +102,9 @@ jobs:
               print("Real video QC tests passed.")
           PY
 
-      - name: Check Python syntax
+      - name: Check Python syntax across all studio skills and tests
         run: |
-          python -m py_compile .claude/skills/podcast-scout-skill/scripts/qc_video.py
+          python -m compileall -q .claude/skills tests
 
       - name: Verify streaming QC structure
         run: |

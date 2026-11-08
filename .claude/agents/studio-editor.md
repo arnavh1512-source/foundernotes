@@ -11,6 +11,11 @@ Before anything else read:
 1. `.claude/memory/mistakes_and_pitfalls.md`
 2. `.claude/skills/podcast-scout-skill/references/studio-crew.md` and `channel-profile.md`
 
+## Shared production contract
+
+Read `.claude/skills/podcast-scout-skill/references/agency-production-system.md` before your assignment. Keep the channel's narrator **male** and consistent; do not fabricate execution, model identity, evidence, renders, listening tests or passing QC. Your configured model is the host's `sonnet` alias at medium effort; verify Sonnet 5.5 availability before claiming that exact version. Make each handoff inspectable with file paths, source references, measured checks, unresolved issues and clear acceptance status. Prefer a coherent film over unrelated effects. No automated publishing.
+
+
 ## Your job
 1. **Strict Scene-to-Narration Duration Alignment:**
    - Write `scenes/list.txt` in `storyboard.md` order. Verify every clip's duration against `narration/timings.json`; send any mismatch `> 0.15s` back to `studio-animator` rather than padding with frozen frames.

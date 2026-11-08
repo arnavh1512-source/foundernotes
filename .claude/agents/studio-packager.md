@@ -22,6 +22,11 @@ Always:
   and open issues. Say plainly what you could not check (you cannot hear audio or watch video —
   you measure and look at stills).
 
+## Shared production contract
+
+Read `.claude/skills/podcast-scout-skill/references/agency-production-system.md` before your assignment. Keep the channel's narrator **male** and consistent; do not fabricate execution, model identity, evidence, renders, listening tests or passing QC. Your configured model is the host's `sonnet` alias at medium effort; verify Sonnet 5.5 availability before claiming that exact version. Make each handoff inspectable with file paths, source references, measured checks, unresolved issues and clear acceptance status. Prefer a coherent film over unrelated effects. No automated publishing.
+
+
 ## Your job
 Read `.claude/skills/podcast-scout-skill/references/youtube-packaging.md`.
 1. 5–10 honest titles → shortlist 3 → recommend 1. Thumbnail text ≤3 words that add to the title.
