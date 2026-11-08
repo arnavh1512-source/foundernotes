@@ -104,7 +104,12 @@ def run_film_gate(video_path, duration, qc_report, allow_blue_purple=False):
     raw = proc.stdout.read()
     proc.wait()
 
- n_frames = len(raw) // frame_bytes
+    raw = proc.stdout.read()
+    proc.wait()
+
+    n_frames = len(raw) // frame_bytes
+
+    if proc.returncode != 0:
 
 if proc.returncode != 0:
     qc_report["status"] = "FAIL"
