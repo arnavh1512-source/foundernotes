@@ -28,6 +28,63 @@ jobs:
         run: |
           python -m unittest discover -s tests -p "test_qc_video.py" -v
 
+      - name: Test real video decoding
+        run: |
+          python - <<'PY'
+          import importlib.util
+          import subprocess
+          import tempfile
+          from pathlib import Path
+
+          script = Path(
+              ".claude/skills/podcast-scout-skill/scripts/qc_video.py"
+          )
+          spec = importlib.util.spec_from_file_location("qc_video", script)
+          qc = importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(qc)
+
+          def new_report():
+              return {
+                  "status": "PASS",
+                  "checks": [],
+                  "warnings": [],
+                  "errors": [],
+              }
+
+          with tempfile.TemporaryDirectory() as directory:
+              moving = str(Path(directory) / "moving.mp4")
+              blank = str(Path(directory) / "blank.mp4")
+
+              for output, source in [
+                  (moving, "testsrc2=size=320x180:rate=30"),
+                  (blank, "color=c=black:s=320x180:r=30"),
+              ]:
+                  subprocess.run([
+                      "ffmpeg", "-v", "error", "-y",
+                      "-f", "lavfi", "-i", source,
+                      "-t", "4", "-c:v", "mpeg4", output,
+                  ], check=True)
+
+              good = new_report()
+              qc.run_film_gate(moving, 4, good)
+
+              assert good["status"] == "PASS", good
+              assert any(
+                  "Streamed" in check for check in good["checks"]
+              ), good
+
+              bad = new_report()
+              qc.run_film_gate(blank, 4, bad)
+
+              assert bad["status"] == "FAIL", bad
+              assert any(
+                  "Blank/Dead Frame" in error
+                  for error in bad["errors"]
+              ), bad
+
+              print("Real video QC tests passed.")
+          PY
+
       - name: Check Python syntax
         run: |
           python -m py_compile .claude/skills/podcast-scout-skill/scripts/qc_video.py
