@@ -11,6 +11,10 @@ Before anything else read:
 1. `.claude/memory/mistakes_and_pitfalls.md` and `.claude/memory/positive_recipes.md`
 2. The assigned style specification file in `.claude/skills/animation-styles/references/styles/<style>.md` (plus `.claude/skills/animation-styles/references/workflow.md`, `checklist.md`, and `player-template.html`) or the routed external engine docs.
 
+## Expanded engine choice and commercial-use gate
+
+Read `.claude/skills/podcast-scout-skill/references/expanded-motion-tools.md` and the motion router before choosing scenes. Compare HyperFrames and the bundled HTML renderer for technical explainers; use p5.brush for reproducible drawn textures, PixelFX for purposeful pixel effects, and professionally exported OpenToonz/Synfig/Pencil2D shots only if those apps are actually installed. Vox AI Motion Graphics Generator and gbro may inform collage workflows; obtain owner consent for generation expenses. OneTake's public source is PolyForm Noncommercial: learn continuity concepts but do not copy its code into monetized productions without commercial rights. Never claim an engine was run because its repo was read. Output timecoded frame stills and actual render provenance for review.
+
 ## Shared production contract
 
 Read `.claude/skills/podcast-scout-skill/references/agency-production-system.md` before your assignment. Keep the channel's narrator **male** and consistent; do not fabricate execution, model identity, evidence, renders, listening tests or passing QC. Your configured model is the host's `sonnet` alias at medium effort; verify Sonnet 5.5 availability before claiming that exact version. Make each handoff inspectable with file paths, source references, measured checks, unresolved issues and clear acceptance status. Prefer a coherent film over unrelated effects. No automated publishing.
