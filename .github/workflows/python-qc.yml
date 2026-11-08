@@ -23,7 +23,7 @@ jobs:
         run: |
           python -m py_compile .claude/skills/podcast-scout-skill/scripts/qc_video.py
 
-      - name: Verify QC error handling
+      - name: Verify streaming QC structure
         run: |
           python - <<'PY'
           import ast
@@ -33,11 +33,28 @@ jobs:
           source = path.read_text(encoding="utf-8")
           tree = ast.parse(source)
 
-          assert 'if not HAS_NUMPY:' in source
-          assert 'qc_report["status"] = "FAIL"' in source
-          assert 'proc.returncode != 0' in source
-          assert 'len(raw) % frame_bytes != 0' in source
-          assert 'if n_frames < 5:' in source
+          functions = {
+              node.name: node
+              for node in tree.body
+              if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+          }
 
-          print("QC error-handling checks passed.")
+          assert "run_film_gate" in functions
+          assert "mark_failure" in functions
+
+          film_gate = ast.get_source_segment(
+              source, functions["run_film_gate"]
+          )
+
+          assert "if not HAS_NUMPY:" in film_gate
+          assert "subprocess.Popen" in film_gate
+          assert "proc.stdout.read(remaining)" in film_gate
+          assert "if remaining != 0:" in film_gate
+          assert "if return_code != 0:" in film_gate
+          assert "if n_frames < 5:" in film_gate
+
+          assert "proc.stdout.read()" not in film_gate
+          assert "raw, stderr = proc.communicate()" not in film_gate
+
+          print("Streaming QC structure checks passed.")
           PY
