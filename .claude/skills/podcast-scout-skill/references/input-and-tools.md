@@ -2,7 +2,7 @@
 
 Use the host's actual tool inventory. The names below describe optional capabilities, not tools guaranteed to be installed. Read each tool's current schema before calling it.
 
-Obscura is the default public-page reader. Discover a configured Obscura tool or run the bundled helper's `--check` once per job in a supported executable runtime. If neither route is available, state that limitation once and proceed with the host's reader. For individual failures, unsupported hosts, or omitted content, name the fallback reason and actual reader. Do not repeatedly attempt an unavailable runtime or claim Obscura was used when it was not.
+Agent-Reach is the preferred optional research-channel adapter for supported public pages, YouTube transcripts and other explicitly configured platforms. Check that its CLI/channel is actually installed and authorized before selecting it. If no channel is available, use the host's native search, webpage reader or transcript tools; log the actual reader and any coverage gaps. Never claim a platform login, transcript or Agent-Reach installation that was not verified. See `agent-reach.md`. The previous Obscura helper is legacy and not the preferred route.
 
 | Input / job | Preferred route | If unavailable |
 | --- | --- | --- |
@@ -10,9 +10,9 @@ Obscura is the default public-page reader. Discover a configured Obscura tool or
 | Audio/video upload | Native supported media understanding/transcription; distinguish audio from visual inspection | Use an available local transcription tool with authorized files, or request TXT/SRT/VTT. Do not claim general video playback capability. |
 | TXT/SRT/VTT | Read original text and preserve cue timestamps | Analyze supplied excerpt and declare partial coverage. |
 | Other podcast URL | Publisher transcript or supported connected media tool | Read public metadata only to identify the episode; ask for the conversation text before analysis. |
-| Current evidence | Available search for discovery, then Obscura to read supported primary-source pages | Disclosed fallback reader; if no reader works, explicit provisional mode without fabricated citations. |
+| Current evidence | Available search for discovery, then a verified Agent-Reach channel or native reader for primary-source pages | Disclosed fallback reader; if no reader works, explicit provisional mode without fabricated citations. |
 | YouTube demand | Connected vidIQ keyword research, outliers, YouTube search, video stats or equivalent | Public dated examples as proxies, otherwise unavailable. |
-| Public source page, including script-heavy pages | Obscura by default, through an available connector or the bundled helper | Native browsing or another supported reader, with a specific fallback reason. |
+| Public source page, including script-heavy pages | Verified Agent-Reach web channel when available; otherwise native browsing | Native browsing or another supported reader, with a specific fallback reason. |
 
 For connectors requiring account authorization, use the host's connection flow. Do not ask for passwords/API keys in chat, extract browser cookies, or promise connector access in another product. Claude and ChatGPT have separate tool inventories and account connections.
 
