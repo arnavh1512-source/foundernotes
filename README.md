@@ -70,6 +70,46 @@ use a cookies file exported from your own browser (`yt-dlp --cookies`). Never pa
 
 Tests: `cd .claude/skills/podcast-scout-skill && python3 -m unittest discover -s tests && node --test scripts/obscura-research.test.mjs`
 
+## Engineering checks and repair status
+
+The studio is undergoing a coordinated engineering hardening pass on the
+`audit/consolidated-pipeline-hardening` branch. **A green GitHub Actions run is not
+proof that a complete video can be produced or that the studio is production-ready.**
+
+### Local validation
+
+From the repository root, run:
+
+```bash
+python3 -m compileall -q .claude/skills tests
+python3 -m unittest discover -s tests -p "test_qc_video.py" -v
+cd .claude/skills/podcast-scout-skill
+python3 -m unittest discover -s tests -v
+node --test scripts/obscura-research.test.mjs
+```
+
+The GitHub workflow `.github/workflows/python-qc.yml` currently checks Python
+syntax, QC behavioral tests, and real FFmpeg decoding samples. The additional
+studio and Node tests above are **manual checks**, not yet CI guarantees.
+
+### Hardening changes on the repair branch
+
+- Broader Python syntax checking exposed and corrected an invalid shell
+  heredoc wrapper committed inside `lint_scenes.py`.
+- `gen_media.py` now downloads into a temporary file, checks common media
+  signatures, caps download size, and avoids modifying batch specifications.
+  Signature checks are not equivalent to full image/video decoding.
+- `assemble.py` validates key render parameters and media inputs before
+  launching expensive FFmpeg processing.
+- Earlier QC fail-closed and regression-test improvements remain in place.
+
+### Before publishing
+
+Verify a complete video run with representative narration, scenes, captions,
+and music. Inspect the rendered master, audio sync, contact sheet, QC report,
+asset provenance, and upload package manually. Do not merge repair work solely
+because syntax checks pass.
+
 ## Credits and licences
 
 Ideas and code adapted from open projects are listed in `.claude/skills/podcast-scout-skill/NOTICE.md`
