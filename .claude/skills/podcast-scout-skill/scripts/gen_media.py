@@ -15,7 +15,7 @@ no text in the image (type is set in the scene). Record every generated asset (m
 seed, date) in CREDITS — the script writes <out>.json next to each file — and tick YouTube's
 "altered or synthetic content" box when realistic AI imagery appears.
 """
-import argparse, json, os, sys, time, urllib.request, urllib.error
+import argparse, json, os, sys, time, tempfile, urllib.request, urllib.error
 
 BASE = os.environ.get("MUAPI_BASE", "https://api.muapi.ai")
 UA = {"User-Agent": "hunting-titles-studio/1.0", "Content-Type": "application/json"}
@@ -72,11 +72,52 @@ def one(name, spec, out, key):
         raise SystemExit(f"gen_media: MuAPI returned a placeholder sample, not a generation ({url}, cost {cost}). "
                          "Top up the MuAPI account and retry.")
     os.makedirs(os.path.dirname(os.path.abspath(out)), exist_ok=True)
-    with urllib.request.urlopen(urllib.request.Request(url, headers={"User-Agent": UA["User-Agent"]}), timeout=120) as r, open(out, "wb") as f:
-        f.write(r.read())
+    # Download to a temporary file so failures never leave a corrupt final asset.
+    destination = os.path.abspath(out)
+    suffix = os.path.splitext(destination)[1].lower()
+    signatures = {
+        ".png": lambda h: h.startswith(b"\\x89PNG\\r\\n\\x1a\\n"),
+        ".jpg": lambda h: h.startswith(b"\\xff\\xd8\\xff"),
+        ".jpeg": lambda h: h.startswith(b"\\xff\\xd8\\xff"),
+        ".webp": lambda h: h.startswith(b"RIFF") and h[8:12] == b"WEBP",
+        ".mp4": lambda h: len(h) >= 12 and h[4:8] == b"ftyp",
+    }
+    if suffix not in signatures:
+        raise SystemExit(f"gen_media: unsupported output extension: {suffix}")
+    tmp = None
+    try:
+        with tempfile.NamedTemporaryFile(
+            dir=os.path.dirname(destination), prefix=".media-", delete=False
+        ) as f:
+            tmp = f.name
+            total = 0
+            with urllib.request.urlopen(
+                urllib.request.Request(url, headers={"User-Agent": UA["User-Agent"]}),
+                timeout=120,
+            ) as response:
+                while True:
+                    chunk = response.read(1024 * 1024)
+                    if not chunk:
+                        break
+                    total += len(chunk)
+                    if total > 500 * 1024 * 1024:
+                        raise ValueError("media download exceeds 500 MiB")
+                    f.write(chunk)
+        with open(tmp, "rb") as f:
+            header = f.read(16)
+        if not signatures[suffix](header):
+            raise ValueError(f"download is not a valid {suffix} media container")
+        os.replace(tmp, destination)
+        tmp = None
+    except (OSError, ValueError) as exc:
+        raise SystemExit(f"gen_media: asset download failed: {exc}") from exc
+    finally:
+        if tmp is not None and os.path.exists(tmp):
+            os.unlink(tmp)
     meta = {"name": name, "model": model, "payload": payload, "request_id": res.get("request_id"), "source_url": url,
             "generated_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "provider": "MuAPI (via Open Generative AI API pattern)"}
-    json.dump(meta, open(out + ".json", "w"), indent=1)
+    with open(out + ".json", "w", encoding="utf-8") as metadata_file:
+        json.dump(meta, metadata_file, indent=1)
     print(f"{name}: {out}")
     return meta
 
@@ -96,8 +137,9 @@ def main():
         specs = json.load(open(a.batch)); od = a.out_dir or "."
         for name, spec in specs.items():
             if name.startswith("_"): continue
-            ext = spec.pop("ext", "png")
-            one(name, spec, os.path.join(od, f"{name}.{ext}"), key)
+            ext = spec.get("ext", "png")
+            clean_spec = {k: v for k, v in spec.items() if k != "ext"}
+            one(name, clean_spec, os.path.join(od, f"{name}.{ext}"), key)
         return
     if not (a.prompt and a.out):
         ap.error("--prompt and --out are required (or use --batch)")
