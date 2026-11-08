@@ -27,7 +27,9 @@ UPSTREAM = (
     "javascript-animation-skills stickman-video-director youtube-agent-skill "
     "OpenMontage voicebox Agent-Reach p5.brush openverse earshot opentoonz "
     "synfig pencil2d vox-ai-motion-graphics-generator pixelfx hyperframes "
-    "onetake gbro-collage-broll lemo-opuscar humanizer"
+    "onetake gbro-collage-broll lemo-opuscar humanizer i-have-adhd "
+    "marketing-video marketing-social marketing-content-strategy "
+    "marketing-analytics marketing-product-marketing"
 ).split()
 UPLOADED = (
     "3d-animation cartoon-episodes documentary commercial-pipeline "
