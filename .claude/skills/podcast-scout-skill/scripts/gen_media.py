@@ -76,9 +76,9 @@ def one(name, spec, out, key):
     destination = os.path.abspath(out)
     suffix = os.path.splitext(destination)[1].lower()
     signatures = {
-        ".png": lambda h: h.startswith(b"\\x89PNG\\r\\n\\x1a\\n"),
-        ".jpg": lambda h: h.startswith(b"\\xff\\xd8\\xff"),
-        ".jpeg": lambda h: h.startswith(b"\\xff\\xd8\\xff"),
+        ".png": lambda h: h.startswith(b"\x89PNG\r\n\x1a\n"),
+        ".jpg": lambda h: h.startswith(b"\xff\xd8\xff"),
+        ".jpeg": lambda h: h.startswith(b"\xff\xd8\xff"),
         ".webp": lambda h: h.startswith(b"RIFF") and h[8:12] == b"WEBP",
         ".mp4": lambda h: len(h) >= 12 and h[4:8] == b"ftyp",
     }
