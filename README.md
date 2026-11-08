@@ -53,6 +53,14 @@ The existing **17 native animation styles** and previously registered sources re
 
 **Status:** Repository descriptions inspected, guidance and agent handoffs committed. External tools have **not** been installed, rendered or listened to in this environment. Paid APIs require owner approval; commercial usage requires applicable code and media licenses. Sound design must preserve the consistent male narrator and verify the **actual finished mix**, rather than assume a successful automated check.
 
+## User-uploaded creative formats: ten adapted production recipes
+
+Six uploaded ZIP archives have now been inspected and mapped into **ten distinct creative formats**: 3D Animation, Cartoon Episodes, Documentary, Commercial Pipeline, Paper-Cut Motion Design, Talking Object, Skeleton Ads, Song-style Ads, Claymation and Paper Animation. They are described in the [adaptation and safety guide](.claude/skills/podcast-scout-skill/references/uploaded-creative-formats.md).
+
+A new **[creative router](.claude/skills/podcast-scout-skill/scripts/creative_router.py)** can list the ten formats, suggest a starting route from topic keywords and validate a shot-plan JSON for narrator approval, shot timings, source evidence, asset rights and paid-generation approval. Example: `python3 .claude/skills/podcast-scout-skill/scripts/creative_router.py --list`; `--sample` prints an illustrative schema with placeholder evidence; `--validate production/creative-plan.json` checks a real plan. [Regression tests](.claude/skills/podcast-scout-skill/tests/test_creative_router.py) cover important rejected cases.
+
+**Integration boundary:** The ZIP contents have not been copied as independent production agents, nor have their third-party assembly scripts or external video generators been executed. The reusable *techniques* are now routed through FounderNotes' existing agents with the channel's **male voice, fact lock, storyboard continuity, rights checks, expense approvals and full QC** intact. A passing plan validation is not evidence of a rendered or approved film.
+
 ## Quick start
 
 ```bash
