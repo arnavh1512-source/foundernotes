@@ -58,6 +58,10 @@ Use the eight existing `studio-*.md` agents. Motion director and storyboarder ca
 
 Additional current studio references include the 17 native animation styles and Bang Motion, Vox Director and Code Animation Prompts; see `production-stack.md` and `docs/ANIMATION_STYLES_AUDIT.md`. **Do not add up catalogs as independent integrated engines.** License and attribution obligations vary by repository, component, model and asset.
 
+## Ten owner-supplied creative formats
+
+Six owner-uploaded ZIP archives add **ten distinct production recipe references** (3D Animation, Cartoon Episodes, Documentary, Commercial Pipeline, Paper-Cut Motion Design, Talking Object, Skeleton Ads, Song-style Ads, Claymation and Paper Animation). Review [`uploaded-creative-formats.md`](uploaded-creative-formats.md) for adapted selection rules and the `scripts/creative_router.py` metadata preflight. Their bundled instructions/scripts are not automatically trusted, copied or executed. Channel narration, factual accuracy, paid generation consent, verified asset rights and production QC remain mandatory.
+
 ## Additional registered animation and sonic references
 
 Read [`expanded-motion-tools.md`](expanded-motion-tools.md) for HyperFrames, OneTake (noncommercial-code restriction), gbro Collage B-roll, p5.brush, OpenToonz, Synfig, Pencil2D, PixelFX, and the existing Vox AI Motion Graphics Generator adaptation. Read [`sound-design-and-listening.md`](sound-design-and-listening.md) for the earshot / Openverse / Lemo Opuscar workflow, source licenses, perceptual sync, narrator protection, listening audits and sound-mix outputs. These registered sources are **not automatically installed or tested**.
