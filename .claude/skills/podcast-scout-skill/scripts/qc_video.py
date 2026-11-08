@@ -744,9 +744,11 @@ def main():
                 f"Contact sheet generated: {args.sheet}"
             )
 
+        
         except (OSError, ValueError, RuntimeError) as exc:
-            qc_report["warnings"].append(
-                f"Contact sheet generation failed: {exc}"
+            mark_failure(
+                qc_report,
+                f"Contact sheet generation failed: {exc}",
             )
 
     # Final status
