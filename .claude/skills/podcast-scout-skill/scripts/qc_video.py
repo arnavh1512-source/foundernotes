@@ -100,37 +100,33 @@ def run_film_gate(video_path, duration, qc_report, allow_blue_purple=False):
         "-vf", f"fps={sample_fps},scale={w}:{h}",
         "-f", "rawvideo", "-pix_fmt", "rgb24", "-"
     ]
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
-    raw = proc.stdout.read()
-    proc.wait()
-
+     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
     raw = proc.stdout.read()
     proc.wait()
 
     n_frames = len(raw) // frame_bytes
 
     if proc.returncode != 0:
+        qc_report["status"] = "FAIL"
+        qc_report["errors"].append(
+            f"FFmpeg decoding failed with exit code {proc.returncode}"
+        )
+        return
 
-if proc.returncode != 0:
-    qc_report["status"] = "FAIL"
-    qc_report["errors"].append(
-        f"FFmpeg decoding failed with exit code {proc.returncode}"
-    )
-    return
+    if len(raw) % frame_bytes != 0:
+        qc_report["status"] = "FAIL"
+        qc_report["errors"].append(
+            "Incomplete video frame detected during QC."
+        )
+        return
 
-if len(raw) % frame_bytes != 0:
-    qc_report["status"] = "FAIL"
-    qc_report["errors"].append(
-        "Incomplete video frame detected during QC."
-    )
-    return
+    if n_frames < 5:
+        qc_report["status"] = "FAIL"
+        qc_report["errors"].append(
+            "Insufficient decoded frames for visual inspection."
+        )
+        return
 
-if n_frames < 5:
-    qc_report["status"] = "FAIL"
-    qc_report["errors"].append(
-        "Insufficient decoded frames for visual inspection."
-    )
-    return
 
     frames = np.frombuffer(raw[:n_frames * frame_bytes], dtype=np.uint8).reshape((n_frames, h, w, 3)).astype(np.float32)
 
