@@ -84,7 +84,15 @@ def audit_audio_gaps_and_lufs(video_path, qc_report, max_silence_gap=1.2):
         qc_report["checks"].append(f"Zero audio dead-air gaps > {max_silence_gap}s")
 
 def run_film_gate(video_path, duration, qc_report, allow_blue_purple=False):
-   if not HAS_NUMPY:
+    if not HAS_NUMPY:
+        qc_report["status"] = "FAIL"
+        qc_report["errors"].append(
+            "CRITICAL: NumPy is missing. "
+            "Mandatory visual inspection cannot run."
+        )
+        return
+
+    sample_fps = 10
     qc_report["status"] = "FAIL"
     qc_report["errors"].append(
         "CRITICAL: NumPy is missing. "
@@ -100,7 +108,7 @@ def run_film_gate(video_path, duration, qc_report, allow_blue_purple=False):
         "-vf", f"fps={sample_fps},scale={w}:{h}",
         "-f", "rawvideo", "-pix_fmt", "rgb24", "-"
     ]
-     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+        proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
     raw = proc.stdout.read()
     proc.wait()
 
