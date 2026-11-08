@@ -69,9 +69,10 @@ def read_ledger(path):
 def latest_reviews(data):
     latest = {}
     for review in data["reviews"]:
-        if isinstance(review, dict) and review.get("skill_id") in catalogue():
+        if isinstance(review, dict) and isinstance(review.get("skill_id"), str) and review["skill_id"] in catalogue():
             timestamp = _parse_time(review.get("evaluated_at"))
-            if timestamp and (review["skill_id"] not in latest or timestamp > latest[review["skill_id"]][0]):
+            # Later entries win ties when two revisions occur within one timestamp.
+            if timestamp and (review["skill_id"] not in latest or timestamp >= latest[review["skill_id"]][0]):
                 latest[review["skill_id"]] = (timestamp, review)
     return latest
 
@@ -155,7 +156,7 @@ def gate(data, video_id, used_ids, at=None):
         if not matches:
             failures.append(f"{key}: no evaluation recorded for this video")
             continue
-        date, review = max(matches, key=lambda entry: entry[0])
+        date, review = max(enumerate(matches), key=lambda entry: (entry[1][0], entry[0]))[1]
         if review.get("outcome") != "pass":
             failures.append(f"{key}: latest review for this video is {review.get('outcome')}, not pass")
     return failures
