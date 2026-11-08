@@ -100,6 +100,7 @@ def generate_contact_sheet(
         )
 
 
+
 def audit_audio_gaps_and_lufs(
     video_path,
     qc_report,
@@ -136,10 +137,16 @@ def audit_audio_gaps_and_lufs(
         return
 
     gaps = []
+    pending_start = None
 
     for line in (res.stderr or "").splitlines():
-        if "silence_end:" not in line:
-            continue
+        m_start = re.search(
+            r"silence_start:\s*([0-9.]+)",
+            line,
+        )
+
+        if m_start:
+            pending_start = float(m_start.group(1))
 
         m_end = re.search(
             r"silence_end:\s*([0-9.]+)",
@@ -155,6 +162,43 @@ def audit_audio_gaps_and_lufs(
             dur_t = float(m_dur.group(1))
             start_t = max(0.0, end_t - dur_t)
             gaps.append((start_t, end_t, dur_t))
+            pending_start = None
+
+    if pending_start is not None:
+        info = run_ffprobe(video_path)
+
+        try:
+            duration = float(
+                info["format"]["duration"]
+            )
+        except (TypeError, KeyError, ValueError):
+            mark_failure(
+                qc_report,
+                "Cannot determine duration of "
+                "unfinished audio silence.",
+            )
+            return
+
+        if not (
+            0 <= pending_start <= duration
+            and duration < float("inf")
+        ):
+            mark_failure(
+                qc_report,
+                "Invalid trailing audio silence timing.",
+            )
+            return
+
+        gap_duration = duration - pending_start
+
+        if gap_duration >= max_silence_gap:
+            gaps.append(
+                (
+                    pending_start,
+                    duration,
+                    gap_duration,
+                )
+            )
 
     if gaps:
         gap_str = ", ".join(
@@ -176,6 +220,7 @@ def audit_audio_gaps_and_lufs(
         qc_report["checks"].append(
             f"Zero audio dead-air gaps > {max_silence_gap}s"
         )
+
 
 
 def run_film_gate(
