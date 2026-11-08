@@ -12,18 +12,19 @@ Before anything else read:
 2. `channel-profile.md`, `.claude/skills/animation-styles/SKILL.md`, and `.claude/skills/design-me/SKILL.md`
 
 ## Your job
-1. **Enforce Cross-Video Style Diversity (Zero Repetition):**
-   - Check `.claude/memory/production_ledger.json`. You MUST NOT repeat any primary style used in the last 5 videos, and your **5-part structure fingerprint** (`concept · chapter count · main object · opener style · closer style`) and **4-part skin** (`palette · display font · background surface · signature motion`) must differ in at least **3 dimensions** from the previous video.
-   - Choose **1 Primary Hero Style** + **at most 2 supporting chapter grammars** from our complete style universe:
+1. **Enforce story-first style choices, with cross-video diversity where useful:**
+   - Check `.claude/memory/production_ledger.json`. Avoid unnecessarily repeating a primary style in the last 5 videos, but reuse it when narrative continuity and factual clarity require it, and your **5-part structure fingerprint** (`concept · chapter count · main object · opener style · closer style`) and **4-part skin** (`palette · display font · background surface · signature motion`) should change in meaningful ways when the subject warrants it; do not change merely to meet a count.
+   - Choose **1 Primary Hero Style** + **at most 2 supporting chapter grammars** after writing the visual thesis from our complete style universe:
      - **Pool A (17 Native `.claude/skills/animation-styles/references/styles/*.md`):** `zackd-films`, `dan-koe`, `one-ball-showreel`, `one-line-graph`, `cgi-motion`, `lego`, `ascii-terminal`, `ink-in-water`, `ps2`, `risograph-cutout`, `renaissance-codex`, `comic-art`, `chalkboard`, `glow-sketch`, `pixel-art`, `pixel-dither`, `flat-vector`.
      - **Pool B (`bang-motion`):** `Aksi kontinu`, `Kartun kolase`, `Jurnalisme visual`, `Katalog putih`, `Sketsa vintage`, `Kartun panggung` (`J()` SVG joint rig, `1.08 <= zoom <= 1.95`, `96px` whip shifts).
      - **Pool C (`vox-director` / `collage-director`):** 9 paper-collage themes (`american-retro`, `swiss-modern`, `punk-zine`, `soviet-constructivist`, `wpa-propaganda`, `70s-groovy`, `chinese-ink`, `atomic-age`, `newsprint-editorial`) + `local-engine` element assembly (`fly_in`, `slap`, `drop`, `pop_settle`).
      - **Pool D (`huashu-art-motion`):** 9 explainer grammars (`y1_kurzgesagt`, `y2_vox`, `y3_whiteboard`, `y4_storytime`, `y5_kinetic_type`, `t1_3b1b`, `t2_keynote_ui`, `t3_finance_chart`, `y6_presenter`) + 53 living art recipes.
      - **Pool E (`claude-drawing-skill`):** 77 CPU physical media modules (`numpy` + `Pillow` + `--stages` draw-on).
      - **Pool F (`code-animation-prompts`):** 341 style prompts across 10 series (`1 Visual K/Z/R/L + 1 Motion M + 1 Palette H`).
-2. **Write `storyboard.md` & `cues.json` (`>= 8:00` / `480s+` timeline):**
+2. **Use [production system](../skills/podcast-scout-skill/references/agency-production-system.md) as your handoff contract:** Assess whether Anidoodle, ClaudeAnimationBase, HandDraw, Manim, JavaScript Animation Skills, LottieFiles principles, Huashu or native styles best explain this beat. Note what is actually installed, tested, legally usable, and paid. Require character/object continuity, motivated camera movement, subject identity, claim evidence and a designed transition. Produce three genuinely different treatments for the same 30–60-second pilot narration, not just palette changes.
+3. **Write `storyboard.md` & `cues.json` (`>= 8:00` / `480s+` timeline):**
    - Split every `8–10s` narration sentence into **2 visual shots** (`2.0s–6.0s` per shot, hard cap `<= 8.0s`).
    - Every row must specify: `shot_id | start_s | end_s | style_engine | concrete_noun (object) | active_verb (action) | camera_move (push/pull/glide/static/snap/slam/cut) | screen_text (<= 7 words) | sfx_cue | claim_id`.
    - **Camera & Text Laws:** Never zoom in (`push`) 3 shots in a row; hold camera `static` when viewers read dense text or charts; ensure text hold duration `>= 0.5s + 0.3s * word_count`; keep text-only shots `<= 30%`; keep the bottom `180px` clear for burned-in subtitles.
-3. **Render 3-Way Style Bake-Off Stills (`looks/`):** Render frame-1 poster stills (`--stills`) and run `python3 .claude/skills/podcast-scout-skill/scripts/lint_scenes.py --storyboard storyboard.md --timings narration/timings.json`. Fix any lint error before handing off to `studio-animator`.
-AGENT2_EOF
+4. **Render 3-Way Style Bake-Off Stills (`looks/`):** Render frame-1 poster stills (`--stills`) and run `python3 .claude/skills/podcast-scout-skill/scripts/lint_scenes.py --storyboard storyboard.md --timings narration/timings.json`. Fix any lint error before handing off to `studio-animator`.
+
