@@ -152,6 +152,133 @@ class ContactSheetTests(unittest.TestCase):
                 )
 
 
+class AudioQCTests(unittest.TestCase):
+    def mock_audio_result(self, stderr="", returncode=0):
+        return CompletedProcess(
+            args=[],
+            returncode=returncode,
+            stdout="",
+            stderr=stderr,
+        )
+
+    def test_clean_audio_passes(self):
+        result = report()
+
+        with patch.object(
+            qc.subprocess,
+            "run",
+            return_value=self.mock_audio_result(),
+        ):
+            qc.audit_audio_gaps_and_lufs("fake.mp4", result)
+
+        self.assertEqual(result["status"], "PASS")
+        self.assertFalse(result["errors"])
+        self.assertTrue(
+            any("Zero audio dead-air" in c for c in result["checks"])
+        )
+
+    def test_normal_silence_gap_warns(self):
+        result = report()
+        log = (
+            "[silencedetect] silence_start: 10.0\n"
+            "[silencedetect] silence_end: 11.5 | "
+            "silence_duration: 1.5\n"
+        )
+
+        with patch.object(
+            qc.subprocess,
+            "run",
+            return_value=self.mock_audio_result(log),
+        ):
+            qc.audit_audio_gaps_and_lufs("fake.mp4", result)
+
+        self.assertEqual(result["status"], "PASS")
+        self.assertTrue(result["warnings"])
+        self.assertFalse(result["errors"])
+
+    def test_long_silence_gap_fails(self):
+        result = report()
+        log = (
+            "[silencedetect] silence_start: 10.0\n"
+            "[silencedetect] silence_end: 13.0 | "
+            "silence_duration: 3.0\n"
+        )
+
+        with patch.object(
+            qc.subprocess,
+            "run",
+            return_value=self.mock_audio_result(log),
+        ):
+            qc.audit_audio_gaps_and_lufs("fake.mp4", result)
+
+        self.assertEqual(result["status"], "FAIL")
+        self.assertIn("Dead audio air", " ".join(result["errors"]))
+
+    def test_trailing_silence_fails(self):
+        result = report()
+        log = "[silencedetect] silence_start: 7.0\n"
+
+        with (
+            patch.object(
+                qc.subprocess,
+                "run",
+                return_value=self.mock_audio_result(log),
+            ),
+            patch.object(
+                qc,
+                "run_ffprobe",
+                return_value={"format": {"duration": "10.0"}},
+            ),
+        ):
+            qc.audit_audio_gaps_and_lufs("fake.mp4", result)
+
+        self.assertEqual(result["status"], "FAIL")
+        self.assertIn("Dead audio air", " ".join(result["errors"]))
+
+    def test_trailing_silence_missing_metadata_fails(self):
+        result = report()
+        log = "[silencedetect] silence_start: 7.0\n"
+
+        with (
+            patch.object(
+                qc.subprocess,
+                "run",
+                return_value=self.mock_audio_result(log),
+            ),
+            patch.object(
+                qc,
+                "run_ffprobe",
+                return_value=None,
+            ),
+        ):
+            qc.audit_audio_gaps_and_lufs("fake.mp4", result)
+
+        self.assertEqual(result["status"], "FAIL")
+        self.assertIn(
+            "Cannot determine duration",
+            " ".join(result["errors"]),
+        )
+
+    def test_ffmpeg_audio_failure_fails(self):
+        result = report()
+
+        with patch.object(
+            qc.subprocess,
+            "run",
+            return_value=self.mock_audio_result(
+                "decoding failed",
+                returncode=1,
+            ),
+        ):
+            qc.audit_audio_gaps_and_lufs("fake.mp4", result)
+
+        self.assertEqual(result["status"], "FAIL")
+        self.assertIn(
+            "Audio silence inspection failed",
+            " ".join(result["errors"]),
+        )
+
+
 class QCIntegrationTests(unittest.TestCase):
     def test_contact_sheet_failure_marks_report_fail(self):
         metadata = {
