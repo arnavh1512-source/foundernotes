@@ -76,6 +76,13 @@ class ResearchGatewayTests(unittest.TestCase):
                 self.assertEqual(result["error"]["code"], "BAD_INPUT")
                 invoke.assert_not_called()
 
+    def test_missing_transcript_or_malformed_port_fails_without_running_cli(self):
+        for operation, value in (("transcript", None), ("read", "https://example.org:bad/a")):
+            with self.subTest(operation=operation), patch.object(gateway, "_execute") as invoke:
+                result = gateway.run(operation, value)
+                self.assertEqual(result["error"]["code"], "BAD_INPUT")
+                invoke.assert_not_called()
+
     def test_bad_or_missing_json_falls_back_honestly(self):
         with patch.object(gateway, "_binary", return_value="agent-reach"), \
              patch.object(gateway.subprocess, "run",
