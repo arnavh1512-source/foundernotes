@@ -133,6 +133,44 @@ def validate_review(review):
         errors.append("evaluated_at must be an offset-aware ISO 8601 timestamp")
     return errors
 
+def verify_evidence(review, root):
+    """Verify actual media and passing QC JSON, not merely path strings.
+
+    This is a file/report integrity gate, not an independent creative review.
+    """
+    issues = []
+    if not isinstance(review, dict):
+        return ["Review must be an object."]
+    evidence = review.get("evidence")
+    if not isinstance(evidence, dict):
+        return ["Review evidence must be an object."]
+    root = Path(root).resolve()
+    for key in ("sample_path", "qa_report_path"):
+        raw = evidence.get(key)
+        if not isinstance(raw, str) or not raw.strip():
+            issues.append(f"evidence.{key} is required.")
+            continue
+        candidate = Path(raw).expanduser()
+        if not candidate.is_absolute():
+            candidate = root / candidate
+        if not candidate.is_file() or candidate.stat().st_size == 0:
+            issues.append(f"evidence.{key}: missing or empty file: {candidate}")
+            continue
+        if key == "qa_report_path":
+            try:
+                report = json.loads(candidate.read_text(encoding="utf-8"))
+                if not isinstance(report, dict):
+                    raise ValueError("not a JSON object")
+                if review.get("outcome") == "pass":
+                    if report.get("status") != "PASS" or report.get("errors"):
+                        issues.append(f"{candidate}: QC must explicitly report PASS with zero errors.")
+                elif report.get("status") not in ("PASS", "WARN", "FAIL"):
+                    issues.append(f"{candidate}: QC status missing or unknown.")
+            except (OSError, ValueError, UnicodeError) as exc:
+                issues.append(f"{candidate}: invalid QC report: {exc}")
+    return issues
+
+
 def record_review(data, review, timestamp=None):
     issues = validate_review(review)
     if issues:
@@ -142,7 +180,7 @@ def record_review(data, review, timestamp=None):
     data["reviews"].append(copy)
     return data
 
-def gate(data, video_id, used_ids, at=None):
+def gate(data, video_id, used_ids, at=None, evidence_root=None):
     if not isinstance(video_id, str) or not video_id.strip():
         return ["video_id is required"]
     failures = []
@@ -159,6 +197,8 @@ def gate(data, video_id, used_ids, at=None):
         date, review = max(enumerate(matches), key=lambda entry: (entry[1][0], entry[0]))[1]
         if review.get("outcome") != "pass":
             failures.append(f"{key}: latest review for this video is {review.get('outcome')}, not pass")
+        elif evidence_root is not None:
+            failures.extend(f"{key}: {problem}" for problem in verify_evidence(review, evidence_root))
     return failures
 
 def main(argv=None):
@@ -181,6 +221,10 @@ def main(argv=None):
             return 0
         if args.command == "record":
             review = json.loads(args.review_file.read_text(encoding="utf-8"))
+            if review.get("outcome") == "pass":
+                problems = verify_evidence(review, Path.cwd())
+                if problems:
+                    raise ValueError("; ".join(problems))
             record_review(data, review)
             args.ledger.parent.mkdir(parents=True, exist_ok=True)
             temp = args.ledger.with_name(args.ledger.name + ".tmp")
@@ -188,7 +232,7 @@ def main(argv=None):
             os.replace(temp, args.ledger)
             print(f"RECORDED: {review['skill_id']} ({review['outcome']})")
             return 0
-        problems = gate(data, args.video, args.used)
+        problems = gate(data, args.video, args.used, evidence_root=Path.cwd())
         if problems:
             for error in problems:
                 print("FAIL:", error, file=sys.stderr)
