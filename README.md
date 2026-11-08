@@ -38,6 +38,21 @@ The existing **17 native animation styles** remain available. Additional documen
 
 **Every produced film targets the channel's consistent male narrator.** The crew requests Sonnet at medium effort and targets Sonnet 5.5 when that specific version is available in the host; its actual version requires runtime verification. External projects are **references**, not automatically installed dependencies. Quality scores, rendered samples and agent runs are not claimed until performed. Start with a **30–60-second fully narrated pilot** before attempting the 8-minute master.
 
+## Expanded animation and sound production references
+
+The production skill now routes additional **animation, drawing, sound and editing tools** through two documents: [expanded motion tools](.claude/skills/podcast-scout-skill/references/expanded-motion-tools.md) and [sound design and listening](.claude/skills/podcast-scout-skill/references/sound-design-and-listening.md).
+
+| Production role | Sources | What they add |
+|---|---|---|
+| HTML and continuous-camera motion | [HyperFrames](https://github.com/HeyGen-com/hyperframes), [OneTake](https://github.com/feitangyuan/onetake) | Deterministic HTML scenes; continuity principles. **OneTake public code is noncommercial and is ideas-only for monetized work without a separate license.** |
+| Collage, drawing and pixel effects | [gbro Collage B-roll](https://github.com/pyang5166/gbro-collage-broll), [Vox AI Motion Graphics Generator](https://github.com/Anil-matcha/vox-ai-motion-graphics-generator), [p5.brush](https://github.com/acamposuribe/p5.brush), [PixelFX](https://github.com/patch-gg/pixelfx) | Editorial collage, seeded painterly textures and purposeful procedural pixel effects |
+| 2D hand-drawn/rigged editing | [OpenToonz](https://github.com/opentoonz/opentoonz), [Synfig](https://github.com/synfig/synfig), [Pencil2D](https://github.com/pencil2d/pencil) | External desktop applications that can export scene clips; **not automatically integrated CLI skills** |
+| Sound effects, licenses and listening | [earshot](https://github.com/Leonxlnx/earshot), [Openverse](https://github.com/WordPress/openverse), [Lemo Opuscar](https://github.com/lemomo-ai/lemo-opuscar) | Procedural Foley, recorded effects with per-file licenses, independent perceptual audio review and timing |
+
+The existing **17 native animation styles** and previously registered sources remain available. [ClaudeAnimationBase](https://github.com/JohnHeibel/ClaudeAnimationBase) and [Lemo Opuscar](https://github.com/lemomo-ai/lemo-opuscar) were already cataloged and are retained, not duplicated. The supplied image also includes the five-skill reference group (HyperFrames, OneTake, Collage B-roll, ClaudeAnimationBase, Lemo Opuscar).
+
+**Status:** Repository descriptions inspected, guidance and agent handoffs committed. External tools have **not** been installed, rendered or listened to in this environment. Paid APIs require owner approval; commercial usage requires applicable code and media licenses. Sound design must preserve the consistent male narrator and verify the **actual finished mix**, rather than assume a successful automated check.
+
 ## Quick start
 
 ```bash
