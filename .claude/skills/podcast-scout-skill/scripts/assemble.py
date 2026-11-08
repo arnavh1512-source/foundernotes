@@ -21,6 +21,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import shutil
 import subprocess
 import sys
@@ -81,6 +82,22 @@ def main(argv=None):
     ap.add_argument("--out", required=True)
     a = ap.parse_args(argv)
 
+    if a.fps <= 0 or a.fps > 120:
+        die("--fps must be between 1 and 120")
+    if not math.isfinite(a.crossfade) or a.crossfade < 0:
+        die("--crossfade must be a finite, non-negative number")
+    for name in ("music_db", "lufs", "tp", "grain"):
+        if not math.isfinite(getattr(a, name)):
+            die(f"--{name.replace('_', '-')} must be finite")
+    if a.grain < 0:
+        die("--grain must be non-negative")
+    if a.sub_size <= 0:
+        die("--sub-size must be positive")
+    for name in ("narration", "music", "captions"):
+        value = getattr(a, name)
+        if value and not Path(value).is_file():
+            die(f"missing {name} file: {value}")
+
     for tool in ("ffmpeg", "ffprobe"):
         if not shutil.which(tool):
             die(f"{tool} not found")
@@ -94,6 +111,13 @@ def main(argv=None):
             die(f"missing clip {s}")
     W, H = FORMATS[a.format]
     narr_d = duration(a.narration)
+    if not math.isfinite(narr_d) or narr_d <= 0:
+        die("narration must have a finite, positive duration")
+    if a.crossfade > 0 and len(scenes) > 1:
+        for scene in scenes:
+            scene_duration = duration(scene)
+            if not math.isfinite(scene_duration) or scene_duration <= a.crossfade:
+                die(f"crossfade must be shorter than every scene: {scene}")
     out = Path(a.out)
     out.parent.mkdir(parents=True, exist_ok=True)
 
