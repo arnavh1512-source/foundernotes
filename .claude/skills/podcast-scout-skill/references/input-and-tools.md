@@ -2,17 +2,17 @@
 
 Use the host's actual tool inventory. The names below describe optional capabilities, not tools guaranteed to be installed. Read each tool's current schema before calling it.
 
-Agent-Reach is the preferred optional research-channel adapter for supported public pages, YouTube transcripts and other explicitly configured platforms. Check that its CLI/channel is actually installed and authorized before selecting it. If no channel is available, use the host's native search, webpage reader or transcript tools; log the actual reader and any coverage gaps. Never claim a platform login, transcript or Agent-Reach installation that was not verified. See `agent-reach.md`. The previous Obscura helper is legacy and not the preferred route.
+**Agent-Reach is the default first-attempt research gateway for FounderNotes.** For public webpages, web queries and YouTube discovery/subtitles, run `python3 .claude/skills/podcast-scout-skill/scripts/research_gateway.py status` and then its `search`, `read`, `youtube-search`, or `transcript` action. The adapter calls only public, read-only Agent-Reach channels and reports a structured native-tool fallback if unavailable; follow its `fallback.allowed` flag. See `agent-reach.md`. Account login, paid transcription and installation require explicit owner authorization. Obscura is legacy, not default.
 
 | Input / job | Preferred route | If unavailable |
 | --- | --- | --- |
-| YouTube podcast | Connected transcript/caption tool, such as vidIQ `video_transcript` | Open an accessible official transcript or request pasted/uploaded captions. A YouTube link alone is not content access. |
+| YouTube podcast | Agent-Reach `research_gateway.py transcript URL` (real captions, not metadata); when unavailable, connected transcript/caption tools such as vidIQ `video_transcript` | Open an accessible official transcript or request pasted/uploaded captions. A YouTube link alone is not content access. |
 | Audio/video upload | Native supported media understanding/transcription; distinguish audio from visual inspection | Use an available local transcription tool with authorized files, or request TXT/SRT/VTT. Do not claim general video playback capability. |
 | TXT/SRT/VTT | Read original text and preserve cue timestamps | Analyze supplied excerpt and declare partial coverage. |
-| Other podcast URL | Publisher transcript or supported connected media tool | Read public metadata only to identify the episode; ask for the conversation text before analysis. |
-| Current evidence | Available search for discovery, then a verified Agent-Reach channel or native reader for primary-source pages | Disclosed fallback reader; if no reader works, explicit provisional mode without fabricated citations. |
+| Other podcast URL | Agent-Reach public URL reading, then publisher transcript or supported connected media tool | Read public metadata only to identify the episode; ask for the conversation text before analysis. |
+| Current evidence | Agent-Reach `search` then `read` for primary sources (use native search/reader if fallback.allowed) | Disclosed fallback reader; if no reader works, explicit provisional mode without fabricated citations. |
 | YouTube demand | Connected vidIQ keyword research, outliers, YouTube search, video stats or equivalent | Public dated examples as proxies, otherwise unavailable. |
-| Public source page, including script-heavy pages | Verified Agent-Reach web channel when available; otherwise native browsing | Native browsing or another supported reader, with a specific fallback reason. |
+| Public source page, including script-heavy pages | Agent-Reach `read` first; otherwise an authorized native reader | Native browsing or another supported reader, with a specific fallback reason. |
 
 For connectors requiring account authorization, use the host's connection flow. Do not ask for passwords/API keys in chat, extract browser cookies, or promise connector access in another product. Claude and ChatGPT have separate tool inventories and account connections.
 
