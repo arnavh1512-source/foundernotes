@@ -152,5 +152,105 @@ class ContactSheetTests(unittest.TestCase):
                 )
 
 
+class QCIntegrationTests(unittest.TestCase):
+    def test_contact_sheet_failure_marks_report_fail(self):
+        metadata = {
+            "format": {
+                "duration": "600.0",
+            },
+            "streams": [
+                {
+                    "codec_type": "video",
+                    "width": 1920,
+                    "height": 1080,
+                    "r_frame_rate": "30/1",
+                },
+                {
+                    "codec_type": "audio",
+                    "codec_name": "aac",
+                },
+            ],
+        }
+
+        saved_reports = []
+
+        def capture_report(path, result):
+            saved_reports.append({
+                "path": path,
+                "status": result["status"],
+                "errors": list(result["errors"]),
+            })
+
+        with (
+            patch.object(
+                qc.sys,
+                "argv",
+                [
+                    "qc_video.py",
+                    "fake.mp4",
+                    "--json",
+                    "fake-qc.json",
+                    "--sheet",
+                    "fake-sheet.jpg",
+                ],
+            ),
+            patch.object(
+                qc.os.path,
+                "isfile",
+                return_value=True,
+            ),
+            patch.object(
+                qc,
+                "run_ffprobe",
+                return_value=metadata,
+            ),
+            patch.object(
+                qc,
+                "audit_audio_gaps_and_lufs",
+            ),
+            patch.object(
+                qc,
+                "run_film_gate",
+            ),
+            patch.object(
+                qc,
+                "generate_contact_sheet",
+                side_effect=RuntimeError("encoding failed"),
+            ),
+            patch.object(
+                qc,
+                "write_report",
+                side_effect=capture_report,
+            ),
+            patch("builtins.print"),
+        ):
+            with self.assertRaises(SystemExit) as raised:
+                qc.main()
+
+        self.assertEqual(raised.exception.code, 1)
+        self.assertEqual(len(saved_reports), 1)
+        self.assertEqual(
+            saved_reports[0]["path"],
+            "fake-qc.json",
+        )
+        self.assertEqual(
+            saved_reports[0]["status"],
+            "FAIL",
+        )
+        self.assertTrue(
+            any(
+                "Contact sheet generation failed"
+                in error
+                for error in saved_reports[0]["errors"]
+            )
+        )
+        self.assertTrue(
+            any(
+                "encoding failed" in error
+                for error in saved_reports[0]["errors"]
+            )
+        )
+
+
 if __name__ == "__main__":
     unittest.main()
