@@ -70,6 +70,43 @@ use a cookies file exported from your own browser (`yt-dlp --cookies`). Never pa
 
 Tests: `cd .claude/skills/podcast-scout-skill && python3 -m unittest discover -s tests && node --test scripts/obscura-research.test.mjs`
 
+## FounderNotes 2.0 — creative production rebuild
+
+**Direction:** The existing animation presets are no longer the target creative standard. The next system will prioritize purposeful, engaging motion, narrative clarity, voice-to-visual synchronization, and measurable improvement after each video. This is a **planned rebuild**, not a claim that the new engine is already implemented.
+
+The full specification is in [FounderNotes 2.0: Motion Direction and Continuous Improvement](docs/FOUNDERNOTES_2_MOTION_SYSTEM.md).
+
+### Five animation sources under evaluation
+
+| Reference | Techniques to study and benchmark |
+|---|---|
+| [Bang Motion](https://github.com/bangtutorial/bang-motion) | Continuous visual worlds, camera choreography, persistent subjects, motion design briefs and deterministic previews |
+| [Vox Director](https://github.com/Alisa0808/vox-director) | Narrative beat maps, visual style bake-offs, editorial collage keyframes, layered animation and sound |
+| [Huashu Art Motion](https://github.com/alchaincyf/huashu-art-motion) | Art-specific animation grammars, parametric explainer scenes, timing grids and motion quality checks |
+| [Claude Drawing Skill](https://github.com/cloveric/claude-drawing-skill) | Code-drawn illustration, reproducible compositions, staged draw-on animation and visual revision |
+| [Code Animation Prompts](https://github.com/XiaoyeCodes/code-animation-prompts) | Searchable animation-style references, sample implementations and time-addressable browser rendering |
+
+**Source status:** Repository documentation and published examples have been reviewed at a high level. Exhaustive code-level analysis, license-by-asset review, and comparative rendered benchmarks are still pending. Do not copy upstream assets or code without checking applicable licenses.
+
+### Intended production workflow
+
+1. Research and lock factual claims.
+2. Generate narration using the proven Voicebox route where available, with pronunciation, transcription and timing checks.
+3. Build a word-aligned narrative beat map; assign each shot a purpose, subject, camera movement, motion grammar and sound cue.
+4. Present three different visual treatments of a representative beat for approval before full production.
+5. Render deterministic scenes using the most suitable approved techniques, not a random mixture of presets.
+6. Check decoded frames, transitions, missing/blank footage, audio gaps, clipping, synchronization and caption timing.
+7. Have a separate **Sonnet / medium-effort** critic review the rendered video for repetition, visual coherence, clarity and pacing.
+8. Record timecoded mistakes, root causes, corrections and regression tests so the next production can reuse verified lessons.
+
+**Quality philosophy:** A technically valid video can still be boring. Motion must communicate; more movement is not automatically better. Audience views and retention can inform improvement when available, but they do not independently prove animation quality.
+
+### First acceptance milestone
+
+Create a **30–60-second narrated pilot** with at least three different narrative functions. Compare it side by side with an existing FounderNotes sample, review it visually and aurally, measure production failures, and only then promote successful techniques into the default pipeline.
+
+The new creative system is not production-ready until that pilot and the required integration checks pass.
+
 ## Engineering checks and repair status
 
 The studio is undergoing a coordinated engineering hardening pass on the
