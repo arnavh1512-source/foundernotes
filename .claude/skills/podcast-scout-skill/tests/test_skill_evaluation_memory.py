@@ -57,6 +57,35 @@ class ContinuousEvaluationTests(unittest.TestCase):
         self.assertTrue(reviews.gate(data, "pilot02", ["native/chalkboard"]))
         self.assertTrue(reviews.gate(data, "pilot03", ["native/chalkboard"]))
 
+    def test_passing_review_requires_real_media_and_qc(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            item = self.review()
+            problems = reviews.verify_evidence(item, root)
+            self.assertTrue(any("missing or empty" in problem for problem in problems))
+            (root / "samples").mkdir()
+            (root / "reports").mkdir()
+            (root / "samples" / "pilot.mp4").write_bytes(b"synthetic nonempty fixture")
+            report_path = root / "reports" / "qc.json"
+            report_path.write_text(json.dumps({"status": "FAIL", "errors": ["unfixed gap"]}))
+            self.assertTrue(reviews.verify_evidence(item, root))
+            report_path.write_text(json.dumps({"status": "PASS", "errors": []}))
+            self.assertEqual(reviews.verify_evidence(item, root), [])
+            data = {"schema_version": 1, "reviews": []}
+            reviews.record_review(data, item)
+            self.assertEqual(reviews.gate(data, "pilot01", ["native/chalkboard"], evidence_root=root), [])
+            report_path.write_text(json.dumps({"status": "WARN", "errors": []}))
+            self.assertTrue(reviews.gate(data, "pilot01", ["native/chalkboard"], evidence_root=root))
+
+    def test_failing_review_does_not_require_passing_qc(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            (root / "samples").mkdir()
+            (root / "reports").mkdir()
+            (root / "samples" / "pilot.mp4").write_bytes(b"x")
+            (root / "reports" / "qc.json").write_text(json.dumps({"status": "FAIL", "errors": ["gap"]}))
+            self.assertEqual(reviews.verify_evidence(self.review(outcome="fail"), root), [])
+
     def test_later_failure_blocks_same_video(self):
         data = {"schema_version": 1, "reviews": []}
         reviews.record_review(data, self.review(video="pilot01"))
