@@ -4,7 +4,7 @@ Use this reference to turn a podcast into original educational video briefs for 
 
 ## 1. Establish what you can actually access
 
-1. Inventory available capabilities: supplied files, transcript retrieval, web search, webpage reading, optional video understanding, and optional YouTube analytics. Use tools present in the current host; never assume a Claude, ChatGPT, OpenAI, vidIQ, or Agent-Reach integration exists.
+1. **Attempt Agent-Reach first** using `scripts/research_gateway.py status` and the matching public `search`, `read`, `youtube-search`, or `transcript` operation. This is the default route, not proof that the CLI is installed. If it reports `fallback.allowed`, use the host's actually available WebSearch/WebFetch, transcript or uploaded-file tools and record the reason. Also inventory available video understanding and YouTube analytics; never assume a Claude, ChatGPT, OpenAI or vidIQ connector exists.
 2. Prefer a transcript with timestamps. Accept pasted text, TXT, SRT, VTT, or a transcription of the supplied media. For a link, retrieve its actual transcript before extracting topics. Descriptions, chapters, search snippets, and a title are not substitutes for the episode.
 3. Record the source title, URL when available, access method, transcript language, whether timestamps exist, and whether coverage is complete, partial, unknown, or unavailable. If coverage is partial or unknown, explain the range or limitation in coverage_note. Do not silently truncate long episodes; segment them, extract candidates from every available segment, then deduplicate.
 4. When video understanding is unavailable, say the analysis is transcript-based. Do not claim to have watched visuals, judged delivery, or measured retention.
