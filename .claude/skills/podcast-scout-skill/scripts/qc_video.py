@@ -18,6 +18,7 @@ Fix 2: Stream decoded frames instead of loading the entire
 
 import argparse
 import json
+import math
 import os
 import re
 import subprocess
@@ -98,7 +99,6 @@ def generate_contact_sheet(
         raise RuntimeError(
             "Contact sheet output file was not created"
         )
-
 
 
 def audit_audio_gaps_and_lufs(
@@ -220,7 +220,6 @@ def audit_audio_gaps_and_lufs(
         qc_report["checks"].append(
             f"Zero audio dead-air gaps > {max_silence_gap}s"
         )
-
 
 
 def run_film_gate(
@@ -710,6 +709,13 @@ def main():
     except (TypeError, ValueError):
         duration = 0.0
 
+    if not math.isfinite(duration) or duration <= 0:
+        mark_failure(
+            qc_report,
+            "Invalid video duration metadata.",
+        )
+        duration = 0.0
+
     qc_report["checks"].append(
         f"Video duration: {duration:.2f}s "
         f"({duration / 60:.2f} min)"
@@ -789,7 +795,6 @@ def main():
                 f"Contact sheet generated: {args.sheet}"
             )
 
-        
         except (OSError, ValueError, RuntimeError) as exc:
             mark_failure(
                 qc_report,
