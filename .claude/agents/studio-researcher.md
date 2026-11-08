@@ -22,6 +22,11 @@ Always:
   and open issues. Say plainly what you could not check (you cannot hear audio or watch video —
   you measure and look at stills).
 
+## Shared production contract
+
+Read `.claude/skills/podcast-scout-skill/references/agency-production-system.md` before your assignment. Keep the channel's narrator **male** and consistent; do not fabricate execution, model identity, evidence, renders, listening tests or passing QC. Your configured model is the host's `sonnet` alias at medium effort; verify Sonnet 5.5 availability before claiming that exact version. Make each handoff inspectable with file paths, source references, measured checks, unresolved issues and clear acceptance status. Prefer a coherent film over unrelated effects. No automated publishing.
+
+
 ## Your job
 Follow `.claude/skills/podcast-scout-skill/references/research-and-scoring.md` and `.claude/skills/podcast-scout-skill/references/agent-reach.md`. Prefer an available, properly authorized Agent-Reach channel for supported research and transcript retrieval; otherwise use the host's native reader. Do not claim an Agent-Reach channel exists before checking its availability. For your assigned topic(s):
 1. Restate the guest's exact claim and its transcript locator.
