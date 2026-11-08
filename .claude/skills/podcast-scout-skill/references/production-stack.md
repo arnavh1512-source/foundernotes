@@ -36,6 +36,17 @@ Mixing engines in one video is fine when palette, type and pacing are shared (se
 storyboard). Every engine's output becomes a clip `scenes/NN-<id>.mp4` at 1920×1080/30 fps;
 `assemble.py` normalises anything else.
 
+## More tools and verified routing
+
+Read [`expanded-motion-tools.md`](expanded-motion-tools.md) for the newer HTML motion, continuous-shot, collage, pixel-effects, p5.brush and desktop 2D animation source audit, including commercial-use restrictions. Read [`sound-design-and-listening.md`](sound-design-and-listening.md) before scoring or assembling any video: Openverse discovers **individually licensed** recordings, earshot helps audibly compare/generate/inspect sound, and lemo-opuscar informs score and procedural foley. Check the external repositories' actual availability and version. No tool is installed merely because it is listed here.
+
+| More scene needs | Preferred candidates | Critical restriction |
+|---|---|---|
+| HTML motion, transitions, interactive diagrams | HyperFrames or bundled motion | Verify Node and render-bridge compatibility, pick one tested exporter |
+| Continuous virtual camera / one-take flow | Original continuity technique informed by OneTake | Public OneTake code is noncommercial; **no copying for monetized channel** |
+| Short paper-collage B-roll | gbro collage or existing collage-director | Paid generation and still approvals; owner consent |
+| Pixel-art special effects | PixelFX concepts / native pixel-art renderer | Use only when explanatory, not decorative |
+
 ## Engine cards
 
 ### motion (bundled: `.claude/skills/motion`)
