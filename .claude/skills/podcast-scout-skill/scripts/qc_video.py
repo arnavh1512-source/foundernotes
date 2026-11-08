@@ -31,6 +31,7 @@ try:
     import numpy as np
     HAS_NUMPY = True
 except ImportError:
+    np = None
     HAS_NUMPY = False
 
 def run_ffprobe(file_path):
