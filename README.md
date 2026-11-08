@@ -101,9 +101,9 @@ The full specification is in [FounderNotes 2.0: Motion Direction and Continuous 
 
 **Quality philosophy:** A technically valid video can still be boring. Motion must communicate; more movement is not automatically better. Audience views and retention can inform improvement when available, but they do not independently prove animation quality.
 
-### Existing 17 animation techniques — audit status
+### Animation library: 17 existing styles + 5 external skill collections
 
-The studio also includes **17 documented animation techniques** under [`.claude/skills/animation-styles/`](.claude/skills/animation-styles/). All 17 style-reference documents have been reviewed as part of the FounderNotes 2.0 instruction audit:
+The studio includes **17 documented animation techniques** under [`.claude/skills/animation-styles/`](.claude/skills/animation-styles/). All 17 style-reference documents have been reviewed as part of the FounderNotes 2.0 instruction audit:
 
 | Family | Techniques |
 |---|---|
@@ -114,6 +114,21 @@ The studio also includes **17 documented animation techniques** under [`.claude/
 The [17-style audit report](docs/ANIMATION_STYLES_AUDIT.md) documents the distinctive mechanism, potential failure modes and appropriate storytelling uses of each style. The [animation skill instructions](.claude/skills/animation-styles/SKILL.md) now describe all 17 and prioritize narrative continuity over arbitrary style rotation.
 
 **Verified so far:** all 17 Markdown style references reviewed; creative direction and continuity rules updated. **Not yet verified:** rendered samples for every style, full shared renderer and player inspection, comparative visual benchmarks, audio-to-action alignment, and complete integration tests. These must be completed before claiming the redesigned animation system is production-ready.
+
+
+### Five additional animation skill collections
+
+These **five external repositories are additional animation sources alongside the 17 built-in styles**, giving the studio **22 tracked style/skill sources in total**. They are **not merely five individual visual styles**: each contains multiple techniques, examples, workflows or style references. Their techniques should be selectively mastered, tested and integrated, not treated as automatically installed or production-ready.
+
+| Added source | Animation capabilities to integrate |
+|---|---|
+| [Bang Motion](https://github.com/bangtutorial/bang-motion) | Continuous action, kinetic typography, camera-led explainer motion, persistent subjects and designed transitions |
+| [Vox Director](https://github.com/Alisa0808/vox-director) | Editorial paper collage, layered cutouts, keyframe-driven motion, beat planning and visual style comparisons |
+| [Huashu Art Motion](https://github.com/alchaincyf/huashu-art-motion) | Art-inspired animation, motion grammars, transformation sequences, parametric scenes and motion analysis |
+| [Claude Drawing Skill](https://github.com/cloveric/claude-drawing-skill) | Procedural illustration, ink and paint treatments, staged drawing, reproducible visuals and iterative critique |
+| [Code Animation Prompts](https://github.com/XiaoyeCodes/code-animation-prompts) | Broad animation-style reference library, code-rendered effects, deterministic timelines and searchable examples |
+
+**Integration target:** one creative director should be able to choose from the 17 existing styles and relevant techniques from all five external sources according to the story, while maintaining a coherent visual world and sound design. First inspect licenses and dependencies, benchmark real rendered clips, then promote proven implementations into the pipeline. Listing a repository here does **not** mean its code has been installed or fully integrated.
 
 ### First acceptance milestone
 
