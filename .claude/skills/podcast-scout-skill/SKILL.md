@@ -31,6 +31,14 @@ Read `references/agency-production-system.md` and `references/production-stack.m
 
 **Pilot before scale:** make a 30–60 second pilot with real male audio, a coherent world, proofed frame transitions and an independent critique; fix failures before the full 8+ minute video. No automatically scheduled publishing.
 
+## Continuous evaluation and persistent self-improvement — mandatory
+
+**Every native, external and uploaded creative skill stays under evaluation** (not only five animation repositories). Read `.claude/memory/mistakes_and_pitfalls.md`, `positive_recipes.md`, `production_ledger.json` and `skill_evaluations.json` before each production. At shot selection, consult `scripts/evaluate_skills.py status`; distinguish UNASSESSED, STALE, NEEDS_REVIEW, FAIL, and PASS from actual evidence.
+
+After each meaningful test or production revision, give each **used skill** its own review file with evidence paths, reviewer, finding, video ID, ratings for clarity/motion/continuity/audio/reliability/rights and outcome. Record it with `scripts/evaluate_skills.py record <review.json>`. Before declaring a video accepted, execute `scripts/evaluate_skills.py gate --video <video-id> --used <skill-id...>`; it must pass along with rendering, independent visual/audio QC, asset-rights review and owner approval. Unused skills are periodically reviewed for staleness; do not fake a pass for a tool not run.
+
+The memory files and `scripts/record_lesson.py` now exist. Use the recorder with evidence-backed `mistake`, `recipe` or `video` JSON records; never fabricate historical lessons. Reevaluate skills after repeated defects or a changed upstream implementation. No automatic model weight changes or unverified permanent learning are implied.
+
 ## Stages 1-6: Scout pipeline
 1. **Ingest & Extract:** Ingest input (URL, file, transcript, or topic). Identify core subject and raw key points.
 2. **Fact Check & Deepen:** Search web/academic literature for ground-truth evidence on every key point. Drop unverified claims; attach primary citations.
