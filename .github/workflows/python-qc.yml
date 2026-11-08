@@ -19,6 +19,15 @@ jobs:
         with:
           python-version: "3.11"
 
+
+      - name: Install test dependencies
+        run: |
+          python -m pip install numpy
+
+      - name: Run QC behavioral tests
+        run: |
+          python -m unittest discover -s tests -p "test_qc_video.py" -v
+
       - name: Check Python syntax
         run: |
           python -m py_compile .claude/skills/podcast-scout-skill/scripts/qc_video.py
