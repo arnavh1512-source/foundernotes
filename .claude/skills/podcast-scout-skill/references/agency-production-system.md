@@ -58,6 +58,10 @@ Use the eight existing `studio-*.md` agents. Motion director and storyboarder ca
 
 Additional current studio references include the 17 native animation styles and Bang Motion, Vox Director and Code Animation Prompts; see `production-stack.md` and `docs/ANIMATION_STYLES_AUDIT.md`. **Do not add up catalogs as independent integrated engines.** License and attribution obligations vary by repository, component, model and asset.
 
+## Additional registered animation and sonic references
+
+Read [`expanded-motion-tools.md`](expanded-motion-tools.md) for HyperFrames, OneTake (noncommercial-code restriction), gbro Collage B-roll, p5.brush, OpenToonz, Synfig, Pencil2D, PixelFX, and the existing Vox AI Motion Graphics Generator adaptation. Read [`sound-design-and-listening.md`](sound-design-and-listening.md) for the earshot / Openverse / Lemo Opuscar workflow, source licenses, perceptual sync, narrator protection, listening audits and sound-mix outputs. These registered sources are **not automatically installed or tested**.
+
 ## Prove it before expanding
 
 Start with one **30–60 second narrated pilot**: one difficult factual explanation, one continuous protagonist or object, at least two appropriate shot techniques, one designed transition and one intentionally quiet moment. Compare candidate looks on the *same narration*. Require reproducible output, confirmed male narration, frame/audio/subtitle checks, a blinded creative critique and owner approval. Only then attempt a full 8+ minute production. Capture the actual commands, versions, durations and reports. Do not mark planned tests as passed.
