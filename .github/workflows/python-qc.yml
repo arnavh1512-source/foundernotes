@@ -91,9 +91,9 @@ jobs:
               print("Real video QC tests passed.")
           PY
 
-      - name: Check Python syntax
+      - name: Check Python syntax across all studio skills and tests
         run: |
-          python -m py_compile .claude/skills/podcast-scout-skill/scripts/qc_video.py
+          python -m compileall -q .claude/skills tests
 
       - name: Verify streaming QC structure
         run: |
