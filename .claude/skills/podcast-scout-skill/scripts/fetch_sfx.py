@@ -21,6 +21,7 @@ import tempfile
 import time
 import urllib.parse
 import urllib.request
+import urllib.error
 from pathlib import Path
 
 API = "https://api.openverse.org/v1/audio/"
