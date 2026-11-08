@@ -9,6 +9,11 @@ Checks:
 3. Audio stream, silence gaps, and timing consistency.
 4. Film gate: motion, blank frames, and blue-purple dominance.
 5. Contact sheet generation.
+
+Fix 1: Fail closed on missing NumPy, FFmpeg decoding errors,
+       incomplete frames, and insufficient decoded frames.
+Fix 2: Stream decoded frames instead of loading the entire
+       video into memory.
 """
 
 import argparse
@@ -26,40 +31,49 @@ except ImportError:
     HAS_NUMPY = False
 
 
+def mark_failure(qc_report, message):
+    qc_report["status"] = "FAIL"
+    qc_report["errors"].append(message)
+
+
 def run_ffprobe(file_path):
     cmd = [
-        "ffprobe",
-        "-v", "quiet",
+        "ffprobe", "-v", "quiet",
         "-print_format", "json",
-        "-show_format",
-        "-show_streams",
+        "-show_format", "-show_streams",
         file_path,
     ]
 
-    result = subprocess.run(
-        cmd,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        text=True,
-    )
-
-    if result.returncode != 0:
-        return None
-
     try:
+        result = subprocess.run(
+            cmd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            check=False,
+        )
+
+        if result.returncode != 0:
+            return None
+
         return json.loads(result.stdout)
-    except json.JSONDecodeError:
+
+    except (OSError, ValueError):
         return None
 
 
-def generate_contact_sheet(video_path, output_sheet, duration, grid="4x6"):
+def generate_contact_sheet(
+    video_path,
+    output_sheet,
+    duration,
+    grid="4x6",
+):
     cols, rows = map(int, grid.split("x"))
     total_tiles = cols * rows
     fps_val = max(total_tiles / max(duration, 1.0), 0.02)
 
     cmd = [
-        "ffmpeg",
-        "-y",
+        "ffmpeg", "-y",
         "-i", video_path,
         "-vf", f"fps={fps_val:.4f},scale=320:-1,tile={grid}",
         "-frames:v", "1",
@@ -71,15 +85,19 @@ def generate_contact_sheet(video_path, output_sheet, duration, grid="4x6"):
         stdout=subprocess.DEVNULL,
         stderr=subprocess.PIPE,
         text=True,
+        check=False,
     )
 
     if result.returncode != 0:
         raise RuntimeError(
-            f"Contact sheet generation failed: {result.stderr[-500:]}"
+            "Contact sheet generation failed: "
+            + result.stderr[-500:]
         )
 
     if not os.path.isfile(output_sheet):
-        raise RuntimeError("Contact sheet output file was not created")
+        raise RuntimeError(
+            "Contact sheet output file was not created"
+        )
 
 
 def audit_audio_gaps_and_lufs(
@@ -91,37 +109,52 @@ def audit_audio_gaps_and_lufs(
         "ffmpeg",
         "-i", video_path,
         "-af", f"silencedetect=noise=-35dB:d={max_silence_gap}",
-        "-f", "null",
-        "-",
+        "-f", "null", "-",
     ]
 
-    res = subprocess.run(
-        cmd,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        text=True,
-    )
-
-    if res.returncode != 0:
-        qc_report["status"] = "FAIL"
-        qc_report["errors"].append(
-            "Audio silence inspection failed during FFmpeg processing."
+    try:
+        res = subprocess.run(
+            cmd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            check=False,
+        )
+    except OSError as exc:
+        mark_failure(
+            qc_report,
+            f"Audio inspection could not start: {exc}",
         )
         return
 
-    stderr = res.stderr or ""
+    if res.returncode != 0:
+        mark_failure(
+            qc_report,
+            "Audio silence inspection failed during "
+            "FFmpeg processing.",
+        )
+        return
+
     gaps = []
 
-    for line in stderr.splitlines():
-        if "silence_end:" in line and "silence_duration:" in line:
-            m_end = re.search(r"silence_end:\s*([0-9.]+)", line)
-            m_dur = re.search(r"silence_duration:\s*([0-9.]+)", line)
+    for line in (res.stderr or "").splitlines():
+        if "silence_end:" not in line:
+            continue
 
-            if m_end and m_dur:
-                end_t = float(m_end.group(1))
-                dur_t = float(m_dur.group(1))
-                start_t = max(0.0, end_t - dur_t)
-                gaps.append((start_t, end_t, dur_t))
+        m_end = re.search(
+            r"silence_end:\s*([0-9.]+)",
+            line,
+        )
+        m_dur = re.search(
+            r"silence_duration:\s*([0-9.]+)",
+            line,
+        )
+
+        if m_end and m_dur:
+            end_t = float(m_end.group(1))
+            dur_t = float(m_dur.group(1))
+            start_t = max(0.0, end_t - dur_t)
+            gaps.append((start_t, end_t, dur_t))
 
     if gaps:
         gap_str = ", ".join(
@@ -130,13 +163,14 @@ def audit_audio_gaps_and_lufs(
         )
 
         qc_report["warnings"].append(
-            f"Audio silence gaps > {max_silence_gap}s detected at: {gap_str}"
+            f"Audio silence gaps > {max_silence_gap}s "
+            f"detected at: {gap_str}"
         )
 
         if any(d > 2.5 for _, _, d in gaps):
-            qc_report["status"] = "FAIL"
-            qc_report["errors"].append(
-                f"Dead audio air > 2.5s detected: {gap_str}"
+            mark_failure(
+                qc_report,
+                f"Dead audio air > 2.5s detected: {gap_str}",
             )
     else:
         qc_report["checks"].append(
@@ -150,24 +184,32 @@ def run_film_gate(
     qc_report,
     allow_blue_purple=False,
 ):
-    # Mandatory NumPy dependency
+    """
+    Stream and analyze sampled frames.
+
+    Memory usage remains approximately constant with
+    video duration because frames are not accumulated.
+    """
+
     if not HAS_NUMPY:
-        qc_report["status"] = "FAIL"
-        qc_report["errors"].append(
+        mark_failure(
+            qc_report,
             "CRITICAL: NumPy is missing. "
-            "Mandatory visual inspection cannot run."
+            "Mandatory visual inspection cannot run.",
         )
         return
 
     sample_fps = 10
-    w, h = 160, 90
-    frame_bytes = w * h * 3
+    width = 160
+    height = 90
+    frame_bytes = width * height * 3
 
     cmd = [
         "ffmpeg",
         "-v", "error",
         "-i", video_path,
-        "-vf", f"fps={sample_fps},scale={w}:{h}",
+        "-vf",
+        f"fps={sample_fps},scale={width}:{height}",
         "-f", "rawvideo",
         "-pix_fmt", "rgb24",
         "-",
@@ -177,165 +219,258 @@ def run_film_gate(
         proc = subprocess.Popen(
             cmd,
             stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
+            stderr=subprocess.DEVNULL,
         )
-        raw, stderr = proc.communicate()
-
     except OSError as exc:
-        qc_report["status"] = "FAIL"
-        qc_report["errors"].append(
-            f"Unable to start FFmpeg visual inspection: {exc}"
+        mark_failure(
+            qc_report,
+            f"Unable to start FFmpeg visual inspection: {exc}",
         )
         return
 
-    # Mandatory FFmpeg decoding check
-    if proc.returncode != 0:
-        qc_report["status"] = "FAIL"
-        detail = stderr.decode("utf-8", errors="replace")[-500:]
-        qc_report["errors"].append(
-            f"FFmpeg decoding failed with exit code "
-            f"{proc.returncode}: {detail}"
+    n_frames = 0
+    motion_count = 0
+    motion_total = 0
+    blue_purple_count = 0
+
+    previous_frame = None
+    blank_start = None
+    blank_runs = []
+
+    incomplete_frame = False
+    inspection_error = None
+
+    try:
+        while True:
+            chunks = []
+            remaining = frame_bytes
+
+            # A pipe read can return fewer bytes than requested.
+            # Continue until one complete frame is available.
+            while remaining > 0:
+                chunk = proc.stdout.read(remaining)
+
+                if not chunk:
+                    break
+
+                chunks.append(chunk)
+                remaining -= len(chunk)
+
+            if not chunks:
+                break
+
+            if remaining != 0:
+                incomplete_frame = True
+                break
+
+            raw_frame = b"".join(chunks)
+
+            frame = np.frombuffer(
+                raw_frame,
+                dtype=np.uint8,
+            ).reshape(
+                height,
+                width,
+                3,
+            )
+
+            # Motion analysis
+            if previous_frame is not None:
+                delta = np.mean(
+                    np.abs(
+                        frame.astype(np.int16)
+                        - previous_frame.astype(np.int16)
+                    )
+                ) / 255.0
+
+                motion_total += 1
+
+                if delta > 0.025:
+                    motion_count += 1
+
+            previous_frame = frame
+
+            # Blank / solid-color frame detection
+            spatial_std = float(np.std(frame))
+
+            if spatial_std < 3.5:
+                if blank_start is None:
+                    blank_start = n_frames
+            else:
+                if blank_start is not None:
+                    blank_runs.append(
+                        (blank_start, n_frames)
+                    )
+                    blank_start = None
+
+            # Blue-purple dominance detection
+            pixels = frame.astype(np.float32)
+
+            red = pixels[:, :, 0]
+            green = pixels[:, :, 1]
+            blue = pixels[:, :, 2]
+
+            bp_pixels = (
+                (blue > 70)
+                & (blue > green * 1.25)
+                & (red > green * 1.05)
+                & ((red + blue) > 160)
+            )
+
+            if float(np.mean(bp_pixels)) > 0.45:
+                blue_purple_count += 1
+
+            n_frames += 1
+
+    except (OSError, ValueError, MemoryError) as exc:
+        inspection_error = str(exc)
+        proc.kill()
+
+    finally:
+        if proc.stdout is not None:
+            proc.stdout.close()
+
+        return_code = proc.wait()
+
+    if inspection_error is not None:
+        mark_failure(
+            qc_report,
+            f"Video frame inspection failed: {inspection_error}",
         )
         return
 
-    # Detect incomplete raw frames
-    if len(raw) % frame_bytes != 0:
-        qc_report["status"] = "FAIL"
-        qc_report["errors"].append(
-            "Incomplete video frame detected during QC."
+    if return_code != 0:
+        mark_failure(
+            qc_report,
+            "FFmpeg decoding failed with exit code "
+            f"{return_code}",
         )
         return
 
-    n_frames = len(raw) // frame_bytes
+    if incomplete_frame:
+        mark_failure(
+            qc_report,
+            "Incomplete video frame detected during QC.",
+        )
+        return
 
-    # Mandatory minimum decoded frames
     if n_frames < 5:
-        qc_report["status"] = "FAIL"
-        qc_report["errors"].append(
-            "Insufficient decoded frames for visual inspection."
+        mark_failure(
+            qc_report,
+            "Insufficient decoded frames for visual inspection.",
         )
         return
 
-    frames = np.frombuffer(
-        raw,
-        dtype=np.uint8,
-    ).reshape(
-        (n_frames, h, w, 3)
-    ).astype(np.float32)
-
-    # 1. Frame-to-frame motion delta
-    diffs = np.mean(
-        np.abs(frames[1:] - frames[:-1]),
-        axis=(1, 2, 3),
-    ) / 255.0
-
-    fast_motion_ratio = float(np.mean(diffs > 0.025))
+    if blank_start is not None:
+        blank_runs.append(
+            (blank_start, n_frames)
+        )
 
     qc_report["checks"].append(
-        f"Fast-motion frame ratio: {fast_motion_ratio:.4f} "
+        f"Streamed {n_frames} sampled frames "
+        f"at {sample_fps} fps"
+    )
+
+    # Motion quality gate
+    fast_motion_ratio = (
+        motion_count / motion_total
+        if motion_total > 0
+        else 0.0
+    )
+
+    qc_report["checks"].append(
+        "Fast-motion frame ratio: "
+        f"{fast_motion_ratio:.4f} "
         "(threshold >= 0.035)"
     )
 
     if fast_motion_ratio < 0.035:
-        qc_report["status"] = "FAIL"
-        qc_report["errors"].append(
+        mark_failure(
+            qc_report,
             "FILM GATE RED LIGHT (Anti-PPT): "
-            f"Fast-motion frame ratio is {fast_motion_ratio:.4f} "
-            "(< 0.035). Video may resemble a static slideshow."
+            f"Fast-motion frame ratio is "
+            f"{fast_motion_ratio:.4f} (< 0.035). "
+            "Video may resemble a static slideshow.",
         )
 
     elif fast_motion_ratio < 0.060:
         qc_report["warnings"].append(
             "FILM GATE YELLOW: "
-            f"Fast-motion frame ratio is {fast_motion_ratio:.4f} "
-            "(< 0.060)."
+            f"Fast-motion frame ratio is "
+            f"{fast_motion_ratio:.4f} (< 0.060)."
         )
 
-    # 2. Mid-video blank / solid-color frames
-    spatial_std = np.std(
-        frames,
-        axis=(1, 2, 3),
+    # Blank frame quality gate
+    # Exclude first 0.5s and last 1.0s.
+    start_index = min(5, n_frames)
+    end_index = max(
+        start_index,
+        n_frames - 10,
     )
 
-    blank_mask = spatial_std < 3.5
-    blank_runs = []
-    run_start = None
+    valid_blank_runs = []
 
-    start_index = min(5, n_frames)
-    end_index = max(start_index, n_frames - 10)
+    for start, end in blank_runs:
+        clipped_start = max(
+            start,
+            start_index,
+        )
 
-    for i in range(start_index, end_index):
-        if blank_mask[i]:
-            if run_start is None:
-                run_start = i
-        else:
-            if run_start is not None:
-                if i - run_start >= 3:
-                    blank_runs.append(
-                        (run_start / sample_fps, i / sample_fps)
-                    )
-                run_start = None
+        clipped_end = min(
+            end,
+            end_index,
+        )
 
-    if run_start is not None:
-        if end_index - run_start >= 3:
-            blank_runs.append(
+        if clipped_end - clipped_start >= 3:
+            valid_blank_runs.append(
                 (
-                    run_start / sample_fps,
-                    end_index / sample_fps,
+                    clipped_start / sample_fps,
+                    clipped_end / sample_fps,
                 )
             )
 
-    if blank_runs:
-        tc_str = ", ".join(
-            f"{s:.2f}s-{e:.2f}s"
-            for s, e in blank_runs[:6]
+    if valid_blank_runs:
+        timecodes = ", ".join(
+            f"{start:.2f}s-{end:.2f}s"
+            for start, end in valid_blank_runs[:6]
         )
 
-        qc_report["status"] = "FAIL"
-        qc_report["errors"].append(
+        mark_failure(
+            qc_report,
             "FILM GATE RED LIGHT "
             "(Blank/Dead Frame Gap >= 0.3s): "
-            f"Empty or solid frames detected at {tc_str}"
+            f"Empty or solid frames detected at {timecodes}",
         )
     else:
         qc_report["checks"].append(
             "Zero mid-video blank/dead frame gaps >= 0.3s"
         )
 
-    # 3. Blue-purple background dominance
-    r = frames[:, :, :, 0]
-    g = frames[:, :, :, 1]
-    b = frames[:, :, :, 2]
-
-    bp_pixels = (
-        (b > 70)
-        & (b > g * 1.25)
-        & (r > g * 1.05)
-        & ((r + b) > 160)
-    )
-
-    bp_frame_ratio = float(
-        np.mean(
-            np.mean(bp_pixels, axis=(1, 2)) > 0.45
-        )
-    )
+    # Blue-purple palette quality gate
+    bp_frame_ratio = blue_purple_count / n_frames
 
     qc_report["checks"].append(
-        f"Blue-purple frame ratio: {bp_frame_ratio:.2%}"
+        "Blue-purple frame ratio: "
+        f"{bp_frame_ratio:.2%}"
     )
 
-    if bp_frame_ratio >= 0.30 and not allow_blue_purple:
-        qc_report["status"] = "FAIL"
-        qc_report["errors"].append(
+    if (
+        bp_frame_ratio >= 0.30
+        and not allow_blue_purple
+    ):
+        mark_failure(
+            qc_report,
             "FILM GATE RED LIGHT (AI-Slop Palette): "
             f"{bp_frame_ratio:.1%} of frames have "
-            "blue-purple dominance (>= 30% limit)."
+            "blue-purple dominance (>= 30% limit).",
         )
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Quality Control Video for Founder Notes Studio"
+        description=(
+            "Quality Control Video for Founder Notes Studio"
+        )
     )
 
     parser.add_argument(
@@ -395,39 +530,26 @@ def main():
         "errors": [],
     }
 
-    if not os.path.exists(args.video):
-        qc_report["status"] = "FAIL"
-        qc_report["errors"].append(
-            f"Video file not found: {args.video}"
+    # File existence
+    if not os.path.isfile(args.video):
+        mark_failure(
+            qc_report,
+            f"Video file not found: {args.video}",
         )
-
-        os.makedirs(
-            os.path.dirname(args.json) or ".",
-            exist_ok=True,
-        )
-
-        with open(args.json, "w", encoding="utf-8") as f:
-            json.dump(qc_report, f, indent=2)
-
-        print(f"QC FAIL: Video file not found: {args.video}")
+        write_report(args.json, qc_report)
+        print(f"QC Status: {qc_report['status']}")
         sys.exit(1)
 
+    # Metadata inspection
     info = run_ffprobe(args.video)
 
     if not info:
-        qc_report["status"] = "FAIL"
-        qc_report["errors"].append(
-            "ffprobe failed to read video metadata"
+        mark_failure(
+            qc_report,
+            "ffprobe failed to read video metadata",
         )
-
-        os.makedirs(
-            os.path.dirname(args.json) or ".",
-            exist_ok=True,
-        )
-
-        with open(args.json, "w", encoding="utf-8") as f:
-            json.dump(qc_report, f, indent=2)
-
+        write_report(args.json, qc_report)
+        print(f"QC Status: {qc_report['status']}")
         sys.exit(1)
 
     format_info = info.get("format", {})
@@ -435,58 +557,75 @@ def main():
 
     video_stream = next(
         (
-            s for s in streams
-            if s.get("codec_type") == "video"
+            stream
+            for stream in streams
+            if stream.get("codec_type") == "video"
         ),
         None,
     )
 
     audio_stream = next(
         (
-            s for s in streams
-            if s.get("codec_type") == "audio"
+            stream
+            for stream in streams
+            if stream.get("codec_type") == "audio"
         ),
         None,
     )
 
-    # 1. Video stream validation
-    if not video_stream:
-        qc_report["status"] = "FAIL"
-        qc_report["errors"].append(
-            "No video stream found"
+    # Video stream validation
+    if video_stream is None:
+        mark_failure(
+            qc_report,
+            "No video stream found",
         )
     else:
-        width = int(video_stream.get("width", 0))
-        height = int(video_stream.get("height", 0))
+        width = int(
+            video_stream.get("width", 0)
+        )
+
+        height = int(
+            video_stream.get("height", 0)
+        )
 
         if args.format == "horizontal":
-            target_w, target_h = 1920, 1080
+            target_width = 1920
+            target_height = 1080
         else:
-            target_w, target_h = 1080, 1920
+            target_width = 1080
+            target_height = 1920
 
-        if (width, height) == (target_w, target_h):
+        if (width, height) == (
+            target_width,
+            target_height,
+        ):
             qc_report["checks"].append(
                 f"Resolution matches target: {width}x{height}"
             )
         else:
-            qc_report["status"] = "FAIL"
-            qc_report["errors"].append(
-                f"Resolution mismatch: got {width}x{height}, "
-                f"expected {target_w}x{target_h}"
+            mark_failure(
+                qc_report,
+                "Resolution mismatch: "
+                f"got {width}x{height}, "
+                f"expected {target_width}x{target_height}",
             )
 
-        r_frame_rate = video_stream.get(
+        frame_rate = video_stream.get(
             "r_frame_rate",
             "30/1",
         )
 
         try:
-            num, den = map(
+            numerator, denominator = map(
                 int,
-                r_frame_rate.split("/"),
+                frame_rate.split("/"),
             )
 
-            fps = num / den if den != 0 else 0
+            fps = (
+                numerator / denominator
+                if denominator != 0
+                else 0.0
+            )
 
             if abs(fps - 30.0) < 1.0:
                 qc_report["checks"].append(
@@ -499,14 +638,14 @@ def main():
 
         except (ValueError, ZeroDivisionError):
             qc_report["warnings"].append(
-                f"Could not parse frame rate: {r_frame_rate}"
+                f"Could not parse frame rate: {frame_rate}"
             )
 
-    # 2. Audio stream validation
-    if not audio_stream:
-        qc_report["status"] = "FAIL"
-        qc_report["errors"].append(
-            "No audio stream found"
+    # Audio stream validation
+    if audio_stream is None:
+        mark_failure(
+            qc_report,
+            "No audio stream found",
         )
     else:
         codec = audio_stream.get(
@@ -518,50 +657,52 @@ def main():
             f"Audio codec: {codec}"
         )
 
-    # 3. Minimum duration validation
+    # Duration validation
     try:
-        v_duration = float(
+        duration = float(
             format_info.get("duration", 0.0)
         )
-    except (ValueError, TypeError):
-        v_duration = 0.0
+    except (TypeError, ValueError):
+        duration = 0.0
 
     qc_report["checks"].append(
-        f"Video duration: {v_duration:.2f}s "
-        f"({v_duration / 60:.2f} min)"
+        f"Video duration: {duration:.2f}s "
+        f"({duration / 60:.2f} min)"
     )
 
-    if args.format == "horizontal":
-        min_req = args.min_duration
-    else:
-        min_req = 30.0
+    min_required = (
+        args.min_duration
+        if args.format == "horizontal"
+        else 30.0
+    )
 
-    if v_duration < min_req:
-        qc_report["status"] = "FAIL"
-        qc_report["errors"].append(
+    if duration < min_required:
+        mark_failure(
+            qc_report,
             "DURATION GATE FAIL: "
-            f"Video duration is {v_duration:.2f}s, "
-            f"below the required {min_req:.0f}s."
+            f"Video duration is {duration:.2f}s, "
+            f"below the required {min_required:.0f}s.",
         )
 
-    # 4. Optional timing metadata
-    if args.timings and os.path.exists(args.timings):
+    # Optional timing metadata
+    if args.timings and os.path.isfile(args.timings):
         try:
             with open(
                 args.timings,
                 "r",
                 encoding="utf-8",
-            ) as f:
-                t_data = json.load(f)
+            ) as file:
+                timing_data = json.load(file)
 
-            t_duration = float(
-                t_data.get("total_duration", 0.0)
+            timing_duration = float(
+                timing_data.get("total_duration", 0.0)
             )
 
-            if abs(v_duration - t_duration) > 1.0:
+            if abs(duration - timing_duration) > 1.0:
                 qc_report["warnings"].append(
-                    f"Video duration ({v_duration:.2f}s) "
-                    f"differs from timings.json ({t_duration:.2f}s)"
+                    f"Video duration ({duration:.2f}s) "
+                    "differs from timings.json "
+                    f"({timing_duration:.2f}s)"
                 )
 
         except (OSError, ValueError, TypeError) as exc:
@@ -569,24 +710,24 @@ def main():
                 f"Failed to parse timings.json: {exc}"
             )
 
-    # 5. Audio gap inspection
-    if audio_stream:
+    # Audio inspection
+    if audio_stream is not None:
         audit_audio_gaps_and_lufs(
             args.video,
             qc_report,
         )
 
-    # 6. Pixel-level visual inspection
-    if video_stream:
+    # Streaming visual inspection
+    if video_stream is not None:
         run_film_gate(
             args.video,
-            v_duration,
+            duration,
             qc_report,
             allow_blue_purple=args.allow_blue_purple,
         )
 
-    # 7. Contact sheet generation
-    if video_stream:
+    # Contact sheet generation
+    if video_stream is not None:
         try:
             os.makedirs(
                 os.path.dirname(args.sheet) or ".",
@@ -596,7 +737,7 @@ def main():
             generate_contact_sheet(
                 args.video,
                 args.sheet,
-                v_duration,
+                duration,
             )
 
             qc_report["checks"].append(
@@ -608,33 +749,49 @@ def main():
                 f"Contact sheet generation failed: {exc}"
             )
 
-    if qc_report["status"] == "PASS" and qc_report["warnings"]:
+    # Final status
+    if (
+        qc_report["status"] == "PASS"
+        and qc_report["warnings"]
+    ):
         qc_report["status"] = "WARN"
 
+    write_report(args.json, qc_report)
+
+    print(
+        f"QC Status: {qc_report['status']}"
+    )
+
+    if qc_report["errors"]:
+        print(
+            "ERRORS:",
+            qc_report["errors"],
+        )
+        sys.exit(1)
+
+    if qc_report["warnings"]:
+        print(
+            "WARNINGS:",
+            qc_report["warnings"],
+        )
+
+
+def write_report(output_path, qc_report):
     os.makedirs(
-        os.path.dirname(args.json) or ".",
+        os.path.dirname(output_path) or ".",
         exist_ok=True,
     )
 
     with open(
-        args.json,
+        output_path,
         "w",
         encoding="utf-8",
-    ) as f:
+    ) as file:
         json.dump(
             qc_report,
-            f,
+            file,
             indent=2,
         )
-
-    print(f"QC Status: {qc_report['status']}")
-
-    if qc_report["errors"]:
-        print("ERRORS:", qc_report["errors"])
-        sys.exit(1)
-
-    if qc_report["warnings"]:
-        print("WARNINGS:", qc_report["warnings"])
 
 
 if __name__ == "__main__":
