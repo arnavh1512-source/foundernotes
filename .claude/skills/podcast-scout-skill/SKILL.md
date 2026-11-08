@@ -19,7 +19,7 @@ Find the teachable ideas inside an expert conversation, prove them, and turn the
 
 ## Production constitution (read before every video)
 
-Read `references/agency-production-system.md` and `references/production-stack.md` first. The studio is an accountable crew, not a preset shuffler: **researcher → scriptwriter → visual director/storyboarder → animator → sound engineer → editor → independent reality checker → packager**. Every handoff includes actual files and evidence. Do not manufacture QC reports, citations, model versions, voice checks or rendered outputs. A film is complete only when its master has been played, inspected, and approved. Read `references/agent-reach.md` for the preferred optional research adapter.
+Read `references/agency-production-system.md` and `references/production-stack.md` first. The studio is an accountable crew, not a preset shuffler: **researcher → scriptwriter → visual director/storyboarder → animator → sound engineer → editor → independent reality checker → packager**. Every handoff includes actual files and evidence. Do not manufacture QC reports, citations, model versions, voice checks or rendered outputs. A film is complete only when its master has been played, inspected, and approved. Read `references/agent-reach.md` for the **default Agent-Reach research gateway** and its honest native fallback. At the beginning of each research task, the researcher must attempt `python3 .claude/skills/podcast-scout-skill/scripts/research_gateway.py status`, then the relevant read-only search/read/subtitle operation. Do not treat a noninstalled CLI as successfully integrated.
 
 **Narration lock:** maintain the channel's consistent male narrator. Use the authorized Voicebox profile when available; fallbacks must also use male voices. Lock and measure audio before shot timing. No narration duration guess can replace actual `ffprobe` measurement. Never clone a third party's voice without permission.
 
@@ -41,7 +41,7 @@ The memory files and `scripts/record_lesson.py` now exist. Use the recorder with
 
 ## Stages 1-6: Scout pipeline
 1. **Ingest & Extract:** Ingest input (URL, file, transcript, or topic). Identify core subject and raw key points.
-2. **Fact Check & Deepen:** Search web/academic literature for ground-truth evidence on every key point. Drop unverified claims; attach primary citations.
+2. **Fact Check & Deepen:** Attempt Agent-Reach `search`/`read` (or `transcript` for YouTube) first via the project gateway, falling back to available native tools when permitted. Search web/academic literature for ground-truth evidence on every key point. Drop unverified claims; attach primary citations.
 3. **Score Opportunities:** Score *Surprise*, *Evidence Density*, *Visual Explanability*, *Utility*, and *Search Interest* (1-5 each; require >= 16/25).
 4. **Draft Briefs:** Write detailed briefs for top 1-3 ideas designed to sustain an **8–12 minute (`1,450–2,100+ word`)** multi-chapter breakdown.
 5. **Review Gate:** Present ranked briefs to the user unless end-to-end production was requested.
