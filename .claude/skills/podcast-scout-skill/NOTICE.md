@@ -19,6 +19,7 @@ separately, never vendored) and adapts ideas and rules from these projects:
 | [Jakeschincariol/youtube-agent-skill](https://github.com/Jakeschincariol/youtube-agent-skill) | MIT | Title/thumbnail/chapter/hook rules re-implemented in package_lint.py and the scriptwriter role |
 | [calesthio/OpenMontage](https://github.com/calesthio/OpenMontage) | AGPL-3.0 | Ideas only (stage gates, sample-first, budget approval, Shorts safe zone); no code or text copied |
 | [jamiepine/voicebox](https://github.com/jamiepine/voicebox) | MIT | Optional local TTS server with male presets |
+| [blader/humanizer](https://github.com/blader/humanizer) | MIT, Copyright (c) 2025 Siqi Chen | Vendored Claude Code writing skill version 3.1.0 under `.claude/skills/humanizer/`, original license preserved. Used for editorial clarity while preserving citations and verified facts. |
 | [Panniantong/Agent-Reach](https://github.com/Panniantong/Agent-Reach) | MIT | Preferred optional research channel integration (not vendored or installed by this repository) |
 | [h4ckf0r0day/obscura](https://github.com/h4ckf0r0day/obscura) | Apache-2.0 | Legacy bundled research-helper references only; no distributed browser binary |
 | [HeyGen-com/hyperframes](https://github.com/HeyGen-com/hyperframes) | Apache-2.0 | Documented optional agent-first HTML animation renderer, not installed |
