@@ -101,6 +101,20 @@ The full specification is in [FounderNotes 2.0: Motion Direction and Continuous 
 
 **Quality philosophy:** A technically valid video can still be boring. Motion must communicate; more movement is not automatically better. Audience views and retention can inform improvement when available, but they do not independently prove animation quality.
 
+### Existing 17 animation techniques — audit status
+
+The studio also includes **17 documented animation techniques** under [`.claude/skills/animation-styles/`](.claude/skills/animation-styles/). All 17 style-reference documents have been reviewed as part of the FounderNotes 2.0 instruction audit:
+
+| Family | Techniques |
+|---|---|
+| 2D illustration and editorial | Pixel Art, Chalkboard, Glow Sketch, Comic Art, Flat Vector, Dan Koe-inspired, Risograph Cutout, Renaissance Codex |
+| 3D and physical worlds | PS2 Retro 3D, CGI Motion, Lego-inspired, ZackD-inspired |
+| Experimental and transformation | One-Line Graph, One-Ball Showreel, ASCII Terminal, Pixel Dither, Ink in Water |
+
+The [17-style audit report](docs/ANIMATION_STYLES_AUDIT.md) documents the distinctive mechanism, potential failure modes and appropriate storytelling uses of each style. The [animation skill instructions](.claude/skills/animation-styles/SKILL.md) now describe all 17 and prioritize narrative continuity over arbitrary style rotation.
+
+**Verified so far:** all 17 Markdown style references reviewed; creative direction and continuity rules updated. **Not yet verified:** rendered samples for every style, full shared renderer and player inspection, comparative visual benchmarks, audio-to-action alignment, and complete integration tests. These must be completed before claiming the redesigned animation system is production-ready.
+
 ### First acceptance milestone
 
 Create a **30–60-second narrated pilot** with at least three different narrative functions. Compare it side by side with an existing FounderNotes sample, review it visually and aurally, measure production failures, and only then promote successful techniques into the default pipeline.
