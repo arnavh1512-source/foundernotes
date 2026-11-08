@@ -40,7 +40,11 @@ def _public_url(value):
     parsed = urllib.parse.urlsplit(value)
     if parsed.scheme not in {"http", "https"} or not parsed.hostname:
         return False
-    if parsed.username or parsed.password or parsed.port not in (None, 80, 443):
+    try:
+        port = parsed.port
+    except ValueError:
+        return False
+    if parsed.username or parsed.password or port not in (None, 80, 443):
         return False
     hostname = parsed.hostname.lower().rstrip(".")
     if hostname in {"localhost", "localhost.localdomain"} or hostname.endswith((".localhost", ".local", ".internal")):
@@ -53,6 +57,8 @@ def _public_url(value):
 
 
 def _youtube_target(value):
+    if not isinstance(value, str):
+        return False
     if len(value) == 11 and all(x.isascii() and (x.isalnum() or x in "-_") for x in value):
         return True
     if not _public_url(value):
