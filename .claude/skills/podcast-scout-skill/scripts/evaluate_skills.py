@@ -9,10 +9,9 @@ from __future__ import annotations
 
 import argparse
 import datetime as dt
-import hashlib
 import json
+import math
 import os
-import re
 import sys
 from pathlib import Path
 
@@ -124,7 +123,7 @@ def validate_review(review):
     else:
         for field in DIMENSIONS:
             rating = ratings.get(field)
-            if type(rating) not in (int, float) or not (0 <= rating <= 5):
+            if type(rating) not in (int, float) or not math.isfinite(rating) or not (0 <= rating <= 5):
                 errors.append(f"ratings.{field} must be between 0 and 5")
     if review.get("outcome") == "pass" and isinstance(ratings, dict):
         if any(type(ratings.get(field)) in (int, float) and ratings[field] < 3 for field in DIMENSIONS):
@@ -145,21 +144,20 @@ def record_review(data, review, timestamp=None):
 def gate(data, video_id, used_ids, at=None):
     if not isinstance(video_id, str) or not video_id.strip():
         return ["video_id is required"]
-    current = latest_reviews(data)
     failures = []
     for key in used_ids:
         if key not in catalogue():
             failures.append(f"{key}: unknown skill ID")
             continue
-        entry = current.get(key)
-        if entry is None:
-            failures.append(f"{key}: never evaluated")
-            continue
-        date, review = entry
-        if review.get("video_id") != video_id:
+        matches = [( _parse_time(item.get("evaluated_at")), item) for item in data["reviews"]
+                   if isinstance(item, dict) and item.get("skill_id") == key
+                   and item.get("video_id") == video_id and _parse_time(item.get("evaluated_at"))]
+        if not matches:
             failures.append(f"{key}: no evaluation recorded for this video")
-        elif review.get("outcome") != "pass":
-            failures.append(f"{key}: latest review is {review.get('outcome')}, not pass")
+            continue
+        date, review = max(matches, key=lambda entry: entry[0])
+        if review.get("outcome") != "pass":
+            failures.append(f"{key}: latest review for this video is {review.get('outcome')}, not pass")
     return failures
 
 def main(argv=None):
