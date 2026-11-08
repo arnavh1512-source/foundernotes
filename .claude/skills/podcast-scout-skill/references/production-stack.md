@@ -30,7 +30,7 @@ Reviewed 2026-11-04 at each repo's default-branch HEAD. Re-check a repo's README
 | Code-made sound effects aimed at the picture; *listening* to a mix (describe, match, timeline, critique) | **earshot** | lemo `sfx.py` |
 | Hand-drawn frame-by-frame or bone-rigged vector shots the owner draws in a desktop app | **Pencil2D** / **Synfig** / **OpenToonz** (export clips, drop into `scenes/`) | our SVG rig |
 | Male narration | `scripts/narrate.py` (Kokoro/Piper); **voicebox** for Qwen male presets | see voiceover.md |
-| Research page reading | **Obscura** | host reader |
+| Research and platform retrieval | **Agent-Reach**, when installed and authorized | host search/reader or transcript tools |
 
 Mixing engines in one video is fine when palette, type and pacing are shared (set them in the
 storyboard). Every engine's output becomes a clip `scenes/NN-<id>.mp4` at 1920×1080/30 fps;
@@ -96,8 +96,8 @@ For shots the owner wants to draw or rig by hand. **Synfig** (vector + bones) re
 ### voicebox — [jamiepine/voicebox](https://github.com/jamiepine/voicebox) (MIT)
 Local voice studio (FastAPI :17493). Male presets without cloning. See voiceover.md.
 
-### Obscura — [h4ckf0r0day/obscura](https://github.com/h4ckf0r0day/obscura) (Apache-2.0)
-Research browser; see obscura.md.
+### Agent-Reach — [Panniantong/Agent-Reach](https://github.com/Panniantong/Agent-Reach) (MIT)
+Optional multi-platform research and transcript adapter, rather than a drop-in browser binary. Check available channels and authorization; see `agent-reach.md`. The prior Obscura adapter remains as a legacy, non-default helper until separately retired.
 
 ## Generative images and clips: Open Generative AI / MuAPI (`scripts/gen_media.py`)
 Open Generative AI (github.com/Anil-matcha/Open-Generative-AI, MIT) is a studio app for MuAPI's model hub,
