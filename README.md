@@ -111,7 +111,7 @@ Tests: `cd .claude/skills/podcast-scout-skill && python3 -m unittest discover -s
 
 The full specification is in [FounderNotes 2.0: Motion Direction and Continuous Improvement](docs/FOUNDERNOTES_2_MOTION_SYSTEM.md).
 
-### Five animation sources under evaluation
+### Five foundational animation sources — continuously evaluated alongside every studio skill
 
 | Reference | Techniques to study and benchmark |
 |---|---|
@@ -135,6 +135,28 @@ The full specification is in [FounderNotes 2.0: Motion Direction and Continuous 
 8. Record timecoded mistakes, root causes, corrections and regression tests so the next production can reuse verified lessons.
 
 **Quality philosophy:** A technically valid video can still be boring. Motion must communicate; more movement is not automatically better. Audience views and retention can inform improvement when available, but they do not independently prove animation quality.
+
+### Continuous evaluation of all skills and self-improving production memory
+
+**Every registered skill stays under continuous evaluation**, not just the original five animation repositories. This includes **17 native animation looks**, other external animation/audio/research/production tools and the **10 adapted creative formats** from user-provided ZIPs. Evaluations are tied to actual videos and benchmarks rather than claimed from documentation.
+
+- The [skill evaluation script](.claude/skills/podcast-scout-skill/scripts/evaluate_skills.py) registers the three skill groups, marks unevaluated/stale/failed skills, records evidence-backed reviews, and checks whether every **used** skill has a passing review for the current video. A review becomes stale after 30 days for inventory purposes.
+- The [self-improvement memory](.claude/memory/) now contains `mistakes_and_pitfalls.md`, `positive_recipes.md`, `production_ledger.json` and `skill_evaluations.json`. These were **missing on the development branch** and were initialized empty; no old performance results have been invented.
+- The [lesson recorder](.claude/skills/podcast-scout-skill/scripts/record_lesson.py) records verified failures, successful remedies and owner-approved video results. Agents must read these records before a new video and write back evidence after corrections.
+- Reviews assess clarity, motion, continuity, audio, reliability and rights. A skill can be improved, reconsidered, or withheld when failures occur; use evidence, not popularity or preset counts.
+- Regression coverage is in [`test_skill_evaluation_memory.py`](.claude/skills/podcast-scout-skill/tests/test_skill_evaluation_memory.py). **These tests are added but have not yet been executed in a real production environment.**
+
+Example commands from the repository root:
+
+```bash
+python3 .claude/skills/podcast-scout-skill/scripts/evaluate_skills.py status
+python3 .claude/skills/podcast-scout-skill/scripts/evaluate_skills.py record production/skill-review.json
+python3 .claude/skills/podcast-scout-skill/scripts/evaluate_skills.py gate --video pilot01 --used native/chalkboard external/earshot
+python3 .claude/skills/podcast-scout-skill/scripts/record_lesson.py production/verified-lesson.json
+python3 -m unittest discover -s .claude/skills/podcast-scout-skill/tests -p 'test_skill_evaluation_memory.py'
+```
+
+A passing **metadata evaluation** never substitutes for rendering, listening, independent creative review or legal verification. The registry tracks evidence and learning; it does not install or automatically benchmark third-party engines.
 
 ### Animation library: 17 existing styles + 5 external skill collections
 
