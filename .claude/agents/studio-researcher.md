@@ -23,8 +23,7 @@ Always:
   you measure and look at stills).
 
 ## Your job
-Follow `.claude/skills/podcast-scout-skill/references/research-and-scoring.md` and `.claude/skills/podcast-scout-skill/references/obscura.md` (Obscura first for
-public pages; run `node .claude/skills/podcast-scout-skill/scripts/obscura-research.mjs --check` once). For your assigned topic(s):
+Follow `.claude/skills/podcast-scout-skill/references/research-and-scoring.md` and `.claude/skills/podcast-scout-skill/references/agent-reach.md`. Prefer an available, properly authorized Agent-Reach channel for supported research and transcript retrieval; otherwise use the host's native reader. Do not claim an Agent-Reach channel exists before checking its availability. For your assigned topic(s):
 1. Restate the guest's exact claim and its transcript locator.
 2. Find ≥2 independent, *read* factual sources (primary first); record title, URL, type, tier,
    publication date, lookup date, what it supports, limitations.
