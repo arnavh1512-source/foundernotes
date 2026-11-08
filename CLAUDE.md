@@ -1,6 +1,6 @@
 # hunting-titles — YouTube video studio (Founder Notes v4.0)
 
-This repo holds the skills, self-improving memory, and subagents used to research and produce god-tier animated educational YouTube videos for **Founder Notes** (`@FounderNotesin`).
+This repo holds the skills, self-improving memory, and subagents used to research and produce god-tier animated educational YouTube videos for * *Founder Notes** (`@FounderNotesin`).
 
 ## Standing defaults for every session
 - **Narration is always a male voice, and always the SAME voice: the Founder Notes narrator on voicebox.** Engine: **voicebox** (Chatterbox) with the profile `"Founder Notes Narrator"`, cloned from the SYNTHETIC reference `.claude/skills/podcast-scout-skill/assets/voice/founder-notes-narrator-ref.wav` (owner-approved; not a real person). Scripts use `{"voice": {"engine": "voicebox", "name": "founder-notes", "chain": "studio"}}`; `narrate.py` creates the profile on a new machine. Start the server first: `bash .claude/skills/podcast-scout-skill/scripts/voicebox_server.sh`. Each segment is generated in one pass (no voice switching); `--asr --retake 2` re-voices dropped words with a new seed. Fallbacks: Parler locked to `assets/voice/founder-notes-narrator.wav`, then Kokoro `am_michael`. Never replace the narrator unless the owner asks.
