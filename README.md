@@ -111,6 +111,10 @@ python3 .claude/skills/podcast-scout-skill/scripts/research_gateway.py transcrip
 
 **Installation is separate and optional, not automatic.** Follow the official [upstream GitHub installation guide](https://github.com/Panniantong/Agent-Reach/blob/main/docs/install.md) on the host running Claude Code after authorizing dependency installation. The similarly named PyPI package is not the official repository. The integration uses public, read-only operations and never signs into accounts or invokes paid speech-to-text without permission. See [the full gateway policy](.claude/skills/podcast-scout-skill/references/agent-reach.md).
 
+## Editorial clarity: Humanizer
+
+FounderNotes includes the [MIT-licensed Humanizer Claude Code skill](.claude/skills/humanizer/SKILL.md) to polish script narration, titles, descriptions and pinned comments. The scriptwriter uses it **before voice generation**; the reality checker then verifies the revised script against the evidence ledger. It never replaces the channel's narrator or changes verified claims, sources, timestamps or required credits. The packager uses it for the final prose polish, followed by metadata validation. See the [editorial integration contract](.claude/skills/podcast-scout-skill/references/editorial-humanizer.md). The skill is already present locally; no external installation is required.
+
 ## Non-negotiable channel rules
 
 - **Narration:** Use the channel's consistent **male narrator**, preferring the configured Voicebox profile when available. Do not clone another person's voice without rights and explicit authorization. Lock scene timing to measured audio, not guessed duration.
@@ -132,6 +136,7 @@ Channel-specific requirements live in [`channel-profile.md`](channel-profile.md)
 | [`.claude/skills/podcast-scout-skill/`](.claude/skills/podcast-scout-skill/) | Main research-to-video skill, scripts and production references |
 | [`.claude/agents/`](.claude/agents/) | Eight specialist production roles |
 | [`.claude/skills/motion/`](.claude/skills/motion/) | Time-driven scene rendering utilities |
+| [`.claude/skills/humanizer/`](.claude/skills/humanizer/) | Natural-language polish for scripts and YouTube copy |
 | [`.claude/skills/animation-styles/`](.claude/skills/animation-styles/) | Native visual-technique reference library |
 | [`.claude/skills/collage-director/`](.claude/skills/collage-director/) | Optional editorial collage workflow |
 | [`.claude/memory/`](.claude/memory/) | Recorded lessons, production history and skill reviews |
