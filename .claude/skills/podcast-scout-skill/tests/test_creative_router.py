@@ -41,6 +41,10 @@ class CreativeRouterTests(unittest.TestCase):
         self.plan["shots"][0]["format"] = "unknown"
         self.check_error(".format must", self.plan)
 
+    def test_rejects_unhashable_format_gracefully(self):
+        self.plan["shots"][0]["format"] = ["claymation"]
+        self.check_error(".format must", self.plan)
+
     def test_rejects_duplicate_ids_and_overlapping_shots(self):
         self.plan["shots"][1]["id"] = "s01"
         self.plan["shots"][1]["start_s"] = 4.0
