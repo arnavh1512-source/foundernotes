@@ -3,6 +3,7 @@ import importlib.util
 import io
 import unittest
 from pathlib import Path
+from subprocess import CompletedProcess
 from unittest.mock import patch
 
 SCRIPT = (
@@ -114,6 +115,41 @@ class FilmGateTests(unittest.TestCase):
 
         self.assertEqual(result["status"], "FAIL")
         self.assertIn("Insufficient", " ".join(result["errors"]))
+
+
+class ContactSheetTests(unittest.TestCase):
+    def test_contact_sheet_failure_raises_error(self):
+        with patch.object(
+            qc.subprocess,
+            "run",
+            side_effect=OSError("ffmpeg unavailable"),
+        ):
+            with self.assertRaises(OSError):
+                qc.generate_contact_sheet(
+                    "fake.mp4",
+                    "sheet.jpg",
+                    10,
+                )
+
+    def test_contact_sheet_nonzero_exit_raises_error(self):
+        with patch.object(
+            qc.subprocess,
+            "run",
+            return_value=CompletedProcess(
+                args=[],
+                returncode=1,
+                stderr="encoding failed",
+            ),
+        ):
+            with self.assertRaisesRegex(
+                RuntimeError,
+                "Contact sheet generation failed",
+            ):
+                qc.generate_contact_sheet(
+                    "fake.mp4",
+                    "sheet.jpg",
+                    10,
+                )
 
 
 if __name__ == "__main__":
