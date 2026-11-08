@@ -70,6 +70,10 @@ use a cookies file exported from your own browser (`yt-dlp --cookies`). Never pa
 
 Tests: `cd .claude/skills/podcast-scout-skill && python3 -m unittest discover -s tests && node --test scripts/obscura-research.test.mjs`
 
+### Research tool: Agent-Reach replaces Obscura as the preferred adapter
+
+[Agent-Reach](https://github.com/Panniantong/Agent-Reach) is now the **preferred optional research-channel integration** for supported web pages, social platforms and transcripts, replacing Obscura in the research workflow guidance. It is a multi-platform CLI, **not an animation engine** and not a direct API-compatible replacement for the old browser helper. Only use channels that have been installed, configured and authorized; otherwise fall back to host-native research tools. The old Obscura script and its tests remain available as **legacy code**, not the default workflow, until a verified migration removes them. See [Agent-Reach research integration](.claude/skills/podcast-scout-skill/references/agent-reach.md). No Agent-Reach install or end-to-end integration is claimed yet.
+
 ## FounderNotes 2.0 — creative production rebuild
 
 **Direction:** The existing animation presets are no longer the target creative standard. The next system will prioritize purposeful, engaging motion, narrative clarity, voice-to-visual synchronization, and measurable improvement after each video. This is a **planned rebuild**, not a claim that the new engine is already implemented.
