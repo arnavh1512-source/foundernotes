@@ -1,0 +1,43 @@
+
+name: Python QC Checks
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  check-python:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Check Python syntax
+        run: |
+          python -m py_compile .claude/skills/podcast-scout-skill/scripts/qc_video.py
+
+      - name: Verify QC error handling
+        run: |
+          python - <<'PY'
+          import ast
+          from pathlib import Path
+
+          path = Path(".claude/skills/podcast-scout-skill/scripts/qc_video.py")
+          source = path.read_text(encoding="utf-8")
+          tree = ast.parse(source)
+
+          assert 'if not HAS_NUMPY:' in source
+          assert 'qc_report["status"] = "FAIL"' in source
+          assert 'proc.returncode != 0' in source
+          assert 'len(raw) % frame_bytes != 0' in source
+          assert 'if n_frames < 5:' in source
+
+          print("QC error-handling checks passed.")
+          PY
