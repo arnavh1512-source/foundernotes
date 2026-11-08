@@ -92,7 +92,8 @@ def run_film_gate(video_path, duration, qc_report, allow_blue_purple=False):
         )
         return
 
-    sample_fps = 10
+   def run_film_gate(video_path, duration, qc_report, allow_blue_purple=False):
+    if not HAS_NUMPY:
         qc_report["status"] = "FAIL"
         qc_report["errors"].append(
             "CRITICAL: NumPy is missing. "
@@ -101,12 +102,8 @@ def run_film_gate(video_path, duration, qc_report, allow_blue_purple=False):
         return
 
     sample_fps = 10
-    qc_report["status"] = "FAIL"
-    qc_report["errors"].append(
-        "CRITICAL: NumPy is missing. "
-        "Mandatory visual inspection cannot run."
-    )
-    return
+    w, h = 160, 90
+    frame_bytes = w * h * 3
 
       proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
    sample_fps = 10
