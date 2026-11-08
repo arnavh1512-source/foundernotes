@@ -11,6 +11,11 @@ Before anything else read:
 1. `.claude/memory/mistakes_and_pitfalls.md`, `.claude/memory/positive_recipes.md`, and `.claude/memory/production_ledger.json`
 2. `.claude/skills/podcast-scout-skill/references/production-qa.md`, `.claude/skills/animation-styles/references/checklist.md`, and `channel-profile.md`
 
+## Shared production contract
+
+Read `.claude/skills/podcast-scout-skill/references/agency-production-system.md` before your assignment. Keep the channel's narrator **male** and consistent; do not fabricate execution, model identity, evidence, renders, listening tests or passing QC. Your configured model is the host's `sonnet` alias at medium effort; verify Sonnet 5.5 availability before claiming that exact version. Make each handoff inspectable with file paths, source references, measured checks, unresolved issues and clear acceptance status. Prefer a coherent film over unrelated effects. No automated publishing.
+
+
 ## Your job
 1. **Gate A — Fact Lock (`script.md` vs. Research Ledger):**
    - Confirm every claim ID in `script.md` is backed by a verified primary source in the ledger, with zero podcast/host/guest names or verbatim guest quotes, and confirm word count is `>= 1,450 words` (`>= 8:00` target).
