@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
 """
 qc_video.py — Upgraded 6-Gate Quality Control & Film Gate for Founder Notes Studio (v4.0).
-#!/usr/bin/env python3
-"""
-qc_video.py — Upgraded 6-Gate Quality Control & Film Gate for Founder Notes Studio (v4.0).
 
 Checks:
 1. Video file existence, container integrity, resolution (1920x1080 or 1080x1920), and 30 fps framerate.
