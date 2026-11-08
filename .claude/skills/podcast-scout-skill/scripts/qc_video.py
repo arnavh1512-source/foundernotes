@@ -85,9 +85,13 @@ def audit_audio_gaps_and_lufs(video_path, qc_report, max_silence_gap=1.2):
         qc_report["checks"].append(f"Zero audio dead-air gaps > {max_silence_gap}s")
 
 def run_film_gate(video_path, duration, qc_report, allow_blue_purple=False):
-    if not HAS_NUMPY:
-        qc_report["warnings"].append("numpy not installed; skipping pixel-level film_gate motion & blank-gap scan")
-        return
+   if not HAS_NUMPY:
+    qc_report["status"] = "FAIL"
+    qc_report["errors"].append(
+        "CRITICAL: NumPy is missing. "
+        "Mandatory visual inspection cannot run."
+    )
+    return
 
     sample_fps = 10
     w, h = 160, 90
@@ -101,9 +105,28 @@ def run_film_gate(video_path, duration, qc_report, allow_blue_purple=False):
     raw = proc.stdout.read()
     proc.wait()
 
-    n_frames = len(raw) // frame_bytes
-    if n_frames < 5:
-        return
+ n_frames = len(raw) // frame_bytes
+
+if proc.returncode != 0:
+    qc_report["status"] = "FAIL"
+    qc_report["errors"].append(
+        f"FFmpeg decoding failed with exit code {proc.returncode}"
+    )
+    return
+
+if len(raw) % frame_bytes != 0:
+    qc_report["status"] = "FAIL"
+    qc_report["errors"].append(
+        "Incomplete video frame detected during QC."
+    )
+    return
+
+if n_frames < 5:
+    qc_report["status"] = "FAIL"
+    qc_report["errors"].append(
+        "Insufficient decoded frames for visual inspection."
+    )
+    return
 
     frames = np.frombuffer(raw[:n_frames * frame_bytes], dtype=np.uint8).reshape((n_frames, h, w, 3)).astype(np.float32)
 
