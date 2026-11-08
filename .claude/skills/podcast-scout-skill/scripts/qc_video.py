@@ -1,4 +1,6 @@
- .claude/skills/podcast-scout-skill/scripts/qc_video.py
+#!/usr/bin/env python3
+"""
+qc_video.py — Upgraded 6-Gate Quality Control & Film Gate for Founder Notes Studio (v4.0).
 #!/usr/bin/env python3
 """
 qc_video.py — Upgraded 6-Gate Quality Control & Film Gate for Founder Notes Studio (v4.0).
