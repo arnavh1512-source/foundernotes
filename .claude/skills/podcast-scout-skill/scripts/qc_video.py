@@ -624,13 +624,20 @@ def main():
             "No video stream found",
         )
     else:
-        width = int(
-            video_stream.get("width", 0)
-        )
+      
+        try:
+            width = int(video_stream.get("width", 0))
+            height = int(video_stream.get("height", 0))
+        except (TypeError, ValueError, OverflowError):
+            width = 0
+            height = 0
 
-        height = int(
-            video_stream.get("height", 0)
-        )
+        if width <= 0 or height <= 0:
+            mark_failure(
+                qc_report,
+                "Invalid video resolution metadata.",
+            )
+
 
         if args.format == "horizontal":
             target_width = 1920
