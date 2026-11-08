@@ -25,12 +25,11 @@ The eight specialist roles—researcher, scriptwriter, visual director, animator
 
 ### 1. Open the project
 
-Clone the repository, then open the project root in Claude Code. The current development work is on `audit/consolidated-pipeline-hardening`; `main` may not include these changes.
+Clone the repository, then open the project root in Claude Code. The integrated production workflow is now on `main`; use a separate feature branch for new experiments.
 
 ```bash
 git clone https://github.com/arnavh1512-source/foundernotes.git
 cd foundernotes
-git switch audit/consolidated-pipeline-hardening
 ```
 
 Before installing dependencies, check the available tools:
@@ -115,6 +114,14 @@ python3 .claude/skills/podcast-scout-skill/scripts/research_gateway.py transcrip
 
 FounderNotes includes the [MIT-licensed Humanizer Claude Code skill](.claude/skills/humanizer/SKILL.md) to polish script narration, titles, descriptions and pinned comments. The scriptwriter uses it **before voice generation**; the reality checker then verifies the revised script against the evidence ledger. It never replaces the channel's narrator or changes verified claims, sources, timestamps or required credits. The packager uses it for the final prose polish, followed by metadata validation. See the [editorial integration contract](.claude/skills/podcast-scout-skill/references/editorial-humanizer.md). The skill is already present locally; no external installation is required.
 
+## Creator growth and operator clarity
+
+The studio includes a focused [creator-marketing skill](.claude/skills/marketing-growth/SKILL.md) with **five MIT-licensed upstream guides** (video, social, content strategy, analytics, brand voice) from [Corey Haines' Marketing Skills](https://github.com/coreyhaines31/marketingskills). They support honest packaging, topic planning, Shorts distribution, and evidence-based improvement. The full upstream marketing marketplace is **not installed**; this repository includes only the selected guides and their references.
+
+An optional [i-have-adhd](.claude/skills/i-have-adhd/SKILL.md) skill from [ayghri](https://github.com/ayghri/i-have-adhd) can produce shorter, action-oriented operator instructions when specifically invoked. It does **not** assume a diagnosis and is not a default channel setting.
+
+The [Humanizer](.claude/skills/humanizer/SKILL.md) skill is part of the **script-writing stage**: edit the fact-checked script into natural spoken English before generating the male narrator's audio, then rerun fact lock. The final YouTube package can receive a separate prose-only Humanizer pass, preserving chapters, facts and credits.
+
 ## Non-negotiable channel rules
 
 - **Narration:** Use the channel's consistent **male narrator**, preferring the configured Voicebox profile when available. Do not clone another person's voice without rights and explicit authorization. Lock scene timing to measured audio, not guessed duration.
@@ -136,6 +143,8 @@ Channel-specific requirements live in [`channel-profile.md`](channel-profile.md)
 | [`.claude/skills/podcast-scout-skill/`](.claude/skills/podcast-scout-skill/) | Main research-to-video skill, scripts and production references |
 | [`.claude/agents/`](.claude/agents/) | Eight specialist production roles |
 | [`.claude/skills/motion/`](.claude/skills/motion/) | Time-driven scene rendering utilities |
+| [`.claude/skills/marketing-growth/`](.claude/skills/marketing-growth/) | Creator marketing references and routing |
+| [`.claude/skills/i-have-adhd/`](.claude/skills/i-have-adhd/) | Optional concise operator-response format |
 | [`.claude/skills/humanizer/`](.claude/skills/humanizer/) | Natural-language polish for scripts and YouTube copy |
 | [`.claude/skills/animation-styles/`](.claude/skills/animation-styles/) | Native visual-technique reference library |
 | [`.claude/skills/collage-director/`](.claude/skills/collage-director/) | Optional editorial collage workflow |
