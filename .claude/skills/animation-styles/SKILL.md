@@ -5,7 +5,7 @@ description: Turns a script, a podcast-scout brief or a one-line idea into an an
 
 # Animation Styles
 
-You are an animation director and a creative coder. You turn the user's script or idea into a short animated film, drawn entirely in code, in one of ten looks. Everything is built from scratch in one HTML file: no stock footage, no image generators, no copied artwork.
+You are an animation director and a creative coder. You turn the user's script or idea into a short animated film, drawn entirely in code, in one of seventeen documented looks. Everything is built from scratch in one HTML file: no stock footage, no image generators, no copied artwork.
 
 ## 1. Pick the style
 Match the user's words to a style file in `references/styles/` (case doesn't matter, the slash is optional):
@@ -30,7 +30,7 @@ Match the user's words to a style file in `references/styles/` (case doesn't mat
 | Codex, /codex, inventor's notebook, parchment | `renaissance-codex.md` |
 | Ink in water, /ink, particle bloom | `ink-in-water.md` |
 
-No style named? Ask one short question: "Which style should I use: Pixel Art, Chalkboard, Glow Sketch, PS2, Comic Art, Flat Vector, Dan Koe, CGI Motion, Lego or ZackD Films?" If a style was already chosen earlier in the chat, reuse it.
+No style named? For a standalone animation request, ask which visual direction the user prefers and offer a short story-appropriate shortlist from all 17 styles. For a FounderNotes studio production, let the motion director choose techniques based on the narration and visual thesis; do not ask the user to pick a preset.
 
 No script and no idea? Ask: "What should I animate? Paste a script or give me a one-line idea."
 
@@ -75,9 +75,9 @@ with the channel, the channel wins.
   - A source line goes on screen whenever a claim is made.
 - **Source podcasts:** never name or credit the podcast, host or guest an idea came from.
 - **Looks:**
-  - Rotate looks and backgrounds; no two adjacent scenes look alike.
-  - Each video gets a new cast (see `podcast-scout-skill/assets/ink-gold-kit/CAST.md`).
-  - Mixing a style per chapter is allowed when every seam is designed.
+  - Preserve visual continuity across adjacent scenes unless a narrative beat justifies a deliberate change. Do not rotate styles or backgrounds merely for variety.
+  - Use consistent characters, props, materials and camera geography within each sequence; a new cast is optional only when the story requires it.
+  - Mix techniques only when the transition has a clear narrative function and is explicitly storyboarded.
 - **Named looks** (Dan Koe, ZackD Films, Lego) are technique inspirations only:
   - never their artwork, characters, minifigures or logos;
   - don't name them in the video or its title.
@@ -89,3 +89,16 @@ with the channel, the channel wins.
   - run the pack's `references/checklist.md` and look at stills;
   - listen to the narration and the final mix with earshot.
 - **3D styles** (PS2, CGI Motion, Lego, ZackD) load three.js r128 from cdnjs. Check the network allows it before choosing one.
+
+## 6. FounderNotes 2.0 creative direction (applies to all 17 looks)
+
+These reference files describe **visual techniques**, not 17 complete video-production engines. Before choosing a technique, identify the spoken claim, audience takeaway, spatial subject and required visual evidence. Choose the technique that best explains that beat; avoid repetitive templates and motion for motion's sake.
+
+- **Plan:** write a timecoded shot description with purpose, subject continuity, camera movement, material/style constraints, narration word anchors and sound cue. The same hero object must not teleport or change identity without a motivated transition.
+- **Preview:** inspect at least the first, middle and last frame of each shot, plus the frames immediately before and after each cut or transition. If a scene is visually empty, ambiguous or unreadable, revise it before export.
+- **Audio:** place effects against meaningful action, not every movement. Protect narration intelligibility, intentional silence and musical dynamics.
+- **Review:** a separate reviewer judges story clarity, coherence, repetition, technical defects and factual visual accuracy. A style checklist alone is not a quality verdict.
+- **Improve:** log timecoded defects, cause, correction and a repeatable regression check. Read verified lessons before the next video. Do not claim the agent permanently learns unless those lessons are stored and used.
+- **Benchmark:** compare the rendered result with alternatives from the five upstream sources listed in `docs/FOUNDERNOTES_2_MOTION_SYSTEM.md`; check licenses before reusing external code/assets.
+
+Use `docs/ANIMATION_STYLES_AUDIT.md` as the style inventory and known limitations. Do not claim the 17 styles are independently benchmarked merely because their Markdown references exist.
