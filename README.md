@@ -148,6 +148,10 @@ The production gate includes actual render inspection, audio listening, technica
 
 Read [the production system](.claude/skills/podcast-scout-skill/references/agency-production-system.md), [the skill router and dependencies](.claude/skills/podcast-scout-skill/references/production-stack.md), [sound production standards](.claude/skills/podcast-scout-skill/references/sound-design-and-listening.md) and [the FounderNotes 2.0 motion specification](docs/FOUNDERNOTES_2_MOTION_SYSTEM.md) for the deeper contracts. Detailed technique inventories—including the existing styles, external projects and user-supplied creative formats—are intentionally kept **in those references**, rather than repeated throughout this README.
 
+### Recent engineering hardening
+
+Scene preflight now validates storyboard time columns, scene manifests and rendered clip durations (`lint_scenes.py --require-clips`). Skill approval now checks for nonempty sample media and a genuine PASS JSON QC report (`evaluate_skills.py`). Openverse sound retrieval filters commercial-use licenses, validates HTTPS sources and file signatures, and bounds downloads. The GitHub workflow runs regression suites and a synthetic FFmpeg assembly/QC test. **These checks improve reliability but do not replace listening to and reviewing a real finished episode.**
+
 ## Readiness and limitations
 
 **Implemented or present in the repository:** Claude Code role/skill definitions, narration and editing scripts, motion utilities, QC code, planning templates, a creative-format router, evaluation/lesson recorders and regression tests.
