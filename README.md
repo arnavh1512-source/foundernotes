@@ -9,10 +9,10 @@ Nothing is ever uploaded automatically: the channel owner reviews and uploads ev
 
 | Rule | How it is enforced |
 |---|---|
-| Male narrator, human explainer delivery | Parler-TTS described male voice + earshot-tuned studio chain; Kokoro `am_michael` and Piper `en_US-ryan-high` as fallbacks; `narrate.py` refuses non-male voices |
+| Male narrator, consistent across videos | Preferred authorized Voicebox `Founder Notes Narrator` male profile, with Parler male profile and Kokoro `am_michael` fallbacks; verify actual rendered voice and timing |
 | Never credit or name the source podcast, host or guest | Scriptwriter and packager rules; reality checker blocks it |
 | Subtitles burned into every video | `assemble.py` burns captions by default; karaoke mode lights each word as it is spoken |
-| Backgrounds rotate; a new cast every video | `K.backdrop` presets (no two adjacent scenes alike); `assets/ink-gold-kit/CAST.md` |
+| Coherent visual world, deliberate variety | Reuse characters, props and palette where narrative continuity matters; choose new treatments intentionally rather than rotating each scene |
 | Every video ends on the Founder Notes end card | `K.endCard`: logo, subscribe click, and the question "What topic should we ... next?", plus a closing CTA line |
 | Facts locked before voicing | Reality checker fact lock (`FACTS.md`); every on-screen number must match it |
 | No real people drawn, no brand logos, no voice cloning | Animator brief + `lint_scenes.py` |
@@ -55,7 +55,7 @@ use a cookies file exported from your own browser (`yt-dlp --cookies`). Never pa
 
 1. **Scout:** read the episode, list its claims, check each against primary sources, and score topics.
 2. **Script and fact lock:** the reality checker passes every line against `FACTS.md` before any voice is recorded.
-3. **Narration:** `narrate.py` with Parler. Every take is transcribed back (`--asr`) and any take that dropped words is redone (`--retake`).
+3. **Narration:** `narrate.py` using the authorized Voicebox male narrator when available, with a documented male fallback. Every take is transcribed back (`--asr`) and any take that dropped words is redone (`--retake`).
 4. **Word map:** `make_words.py` writes the time of every spoken word. Scenes, punch-ins, sound effects and captions all land on words, not on hard-coded seconds, so a re-voice never breaks the edit.
 5. **Scenes:** four animators build them in parallel from `STORYBOARD.md`, `LOOKS.md` and `ANIMATOR-BRIEF.md`, with fixed rules that hold across scenes (desk, pin, chapter looks, case-file stamps). Each scene is checked from stills and `lint_scenes.py`.
 6. **Score:** an original score from real instrument samples, plus foley timed to the words.
@@ -66,7 +66,7 @@ use a cookies file exported from your own browser (`yt-dlp --cookies`). Never pa
 
 | Script | Does |
 |---|---|
-| `narrate.py` (+ `parler_worker.py`) | Script JSON → male narration, `timings.json`, SRT/VTT captions. Parler reads in short chunks of 14 words or fewer with natural breaths. `--asr --retake N` re-voices only the takes that dropped words |
+| `narrate.py` (+ `parler_worker.py`) | Script JSON → male narration, `timings.json`, SRT/VTT captions. The selected male voice and actual timings must be verified. `--asr --retake N` re-voices only the takes that dropped words |
 | `karaoke_ass.py` | SRT + word times → ASS captions where each word turns gold as it is spoken, and each line springs in |
 | `assemble.py` | Scene clips + narration + ducked music + captions → 1080p30 H.264/AAC master at −14 LUFS (`--sub-karaoke` for karaoke captions) |
 | `qc_video.py` | Spec, loudness, black opening, freezes, dead air, sync, caption rules, contact sheet |
