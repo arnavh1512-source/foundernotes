@@ -45,6 +45,10 @@ jobs:
         run: |
           python -m unittest discover -s .claude/skills/podcast-scout-skill/tests -p "test_research_gateway.py" -v
 
+      - name: Verify writing and creator marketing skill integrations
+        run: |
+          python -m unittest discover -s .claude/skills/podcast-scout-skill/tests -p "test_integrated_writing_marketing_skills.py" -v
+
       - name: Integration smoke test for scene, narration and MP4 QC
         run: |
           python -m unittest discover -s .claude/skills/podcast-scout-skill/tests -p "test_production_smoke.py" -v
