@@ -14,8 +14,8 @@ Values left as `TBD` fall back to the defaults shown.
 - **Delivery:** calm, warm, clear, authoritative; ~175–180 wpm at 1.0x speed
 - **Pronunciation notes:** TBD (respellings for recurring names/terms)
 
-## Look & Style Rotation (No Repetitive Slideshows)
-- **Visual language router:** Every video selects a fresh primary visual style from `.claude/memory/production_ledger.json` across:
+## Visual direction (purposeful and consistent)
+- **Visual language router:** Each video selects the technique that best conveys its factual claims and narrative. Consult `.claude/memory/production_ledger.json` to avoid repetitive *creative treatment*, without forcing gratuitous style switches. Available reference sources include:
   1. **17 Native Code-Drawn Styles (`.claude/skills/animation-styles/references/styles/*.md`):** `zackd-films`, `dan-koe`, `one-ball-showreel`, `one-line-graph`, `cgi-motion`, `lego`, `ascii-terminal`, `ink-in-water`, `ps2`, `risograph-cutout`, `renaissance-codex`, `comic-art`, `chalkboard`, `glow-sketch`, `pixel-art`, `pixel-dither`, `flat-vector`.
   2. **5 External Master Engines:** `bang-motion` (6 explainer worlds & 19 opener concepts), `vox-director` / `collage-director` (9 tactile paper-collage themes + `local-engine` element assembly), `huashu-art-motion` (9 explainer grammars + 53 living art recipes), `claude-drawing-skill` (77 CPU physical media modules + `--stages` draw-on), and `code-animation-prompts` (341 style prompts + `mg-styles-15`).
 - **Brand Frame Palette (for `K.endCard` & channel chrome):** background `#101418`, ink `#F2EFE9`, accent 1 `#F2B134`, accent 2 `#4E79A7`, alert `#E15759`. Scene palettes adapt to the chosen style's specification (banning generic neon blue-purple AI gradients).
@@ -36,10 +36,10 @@ Values left as `TBD` fall back to the defaults shown.
 - Every video has subtitles burned into the picture (`assemble.py` default), in the channel font, cream on a translucent ink box at the bottom. Keep the bottom `~180 px` of every scene clear. Also upload the `.srt` as captions.
 
 ## Backgrounds & Camera Worlds (owner rule)
-- Change backgrounds and camera viewpoints regularly. No two adjacent scenes share a backdrop or static camera angle, and use at least 8–10 distinct backdrops/stages per 8+ minute video.
+- Change backgrounds and camera viewpoints when the narration, physical scene or story structure calls for it. Reuse worlds and camera positions when that protects narrative continuity; don't impose an artificial number of backgrounds.
 
 ## Characters (owner rule)
-- New characters in every video. Check `assets/ink-gold-kit/CAST.md` and differ from every earlier lead in at least 4 of: skin tone, hair style, facial hair, glasses, build, outfit colours. Log the new cast there.
+- Keep character identities consistent within a video and across recurring-series episodes. For a new story, introduce a distinct original cast only when it serves the narrative; record useful continuity details in `assets/ink-gold-kit/CAST.md`.
 - Real people are never drawn (unless using C-roll photographic cutout stickers for historical artifacts/products).
 
 ## Channel identity and the ending (owner rule)
