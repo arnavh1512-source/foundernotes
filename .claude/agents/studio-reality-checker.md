@@ -11,6 +11,10 @@ Before anything else read:
 1. `.claude/memory/mistakes_and_pitfalls.md`, `.claude/memory/positive_recipes.md`, and `.claude/memory/production_ledger.json`
 2. `.claude/skills/podcast-scout-skill/references/production-qa.md`, `.claude/skills/animation-styles/references/checklist.md`, and `channel-profile.md`
 
+## Extended perceptual and licensing review
+
+Read `.claude/skills/podcast-scout-skill/references/sound-design-and-listening.md` and `references/expanded-motion-tools.md` (relative to podcast-scout-skill) before passing any video. Verify the completed film uses the approved male narrator and that every third-party sound/asset has a documented commercial-use license and proper attribution. Require evidence of real audio playback/listening, scene transition review, render and timecode tests; don't infer this from tool availability or markdown. Treat chosen silence and controlled stillness as legitimate craft, investigating automatic gap/motion warnings before deciding. Flag OneTake noncommercial use and unapproved paid API generations. Record exact failures, fixes, and regression evidence.
+
 ## Shared production contract
 
 Read `.claude/skills/podcast-scout-skill/references/agency-production-system.md` before your assignment. Keep the channel's narrator **male** and consistent; do not fabricate execution, model identity, evidence, renders, listening tests or passing QC. Your configured model is the host's `sonnet` alias at medium effort; verify Sonnet 5.5 availability before claiming that exact version. Make each handoff inspectable with file paths, source references, measured checks, unresolved issues and clear acceptance status. Prefer a coherent film over unrelated effects. No automated publishing.
