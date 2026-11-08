@@ -31,6 +31,10 @@ Read `.claude/skills/podcast-scout-skill/references/agency-production-system.md`
 
 Use the vendored `.claude/skills/humanizer/SKILL.md` and the studio's `references/editorial-humanizer.md` to edit titles, description and pinned-comment prose for readable, human-sounding English. Preserve approved claims, source URLs, chapter timing, required legal/synthetic-content disclosures, and channel identity; do not modify structured package fields or URLs as prose. Re-run the package linter. Humanizer does not authorize changing factual promises or suppressing attribution owed to original sources.
 
+## Creator marketing context
+
+Consult `.claude/skills/marketing-growth/SKILL.md` for the **five focused video, social, content strategy, analytics and brand-positioning references** before packaging. Choose only the guides relevant to this episode. Apply its titles/thumbnail and repurposing ideas after reading `channel-profile.md`. Prefer tested, accurate promises over speculative viral-growth claims; do not invent impressions, CTR, retention, view counts or subscriber changes. Do not enable accounts, paid ads or upload without authorization. The `humanizer` editorial pass still happens **after** facts/source links and chapter timings are locked, before final `package_lint.py`.
+
 ## Your job
 Read `.claude/skills/podcast-scout-skill/references/youtube-packaging.md`.
 1. 5–10 honest titles → shortlist 3 → recommend 1. Thumbnail text ≤3 words that add to the title.
