@@ -379,5 +379,103 @@ class QCIntegrationTests(unittest.TestCase):
         )
 
 
+class DurationValidationTests(unittest.TestCase):
+    def test_invalid_durations_fail(self):
+        invalid_values = [
+            "nan",
+            "inf",
+            "-inf",
+            "0",
+            "-10",
+        ]
+
+        for value in invalid_values:
+            with self.subTest(duration=value):
+                metadata = {
+                    "format": {
+                        "duration": value,
+                    },
+                    "streams": [
+                        {
+                            "codec_type": "video",
+                            "width": 1920,
+                            "height": 1080,
+                            "r_frame_rate": "30/1",
+                        },
+                        {
+                            "codec_type": "audio",
+                            "codec_name": "aac",
+                        },
+                    ],
+                }
+
+                saved_reports = []
+
+                def capture_report(path, result):
+                    saved_reports.append({
+                        "status": result["status"],
+                        "errors": list(result["errors"]),
+                    })
+
+                with (
+                    patch.object(
+                        qc.sys,
+                        "argv",
+                        [
+                            "qc_video.py",
+                            "fake.mp4",
+                            "--json",
+                            "fake-qc.json",
+                            "--sheet",
+                            "fake-sheet.jpg",
+                        ],
+                    ),
+                    patch.object(
+                        qc.os.path,
+                        "isfile",
+                        return_value=True,
+                    ),
+                    patch.object(
+                        qc,
+                        "run_ffprobe",
+                        return_value=metadata,
+                    ),
+                    patch.object(
+                        qc,
+                        "audit_audio_gaps_and_lufs",
+                    ),
+                    patch.object(
+                        qc,
+                        "run_film_gate",
+                    ),
+                    patch.object(
+                        qc,
+                        "generate_contact_sheet",
+                    ),
+                    patch.object(
+                        qc,
+                        "write_report",
+                        side_effect=capture_report,
+                    ),
+                    patch("builtins.print"),
+                ):
+                    with self.assertRaises(SystemExit) as raised:
+                        qc.main()
+
+                self.assertEqual(raised.exception.code, 1)
+                self.assertEqual(len(saved_reports), 1)
+                self.assertEqual(
+                    saved_reports[0]["status"],
+                    "FAIL",
+                )
+                self.assertTrue(
+                    any(
+                        "Invalid video duration metadata"
+                        in error
+                        for error in saved_reports[0]["errors"]
+                    )
+                )
+
+
 if __name__ == "__main__":
     unittest.main()
