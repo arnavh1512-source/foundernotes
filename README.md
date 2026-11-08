@@ -98,6 +98,19 @@ Report what is complete, what failed and what remains.
 
 The [production-plan template](.claude/skills/podcast-scout-skill/assets/production-plan.md) describes the intended handoffs and file layout under `studio-output/<slug>/` (ignored by Git).
 
+## Default research gateway: Agent-Reach
+
+FounderNotes **tries [Agent-Reach](https://github.com/Panniantong/Agent-Reach) first** for public web discovery, reading source pages, YouTube search and subtitles. The studio includes a working [research gateway script](.claude/skills/podcast-scout-skill/scripts/research_gateway.py) which calls the Agent-Reach 1.6+ JSON CLI and records the provider/backend. If Agent-Reach is missing or fails in a way that permits fallback, Claude Code switches to its available native research tools and labels the actual source. Restrictions such as rate limits and login requirements are not bypassed.
+
+```bash
+python3 .claude/skills/podcast-scout-skill/scripts/research_gateway.py status
+python3 .claude/skills/podcast-scout-skill/scripts/research_gateway.py search "your topic"
+python3 .claude/skills/podcast-scout-skill/scripts/research_gateway.py read "https://example.org"
+python3 .claude/skills/podcast-scout-skill/scripts/research_gateway.py transcript "https://www.youtube.com/watch?v=jNQXAC9IVRw"
+```
+
+**Installation is separate and optional, not automatic.** Follow the official [upstream GitHub installation guide](https://github.com/Panniantong/Agent-Reach/blob/main/docs/install.md) on the host running Claude Code after authorizing dependency installation. The similarly named PyPI package is not the official repository. The integration uses public, read-only operations and never signs into accounts or invokes paid speech-to-text without permission. See [the full gateway policy](.claude/skills/podcast-scout-skill/references/agent-reach.md).
+
 ## Non-negotiable channel rules
 
 - **Narration:** Use the channel's consistent **male narrator**, preferring the configured Voicebox profile when available. Do not clone another person's voice without rights and explicit authorization. Lock scene timing to measured audio, not guessed duration.
