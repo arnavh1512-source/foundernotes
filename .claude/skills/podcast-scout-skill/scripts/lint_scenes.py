@@ -1,4 +1,3 @@
-cat << 'LINT_EOF' > .claude/skills/podcast-scout-skill/scripts/lint_scenes.py
 #!/usr/bin/env python3
 """
 lint_scenes.py — Upgraded Pre-Render & Post-Scene Linter for Founder Notes Studio (v4.0).
@@ -189,5 +188,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-LINT_EOF
-chmod +x .claude/skills/podcast-scout-skill/scripts/lint_scenes.py
