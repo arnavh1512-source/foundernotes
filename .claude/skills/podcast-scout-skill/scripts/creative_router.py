@@ -81,7 +81,7 @@ def validate_plan(plan):
             ids.add(sid)
 
         fmt = shot.get("format")
-        if fmt not in FORMATS:
+        if not isinstance(fmt, str) or fmt not in FORMATS:
             errors.append(f"{prefix}.format must be one of: {', '.join(FORMATS)}.")
         start, end = shot.get("start_s"), shot.get("end_s")
         if not _valid_seconds(start) or not _valid_seconds(end) or end <= start:
