@@ -30,6 +30,14 @@ Nothing is ever uploaded automatically: the channel owner reviews and uploads ev
 | `.claude/agents/studio-*.md` | 8-role crew: researcher, scriptwriter, visual director, animator, sound engineer, editor, packager, reality checker. All run with `model: sonnet`, `effort: medium` |
 | `.claude/skills/podcast-scout-skill/references/craft-library.md` | Everything learned from the repos, packs and tutorials the owner shared (§12–§18), rewritten as working rules |
 
+## Expanded production crew and animation reference library
+
+FounderNotes now has a [specialist production charter](.claude/skills/podcast-scout-skill/references/agency-production-system.md) inspired by [Agency Agents](https://github.com/msitarzewski/agency-agents): explicit handoffs, a narrator/shot lock, frame and audio checks, an independent critic, an owner approval gate, and a recorded improvement loop.
+
+The existing **17 native animation styles** remain available. Additional documented techniques include [Anidoodle](https://github.com/alexgreensh/anidoodle), [Huashu Art Motion](https://github.com/alchaincyf/huashu-art-motion), [Claude Drawing Skill](https://github.com/cloveric/claude-drawing-skill), [ClaudeAnimationBase](https://github.com/JohnHeibel/ClaudeAnimationBase), [LunaAI Motion Skill](https://github.com/LunaAI519/motion-skill), [LottieFiles Motion Design](https://github.com/LottieFiles/motion-design-skill), [HandDraw Skill](https://github.com/ToBeWin/HandDraw-Skill), [Manim Skill](https://github.com/adithya-s-k/manim_skill), [JavaScript Animation Skills](https://github.com/iart-ai/javascript-animation-skills) and [Stickman Video Director](https://github.com/kaomei/stickman-video-director). The production stack also tracks YouTube Agent Skill, OpenMontage, Voicebox, Bang Motion, Vox Director and Code Animation Prompts. See the [engine-by-scene router](.claude/skills/podcast-scout-skill/references/production-stack.md) for capabilities and caveats.
+
+**Every produced film targets the channel's consistent male narrator.** The crew requests Sonnet at medium effort and targets Sonnet 5.5 when that specific version is available in the host; its actual version requires runtime verification. External projects are **references**, not automatically installed dependencies. Quality scores, rendered samples and agent runs are not claimed until performed. Start with a **30–60-second fully narrated pilot** before attempting the 8-minute master.
+
 ## Quick start
 
 ```bash
