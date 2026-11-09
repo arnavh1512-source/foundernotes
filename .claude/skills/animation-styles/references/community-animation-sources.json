@@ -1,0 +1,162 @@
+{
+  "schema_version": 1,
+  "description": "FounderNotes animation library source registry; source references and catalogs do not install upstream engines.",
+  "sources": [
+    {
+      "id": "lemo-opuscar",
+      "repo": "lemomo-ai/lemo-opuscar",
+      "homepage": "https://github.com/lemomo-ai/lemo-opuscar",
+      "license": "MIT code/docs; demos CC BY 4.0 with voice exclusions",
+      "kind": "code-film-renderer",
+      "upstream_index": "styles/README.md",
+      "upstream_skill": "plugin/skills/lemo-opuscar/SKILL.md",
+      "local_catalog": "references/lemo-opuscar-catalog.json",
+      "availability": "metadata-indexed; upstream runtime not bundled",
+      "notes": "Install separately. Scene must supply window.READY, window.render(t), window.DUR; scene renders with upstream core Node CLI."
+    },
+    {
+      "id": "code-animation-prompts",
+      "repo": "XiaoyeCodes/code-animation-prompts",
+      "homepage": "https://github.com/XiaoyeCodes/code-animation-prompts",
+      "license": "Mixed-source free sharing; do NOT resell/repackage prompt collection commercially",
+      "kind": "prompt-reference",
+      "upstream_index": "skills/code-animation-prompts/references/catalog.json",
+      "upstream_skill": "skills/code-animation-prompts/SKILL.md",
+      "local_catalog": "references/code-animation-prompts-catalog.json",
+      "availability": "metadata-indexed; upstream runtime not bundled",
+      "notes": "Only metadata indexed locally. Review source and use rights; prompts/reference images not vendored."
+    },
+    {
+      "id": "anidoodle",
+      "repo": "alexgreensh/anidoodle",
+      "homepage": "https://github.com/alexgreensh/anidoodle",
+      "license": "Apache-2.0 code; check individual media",
+      "kind": "code-animation-engine",
+      "upstream_index": "skills/anidoodle/references/styles/INDEX.md",
+      "upstream_skill": "skills/anidoodle/SKILL.md",
+      "local_catalog": "references/anidoodle-catalog.json",
+      "availability": "metadata-indexed; upstream runtime not bundled",
+      "notes": "Engine separately installed; use original subjects, no demo copy."
+    },
+    {
+      "id": "huashu-art-motion",
+      "repo": "alchaincyf/huashu-art-motion",
+      "homepage": "https://github.com/alchaincyf/huashu-art-motion",
+      "license": "MIT code; demo characters/art excluded",
+      "kind": "art-motion-recipes",
+      "upstream_index": "references/风格配方/INDEX.md",
+      "upstream_skill": "SKILL.md",
+      "local_catalog": "references/huashu-catalog.json",
+      "availability": "metadata-indexed; upstream runtime not bundled",
+      "notes": "Some cards are research recipes, not independently validated renders; avoid excluded character assets."
+    },
+    {
+      "id": "claude-drawing-skill",
+      "repo": "cloveric/claude-drawing-skill",
+      "homepage": "https://github.com/cloveric/claude-drawing-skill",
+      "license": "MIT",
+      "kind": "procedural-still-engine",
+      "upstream_index": "SKILL.md",
+      "upstream_skill": "SKILL.md",
+      "local_catalog": null,
+      "availability": "metadata-indexed; upstream runtime not bundled",
+      "notes": "83 styles upstream as of current README; render still plates, do not claim independent video animation engine."
+    },
+    {
+      "id": "bang-motion",
+      "repo": "bangtutorial/bang-motion",
+      "homepage": "https://github.com/bangtutorial/bang-motion",
+      "license": "MIT",
+      "kind": "browser-motion-skill",
+      "upstream_index": "README.md",
+      "upstream_skill": "SKILL.md",
+      "local_catalog": null,
+      "availability": "metadata-indexed; upstream runtime not bundled",
+      "notes": "HTML motion export needs supported browser and renderer."
+    },
+    {
+      "id": "vox-director",
+      "repo": "Alisa0808/vox-director",
+      "homepage": "https://github.com/Alisa0808/vox-director",
+      "license": "MIT",
+      "kind": "collage-film-pipeline",
+      "upstream_index": "README.md",
+      "upstream_skill": "SKILL.md",
+      "local_catalog": null,
+      "availability": "metadata-indexed; upstream runtime not bundled",
+      "notes": "Cloud credits and external generation services can be paid; require authorization."
+    },
+    {
+      "id": "ClaudeAnimationBase",
+      "repo": "JohnHeibel/ClaudeAnimationBase",
+      "homepage": "https://github.com/JohnHeibel/ClaudeAnimationBase",
+      "license": "MIT",
+      "kind": "character-animation-base",
+      "upstream_index": "ANIMATION_GUIDE.md",
+      "upstream_skill": "ANIMATION_GUIDE.md",
+      "local_catalog": null,
+      "availability": "metadata-indexed; upstream runtime not bundled",
+      "notes": "Use original characters instead of demo mascot; separate runtime."
+    },
+    {
+      "id": "motion-skill",
+      "repo": "LunaAI519/motion-skill",
+      "homepage": "https://github.com/LunaAI519/motion-skill",
+      "license": "MIT code; generated assets service-dependent",
+      "kind": "paid-video-skill",
+      "upstream_index": "README.md",
+      "upstream_skill": "SKILL.md",
+      "local_catalog": null,
+      "availability": "metadata-indexed; upstream runtime not bundled",
+      "notes": "External AI generation; requires explicit spend/authorization."
+    },
+    {
+      "id": "motion-design-skill",
+      "repo": "LottieFiles/motion-design-skill",
+      "homepage": "https://github.com/LottieFiles/motion-design-skill",
+      "license": "MIT",
+      "kind": "motion-principles",
+      "upstream_index": "README.md",
+      "upstream_skill": "skills/motion-design/SKILL.md",
+      "local_catalog": null,
+      "availability": "metadata-indexed; upstream runtime not bundled",
+      "notes": "Principles only; no standalone renderer."
+    },
+    {
+      "id": "HandDraw-Skill",
+      "repo": "ToBeWin/HandDraw-Skill",
+      "homepage": "https://github.com/ToBeWin/HandDraw-Skill",
+      "license": "MIT code; review Remotion licensing",
+      "kind": "handdraw-engine",
+      "upstream_index": "README.md",
+      "upstream_skill": "SKILL.md",
+      "local_catalog": null,
+      "availability": "metadata-indexed; upstream runtime not bundled",
+      "notes": "SVG/Remotion export requires local dependencies; review Remotion commercial terms."
+    },
+    {
+      "id": "manim_skill",
+      "repo": "adithya-s-k/manim_skill",
+      "homepage": "https://github.com/adithya-s-k/manim_skill",
+      "license": "MIT",
+      "kind": "math-animation-skills",
+      "upstream_index": "README.md",
+      "upstream_skill": "skills/manimce-best-practices/SKILL.md",
+      "local_catalog": null,
+      "availability": "metadata-indexed; upstream runtime not bundled",
+      "notes": "Requires Manim Community Edition/ManimGL engine separately."
+    },
+    {
+      "id": "javascript-animation-skills",
+      "repo": "iart-ai/javascript-animation-skills",
+      "homepage": "https://github.com/iart-ai/javascript-animation-skills",
+      "license": "MIT",
+      "kind": "canvas-animation-skills",
+      "upstream_index": "README.md",
+      "upstream_skill": "skills/javascript-animation/SKILL.md",
+      "local_catalog": null,
+      "availability": "metadata-indexed; upstream runtime not bundled",
+      "notes": "Canvas/JS film workflow, original score; engine dependencies optional."
+    }
+  ]
+}
