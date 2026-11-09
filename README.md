@@ -1,200 +1,136 @@
 # FounderNotes
 
-**An AI-assisted YouTube production studio for research-driven explainers.**
+**An AI-assisted production studio for research-driven YouTube explainers.**
 
-FounderNotes is the production system behind [Founder Notes](https://www.youtube.com/@FounderNotesin). Give it a topic, podcast, transcript, or source material; the studio helps turn that input into an original, evidence-led video, from research and scriptwriting through narration, scene production, review, and YouTube packaging.
+FounderNotes is the Claude Code workspace behind [Founder Notes](https://www.youtube.com/@FounderNotesin). It takes a topic, podcast, transcript, or reference material through research, editorial development, narration, scene production, sound, quality review, and YouTube packaging.
 
-**The goal is a compelling story that happens to use motion—not a slideshow of effects.**
+**One goal:** tell an accurate, engaging story with purposeful visuals—not a collection of disconnected effects.
 
-> **Development status:** This repository contains real production scripts, Claude Code skills, specialist agent definitions, templates, and evaluation tools. The expanded production workflow is still being integrated and **has not been verified end to end on a completed pilot**. Referenced external tools are not automatically installed.
+[![Python QC Checks](https://github.com/arnavh1512-source/foundernotes/actions/workflows/python-qc.yml/badge.svg)](https://github.com/arnavh1512-source/foundernotes/actions/workflows/python-qc.yml)
 
-## What the studio does
+> **Project maturity:** The repository has executable production tools, Claude Code skills and agents, and automated tests. A full episode produced and approved end-to-end has **not yet been verified**. External rendering engines, Voicebox and Agent-Reach require separate installation and live testing.
 
-| Production stage | Output |
-| --- | --- |
-| **Discover & research** | Topic opportunities, source notes, evidence and fact checks |
-| **Write & direct** | Original script, visual treatment, timecoded storyboard and scene plan |
-| **Narrate** | Consistent male voiceover, captions and measured narration timing |
-| **Produce & edit** | Rendered scenes, sound effects, music, subtitles and MP4 master |
-| **Review & improve** | Technical checks, independent creative critique, recorded defects and lessons |
-| **Prepare for YouTube** | Thumbnail guidance, titles, description, chapters and upload checklist |
+## Quick start
 
-The eight specialist roles—researcher, scriptwriter, visual director, animator, sound engineer, editor, reality checker and packager—are defined in [`.claude/agents/`](.claude/agents/). The coordinator is responsible for handoffs, evidence, and approval gates. **Publishing is always manual.**
+### 1. Open the repository
 
-## Getting started with Claude Code
-
-### 1. Open the project
-
-Clone the repository, then open the project root in Claude Code. The integrated production workflow is now on `main`; use a separate feature branch for new experiments.
+**Requirements:** Claude Code, Python 3, Node.js, FFmpeg/ffprobe, and a working shell. A suitable browser/runtime is needed for scene rendering. Some voice and rendering engines have additional dependencies. On Windows, use a compatible Bash environment such as WSL for the provided shell scripts.
 
 ```bash
 git clone https://github.com/arnavh1512-source/foundernotes.git
 cd foundernotes
-```
 
-Before installing dependencies, check the available tools:
-
-```bash
+# Inspect available tools without installing packages:
 bash .claude/skills/podcast-scout-skill/scripts/setup_studio.sh --check
+
+# Open Claude Code from the project root:
+claude
 ```
 
-When you want to prepare the local voice and production dependencies, review the setup script and run:
+The setup script's diagnostic mode is read-only. To install its supported local Python voice dependencies and models, **review the script first** and run it without `--check`. Some optional packages are large. Voicebox and other third-party engines still require their own setup; the script does not automatically make every backend available.
 
-```bash
-bash .claude/skills/podcast-scout-skill/scripts/setup_studio.sh
-```
+### 2. Give Claude Code a production brief
 
-The setup script uses a Python virtual environment and may download packages and voice models. Rendering also requires Node.js, a compatible Chromium environment, FFmpeg and the chosen scene engine; optional engines have separate prerequisites. **On Windows, use an appropriate Bash environment, such as WSL, for these shell scripts.**
+Claude Code reads the root [`CLAUDE.md`](CLAUDE.md). The primary entry point is [`podcast-scout-skill`](.claude/skills/podcast-scout-skill/SKILL.md), which you can invoke as `/podcast-scout-skill` when the skill is recognized by your Claude Code installation.
 
-### 2. Tell Claude what to do
-
-Claude Code should load [`CLAUDE.md`](CLAUDE.md) from the repository root. The main workflow is [`podcast-scout-skill`](.claude/skills/podcast-scout-skill/SKILL.md). Start with:
+For a first run, paste this prompt:
 
 ```text
-/podcast-scout-skill
+Read CLAUDE.md, channel-profile.md and
+.claude/skills/podcast-scout-skill/SKILL.md.
+You are operating the FounderNotes YouTube production studio.
+
+Topic or source: [PUT YOUR TOPIC OR LINK HERE]
+Mode: 45–60-second pilot
+
+Follow the studio's stage gates and use the studio-* agents where available.
+Attempt Agent-Reach first for public research; use authorized native tools
+when its documented fallback applies. Log sources and fact-check claims.
+Write an original script and use Humanizer for a natural spoken-English pass;
+verify the revised script against the evidence before recording.
+Use the established male Voicebox narrator. Add distinct original synthetic
+male/female character voices only when dialogue serves the story.
+Produce a coherent storyboard, source/rights manifest, narration-timed
+scenes, captions and a mixed MP4. Run real technical and creative QC.
+Record actual lessons and skill evaluations. Prepare the upload package.
+
+Before installing extra tools, spending money, or using accounts, ask.
+Do not publish, invent citations, fabricate tests, or call a prompt a render.
+Show me the resulting files, remaining blockers, and what you verified.
 ```
 
-You can also give Claude Code this complete project brief:
+**Recommended sequence:** finish and review a **30–60-second pilot** before commissioning the channel's **8+ minute** full-length format. You can also ask for **research only**, **script and storyboard**, **a dialogue scene**, **QC on an existing video**, or **YouTube packaging** without running the whole pipeline.
 
-```text
-You are working inside the FounderNotes repository.
+## How the studio works
 
-Read CLAUDE.md, channel-profile.md, and
-.claude/skills/podcast-scout-skill/SKILL.md first.
-Read the studio crew and agency-production-system references before delegating.
+| Stage | Responsibility | Main artifact |
+| --- | --- | --- |
+| **Research** | Establish an angle, retrieve primary sources, identify uncertainties | Source ledger and verified claims |
+| **Script** | Explain the idea clearly; use Humanizer, then verify the edited facts | Original script with claim mapping |
+| **Direction** | Design scene actions, continuity, camera decisions and timing | Storyboard and shot plan |
+| **Voices & sound** | Generate approved narration or character dialogue; time and mix audio | WAV master, `timings.json`, SRT/VTT and sound cues |
+| **Scene production** | Render meaningful motion using an available, suitable engine | Scene clips, assets and preview frames |
+| **Editing** | Assemble synchronized video, sound and subtitles | MP4 master |
+| **Independent review** | Inspect claims, continuity, audio, frames, rights and technical QC | QC report and corrective actions |
+| **Publishing preparation** | Draft accurate titles, thumbnail concepts, chapters and description | Upload-ready package (**manual publishing**) |
 
-Treat this repository as an end-to-end YouTube explainer studio,
-not a collection of unrelated animation presets.
+The existing [eight studio agents](.claude/agents/) handle these responsibilities under one production coordinator. Their prompts are **workflow definitions**, not evidence that a real agent or generator ran. The [production plan](.claude/skills/podcast-scout-skill/assets/production-plan.md) describes the expected handoffs and output folders under `studio-output/<slug>/`.
 
-For my topic or source:
-1. Find the strongest factual angle, with a source/evidence ledger.
-2. Write an original script and obtain a fact-lock review.
-3. Produce a clear treatment, storyboard, and narrator-aligned shot plan.
-4. Use the established male channel narrator; confirm real audio timing.
-5. Choose only story-appropriate, available and legally usable tools.
-6. Build a short pilot and inspect rendered frames and the audible mix.
-7. Correct concrete defects, then produce the full video if approved.
-8. Run the technical checks and independent quality review.
-9. Record verified lessons and skill evaluations.
-10. Prepare the YouTube package; do not upload or publish.
+## Key capabilities
 
-Use the studio-* subagents where available (Sonnet, medium effort).
-Verify the actual model/version at runtime; do not assume an alias
-guarantees Sonnet 5.5. Ask before paid generation or installing extras.
-Never invent citations, rendered outputs, test results or approvals.
-Report what is complete, what failed and what remains.
-```
+**Research and editorial quality.** [Agent-Reach](.claude/skills/podcast-scout-skill/references/agent-reach.md) is the default *first attempt* for public web search, page reading, YouTube search and subtitles. When unavailable, Claude can use an authorized native research fallback. [Humanizer](.claude/skills/humanizer/SKILL.md) is included locally for script and packaging polish; it must preserve factual meaning, numbers, citations and qualifications. The [marketing-growth skill](.claude/skills/marketing-growth/SKILL.md) provides focused references for topics, honest packaging, distribution and analytics. The [i-have-adhd skill](.claude/skills/i-have-adhd/SKILL.md) is an **opt-in** formatting aid, never an assumed user characteristic.
 
-### 3. Choose the production mode
+**Voicebox casting.** The principal voice is the authorized, consistent male **Founder Notes Narrator**. An episode can also use distinct **male and female synthetic character voices**, selected per scripted segment for interviews, dramatized interactions or storytelling. Character profiles must exist and be approved in a **local Voicebox** installation. The system produces a sequential master with speaker-aware timings and captions; **simultaneous overlapping dialogue and automatic lip sync are not implemented**. See the [casting guide](.claude/skills/podcast-scout-skill/references/voice-casting.md) and [example cast](.claude/skills/podcast-scout-skill/assets/voice-cast.example.json).
 
-| Goal | Ask Claude to do |
-| --- | --- |
-| **Research only** | Evaluate a topic or supplied transcript and return evidence-backed video ideas. |
-| **Pre-production** | Take an approved idea through script, fact lock, narration and storyboard. |
-| **Pilot** | Produce a **30–60-second** narrated sample with scene, sound and frame checks. **Recommended first run.** |
-| **Full episode** | Once the pilot works, produce the channel's long-form video and upload package. The configured long-form minimum is **8 minutes**. |
-| **Audit / repair** | Review existing scripts, scene clips or a finished MP4; provide timestamped defects, repair them and rerun checks. |
+**Visual production.** FounderNotes has a built-in scene/motion workflow plus optional approaches documented in its [production stack](.claude/skills/podcast-scout-skill/references/production-stack.md). Pick the engine that best serves the story and is actually installed. [Raea](.claude/skills/raea-renderer/SKILL.md) is an optional external GPU renderer for TSX/React and 3D scenes—not the default and **not bundled**. Its canary maturity and Functional Source License require review before use. Extensive visual-style references stay in the skill documentation rather than being listed across this homepage.
 
-The [production-plan template](.claude/skills/podcast-scout-skill/assets/production-plan.md) describes the intended handoffs and file layout under `studio-output/<slug>/` (ignored by Git).
+**Learning and quality control.** The studio records verified defects, successful recipes and skill-specific reviews in [`.claude/memory/`](.claude/memory/). A skill is not considered evaluated merely because it appears in the repository. Technical tools include scene linting, video/audio QC, a creative-plan validator, skill-evaluation gates and lesson recording. Evidence from rendered output and human listening is required.
 
-## Default research gateway: Agent-Reach
+## Useful commands
 
-FounderNotes **tries [Agent-Reach](https://github.com/Panniantong/Agent-Reach) first** for public web discovery, reading source pages, YouTube search and subtitles. The studio includes a working [research gateway script](.claude/skills/podcast-scout-skill/scripts/research_gateway.py) which calls the Agent-Reach 1.6+ JSON CLI and records the provider/backend. If Agent-Reach is missing or fails in a way that permits fallback, Claude Code switches to its available native research tools and labels the actual source. Restrictions such as rate limits and login requirements are not bypassed.
+Run these from the repository root after ensuring Python and any required dependencies are available.
 
 ```bash
+# Check the configured public research gateway:
 python3 .claude/skills/podcast-scout-skill/scripts/research_gateway.py status
-python3 .claude/skills/podcast-scout-skill/scripts/research_gateway.py search "your topic"
-python3 .claude/skills/podcast-scout-skill/scripts/research_gateway.py read "https://example.org"
-python3 .claude/skills/podcast-scout-skill/scripts/research_gateway.py transcript "https://www.youtube.com/watch?v=jNQXAC9IVRw"
-```
 
-**Installation is separate and optional, not automatic.** Follow the official [upstream GitHub installation guide](https://github.com/Panniantong/Agent-Reach/blob/main/docs/install.md) on the host running Claude Code after authorizing dependency installation. The similarly named PyPI package is not the official repository. The integration uses public, read-only operations and never signs into accounts or invokes paid speech-to-text without permission. See [the full gateway policy](.claude/skills/podcast-scout-skill/references/agent-reach.md).
-
-## Editorial clarity: Humanizer
-
-FounderNotes includes the [MIT-licensed Humanizer Claude Code skill](.claude/skills/humanizer/SKILL.md) to polish script narration, titles, descriptions and pinned comments. The scriptwriter uses it **before voice generation**; the reality checker then verifies the revised script against the evidence ledger. It never replaces the channel's narrator or changes verified claims, sources, timestamps or required credits. The packager uses it for the final prose polish, followed by metadata validation. See the [editorial integration contract](.claude/skills/podcast-scout-skill/references/editorial-humanizer.md). The skill is already present locally; no external installation is required.
-
-## Creator growth and operator clarity
-
-The studio includes a focused [creator-marketing skill](.claude/skills/marketing-growth/SKILL.md) with **five MIT-licensed upstream guides** (video, social, content strategy, analytics, brand voice) from [Corey Haines' Marketing Skills](https://github.com/coreyhaines31/marketingskills). They support honest packaging, topic planning, Shorts distribution, and evidence-based improvement. The full upstream marketing marketplace is **not installed**; this repository includes only the selected guides and their references.
-
-An optional [i-have-adhd](.claude/skills/i-have-adhd/SKILL.md) skill from [ayghri](https://github.com/ayghri/i-have-adhd) can produce shorter, action-oriented operator instructions when specifically invoked. It does **not** assume a diagnosis and is not a default channel setting.
-
-The [Humanizer](.claude/skills/humanizer/SKILL.md) skill is part of the **script-writing stage**: edit the fact-checked script into natural spoken English before generating the male narrator's audio, then rerun fact lock. The final YouTube package can receive a separate prose-only Humanizer pass, preserving chapters, facts and credits.
-
-### Optional Raea GPU rendering
-
-The [Raea renderer adapter](.claude/skills/raea-renderer/SKILL.md) supports **separately installed** [Raea](https://github.com/shinyobjectz/raea) for React/TypeScript motion and 3D shots. It offers an offline-first local CLI bridge for status, single-frame rendering, MP4 output and optional export checks. The bundled renderer remains the default; the upstream engine is a canary release and uses **FSL-1.1-ALv2**, which restricts competing commercial software/service uses. A live GPU render on the creator's computer has not been verified.
-
-### Flexible Voicebox dialogue casting
-
-The channel keeps its established male narrator, while scenes can optionally use **multiple distinct male and female synthetic Voicebox character voices** for interviews, conversations, dramatized explanations and other interactions. Cast definitions and per-line speaker IDs are supplied in the [example dialogue script](.claude/skills/podcast-scout-skill/assets/voice-cast.example.json). The [casting guide](.claude/skills/podcast-scout-skill/references/voice-casting.md) covers profile identity, original synthetic sources, optional local preset/voice-design/reference provisioning, continuity, timestamps and safety. The implementation is in `narrate.py`; it generates one sequential audio master with speaker metadata, not simultaneous voice overlap or automatic lip sync. Every voice must actually exist in the local Voicebox service and pass listening review.
-
-## Non-negotiable channel rules
-
-- **Narration:** Use the channel's consistent **male narrator**, preferring the configured Voicebox profile when available. Do not clone another person's voice without rights and explicit authorization. Lock scene timing to measured audio, not guessed duration.
-- **Evidence:** Verify factual claims and record sources. Present reconstructions or illustrative scenes accurately; do not manufacture documentary evidence.
-- **Direction:** Maintain continuity of subjects, worlds and actions. The story decides which technique to use; visual novelty alone is not a reason to switch.
-- **Sound and accessibility:** Include appropriate music/SFX, narration intelligibility and burned-in subtitles; inspect the actual audio and video, not just metadata.
-- **Rights and spending:** Check commercial licenses and media attribution. Use paid generators or authenticated services only with approval.
-- **Quality:** Run technical validation and an independent creative review before calling the video ready.
-- **Owner control:** No automatic YouTube publishing.
-
-Channel-specific requirements live in [`channel-profile.md`](channel-profile.md). If a reference technique conflicts with those requirements, the channel and production contracts take priority.
-
-## How FounderNotes is organized
-
-| Location | Purpose |
-| --- | --- |
-| [`CLAUDE.md`](CLAUDE.md) | Standing instructions for Claude Code |
-| [`channel-profile.md`](channel-profile.md) | Audience, narration, format and editorial policy |
-| [`.claude/skills/podcast-scout-skill/`](.claude/skills/podcast-scout-skill/) | Main research-to-video skill, scripts and production references |
-| [`.claude/agents/`](.claude/agents/) | Eight specialist production roles |
-| [`.claude/skills/motion/`](.claude/skills/motion/) | Time-driven scene rendering utilities |
-| [`.claude/skills/marketing-growth/`](.claude/skills/marketing-growth/) | Creator marketing references and routing |
-| [`.claude/skills/i-have-adhd/`](.claude/skills/i-have-adhd/) | Optional concise operator-response format |
-| [`.claude/skills/humanizer/`](.claude/skills/humanizer/) | Natural-language polish for scripts and YouTube copy |
-| [`.claude/skills/animation-styles/`](.claude/skills/animation-styles/) | Native visual-technique reference library |
-| [`.claude/skills/collage-director/`](.claude/skills/collage-director/) | Optional editorial collage workflow |
-| [`.claude/memory/`](.claude/memory/) | Recorded lessons, production history and skill reviews |
-| [`docs/`](docs/) | Detailed design and audit documents |
-| [`tests/`](tests/) | Repository-level QC regression tests |
-
-### Production tools
-
-Useful scripts live under [`.claude/skills/podcast-scout-skill/scripts/`](.claude/skills/podcast-scout-skill/scripts/): `narrate.py` for narration/timings, `assemble.py` for the master, `lint_scenes.py` and `qc_video.py` for checks, `package_lint.py` for YouTube metadata, `creative_router.py` for proposed scene formats, `evaluate_skills.py` for skill reviews and `record_lesson.py` for verified learning.
-
-For example, these commands **inspect or test** the project; they do not generate a complete video by themselves:
-
-```bash
+# Inspect the available creative routes and evaluation history:
 python3 .claude/skills/podcast-scout-skill/scripts/creative_router.py --list
 python3 .claude/skills/podcast-scout-skill/scripts/evaluate_skills.py status
-python3 -m unittest discover -s .claude/skills/podcast-scout-skill/tests -v
-python3 -m unittest discover -s tests -v
+
+# Check whether the optional GPU renderer is installed:
+python3 .claude/skills/podcast-scout-skill/scripts/raea_backend.py status
+
+# Run the repository's focused studio regression tests:
+python3 -m unittest discover -s .claude/skills/podcast-scout-skill/tests -p 'test_voice_cast.py' -v
 ```
 
-For engine-specific render commands, consult the selected engine's instructions first. Do not assume all optional tools are installed.
+To use the optional character cast, first copy the [sample JSON](.claude/skills/podcast-scout-skill/assets/voice-cast.example.json) into an episode's `narration/script.json`. With Voicebox running locally, use [`provision_voicebox_cast.py`](.claude/skills/podcast-scout-skill/scripts/provision_voicebox_cast.py) for a **read-only preview** of missing profiles; adding `--create` explicitly authorizes creation of the selected approved synthetic profiles. See the casting guide for the exact workflow.
 
-## Continuous quality and improvement
+## Project map
 
-The studio is designed to **evaluate every skill it uses**, not only animation. It records reviews by video, including clarity, continuity, motion, audio, reliability and rights; a tool that has never been tested must remain **unassessed**, not silently pass. Lessons are saved in `.claude/memory/` and should be read before subsequent productions.
+| Path | What to read it for |
+| --- | --- |
+| [`CLAUDE.md`](CLAUDE.md) | Claude Code's standing project instructions |
+| [`channel-profile.md`](channel-profile.md) | Audience, tone, voice identity and editorial constraints |
+| [`.claude/skills/podcast-scout-skill/`](.claude/skills/podcast-scout-skill/) | Main end-to-end workflow, scripts, assets and references |
+| [`.claude/agents/`](.claude/agents/) | The eight specialist roles |
+| [`agency-production-system.md`](.claude/skills/podcast-scout-skill/references/agency-production-system.md) | Stage gates, handoffs and approval requirements |
+| [`voice-casting.md`](.claude/skills/podcast-scout-skill/references/voice-casting.md) | Voice profiles, dialogue format and local setup |
+| [`.claude/memory/`](.claude/memory/) | Verified lessons, production history and evaluations |
+| [`docs/`](docs/) | Extended architecture and engineering reports |
+| [`NOTICE.md`](.claude/skills/podcast-scout-skill/NOTICE.md) | Third-party references, license limitations and attribution |
 
-The production gate includes actual render inspection, audio listening, technical QC, source/rights verification and owner sign-off. A validated JSON plan or passing metadata test is **not proof of a finished video**.
+## Production standards and readiness
 
-Read [the production system](.claude/skills/podcast-scout-skill/references/agency-production-system.md), [the skill router and dependencies](.claude/skills/podcast-scout-skill/references/production-stack.md), [sound production standards](.claude/skills/podcast-scout-skill/references/sound-design-and-listening.md) and [the FounderNotes 2.0 motion specification](docs/FOUNDERNOTES_2_MOTION_SYSTEM.md) for the deeper contracts. Detailed technique inventories—including the existing styles, external projects and user-supplied creative formats—are intentionally kept **in those references**, rather than repeated throughout this README.
+- **Truth first:** Verify important facts against identifiable sources. Clearly label hypothetical or reconstructed scenes; do not invent quotes or evidence.
+- **Consistent storytelling:** Keep characters, dialogue voices and visual worlds recognizable. Measure scene timing from the actual narration WAV rather than an estimated word count.
+- **Rights and approval:** Respect source, audio, asset and engine licenses. No unapproved voice imitation, paid-generation calls, account connections or automatic publishing.
+- **Real QC:** Review rendered frames, complete audio, captions, synchronization and output reports. Record deficiencies and rerun failed checks.
+- **Honest status:** CI runs regression tests and a synthetic FFmpeg production smoke test. It does **not** prove that a local Voicebox cast, live Agent-Reach retrieval, optional Raea GPU engine or a complete real-world episode has been validated.
 
-### Recent engineering hardening
-
-Scene preflight now validates storyboard time columns, scene manifests and rendered clip durations (`lint_scenes.py --require-clips`). Skill approval now checks for nonempty sample media and a genuine PASS JSON QC report (`evaluate_skills.py`). Openverse sound retrieval filters commercial-use licenses, validates HTTPS sources and file signatures, and bounds downloads. The GitHub workflow runs regression suites and a synthetic FFmpeg assembly/QC test. **These checks improve reliability but do not replace listening to and reviewing a real finished episode.**
-
-## Readiness and limitations
-
-**Implemented or present in the repository:** Claude Code role/skill definitions, narration and editing scripts, motion utilities, QC code, planning templates, a creative-format router, evaluation/lesson recorders and regression tests.
-
-**Still requires real-world verification:** installing compatible dependencies, rendering a coherent pilot, checking the configured male voice, testing complete audio/visual synchronization, exercising the full multi-agent workflow, confirming specific Claude model versions, and resolving any remaining licensing/production issues.
-
-The next meaningful milestone is a **complete, reviewed 30–60-second pilot**, followed by the first full-length Founder Notes episode.
+**Next milestone:** a reviewed 30–60-second pilot with real research, natural narration, coherent action, edited sound, accurate captions and evidence-backed QC. Only then scale up to an 8+ minute production.
 
 ---
 
-*FounderNotes is an independent creator-production project. Third-party tools and references retain their own licenses; see [`NOTICE.md`](.claude/skills/podcast-scout-skill/NOTICE.md).*
+FounderNotes is an independent creator project. External projects have their own terms and prerequisites; see the [third-party notices](.claude/skills/podcast-scout-skill/NOTICE.md).
