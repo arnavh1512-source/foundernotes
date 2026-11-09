@@ -38,8 +38,8 @@ if [ -x "$VENV/bin/python" ]; then
          && ok "installed kokoro-onnx, piper-tts, edge-tts" || bad "pip install failed (network?)"; fi
 fi
 
-mkdir -p "$VOICES"
 if ! $check_only; then
+  mkdir -p "$VOICES"
   echo "  ...   fetching male voices into $VOICES"
   K=https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.0
   fetch "$K/kokoro-v1.0.onnx" "$VOICES/kokoro-v1.0.onnx" || bad "kokoro model download"
@@ -70,7 +70,7 @@ fi
 # Parler-TTS: the expressive narration engine (default when present). Separate venv so its torch pins
 # don't fight the studio venv. CPU wheels; torch and torchaudio must match (2.11 CPU tested).
 PARLER_VENV="${PARLER_VENV:-$HOME/.cache/venv-parler}"
-if [ "${SKIP_PARLER:-0}" != 1 ]; then
+if ! $check_only && [ "${SKIP_PARLER:-0}" != 1 ]; then
   if [ ! -x "$PARLER_VENV/bin/python" ]; then python3 -m venv "$PARLER_VENV"; fi
   "$PARLER_VENV/bin/pip" install -q --upgrade pip >/dev/null 2>&1
   "$PARLER_VENV/bin/pip" install -q parler-tts soundfile >/dev/null 2>&1
