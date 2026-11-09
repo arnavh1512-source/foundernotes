@@ -334,7 +334,7 @@ def synth_voicebox(text, voice, speed, out: Path, seed=42, engine=None):
     Each segment is generated in ONE pass, so the voice cannot switch mid-segment."""
     base = voicebox_url()
     body = {"profile_id": voice, "text": text, "language": "en", "seed": int(seed)}
-    eng = os.environ.get("VOICEBOX_ENGINE") or engine
+    eng = engine or os.environ.get("VOICEBOX_ENGINE")
     if eng:
         body["engine"] = eng
     if os.environ.get("VOICEBOX_INSTRUCT"):
@@ -581,7 +581,11 @@ def validate_voice_cast(data):
 
 
 def resolve_voice_cast(cast):
-    """Match only existing approved character profiles on the local Voicebox server."""
+    """Match original character profiles and their valid Voicebox synthesis engines.
+
+    Voicebox types differ: presets have no samples, voice-designed profiles
+    have a prompt, while cloned-from-synthetic profiles require samples.
+    """
     narrator_id = voicebox_channel_profile()
     try:
         with urllib.request.urlopen(f"{voicebox_url()}/profiles", timeout=30) as response:
@@ -590,20 +594,46 @@ def resolve_voice_cast(cast):
         raise RuntimeError(f"could not list Voicebox profiles: {exc}") from exc
     if not isinstance(profiles, list):
         raise ValueError("Voicebox /profiles returned an invalid response")
-    resolved = {"narrator": narrator_id}
+    resolved = {"narrator": {"id": narrator_id, "engine": CHANNEL_NARRATOR_ENGINE,
+                              "voice_type": "cloned"}}
     for key, entry in cast.items():
         if key == "narrator":
             continue
         matching = [p for p in profiles if isinstance(p, dict)
                     and p.get("name") == entry["profile_name"]
-                    and isinstance(p.get("id"), str) and p["id"]
-                    and p.get("sample_count", 1) != 0]
+                    and isinstance(p.get("id"), str) and p["id"]]
         if len(matching) != 1:
-            raise ValueError(f"{key}: expected one active Voicebox profile named "
-                             f"{entry['profile_name']!r}; create an authorized synthetic "
-                             "profile with a sample in the Voicebox UI first")
-        resolved[key] = matching[0]["id"]
-    if len(set(resolved.values())) != len(resolved):
+            raise ValueError(f"{key}: expected one unique Voicebox profile named "
+                             f"{entry['profile_name']!r}; create it first")
+        p = matching[0]
+        voice_type = p.get("voice_type") or "cloned"
+        declared_type = entry.get("voice_type")
+        if declared_type and declared_type != voice_type:
+            raise ValueError(f"{key}: expected {declared_type} Voicebox profile, got {voice_type}")
+        if voice_type == "preset":
+            if not p.get("preset_voice_id") or p.get("preset_engine") not in ("kokoro", "qwen_custom_voice"):
+                raise ValueError(f"{key}: invalid Voicebox preset metadata")
+            engine = p["preset_engine"]
+            # Kokoro's built-in voice IDs encode sex in the second character.
+            preset = p["preset_voice_id"]
+            if engine == "kokoro" and len(preset) >= 3 and preset[1] in "mf":
+                expected = "male" if preset[1] == "m" else "female"
+                if entry["gender"] != expected:
+                    raise ValueError(f"{key}: declared gender does not match Kokoro preset voice")
+        elif voice_type == "designed":
+            if not p.get("design_prompt") or p.get("default_engine") not in (None, "qwen_voice_design"):
+                raise ValueError(f"{key}: invalid Voicebox designed-voice profile")
+            engine = "qwen_voice_design"
+        elif voice_type == "cloned":
+            if p.get("sample_count", 0) <= 0:
+                raise ValueError(f"{key}: cloned profile has no approved audio sample")
+            engine = p.get("default_engine") or "chatterbox"
+            if engine not in ("chatterbox", "chatterbox_turbo", "qwen", "luxtts", "tada", "omnivoice"):
+                raise ValueError(f"{key}: unsupported cloning engine: {engine}")
+        else:
+            raise ValueError(f"{key}: unsupported Voicebox profile type: {voice_type}")
+        resolved[key] = {"id": p["id"], "engine": engine, "voice_type": voice_type}
+    if len({item["id"] for item in resolved.values()}) != len(resolved):
         raise ValueError("Multiple cast members resolve to the same Voicebox profile")
     return resolved
 
@@ -675,7 +705,7 @@ def main(argv=None):
             cast_profiles = resolve_voice_cast(cast)
         except Exception as e:
             die(f"voicebox cast: {e}; start voicebox and provision synthetic character profiles first")
-        voice = cast_profiles["narrator"]
+        voice = cast_profiles["narrator"]["id"]
         vb_engine = CHANNEL_NARRATOR_ENGINE
     elif engine == "voicebox" and voice == CHANNEL_NARRATOR:
         try:
@@ -729,14 +759,16 @@ def main(argv=None):
         for i, s in enumerate(data["segments"]):
             text = " ".join(str(s["text"]).split())
             speaker = s.get("speaker", "narrator") if cast else None
-            segment_voice = cast_profiles[speaker] if cast_profiles else voice
-            segment_voice_key = f"{speaker}:{cast[speaker]['profile_name']}:{segment_voice}" if cast else voice_key
+            segment_profile = cast_profiles[speaker] if cast_profiles else None
+            segment_voice = segment_profile["id"] if segment_profile else voice
+            segment_engine = segment_profile["engine"] if segment_profile else vb_engine
+            segment_voice_key = f"{speaker}:{cast[speaker]['profile_name']}:{segment_voice}:{segment_engine}" if cast else voice_key
             extra = ""
             if engine == "files":                      # a replaced recording must invalidate the cached take
                 src = Path(a.files_dir or "recordings") / f"{s['id']}.wav"
                 extra = hashlib.sha256(src.read_bytes()).hexdigest() if src.exists() else "missing"
             elif engine == "voicebox":
-                extra = "|".join(os.environ.get(k, "") for k in ("VOICEBOX_ENGINE", "VOICEBOX_INSTRUCT")) + f"|{vb_engine}|take{takes.get(s['id'], 0)}"
+                extra = "|".join(os.environ.get(k, "") for k in ("VOICEBOX_ENGINE", "VOICEBOX_INSTRUCT")) + f"|{segment_engine}|take{takes.get(s['id'], 0)}"
             if perform:
                 extra += "|" + PERFORM_VERSION + perform_mode
             if engine == "parler":
@@ -758,7 +790,7 @@ def main(argv=None):
                 elif engine == "edge":
                     synth_edge(text, voice, speed, wav)
                 elif engine == "voicebox":
-                    synth_voicebox(text, segment_voice, speed, wav, seed=42 + 7 * takes.get(s["id"], 0), engine=vb_engine)
+                    synth_voicebox(text, segment_voice, speed, wav, seed=42 + 7 * takes.get(s["id"], 0), engine=segment_engine)
                     vb_made.append(s["id"])
                 else:
                     synth_files(s["id"], Path(a.files_dir or "recordings"), wav, speed)
@@ -772,6 +804,8 @@ def main(argv=None):
                 timing["scene_id"] = s.get("scene_id")
                 timing["role"] = "narrator" if speaker == "narrator" else "character"
                 timing["voice_profile"] = cast[speaker]["profile_name"]
+                timing["voice_engine"] = segment_engine
+                timing["voice_type"] = segment_profile["voice_type"]
             timings.append(timing)
             parts.append(wav)
             clock += d
