@@ -1,0 +1,231 @@
+{
+  "source": "alexgreensh/anidoodle",
+  "source_index_sha": "06ccbbcbf6874fafd916df762efbfb84e5f5d8f6",
+  "entry_count": 32,
+  "entries": [
+    {
+      "id": "balloon",
+      "name": "Crayon",
+      "medium": "wax crayon on toothed paper: back-and-forth scribble fills that skip the valleys, a darker crayon on the shade side, a white one burnishing the highlight, a fat contour gone over twice",
+      "hero_module": "skills/anidoodle/engine/src/canvas-core/balloon.ts",
+      "film_module": "skills/anidoodle/engine/src/canvas-core/balloonDraw.ts"
+    },
+    {
+      "id": "blueprint",
+      "name": "Cyanotype blueprint",
+      "medium": "ruling pen and spring-bow compass in white ink on Prussian-blue cyanotype stock",
+      "hero_module": "skills/anidoodle/engine/src/canvas-core/blueprint.ts",
+      "film_module": "skills/anidoodle/engine/src/canvas-core/blueprint.ts"
+    },
+    {
+      "id": "brokenColour",
+      "name": "Broken colour",
+      "medium": "opaque oil dabs from a loaded flat hog brush on primed linen, unmixed colours side by side for the eye to mix",
+      "hero_module": "skills/anidoodle/engine/src/canvas-core/brokenColour.ts",
+      "film_module": "skills/anidoodle/engine/src/canvas-core/brokenColour.ts"
+    },
+    {
+      "id": "charcoalErasure",
+      "name": "Charcoal, erased and redrawn",
+      "medium": "vine and compressed charcoal on heavy rag paper, stumped, lifted with a kneaded eraser, redrawn over its own residue",
+      "hero_module": "skills/anidoodle/engine/src/canvas-core/charcoalErasure.ts",
+      "film_module": "skills/anidoodle/engine/src/canvas-core/charcoalErasure.ts"
+    },
+    {
+      "id": "colouredPencil",
+      "name": "Coloured pencil",
+      "medium": "wax coloured pencils hatched in one diagonal on toothy cream cartridge paper, hues layered, darks cross-hatched",
+      "hero_module": "skills/anidoodle/engine/src/canvas-core/colouredPencil.ts",
+      "film_module": "skills/anidoodle/engine/src/canvas-core/colouredPencil.ts"
+    },
+    {
+      "id": "dreamGlaze",
+      "name": "Dream glaze",
+      "medium": "resin-thinned oil glazes laid with a very small soft brush on a smooth white ground: no visible stroke, every form turned pixel by pixel under one low sun, every edge hard",
+      "hero_module": "skills/anidoodle/engine/src/canvas-core/dreamGlaze.ts",
+      "film_module": "skills/anidoodle/engine/src/canvas-core/dreamGlazeDraw.ts"
+    },
+    {
+      "id": "embroidery",
+      "name": "Hand embroidery",
+      "medium": "stranded cotton floss stitched through natural plain-weave linen in a beech hoop",
+      "hero_module": "skills/anidoodle/engine/src/canvas-core/embroidery.ts",
+      "film_module": "skills/anidoodle/engine/src/canvas-core/embroidery.ts"
+    },
+    {
+      "id": "flatVector",
+      "name": "Flat vector",
+      "medium": "pen-tool paths in a vector app, flat fills that land when a path closes, long-shadow shapes with a transparency ramp, a raster grain brush over the shade sides",
+      "hero_module": "skills/anidoodle/engine/src/canvas-core/flatVector.ts",
+      "film_module": "skills/anidoodle/engine/src/canvas-core/flatVector.ts"
+    },
+    {
+      "id": "folkTale",
+      "name": "Folk-tale storybook",
+      "medium": "gouache and watercolour over an HB pencil drawing on cream cartridge: opaque, dry-brushed paint in the foreground thinning to a pale wash and then to bare pencil in the distance",
+      "hero_module": "skills/anidoodle/engine/src/canvas-core/folkTale.ts",
+      "film_module": "skills/anidoodle/engine/src/canvas-core/folkTale.ts"
+    },
+    {
+      "id": "fox",
+      "name": "Cut-paper collage",
+      "medium": "zero drawn lines: torn pieces with a white fibrous edge, scissor pieces crisp, each lifting a soft shadow off the piece below",
+      "hero_module": "skills/anidoodle/engine/src/canvas-core/fox.ts",
+      "film_module": "skills/anidoodle/engine/src/canvas-core/foxDraw.ts"
+    },
+    {
+      "id": "halftone",
+      "name": "Newsprint halftone",
+      "medium": "web-offset newspaper print: black on a 45 degree AM screen plus one orange spot at 15 degrees, oil ink gaining into unbleached groundwood newsprint",
+      "hero_module": "skills/anidoodle/engine/src/canvas-core/halftone.ts",
+      "film_module": "skills/anidoodle/engine/src/canvas-core/halftone.ts"
+    },
+    {
+      "id": "isometric",
+      "name": "Isometric cutaway",
+      "medium": "flat vector planes on a true 2:1 isometric grid, three tones per material, crisp edges, pen-tool order",
+      "hero_module": "skills/anidoodle/engine/src/canvas-core/isometric.ts",
+      "film_module": "skills/anidoodle/engine/src/canvas-core/isometric.ts"
+    },
+    {
+      "id": "koi",
+      "name": "Marker comic",
+      "medium": "alcohol-marker cel fills with a hard shadow edge under one heavy contour that thickens away from the light",
+      "hero_module": "skills/anidoodle/engine/src/canvas-core/koi.ts",
+      "film_module": "skills/anidoodle/engine/src/canvas-core/koiDraw.ts"
+    },
+    {
+      "id": "lighthouse",
+      "name": "Risograph",
+      "medium": "soy ink, one layer per drum multiplied through its own registration offset; every other colour an overprint, tone a halftone screen per ink angle, white is bare paper",
+      "hero_module": "skills/anidoodle/engine/src/canvas-core/lighthouse.ts",
+      "film_module": "skills/anidoodle/engine/src/canvas-core/lighthouseDraw.ts"
+    },
+    {
+      "id": "lowPoly",
+      "name": "Low-poly",
+      "medium": "triangle meshes projected by hand through a pinhole camera, each facet flat-shaded by its normal against one low sun, painter-sorted far to near; no 3D engine",
+      "hero_module": "skills/anidoodle/engine/src/canvas-core/lowPoly.ts",
+      "film_module": "skills/anidoodle/engine/src/canvas-core/lowPoly.ts"
+    },
+    {
+      "id": "mellan",
+      "name": "Single-line engraving",
+      "medium": "one unbroken engraved line whose width follows a procedural tone field: the whole picture is a single stroke",
+      "hero_module": "skills/anidoodle/engine/src/canvas-core/mellan.ts",
+      "film_module": "skills/anidoodle/engine/src/canvas-core/mellanUnspool.ts"
+    },
+    {
+      "id": "midCentury",
+      "name": "Mid-century gouache",
+      "medium": "opaque matte designer's gouache on warm illustration board, a dry brush dragged over the flats, a loose brush-and-ink line printed off register",
+      "hero_module": "skills/anidoodle/engine/src/canvas-core/midCentury.ts",
+      "film_module": "skills/anidoodle/engine/src/canvas-core/midCentury.ts"
+    },
+    {
+      "id": "moonPhases",
+      "name": "Chalkboard",
+      "medium": "side-of-the-chalk scumble on a slate board, lit limbs worked twice, every stroke broken by the board's tooth with dust either side, ghosts of old lessons",
+      "hero_module": "skills/anidoodle/engine/src/canvas-core/moonPhases.ts",
+      "film_module": "skills/anidoodle/engine/src/canvas-core/moonPhasesDraw.ts"
+    },
+    {
+      "id": "paintedOil",
+      "name": "Oil on canvas",
+      "medium": "opaque oil paint with hog-bristle brushes on a toned linen canvas, lean block-in to fat impasto",
+      "hero_module": "skills/anidoodle/engine/src/canvas-core/paintedOil.ts",
+      "film_module": "skills/anidoodle/engine/src/canvas-core/paintedOil.ts"
+    },
+    {
+      "id": "paperCraft",
+      "name": "Toy-theatre paper collage",
+      "medium": "a cardboard toy theatre: patterned and sugar papers cut and torn, gouache-painted cut-outs with a white sticker margin, every piece with a card edge and a gap to the flat behind",
+      "hero_module": "skills/anidoodle/engine/src/canvas-core/paperCraft.ts",
+      "film_module": "skills/anidoodle/engine/src/canvas-core/paperCraft.ts"
+    },
+    {
+      "id": "pixelArt",
+      "name": "Pixel art",
+      "medium": "a 120x120 grid of cells, each one of 16 declared palette colours, laid one cell at a time and blown up by a whole number, no smoothing",
+      "hero_module": "skills/anidoodle/engine/src/canvas-core/pixelArt.ts",
+      "film_module": "skills/anidoodle/engine/src/canvas-core/pixelArt.ts"
+    },
+    {
+      "id": "pocketWatch",
+      "name": "Ballpoint sketch",
+      "medium": "one blue ballpoint on cream cartridge, near-constant weight; tone only from where the hatching sits, plus the blob where a firm stroke stops",
+      "hero_module": "skills/anidoodle/engine/src/canvas-core/pocketWatch.ts",
+      "film_module": "skills/anidoodle/engine/src/canvas-core/pocketWatchDraw.ts"
+    },
+    {
+      "id": "ranunculus",
+      "name": "Pencil & watercolour",
+      "medium": "graphite and pan watercolour on cold-press: washes that never quite fill their outline, form shaded toward one light, graphite over the paint",
+      "hero_module": "skills/anidoodle/engine/src/canvas-core/ranunculus.ts",
+      "film_module": "skills/anidoodle/engine/src/canvas-core/ranunculusDraw.ts"
+    },
+    {
+      "id": "rubberHose",
+      "name": "Rubber hose",
+      "medium": "India ink at one pressure on a clear cel over a blue-pencil rough, flat grey paint on the back, photographed and printed on black-and-white film",
+      "hero_module": "skills/anidoodle/engine/src/canvas-core/rubberHose.ts",
+      "film_module": "skills/anidoodle/engine/src/canvas-core/rubberHose.ts"
+    },
+    {
+      "id": "scrapbook",
+      "name": "Archival scrapbook",
+      "medium": "foxed rag-paper album page; torn cards, cellulose tape, a clothespin on twine; copperplate engravings hand-tinted; typewriter, ransom-note cut letters, red pen, rubber stamp",
+      "hero_module": "skills/anidoodle/engine/src/canvas-core/scrapbook.ts",
+      "film_module": "skills/anidoodle/engine/src/canvas-core/scrapbook.ts"
+    },
+    {
+      "id": "scratchboard",
+      "name": "Scratchboard",
+      "medium": "white china clay under black India ink; every mark is ink scraped away with a knife or scratch nib",
+      "hero_module": "skills/anidoodle/engine/src/canvas-core/scratchboard.ts",
+      "film_module": "skills/anidoodle/engine/src/canvas-core/scratchboard.ts"
+    },
+    {
+      "id": "stipple",
+      "name": "Pen-and-ink stipple",
+      "medium": "one 0.25 mm technical pen dotted straight down onto hot-press bristol; tone is dot density only",
+      "hero_module": "skills/anidoodle/engine/src/canvas-core/stipple.ts",
+      "film_module": "skills/anidoodle/engine/src/canvas-core/stipple.ts"
+    },
+    {
+      "id": "storybook",
+      "name": "Storybook pencil + watercolour",
+      "medium": "storybook graphite and gentle pan watercolour, drawn for a recurring character",
+      "hero_module": "skills/anidoodle/engine/src/canvas-core/storybook.ts",
+      "film_module": "skills/anidoodle/engine/src/canvas-core/storybookDraw.ts"
+    },
+    {
+      "id": "sumiE",
+      "name": "Sumi-e ink painting",
+      "medium": "one loaded soft brush of sumi ink, five dilutions, on unsized absorbent xuan paper, with a cinnabar seal",
+      "hero_module": "skills/anidoodle/engine/src/canvas-core/sumiE.ts",
+      "film_module": "skills/anidoodle/engine/src/canvas-core/sumiE.ts"
+    },
+    {
+      "id": "toyBrick",
+      "name": "Toy brick",
+      "medium": "moulded ABS toy bricks, rendered flat-plastic in orthographic view: face tones by the cube rule, bevel highlights, seam hairlines, real studs, a soft ground shadow",
+      "hero_module": "skills/anidoodle/engine/src/canvas-core/toyBrick.ts",
+      "film_module": "skills/anidoodle/engine/src/canvas-core/toyBrick.ts"
+    },
+    {
+      "id": "woodcut",
+      "name": "Ukiyo-e colour woodblock",
+      "medium": "water-based pigment printed by baren from hand-carved cherry blocks onto damp kozo washi: a sumi keyblock, flat colour blocks, bokashi wipes",
+      "hero_module": "skills/anidoodle/engine/src/canvas-core/woodcut.ts",
+      "film_module": "skills/anidoodle/engine/src/canvas-core/woodcut.ts"
+    },
+    {
+      "id": "wren",
+      "name": "Ink & line-wash",
+      "medium": "wet washes first that flood past the line and settle along each shape's bottom edge, backruns, then a flexible nib thick on the press and hair-thin on the lift",
+      "hero_module": "skills/anidoodle/engine/src/canvas-core/wren.ts",
+      "film_module": "skills/anidoodle/engine/src/canvas-core/wrenDraw.ts"
+    }
+  ]
+}
