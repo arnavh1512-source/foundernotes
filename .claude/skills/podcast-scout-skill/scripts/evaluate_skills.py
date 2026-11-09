@@ -29,7 +29,7 @@ UPSTREAM = (
     "synfig pencil2d vox-ai-motion-graphics-generator pixelfx hyperframes "
     "onetake gbro-collage-broll lemo-opuscar humanizer i-have-adhd "
     "marketing-video marketing-social marketing-content-strategy "
-    "marketing-analytics marketing-product-marketing"
+    "marketing-analytics marketing-product-marketing raea"
 ).split()
 UPLOADED = (
     "3d-animation cartoon-episodes documentary commercial-pipeline "
