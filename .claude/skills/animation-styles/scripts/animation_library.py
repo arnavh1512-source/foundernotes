@@ -96,6 +96,25 @@ def entries():
     return result
 
 
+
+def provider_entries():
+    """Expose reference-only providers in search without inflating style counts."""
+    results = []
+    for sid, src in source_registry().items():
+        if sid in CATALOGS:
+            continue
+        results.append({
+            "id": f"{sid}:provider", "source": sid,
+            "name": sid.replace("-", " ").replace("_", " ").title(),
+            "category": src["kind"], "kind": "external-provider-reference",
+            "status": "upstream-skill-not-installed",
+            "source_file": src["upstream_skill"],
+            "source_url": remote_url(src["repo"], src["upstream_skill"]),
+            "description": src["notes"] + " " + src["kind"],
+        })
+    return results
+
+
 def search(text, *, source=None, limit=12):
     if not isinstance(text, str) or not text.strip():
         raise ValueError("Search query must be nonempty")
@@ -107,7 +126,7 @@ def search(text, *, source=None, limit=12):
     if not words:
         raise ValueError("Invalid search query")
     ranked = []
-    for item in entries():
+    for item in entries() + provider_entries():
         if source and item["source"] != source:
             continue
         name = item["name"].casefold().replace("watercolour", "watercolor")
@@ -149,13 +168,13 @@ def main(argv=None):
     if args.sources:
         answer = available_sources()
     elif args.show:
-        answer = next((item for item in entries() if item["id"] == args.show), None)
+        answer = next((item for item in entries() + provider_entries() if item["id"] == args.show), None)
         if answer is None:
             parser.error("Style ID not in catalog; use --search or --list")
     elif args.list:
         if args.list not in {"native", *source_registry().keys()}:
             parser.error("Unknown source ID")
-        answer = [x for x in entries() if x["source"] == args.list][:args.limit]
+        answer = [x for x in entries() + provider_entries() if x["source"] == args.list][:args.limit]
     else:
         answer = search(args.search, limit=args.limit)
     print(json.dumps(answer, ensure_ascii=False, indent=2))
