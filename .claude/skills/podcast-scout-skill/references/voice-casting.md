@@ -39,33 +39,79 @@ For recurring characters, preserve the same `profile_name` between episodes. Sto
 
 ## 2. Create or select synthetic Voicebox profiles
 
-Raeas, TTS models and marketing skills do not create these voices automatically. Character profiles must already exist in the **local Voicebox** app with a valid sample and correct name. Use the Voicebox UI to select or produce an original synthetic voice profile for each character, and listen to the sample before approving it. Alternatively, if you have an **original synthetic WAV reference and an accurate reference transcript** with the necessary rights, the local provisioning script can register it in Voicebox.
+Raea, marketing skills and the video engine do not create voices on their own. **Voicebox supports three ways to configure characters:** reusable built-in TTS presets, voice-design prompts, and synthetic-audio-reference profiles. The local profile setup is optional and **never runs without `--create`**.
 
-Add these fields to each character requiring a new profile:
+**A. Built-in synthetic voices — easiest first pilot**
+
+The sample `../assets/voice-cast.example.json` already specifies four distinct native Voicebox Kokoro presets: two male (`am_adam`, `am_fenrir`) and two female (`af_heart`, `af_bella`). Example character cast entry:
 
 ```json
-"reference_wav": "synthetic-references/character-host-m1.wav",
-"reference_text": "The exact words spoken in the original synthetic reference recording."
+{
+  "profile_name": "FN Character Investor F1",
+  "gender": "female",
+  "voice_type": "preset",
+  "preset_engine": "kokoro",
+  "preset_voice_id": "af_heart",
+  "synthetic_voice": true,
+  "approved": true
+}
 ```
 
-Paths are relative to the episode's `script.json`. The provisioning tool is opt-in, requires proof flags `approved:true` and `synthetic_voice:true`, and rejects invalid/unreadable WAV files. It cannot independently certify the reference's provenance; **the owner must ensure it is original and authorized**. The command does not create a fresh voice from nothing or scrape a real person's audio.
+This creates a named synthetic preset **without cloning any speaker**. The appropriate voice model must actually be installed in local Voicebox before synthesis. Preset profiles are routed to their native engine, **not** forced through Chatterbox.
+
+**B. Voicebox-designed original voices — when an actor needs distinctive delivery**
+
+For a locally supported Qwen VoiceDesign engine, replace the preset fields with:
+
+```json
+{
+  "profile_name": "FN Character Original Expert F3",
+  "gender": "female",
+  "voice_type": "designed",
+  "design_prompt": "An original adult female voice, thoughtful, mid-range pitch, warm clear English diction, measured rhythm.",
+  "synthetic_voice": true,
+  "approved": true
+}
+```
+
+The design engine `qwen_voice_design` must be present and capable of running on the user's hardware. **A design prompt does not guarantee a unique, expressive or female-sounding outcome**; audition the result and revise/approve it. Do not request imitation of a named real person.
+
+**C. Voicebox cloned-from-synthetic reference — only when an original sample exists**
+
+For a character voice originally generated with properly licensed synthetic tools, the owner can supply a reference WAV and its accurate transcript:
+
+```json
+{
+  "profile_name": "FN Character Narrator Alternate M3",
+  "gender": "male",
+  "voice_type": "cloned",
+  "reference_wav": "synthetic-references/original-male-character.wav",
+  "reference_text": "The exact words spoken in the original synthetic recording.",
+  "synthetic_voice": true,
+  "approved": true
+}
+```
+
+Paths are relative to the episode's `script.json`. The provisioner checks a valid nonempty local WAV and a transcript. It cannot independently prove reference provenance; the owner must verify originality and commercial rights.
+
+**Local setup**
 
 ```bash
-# Run the local Voicebox server as usual:
 bash .claude/skills/podcast-scout-skill/scripts/voicebox_server.sh
 
-# Verify existing profiles and preview actions (nothing created):
+# Preview profiles that exist or need to be created; no writes:
 python3 .claude/skills/podcast-scout-skill/scripts/provision_voicebox_cast.py \
   studio-output/pilot/narration/script.json
 
-# With approved ORIGINAL synthetic WAVs and explicit authorization:
+# Explicit local creation with the user's approved original choices:
 python3 .claude/skills/podcast-scout-skill/scripts/provision_voicebox_cast.py \
   studio-output/pilot/narration/script.json --create
 ```
 
-For the regular narrator profile, `narrate.py` already uses the repo's dedicated original synthetic reference. The provisioner skips that entry.
+The provisioner avoids duplicate profile names and checks per-role approval. It does **not** install TTS models, log in, call remote servers, or pre-generate complete voice samples. The permanent `Founder Notes Narrator` is already managed by `narrate.py` from its own authorized synthetic reference, so the cast setup skips it.
 
-**Voicebox has a local unauthenticated API**, so keep it bound to localhost. `provision_voicebox_cast.py` will refuse non-local URLs. The core narrator's existing `VOICEBOX_URL` behavior is unchanged.
+**Voicebox exposes a local unauthenticated API**, so keep it bound to localhost. This provisioning script explicitly rejects remote URLs.
+
 
 ## 3. Render and verify an episode
 
@@ -98,4 +144,4 @@ If the script or cast changes, invalidate and regenerate affected takes; the seg
 - Future shots can involve one, two, five, or more characters. *You do not need to predefine a fixed number of voices for the entire channel.*
 - Continuously evaluate the capability under `external/voicebox` using genuine narrated samples and real QC reports.
 
-**State of implementation:** Per-segment Voicebox routing, name/rights checks, profile lookup, master audio assembly, and speaker-annotated timing files are implemented. Real Voicebox hardware, casting quality, authentic dialogue performances, and actual local profile generation still require a pilot on the user's machine.
+**State of implementation:** Per-segment Voicebox routing, name/rights checks, profile lookup, master audio assembly, and speaker-annotated timing files are implemented. Real Voicebox hardware, casting quality, authentic dialogue performances, and local profile generation still require a pilot on the user's machine.
