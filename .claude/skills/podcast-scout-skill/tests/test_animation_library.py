@@ -23,18 +23,18 @@ lemo = load_module("lemo_backend", SCRIPTS / "lemo_backend.py")
 
 
 class AnimationLibraryTests(unittest.TestCase):
-    def test_all_13_external_sources_and_509_entries_indexed(self):
+    def test_all_13_external_sources_and_592_entries_indexed(self):
         sources = catalog.source_registry()
         self.assertEqual(len(sources), 13)
         items = catalog.entries()
-        self.assertEqual(len(items), 509)
+        self.assertEqual(len(items), 592)
         self.assertEqual(len({item["id"] for item in items}), len(items))
         counts = {src: len([item for item in items if item["source"] == src])
                   for src in ("native", "lemo-opuscar", "code-animation-prompts",
-                              "anidoodle", "huashu-art-motion")}
+                              "anidoodle", "huashu-art-motion", "claude-drawing-skill")}
         self.assertEqual(counts, {"native": 17, "lemo-opuscar": 66,
                                   "code-animation-prompts": 341, "anidoodle": 32,
-                                  "huashu-art-motion": 53})
+                                  "huashu-art-motion": 53, "claude-drawing-skill": 83})
 
     def test_search_across_sources_and_file_links(self):
         matches = catalog.search("watercolor", limit=30)
@@ -43,6 +43,21 @@ class AnimationLibraryTests(unittest.TestCase):
         self.assertTrue(any(x["source"] == "anidoodle" for x in matches))
         self.assertTrue(all(x["source_url"] for x in matches if x["source"] != "native"))
         self.assertTrue(catalog.search("水墨", source="code-animation-prompts"))
+        self.assertTrue(catalog.search("水墨", source="claude-drawing-skill"))
+        self.assertTrue(any(x["source"] == "claude-drawing-skill" for x in catalog.search("watercolor")))
+
+    def test_original_skill_and_readme_expose_catalog(self):
+        repo = SKILLS.parent.parent
+        original = (SKILLS / "animation-styles" / "SKILL.md").read_text(encoding="utf-8")
+        readme = (repo / "README.md").read_text(encoding="utf-8")
+        studio = (SKILLS / "podcast-scout-skill" / "SKILL.md").read_text(encoding="utf-8")
+        for content in (original, readme, studio):
+            self.assertIn("592", content)
+            self.assertIn("animation-styles", content)
+        self.assertIn("scripts/animation_library.py", original)
+        self.assertTrue((SKILLS / "animation-styles" / "references" /
+                         "community-animation-integration.md").is_file())
+        self.assertIn("metadata", readme.lower())
 
     def test_restricted_metadata_is_not_a_rendering_claim(self):
         prompts = [x for x in catalog.entries() if x["source"] == "code-animation-prompts"]
@@ -133,12 +148,31 @@ class LemoBackendTests(unittest.TestCase):
         def fake_run(args, **kwargs):
             self.assertEqual(args[1], str(self.root / "core/render/still.mjs"))
             self.assertIn("1.5", args)
+            (self.project / "stills").mkdir(exist_ok=True)
+            for seconds in (0, 1.5, 3):
+                (self.project / "stills" / f"t_{seconds}.jpg").write_bytes(b"jpeg")
             return subprocess.CompletedProcess(args, 0, "frame rendered", "")
         with patch.object(lemo.shutil, "which", return_value="/bin/exe"), \
              patch.object(lemo.subprocess, "run", side_effect=fake_run):
             result = lemo.execute("still", library=self.root, style="watercolor",
                                   project=self.project, seconds=[0, 1.5, 3])
         self.assertTrue(result["ok"], result)
+
+    def test_still_rejects_success_without_real_frames_and_stale_outputs(self):
+        with patch.object(lemo.shutil, "which", return_value="/bin/exe"), \
+             patch.object(lemo.subprocess, "run",
+                          return_value=subprocess.CompletedProcess([], 0, "success", "")):
+            no_frames = lemo.execute("still", library=self.root, style="watercolor",
+                                     project=self.project, seconds=[0, 1.5])
+        self.assertEqual(no_frames["error"], "MISSING_STILL_OUTPUT")
+        (self.project / "stills").mkdir()
+        (self.project / "stills" / "t_0.jpg").write_bytes(b"old")
+        with patch.object(lemo.shutil, "which", return_value="/bin/exe"), \
+             patch.object(lemo.subprocess, "run") as invoked:
+            stale = lemo.execute("still", library=self.root, style="watercolor",
+                                  project=self.project, seconds=[0])
+        self.assertEqual(stale["error"], "STILLS_EXIST")
+        invoked.assert_not_called()
 
     def test_no_remote_installer_or_dependency_download(self):
         with patch.object(lemo.shutil, "which", return_value=None), \
