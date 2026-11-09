@@ -126,6 +126,10 @@ The [Humanizer](.claude/skills/humanizer/SKILL.md) skill is part of the **script
 
 The [Raea renderer adapter](.claude/skills/raea-renderer/SKILL.md) supports **separately installed** [Raea](https://github.com/shinyobjectz/raea) for React/TypeScript motion and 3D shots. It offers an offline-first local CLI bridge for status, single-frame rendering, MP4 output and optional export checks. The bundled renderer remains the default; the upstream engine is a canary release and uses **FSL-1.1-ALv2**, which restricts competing commercial software/service uses. A live GPU render on the creator's computer has not been verified.
 
+### Flexible Voicebox dialogue casting
+
+The channel keeps its established male narrator, while scenes can optionally use **multiple distinct male and female synthetic Voicebox character voices** for interviews, conversations, dramatized explanations and other interactions. Cast definitions and per-line speaker IDs are supplied in the [example dialogue script](.claude/skills/podcast-scout-skill/assets/voice-cast.example.json). The [casting guide](.claude/skills/podcast-scout-skill/references/voice-casting.md) covers profile identity, original synthetic sources, optional local provisioning, continuity, timestamps and safety. The implementation is in `narrate.py`; it generates one sequential audio master with speaker metadata, not simultaneous voice overlap or automatic lip sync. Every voice must actually exist in the local Voicebox service and pass listening review.
+
 ## Non-negotiable channel rules
 
 - **Narration:** Use the channel's consistent **male narrator**, preferring the configured Voicebox profile when available. Do not clone another person's voice without rights and explicit authorization. Lock scene timing to measured audio, not guessed duration.
