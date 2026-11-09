@@ -101,15 +101,17 @@ def search(text, *, source=None, limit=12):
         raise ValueError("Search query must be nonempty")
     if limit < 1 or limit > 100:
         raise ValueError("limit must be 1..100")
-    words = re.findall(r"[\w-]+", text.casefold(), re.UNICODE)
+    # Make the common US/UK spelling of watercolour discover each other.
+    normalized = text.casefold().replace("watercolour", "watercolor")
+    words = re.findall(r"[\w-]+", normalized, re.UNICODE)
     if not words:
         raise ValueError("Invalid search query")
     ranked = []
     for item in entries():
         if source and item["source"] != source:
             continue
-        name = item["name"].casefold()
-        hay = " ".join(str(item[k]) for k in ("id", "name", "category", "description")).casefold()
+        name = item["name"].casefold().replace("watercolour", "watercolor")
+        hay = " ".join(str(item[k]) for k in ("id", "name", "category", "description")).casefold().replace("watercolour", "watercolor")
         score = sum(5 if word in name else 1 if word in hay else 0 for word in words)
         if score:
             ranked.append((score, item))
