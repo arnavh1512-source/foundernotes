@@ -122,6 +122,10 @@ An optional [i-have-adhd](.claude/skills/i-have-adhd/SKILL.md) skill from [ayghr
 
 The [Humanizer](.claude/skills/humanizer/SKILL.md) skill is part of the **script-writing stage**: edit the fact-checked script into natural spoken English before generating the male narrator's audio, then rerun fact lock. The final YouTube package can receive a separate prose-only Humanizer pass, preserving chapters, facts and credits.
 
+### Optional Raea GPU rendering
+
+The [Raea renderer adapter](.claude/skills/raea-renderer/SKILL.md) supports **separately installed** [Raea](https://github.com/shinyobjectz/raea) for React/TypeScript motion and 3D shots. It offers an offline-first local CLI bridge for status, single-frame rendering, MP4 output and optional export checks. The bundled renderer remains the default; the upstream engine is a canary release and uses **FSL-1.1-ALv2**, which restricts competing commercial software/service uses. A live GPU render on the creator's computer has not been verified.
+
 ## Non-negotiable channel rules
 
 - **Narration:** Use the channel's consistent **male narrator**, preferring the configured Voicebox profile when available. Do not clone another person's voice without rights and explicit authorization. Lock scene timing to measured audio, not guessed duration.
