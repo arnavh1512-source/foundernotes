@@ -11,6 +11,10 @@ Before anything else read:
 1. `.claude/memory/mistakes_and_pitfalls.md`, `.claude/memory/positive_recipes.md`, and `.claude/memory/production_ledger.json`
 2. `channel-profile.md`, `.claude/skills/animation-styles/SKILL.md`, and `.claude/skills/design-me/SKILL.md`
 
+## Unified animation catalog (required)
+
+Before assigning each major scene style, read the original `.claude/skills/animation-styles/SKILL.md` and query `python3 .claude/skills/animation-styles/scripts/animation_library.py --search "<visual intent>"`. The index covers 592 named entries (including drawings, prompt references and unverified research recipes) and a registry of 13 external source providers. Choose 1–3 plausible techniques and justify which is actually renderable and licensed. Use a selected upstream reference only as verified visual guidance, not as automatic installation or final output. The original 17 native styles remain available. Write exact catalog ID, provider, rights notes, available runtime and fallback into the storyboard; keep one coherent visual world and measured narration timing.
+
 ## Optional GPU motion / 3D candidate
 
 Raea may be shortlisted for GPU React/TypeScript motion or an original 3D sequence **only when** the creative brief benefits and its executable is installed. Refer to `.claude/skills/raea-renderer/SKILL.md`; compare a small still/sample with the current HTML/motion route and record measured continuity/legibility. Its engine license is FSL-1.1 and its current release canary; no blanket commercial suitability claim. Do not require Raea for every video.
