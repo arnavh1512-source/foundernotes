@@ -46,6 +46,17 @@ class AnimationLibraryTests(unittest.TestCase):
         self.assertTrue(catalog.search("水墨", source="claude-drawing-skill"))
         self.assertTrue(any(x["source"] == "claude-drawing-skill" for x in catalog.search("watercolor")))
 
+    def test_all_remaining_providers_are_searchable_without_false_styles(self):
+        providers = catalog.provider_entries()
+        self.assertEqual(len(providers), 8)
+        self.assertEqual(len(catalog.entries()), 592)
+        self.assertTrue(any(x["id"] == "bang-motion:provider"
+                            for x in catalog.search("bang motion")))
+        self.assertTrue(any(x["id"] == "manim_skill:provider"
+                            for x in catalog.search("manim")))
+        self.assertTrue(all(x["status"] == "upstream-skill-not-installed" for x in providers))
+        self.assertTrue(all(x["source_url"].startswith("https://github.com/") for x in providers))
+
     def test_original_skill_and_readme_expose_catalog(self):
         repo = SKILLS.parent.parent
         original = (SKILLS / "animation-styles" / "SKILL.md").read_text(encoding="utf-8")
