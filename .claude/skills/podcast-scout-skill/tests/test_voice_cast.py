@@ -91,6 +91,42 @@ class CastPolicy(unittest.TestCase):
                 narrate.resolve_voice_cast(script["cast"])
 
 
+
+SETUP_SCRIPT = SCRIPT.parent / "provision_voicebox_cast.py"
+setup_spec = importlib.util.spec_from_file_location("provision_voicebox_cast", SETUP_SCRIPT)
+setup_cast = importlib.util.module_from_spec(setup_spec)
+setup_spec.loader.exec_module(setup_cast)
+
+
+class LocalCastProvisioning(unittest.TestCase):
+    def test_rejects_remote_and_malformed_voicebox_base(self):
+        for value in ("https://voicebox.example.com", "http://192.168.1.2:17493",
+                      "file:///etc/passwd", "http://127.0.0.1:17493/user"):
+            with self.subTest(url=value), self.assertRaises(ValueError):
+                setup_cast.local_base(value)
+        self.assertEqual(setup_cast.local_base("http://127.0.0.1:17493"), "http://127.0.0.1:17493")
+
+    def test_requires_original_synthetic_wav_and_transcript(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            entry = {"profile_name": "Original Character Female 01", "gender": "female",
+                     "synthetic_voice": True, "approved": True,
+                     "reference_wav": "character.wav", "reference_text": "An original synthetic reference."}
+            reference = root / "character.wav"
+            with wave.open(str(reference), "wb") as wav:
+                wav.setnchannels(1)
+                wav.setsampwidth(2)
+                wav.setframerate(24000)
+                wav.writeframes(b"\x01\x00" * 12000)
+            self.assertEqual(setup_cast.verify_reference(entry, "character", root), reference)
+            entry["synthetic_voice"] = False
+            with self.assertRaisesRegex(ValueError, "original synthetic"):
+                setup_cast.verify_reference(entry, "character", root)
+            entry["synthetic_voice"] = True
+            entry["reference_text"] = ""
+            with self.assertRaisesRegex(ValueError, "reference_text"):
+                setup_cast.verify_reference(entry, "character", root)
+
 @unittest.skipUnless(shutil.which("ffmpeg"), "ffmpeg required for voice master assembly")
 class CastAssembly(unittest.TestCase):
     def test_synthesizes_each_segment_with_own_profile_and_records_speaker(self):
