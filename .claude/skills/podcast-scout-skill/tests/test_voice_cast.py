@@ -75,6 +75,47 @@ class CastPolicy(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "safe filename"):
             narrate.validate_voice_cast(script)
 
+    def test_builtin_kokoro_preset_requires_no_samples(self):
+        script = example()
+        profiles = [{
+            "name": entry["profile_name"], "id": f"p-{speaker}", "sample_count": 0,
+            "voice_type": "preset", "preset_engine": "kokoro",
+            "preset_voice_id": entry["preset_voice_id"]
+        } for speaker, entry in script["cast"].items() if speaker != "narrator"]
+        with patch.object(narrate, "voicebox_channel_profile", return_value="narrator-id"), \
+             patch.object(narrate.urllib.request, "urlopen", return_value=io.BytesIO(json.dumps(profiles).encode())):
+            result = narrate.resolve_voice_cast(script["cast"])
+        self.assertEqual(result["investor"], {"id": "p-investor", "engine": "kokoro",
+                                              "voice_type": "preset"})
+        self.assertEqual(result["narrator"]["engine"], "chatterbox")
+
+    def test_designed_profile_routes_through_qwen_voice_design(self):
+        script = example()
+        script["cast"] = {"narrator": script["cast"]["narrator"], "investor": {
+            "profile_name": "FN Character Investor F1", "gender": "female",
+            "synthetic_voice": True, "approved": True, "voice_type": "designed"
+        }}
+        profiles = [{"name": "FN Character Investor F1", "id": "designed-id",
+                     "sample_count": 0, "voice_type": "designed",
+                     "default_engine": "qwen_voice_design",
+                     "design_prompt": "Original adult female voice, clear and conversational."}]
+        with patch.object(narrate, "voicebox_channel_profile", return_value="narrator-id"), \
+             patch.object(narrate.urllib.request, "urlopen", return_value=io.BytesIO(json.dumps(profiles).encode())):
+            result = narrate.resolve_voice_cast(script["cast"])
+        self.assertEqual(result["investor"]["engine"], "qwen_voice_design")
+
+    def test_gender_mismatch_for_known_preset_is_rejected(self):
+        script = example()
+        script["cast"]["investor"]["gender"] = "male"
+        profiles = [{"name": script["cast"]["investor"]["profile_name"],
+                     "id": "bad-preset", "voice_type": "preset", "preset_engine": "kokoro",
+                     "preset_voice_id": "af_heart", "sample_count": 0}]
+        with patch.object(narrate, "voicebox_channel_profile", return_value="narrator-id"), \
+             patch.object(narrate.urllib.request, "urlopen", return_value=io.BytesIO(json.dumps(profiles).encode())):
+            with self.assertRaisesRegex(ValueError, "gender does not match"):
+                narrate.resolve_voice_cast({"narrator": script["cast"]["narrator"],
+                                           "investor": script["cast"]["investor"]})
+
     def test_resolves_only_existing_voicebox_profiles(self):
         script = example()
         profiles = [{"name": cast["profile_name"], "id": f"p-{key}", "sample_count": 1}
@@ -82,8 +123,8 @@ class CastPolicy(unittest.TestCase):
         with patch.object(narrate, "voicebox_channel_profile", return_value="narrator-id"), \
              patch.object(narrate.urllib.request, "urlopen", return_value=io.BytesIO(json.dumps(profiles).encode())):
             resolved = narrate.resolve_voice_cast(script["cast"])
-        self.assertEqual(resolved["narrator"], "narrator-id")
-        self.assertEqual(resolved["investor"], "p-investor")
+        self.assertEqual(resolved["narrator"]["id"], "narrator-id")
+        self.assertEqual(resolved["investor"]["id"], "p-investor")
         profiles[0]["sample_count"] = 0
         with patch.object(narrate, "voicebox_channel_profile", return_value="narrator-id"), \
              patch.object(narrate.urllib.request, "urlopen", return_value=io.BytesIO(json.dumps(profiles).encode())):
@@ -136,8 +177,10 @@ class CastAssembly(unittest.TestCase):
             data = example()
             script.write_text(json.dumps(data), encoding="utf-8")
             output = folder / "audio"
-            profiles = {"narrator": "narrator-id", "founder": "p-founder",
-                        "investor": "p-investor", "analyst": "p-analyst", "reporter": "p-reporter"}
+            profiles = {"narrator": {"id": "narrator-id", "engine": "chatterbox", "voice_type": "cloned"}}
+            profiles.update({speaker: {"id": "p-" + speaker, "engine": "kokoro",
+                                       "voice_type": "preset"}
+                             for speaker in ("founder", "investor", "analyst", "reporter")})
             used = []
             def instrument(text, profile, speed, path, **kwargs):
                 used.append(profile)
@@ -153,6 +196,8 @@ class CastAssembly(unittest.TestCase):
             self.assertEqual([x["speaker"] for x in meta["segments"]],
                              ["narrator", "founder", "investor", "analyst", "reporter", "narrator"])
             self.assertEqual(meta["cast"]["investor"]["gender"], "female")
+            self.assertEqual(meta["segments"][2]["voice_engine"], "kokoro")
+            self.assertEqual(meta["segments"][0]["voice_engine"], "chatterbox")
             self.assertEqual(meta["cast"]["narrator"]["gender"], "male")
             self.assertTrue((output / "narration.wav").stat().st_size > 0)
             self.assertTrue((output / "captions.srt").stat().st_size > 0)
