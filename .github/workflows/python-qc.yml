@@ -49,6 +49,11 @@ jobs:
         run: |
           python -m unittest discover -s .claude/skills/podcast-scout-skill/tests -p "test_integrated_writing_marketing_skills.py" -v
 
+      - name: Test optional Raea renderer and multi-speaker Voicebox casting
+        run: |
+          python -m unittest discover -s .claude/skills/podcast-scout-skill/tests -p "test_raea_backend.py" -v
+          python -m unittest discover -s .claude/skills/podcast-scout-skill/tests -p "test_voice_cast.py" -v
+
       - name: Integration smoke test for scene, narration and MP4 QC
         run: |
           python -m unittest discover -s .claude/skills/podcast-scout-skill/tests -p "test_production_smoke.py" -v
