@@ -19,6 +19,7 @@ CATALOGS = {
     "lemo-opuscar": "lemo-opuscar-catalog.json",
     "code-animation-prompts": "code-animation-prompts-catalog.json",
     "anidoodle": "anidoodle-catalog.json",
+    "claude-drawing-skill": "claude-drawing-catalog.json",
     "huashu-art-motion": "huashu-catalog.json",
 }
 
@@ -72,6 +73,11 @@ def entries():
                 kind = "code-media-style"
                 desc = item.get("medium", "")
                 stage = "upstream-engine-required"
+            elif sid == "claude-drawing-skill":
+                source_file = item["source_file"]
+                kind = "procedural-still-style"
+                desc = item.get("class", "") + " " + (item.get("library_file") or "")
+                stage = "upstream-still-generator-required"
             else:
                 source_file = item["source_file"]
                 kind = "art-motion-recipe"
