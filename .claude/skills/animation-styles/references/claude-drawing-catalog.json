@@ -1,0 +1,672 @@
+{
+  "source": "cloveric/claude-drawing-skill",
+  "source_skill_blob_sha": "a5a5c1bd05df8c22d0c61be9e1d699d999e5da4b",
+  "entry_count": 83,
+  "note": "Procedural still painting styles; use a separate engine to animate composed plates. Upstream skill and code not copied; identifiers indexed only.",
+  "entries": [
+    {
+      "id": "inkpaint",
+      "name": "水墨",
+      "class": "Painting",
+      "library_file": "lib/inkpaint.py",
+      "example_file": "examples/bawansiqian.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "watercolor",
+      "name": "水彩",
+      "class": "Watercolor",
+      "library_file": "lib/watercolor.py",
+      "example_file": "examples/watercolor_autumn.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "papercut",
+      "name": "剪纸拼贴",
+      "class": "Collage",
+      "library_file": "lib/papercut.py",
+      "example_file": "examples/papercut_balloons.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "colorpencil",
+      "name": "韩国彩铅",
+      "class": "ColorPencil",
+      "library_file": "lib/colorpencil.py",
+      "example_file": "examples/colorpencil_dessert.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "anime",
+      "name": "日本动漫",
+      "class": "Anime",
+      "library_file": "lib/anime.py",
+      "example_file": "examples/anime_summer.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "editorial",
+      "name": "编辑风手绘",
+      "class": "Editorial",
+      "library_file": "lib/editorial.py",
+      "example_file": "examples/editorial_ideas.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "oilpaint",
+      "name": "油画厚涂",
+      "class": "OilPainting",
+      "library_file": "lib/oilpaint.py",
+      "example_file": "examples/oil_wheatfield.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "ukiyoe",
+      "name": "浮世绘木版画",
+      "class": "Ukiyoe",
+      "library_file": "lib/ukiyoe.py",
+      "example_file": "examples/ukiyoe_fuji.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "pixelart",
+      "name": "像素风",
+      "class": "PixelArt",
+      "library_file": "lib/pixelart.py",
+      "example_file": "examples/pixel_rainy_cafe.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "clay",
+      "name": "黏土定格",
+      "class": "Clay",
+      "library_file": "lib/clay.py",
+      "example_file": "examples/clay_lighthouse.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "cyanotype",
+      "name": "蓝晒",
+      "class": "Cyanotype",
+      "library_file": "lib/cyanotype.py",
+      "example_file": "examples/cyanotype_botanicals.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "stitch",
+      "name": "十字绣",
+      "class": "Stitch",
+      "library_file": "lib/stitch.py",
+      "example_file": "examples/stitch_sampler.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "panel",
+      "name": "复古仪器面板",
+      "class": "Panel",
+      "library_file": "lib/panel.py",
+      "example_file": "examples/panel_radio.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "sticker",
+      "name": "贴纸拼贴 · 小票",
+      "class": "Sticker",
+      "library_file": "lib/sticker.py",
+      "example_file": "examples/sticker_market.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "notebook",
+      "name": "实验笔记本 · 贴纸",
+      "class": "Notebook",
+      "library_file": "lib/notebook.py",
+      "example_file": "examples/notebook_brewing.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "chalk",
+      "name": "黑板板书",
+      "class": "Chalkboard",
+      "library_file": "lib/chalk.py",
+      "example_file": "examples/chalk_lesson.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "cyberpunk",
+      "name": "赛博朋克",
+      "class": "Cyberpunk",
+      "library_file": "lib/cyberpunk.py",
+      "example_file": "examples/cyberpunk_neon_street.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "cartoon",
+      "name": "卡通手绘（逐帧手绘）",
+      "class": "Cartoon",
+      "library_file": "lib/cartoon.py",
+      "example_file": "examples/cartoon_toaster.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "isometric",
+      "name": "等轴 2.5D",
+      "class": "Isometric",
+      "library_file": "lib/isometric.py",
+      "example_file": "examples/isometric_weather_island.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "lineart",
+      "name": "单线画",
+      "class": "LineArt",
+      "library_file": "lib/lineart.py",
+      "example_file": "examples/lineart_paper_plane.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "soft3d",
+      "name": "柔光 3D",
+      "class": "Soft3D",
+      "library_file": "lib/soft3d.py",
+      "example_file": "examples/soft3d_rise.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "morph",
+      "name": "形变动画",
+      "class": "Morph",
+      "library_file": "lib/morph.py",
+      "example_file": "examples/morph_water_cycle.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "newscollage",
+      "name": "报刊拼贴",
+      "class": "NewsCollage",
+      "library_file": "lib/newscollage.py",
+      "example_file": "examples/newscollage_curiosity.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "aurora",
+      "name": "弥散玻璃",
+      "class": "Aurora",
+      "library_file": "lib/aurora.py",
+      "example_file": "examples/aurora_morning.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "bauhaus",
+      "name": "包豪斯几何",
+      "class": "Bauhaus",
+      "library_file": "lib/bauhaus.py",
+      "example_file": "examples/bauhaus_form_colour.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "synthwave",
+      "name": "复古 Synthwave",
+      "class": "Synthwave",
+      "library_file": "lib/synthwave.py",
+      "example_file": "examples/synthwave_coastline.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "perler",
+      "name": "拼豆",
+      "class": "Perler",
+      "library_file": "lib/perler.py",
+      "example_file": "examples/perler_strawberry_coaster.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "petroglyph",
+      "name": "岩画（凿刻砂岩）",
+      "class": "Petroglyph",
+      "library_file": "lib/petroglyph.py",
+      "example_file": "examples/petroglyph_migration.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "tomb",
+      "name": "古埃及墓室壁画",
+      "class": "TombPainting",
+      "library_file": "lib/tomb.py",
+      "example_file": "examples/tomb_harvest.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "mosaic",
+      "name": "罗马马赛克",
+      "class": "Mosaic",
+      "library_file": "lib/mosaic.py",
+      "example_file": "examples/mosaic_harbor.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "stainedglass",
+      "name": "彩色玻璃花窗",
+      "class": "StainedGlass",
+      "library_file": "lib/stainedglass.py",
+      "example_file": "examples/stainedglass_seasons.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "illuminated",
+      "name": "泥金手抄本",
+      "class": "Illuminated",
+      "library_file": "lib/illuminated.py",
+      "example_file": "examples/illuminated_starchart.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "codex",
+      "name": "达·芬奇手稿",
+      "class": "Codex",
+      "library_file": "lib/codex.py",
+      "example_file": "examples/codex_ornithopter.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "silhouette",
+      "name": "剪影",
+      "class": "Silhouette",
+      "library_file": "lib/silhouette.py",
+      "example_file": "examples/silhouette_family.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "letterpress",
+      "name": "凸版印刷海报",
+      "class": "Letterpress",
+      "library_file": "lib/letterpress.py",
+      "example_file": "examples/letterpress_circus.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "constructivism",
+      "name": "苏联构成主义",
+      "class": "Constructivism",
+      "library_file": "lib/constructivism.py",
+      "example_file": "examples/constructivism_radio.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "artdeco",
+      "name": "装饰艺术（Art Deco）",
+      "class": "ArtDeco",
+      "library_file": "lib/artdeco.py",
+      "example_file": "examples/artdeco_express.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "comic",
+      "name": "黄金时代漫画",
+      "class": "ComicCover",
+      "library_file": "lib/comic.py",
+      "example_file": "examples/comic_rocket.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "popart",
+      "name": "波普丝网",
+      "class": "PopSilkscreen",
+      "library_file": "lib/popart.py",
+      "example_file": "examples/popart_cat_moods.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "lineprinter",
+      "name": "ASCII 字符画（行式打印机）",
+      "class": "LinePrinter",
+      "library_file": "lib/lineprinter.py",
+      "example_file": "examples/lineprinter_launch.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "lowpoly",
+      "name": "低多边形（1999 年代 3D）",
+      "class": "LowPoly",
+      "library_file": "lib/lowpoly.py",
+      "example_file": "examples/lowpoly_canyon.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "stencil",
+      "name": "喷漆模板涂鸦",
+      "class": "Stencil",
+      "library_file": "lib/stencil.py",
+      "example_file": "examples/stencil_kite.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "patch",
+      "name": "刺绣徽章",
+      "class": "Patch",
+      "library_file": "lib/patch.py",
+      "example_file": "examples/patch_camping.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "blueprint",
+      "name": "蓝图工程图",
+      "class": "Blueprint",
+      "library_file": "lib/blueprint.py",
+      "example_file": "examples/blueprint_lighthouse.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "crayon",
+      "name": "儿童蜡笔画",
+      "class": "Crayon",
+      "library_file": "lib/crayon.py",
+      "example_file": "examples/crayon_picnic.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "crt",
+      "name": "绿屏终端 CRT（荧光字符画）",
+      "class": "CRTTerminal",
+      "library_file": "lib/crt.py",
+      "example_file": "examples/crt_weather.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "thermal",
+      "name": "热成像",
+      "class": "Thermal",
+      "library_file": "lib/thermal.py",
+      "example_file": "examples/thermal_kitchen.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "delft",
+      "name": "代尔夫特蓝瓷砖",
+      "class": "DelftTile",
+      "library_file": "lib/delft.py",
+      "example_file": "examples/delft_canal.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "cave",
+      "name": "洞穴壁画（赭石颜料）",
+      "class": "CavePainting",
+      "library_file": "lib/cave.py",
+      "example_file": "examples/cave_hunt.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "macpaint",
+      "name": "1-bit 早期画图软件",
+      "class": "MacPaint",
+      "library_file": "lib/macpaint.py",
+      "example_file": "examples/macpaint_garden.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "blackfigure",
+      "name": "古希腊黑绘陶瓶",
+      "class": "BlackFigure",
+      "library_file": "lib/blackfigure.py",
+      "example_file": "examples/blackfigure_games.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "graphite",
+      "name": "铅笔素描",
+      "class": "Graphite",
+      "library_file": "lib/graphite.py",
+      "example_file": "examples/graphite_bicycle.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "xray",
+      "name": "X 光片",
+      "class": "XRay",
+      "library_file": "lib/xray.py",
+      "example_file": "examples/xray_luggage.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "rubberhose",
+      "name": "1930 年代黑白橡皮管动画",
+      "class": "RubberHose",
+      "library_file": "lib/rubberhose.py",
+      "example_file": "examples/rubberhose_morning.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "linocut",
+      "name": "黑白麻胶版画（linocut）",
+      "class": "Linocut",
+      "library_file": "lib/linocut.py",
+      "example_file": "examples/linocut_snowy_village.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "vhs",
+      "name": "VHS 家庭录像",
+      "class": "VHSCamcorder",
+      "library_file": "lib/vhs.py",
+      "example_file": "examples/vhs_birthday.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "flatvector",
+      "name": "扁平矢量",
+      "class": "FlatVector",
+      "library_file": "lib/flatvector.py",
+      "example_file": "examples/flatvector_night_camp.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "storybook",
+      "name": "绘本角色动画",
+      "class": "Storybook",
+      "library_file": "lib/storybook.py",
+      "example_file": "examples/storybook_acorn.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "ballpoint",
+      "name": "圆珠笔涂鸦",
+      "class": "Ballpoint",
+      "library_file": "lib/ballpoint.py",
+      "example_file": "examples/ballpoint_board_game.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "overlay",
+      "name": "描图纸叠层",
+      "class": "Overlay",
+      "library_file": "lib/overlay.py",
+      "example_file": "examples/overlay_city_map.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "pastelui",
+      "name": "粉彩界面 · Pastel UI",
+      "class": "PastelUI",
+      "library_file": "lib/pastelui.py",
+      "example_file": "examples/pastelui_packing.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "grading",
+      "name": "阅卷批改 · Exam Grading",
+      "class": "Grading",
+      "library_file": "lib/grading.py",
+      "example_file": "examples/grading_math_quiz.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "shadowpuppet",
+      "name": "皮影戏 · Shadow Puppetry",
+      "class": "ShadowPuppet",
+      "library_file": "lib/shadowpuppet.py",
+      "example_file": "examples/shadowpuppet_cuju.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "penwash",
+      "name": "钢笔淡彩 · Pen & Wash",
+      "class": "PenWash",
+      "library_file": "lib/penwash.py",
+      "example_file": "examples/penwash_neighbours.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "gouache",
+      "name": "复古水粉 · Retro Gouache",
+      "class": "GouachePortrait",
+      "library_file": "lib/gouache.py",
+      "example_file": "examples/gouache_rainy_day.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "bluebook",
+      "name": "蓝调绘本 · Blue Picture Book",
+      "class": "BlueBook",
+      "library_file": "lib/bluebook.py",
+      "example_file": "examples/bluebook_shared_umbrella.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "jiangnan",
+      "name": "江南园林 · Jiangnan Garden",
+      "class": "JiangnanGarden",
+      "library_file": "lib/jiangnan.py",
+      "example_file": "examples/jiangnan_spring_water.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "drybrush",
+      "name": "干刷色块 · Dry-Brush Blocks",
+      "class": "DryBrushBlocks",
+      "library_file": "lib/drybrush.py",
+      "example_file": "examples/drybrush_noodle_counter.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "twilight",
+      "name": "暮色微缩绘本 · Twilight Storybook",
+      "class": "TwilightStorybook",
+      "library_file": "lib/twilight.py",
+      "example_file": "examples/twilight_paper_kite.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "nocturne",
+      "name": "排线夜景 · Hatched Nocturne",
+      "class": "Nocturne",
+      "library_file": "lib/nocturne.py",
+      "example_file": "examples/nocturne_lava_sea.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "obsidianui",
+      "name": "笔记应用界面 · Obsidian UI",
+      "class": "ObsidianUI",
+      "library_file": "lib/obsidianui.py",
+      "example_file": "examples/obsidianui_reading_notes.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "canvasboard",
+      "name": "白板卡片 · Canvas Board",
+      "class": "CanvasBoard",
+      "library_file": "lib/canvasboard.py",
+      "example_file": "examples/canvasboard_moving_plan.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "flexoki",
+      "name": "Flexoki 纸面 · Flexoki Paper",
+      "class": "FlexokiPaper",
+      "library_file": "lib/flexoki.py",
+      "example_file": "examples/flexoki_pour_over.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "pencilbook",
+      "name": "暖调彩铅绘本 · Warm Pencil Storybook",
+      "class": "PencilStorybook",
+      "library_file": "lib/pencilbook.py",
+      "example_file": "examples/pencilbook_tortoise_crossing.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "colortown",
+      "name": "彩色小镇 · Colour Town",
+      "class": "ColorTown",
+      "library_file": "lib/colortown.py",
+      "example_file": "examples/colortown_festival_steps.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "pastelvignette",
+      "name": "色粉小像 · Pastel Vignette",
+      "class": "PastelVignette",
+      "library_file": "lib/pastelvignette.py",
+      "example_file": "examples/pastelvignette_marmalade_scarf.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "poetichalloween",
+      "name": "诗意万圣夜 · Poetic Halloween",
+      "class": "PoeticHalloween",
+      "library_file": "lib/poetichalloween.py",
+      "example_file": "examples/poetichalloween_ghost_jar.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "oilpastel",
+      "name": "油画棒肖像 · Oil-Pastel Portrait",
+      "class": "OilPastel",
+      "library_file": "lib/oilpastel.py",
+      "example_file": "examples/oilpastel_warm_cup.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "sketchbook",
+      "name": "手账线描 · Sketchbook Doodle",
+      "class": "Sketchbook",
+      "library_file": "lib/sketchbook.py",
+      "example_file": "examples/sketchbook_reading_hour.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "spotillo",
+      "name": "日系扁平小插画 · Flat Spot Illustration",
+      "class": "SpotIllustration",
+      "library_file": "lib/spotillo.py",
+      "example_file": "examples/spotillo_rainy_saturday.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "grainbook",
+      "name": "颗粒童书 · Grainy Picture Book",
+      "class": "GrainBook",
+      "library_file": "lib/grainbook.py",
+      "example_file": "examples/grainbook_snow_walk.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "dreamhills",
+      "name": "柔光草丘 · Dreamy Hills",
+      "class": "DreamHills",
+      "library_file": "lib/dreamhills.py",
+      "example_file": "examples/dreamhills_long_walk.py",
+      "source_file": "SKILL.md"
+    },
+    {
+      "id": "sunlitgreen",
+      "name": "夏日光绿 · Sunlit Greenery",
+      "class": "SunlitGreen",
+      "library_file": "lib/sunlitgreen.py",
+      "example_file": "examples/sunlitgreen_window_seat.py",
+      "source_file": "SKILL.md"
+    }
+  ]
+}
