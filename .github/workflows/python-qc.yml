@@ -41,6 +41,12 @@ jobs:
           python -m unittest discover -s .claude/skills/podcast-scout-skill/tests -p "test_skill_evaluation_memory.py" -v
           python -m unittest discover -s .claude/skills/podcast-scout-skill/tests -p "test_fetch_sfx.py" -v
 
+      - name: Test original animation-styles library (592 entries) and Lemo export bridge
+        run: |
+          python -m unittest discover -s .claude/skills/podcast-scout-skill/tests -p "test_animation_library.py" -v
+          python .claude/skills/animation-styles/scripts/animation_library.py --sources > /tmp/animation-sources.json
+          python .claude/skills/animation-styles/scripts/animation_library.py --show lemo-opuscar:visual-investigation > /tmp/animation-style.json
+
       - name: Test default Agent-Reach research gateway (offline mocks)
         run: |
           python -m unittest discover -s .claude/skills/podcast-scout-skill/tests -p "test_research_gateway.py" -v
