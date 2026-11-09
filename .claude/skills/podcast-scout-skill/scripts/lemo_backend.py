@@ -144,7 +144,12 @@ def execute(action, *, library=None, style=None, project=None, output=None, seco
             return report(action, False, error="BAD_STILL_TIMES")
         if any(not math.isfinite(t) or t < 0 or t > MAX_SECONDS for t in seconds):
             return report(action, False, error="BAD_STILL_TIMES")
-        # Generate stills in the project directory, as upstream default.
+        # Upstream writes project/stills/t_<seconds>.jpg by default.
+        # Refuse to use old or overwritten frames as new evidence.
+        expected_stills = [folder / "stills" / f"t_{t}.jpg" for t in seconds]
+        if any(path.exists() for path in expected_stills):
+            return report(action, False, error="STILLS_EXIST",
+                          message="Remove or rename existing frames manually; no overwrite or stale-frame success")
         command = ["node", str(root / "core/render/still.mjs"), str(folder),
                    *[str(t) for t in seconds], "--size", DEFAULT_SIZE]
     elif action == "render":
@@ -164,8 +169,12 @@ def execute(action, *, library=None, style=None, project=None, output=None, seco
     if problem:
         return report(action, False, error="RENDER_FAILED", detail=problem)
     if action == "still":
+        if any(not path.is_file() or path.stat().st_size == 0 for path in expected_stills):
+            return report(action, False, error="MISSING_STILL_OUTPUT",
+                          message="Lemo exited successfully but requested JPEG frames are missing or empty")
         return report(action, True, project=str(folder), style=style,
-                      note="Inspect actual stills visually; generated files remain in project/stills")
+                      stills=[str(path) for path in expected_stills],
+                      note="Inspect actual JPEGs visually; these are not reviewed merely by existing")
     if not path.is_file() or path.stat().st_size == 0:
         return report(action, False, error="NO_VIDEO_OUTPUT")
     checked = check_output(path, expected_seconds=expected_seconds)
