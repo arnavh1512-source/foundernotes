@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Synthesize narration with a MALE voice and write timings + captions.
+"""Synthesize narration or a multi-speaker cast with Voicebox and write timings + captions.
 
     python3 narrate.py SCRIPT.json --out DIR [--engine kokoro|piper|edge|voicebox|files]
                                    [--voice NAME] [--speed 1.0] [--allow-non-male]
@@ -19,8 +19,9 @@ Outputs in DIR:
     captions.srt/.vtt    single-line captions; word timing inside a segment is ESTIMATED from
                          character counts (good enough for captions, not for lip-sync)
 
-Default voice policy: male narrator. The script refuses voices that are not on the male
-allowlist unless --allow-non-male is passed (the channel owner must ask for that explicitly).
+Default voice policy: established male narrator. With a validated Voicebox cast,
+individual character segments may use authorized synthetic male or female profiles;
+this does NOT change the narrator's identity or permit unapproved cloning.
 """
 from __future__ import annotations
 
@@ -537,6 +538,76 @@ def pick_engine(requested, voice):
     die("no TTS engine available. Run scripts/setup_studio.sh (installs Kokoro + Piper male voices).")
 
 
+# ---------------------------------------------------------------- optional dialogue casting
+def validate_voice_cast(data):
+    """Validate an opt-in Voicebox character cast without changing solo narration."""
+    cast = data.get("cast")
+    if cast is None:
+        if any("speaker" in seg for seg in data["segments"]):
+            raise ValueError("segments with speaker require a cast map")
+        return None
+    if not isinstance(cast, dict) or "narrator" not in cast:
+        raise ValueError("cast must include a narrator entry")
+    if data.get("voice", {}).get("engine", "voicebox") != "voicebox":
+        raise ValueError("multi-speaker cast requires the voicebox engine")
+    seen_profiles = set()
+    for key, entry in cast.items():
+        if not isinstance(key, str) or not re.fullmatch(r"[a-z][a-z0-9_-]{0,63}", key):
+            raise ValueError(f"invalid speaker key: {key!r}")
+        if not isinstance(entry, dict):
+            raise ValueError(f"cast.{key} must be an object")
+        if entry.get("approved") is not True or entry.get("synthetic_voice") is not True:
+            raise ValueError(f"cast.{key} requires approved:true and synthetic_voice:true")
+        if entry.get("gender") not in ("male", "female"):
+            raise ValueError(f"cast.{key}.gender must be male or female")
+        if key == "narrator":
+            if entry["gender"] != "male" or entry.get("profile_name") != CHANNEL_NARRATOR_NAME:
+                raise ValueError("narrator must use the established male Founder Notes Narrator profile")
+        else:
+            name = entry.get("profile_name")
+            if not isinstance(name, str) or not name.strip() or name == CHANNEL_NARRATOR_NAME:
+                raise ValueError(f"cast.{key} requires an independent named Voicebox character profile")
+        name = entry["profile_name"]
+        if name in seen_profiles:
+            raise ValueError(f"Voicebox profile {name!r} assigned to multiple characters")
+        seen_profiles.add(name)
+    for seg in data["segments"]:
+        if not re.fullmatch(r"[a-zA-Z0-9_-]{1,80}", str(seg["id"])):
+            raise ValueError(f"cast segment id must be a safe filename: {seg['id']!r}")
+        key = seg.get("speaker", "narrator")
+        if key not in cast:
+            raise ValueError(f"segment {seg['id']} refers to undeclared speaker {key!r}")
+    return cast
+
+
+def resolve_voice_cast(cast):
+    """Match only existing approved character profiles on the local Voicebox server."""
+    narrator_id = voicebox_channel_profile()
+    try:
+        with urllib.request.urlopen(f"{voicebox_url()}/profiles", timeout=30) as response:
+            profiles = json.loads(response.read())
+    except Exception as exc:
+        raise RuntimeError(f"could not list Voicebox profiles: {exc}") from exc
+    if not isinstance(profiles, list):
+        raise ValueError("Voicebox /profiles returned an invalid response")
+    resolved = {"narrator": narrator_id}
+    for key, entry in cast.items():
+        if key == "narrator":
+            continue
+        matching = [p for p in profiles if isinstance(p, dict)
+                    and p.get("name") == entry["profile_name"]
+                    and isinstance(p.get("id"), str) and p["id"]
+                    and p.get("sample_count", 1) != 0]
+        if len(matching) != 1:
+            raise ValueError(f"{key}: expected one active Voicebox profile named "
+                             f"{entry['profile_name']!r}; create an authorized synthetic "
+                             "profile with a sample in the Voicebox UI first")
+        resolved[key] = matching[0]["id"]
+    if len(set(resolved.values())) != len(resolved):
+        raise ValueError("Multiple cast members resolve to the same Voicebox profile")
+    return resolved
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("script", nargs="?")
@@ -568,9 +639,19 @@ def main(argv=None):
         die("ffmpeg not found")
 
     data = load_script(Path(a.script))
+    try:
+        cast = validate_voice_cast(data)
+    except (ValueError, TypeError) as exc:
+        die(f"voice cast: {exc}")
     vcfg = data.get("voice", {})
     engine = a.engine or vcfg.get("engine")
     voice = a.voice or vcfg.get("name")
+    if cast:
+        if a.engine and a.engine != "voicebox":
+            die("multi-speaker cast supports Voicebox only")
+        if a.voice:
+            die("do not override a multi-speaker cast with --voice")
+        engine, voice = "voicebox", CHANNEL_NARRATOR
     engine = pick_engine(engine, voice)
     if engine == "parler":
         voice = voice or PARLER_DESC
@@ -588,7 +669,15 @@ def main(argv=None):
         voice = voice or CHANNEL_NARRATOR
     vb_engine = None
     voice_key = voice
-    if engine == "voicebox" and voice == CHANNEL_NARRATOR:
+    cast_profiles = None
+    if cast:
+        try:
+            cast_profiles = resolve_voice_cast(cast)
+        except Exception as e:
+            die(f"voicebox cast: {e}; start voicebox and provision synthetic character profiles first")
+        voice = cast_profiles["narrator"]
+        vb_engine = CHANNEL_NARRATOR_ENGINE
+    elif engine == "voicebox" and voice == CHANNEL_NARRATOR:
         try:
             voice = voicebox_channel_profile()
         except Exception as e:
@@ -639,6 +728,9 @@ def main(argv=None):
                 subprocess.run([parler_python(), str(Path(__file__).with_name("parler_worker.py")), str(jf)], check=True, env=env_)
         for i, s in enumerate(data["segments"]):
             text = " ".join(str(s["text"]).split())
+            speaker = s.get("speaker", "narrator") if cast else None
+            segment_voice = cast_profiles[speaker] if cast_profiles else voice
+            segment_voice_key = f"{speaker}:{cast[speaker]['profile_name']}" if cast else voice_key
             extra = ""
             if engine == "files":                      # a replaced recording must invalidate the cached take
                 src = Path(a.files_dir or "recordings") / f"{s['id']}.wav"
@@ -649,11 +741,11 @@ def main(argv=None):
                 extra += "|" + PERFORM_VERSION + perform_mode
             if engine == "parler":
                 extra = f"{PARLER_MODEL}|{PARLER_VOICE_V}|take{takes.get(s['id'], 0)}"
-            key = hashlib.sha256(f"{engine}|{voice_key if engine == 'voicebox' else voice}|{speed}|{text}|{extra}".encode()).hexdigest()[:16]
+            key = hashlib.sha256(f"{engine}|{segment_voice_key if engine == 'voicebox' else voice}|{speed}|{text}|{extra}".encode()).hexdigest()[:16]
             wav = seg_dir / f"{s['id']}.wav"
             stamp = seg_dir / f"{s['id']}.key"
             if not (wav.exists() and stamp.exists() and stamp.read_text() == key):
-                print(f"  [{engine}:{voice}] {s['id']}: {text[:60]}{'…' if len(text) > 60 else ''}", file=sys.stderr)
+                print(f"  [{engine}:{speaker or 'solo'}:{segment_voice}] {s['id']}: {text[:60]}{'…' if len(text) > 60 else ''}", file=sys.stderr)
                 if engine == "parler":
                     raw = td / f"{s['id']}.raw.wav"
                     to_master_format(raw, wav, speed=speed)
@@ -666,15 +758,21 @@ def main(argv=None):
                 elif engine == "edge":
                     synth_edge(text, voice, speed, wav)
                 elif engine == "voicebox":
-                    synth_voicebox(text, voice, speed, wav, seed=42 + 7 * takes.get(s["id"], 0), engine=vb_engine)
+                    synth_voicebox(text, segment_voice, speed, wav, seed=42 + 7 * takes.get(s["id"], 0), engine=vb_engine)
                     vb_made.append(s["id"])
                 else:
                     synth_files(s["id"], Path(a.files_dir or "recordings"), wav, speed)
                 stamp.write_text(key)
             d = wav_seconds(wav)
-            timings.append({"id": s["id"], "start": round(clock, 3), "end": round(clock + d, 3),
-                            "text": text, "display": " ".join(str(s.get("display", text)).split()),
-                            "words": len(text.split())})
+            timing = {"id": s["id"], "start": round(clock, 3), "end": round(clock + d, 3),
+                      "text": text, "display": " ".join(str(s.get("display", text)).split()),
+                      "words": len(text.split())}
+            if cast:
+                timing["speaker"] = speaker
+                timing["scene_id"] = s.get("scene_id")
+                timing["role"] = "narrator" if speaker == "narrator" else "character"
+                timing["voice_profile"] = cast[speaker]["profile_name"]
+            timings.append(timing)
             parts.append(wav)
             clock += d
             gap = float(s.get("pause_after", 0.35 if i < len(data["segments"]) - 1 else tail))
@@ -700,6 +798,11 @@ def main(argv=None):
             "duration": round(total, 3), "words": words,
             "wpm_speech": round(words / (speech / 60), 1) if speech else None,
             "word_timing": "estimated-from-characters", "segments": timings}
+    if cast:
+        meta["cast"] = {k: {"gender": v["gender"], "profile_name": v["profile_name"],
+                            "synthetic_voice": True, "approved": True}
+                        for k, v in cast.items()}
+        meta["voice_policy"] = "male principal narrator plus owner-approved synthetic male/female characters"
     (out / "timings.json").write_text(json.dumps(meta, indent=2), encoding="utf-8")
     write_captions(build_captions(timings), out)
     print(json.dumps({k: meta[k] for k in ("engine", "voice", "duration", "words", "wpm_speech")}))
