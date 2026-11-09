@@ -6,6 +6,7 @@ The new sources supplement the **17 native style references** and the existing p
 
 | Source | Distinct contribution | Routing recommendation | Constraints |
 |---|---|---|---|
+| [Raea / Render Anything Engine](https://github.com/shinyobjectz/raea) | React/TSX/Bevy GPU rendering of video and individual frames; built-in `raea check` quality report | Optional scripted export of original motion/3D scenes; first prove a short pilot on the actual host | **Canary**; FSL-1.1-ALv2 with competing-use restriction; installed separately, not vendored; Windows is least tested; requires GPU. See `.claude/skills/raea-renderer/SKILL.md`. |
 | [HeyGen HyperFrames](https://github.com/HeyGen-com/hyperframes) | HTML to deterministic video oriented to agents; frame control and component techniques | HTML-based explainers, diagrams, typography and UI actions | Apache-2.0; Node >=22 per README; test alongside bundled motion bridge |
 | [OneTake](https://github.com/feitangyuan/onetake) | One continuous evolving camera world, measured shot continuity | Learn transition planning and continuity measurement | **PolyForm Noncommercial** public license: DO NOT copy or embed code for the monetized channel without separate commercial rights; original implementation only |
 | [gbro-collage-broll](https://github.com/pyang5166/gbro-collage-broll) | Metaphor → still approval → generated layered collage B-roll, frame checks | Short editorial collage inserts with a strong concrete metaphor | Paid Gemini generation and image-gen dependency; ask before spending; independent asset rights review |
