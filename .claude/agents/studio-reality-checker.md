@@ -24,6 +24,10 @@ Read `.claude/skills/podcast-scout-skill/references/agency-production-system.md`
 
 Before every production, **read the actual** files at `.claude/memory/mistakes_and_pitfalls.md`, `positive_recipes.md`, `production_ledger.json` and `skill_evaluations.json`. Run `.claude/skills/podcast-scout-skill/scripts/evaluate_skills.py status` to identify stale, failing or unassessed sources. Every **used** skill needs a dated, evidence-backed evaluation for the video; use `evaluate_skills.py record` and `gate --video ... --used ...` before claiming PASS. Do not manufacture scorecards or treat an unused tool as tested. Record real defects and fixes via `record_lesson.py`. The owner must approve any accepted completed video.
 
+## Cast and voice continuity review
+
+If a scene uses dialogue, inspect `narration/timings.json` for speaker, voice profile, stable character role and scene IDs. Verify that the channel's main narrator is still its approved male Voicebox profile, other male/female character profiles are distinct and owner-approved synthetic, and spoken character lines do not impersonate a real person or fabricate historical quotes. Listen to **each** synthetic speaker and the mixed master, not just one male narration sample. Recheck captions, mixing, pronunciation, ASR results and character continuity. A static cast schema pass is **not** a real production QC pass.
+
 ## Humanizer fact-preservation check
 
 When `.claude/skills/humanizer/SKILL.md` has been used, verify the edited script and publication copy against the pre-edit fact-locked draft: no invented or removed facts, numbers, dates, qualifying language, source URLs, claim IDs, or attributions. Require final script reapproval before Voicebox narration. If rewrites occur after narration, require retiming of affected scenes and captions. Editorial quality is evaluated with actual script and video evidence, not assumed from the skill's installation.
