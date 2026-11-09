@@ -12,6 +12,7 @@ Reviewed 2026-11-04 at each repo's default-branch HEAD. Re-check a repo's README
 
 | Scene need | First choice | Also good |
 |---|---|---|
+| GPU-rendered React/TSX scene, Bevy 3D or one frame for visual inspection | **Raea** (optional, only if installed and individually approved) via `scripts/raea_backend.py` | bundled motion renderer remains the production baseline; FSL-1.1 license and canary maturity require explicit review |
 | Kinetic type, title cards, UI/product, diagrams that build, data charts, lower thirds | **motion** skill (HTML render contract, bundled) | javascript-animation |
 | Equations, graphs, geometry, transforms, 3Blue1Brown-style maths | **Manim** (manim_skill) | huashu `t1_3b1b` grammar |
 | Whiteboard / hand-drawn explainer with drawing-on lines | **HandDraw-Skill** | anidoodle `chalkboard`, huashu `y3_whiteboard` |
