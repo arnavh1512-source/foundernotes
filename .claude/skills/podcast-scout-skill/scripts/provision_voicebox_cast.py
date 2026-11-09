@@ -2,8 +2,8 @@
 """Provision approved ORIGINAL SYNTHETIC character profiles in a local Voicebox.
 
 No human voice cloning. No cloud service, auto-login, paid operations, or
-automatic synthesis of reference voices. The owner first supplies and
-approves reference WAVs generated for original characters.
+automatic synthesis of reference voices. The owner selects built-in preset voices, describes original voice designs,
+or supplies approved synthetic reference WAVs. Creation requires --create.
 Dry run is the default; --create explicitly authorizes local profile writes.
 """
 from __future__ import annotations
@@ -81,16 +81,68 @@ def profiles(base):
     return result
 
 
-def create_profile(base, entry, sample):
+def choose_voice_type(entry, speaker, root):
+    """Select a built-in synthetic preset, designed voice, or supplied WAV."""
+    if not isinstance(entry, dict):
+        raise ValueError(f"{speaker}: cast entry must be an object")
+    if entry.get("approved") is not True or entry.get("synthetic_voice") is not True:
+        raise ValueError(f"{speaker}: original synthetic voice and owner approval must be declared")
+    if entry.get("gender") not in ("male", "female"):
+        raise ValueError(f"{speaker}: gender must be male or female")
+    if not isinstance(entry.get("profile_name"), str) or not entry["profile_name"].strip():
+        raise ValueError(f"{speaker}: profile_name required")
+    requested = entry.get("voice_type")
+    if requested and requested not in ("preset", "designed", "cloned"):
+        raise ValueError(f"{speaker}: unsupported voice_type")
+    mode = requested or ("preset" if entry.get("preset_voice_id") else
+                         "designed" if entry.get("design_prompt") else "cloned")
+    if mode == "preset":
+        if entry.get("reference_wav") or entry.get("design_prompt"):
+            raise ValueError(f"{speaker}: preset cannot combine with sample or design")
+        engine, voice_id = entry.get("preset_engine"), entry.get("preset_voice_id")
+        if engine not in ("kokoro", "qwen_custom_voice") or not isinstance(voice_id, str) or not voice_id.strip():
+            raise ValueError(f"{speaker}: valid preset_engine and preset_voice_id required")
+        if engine == "kokoro" and len(voice_id) >= 3 and voice_id[1] in "mf":
+            expected = "male" if voice_id[1] == "m" else "female"
+            if expected != entry["gender"]:
+                raise ValueError(f"{speaker}: gender does not match Kokoro preset voice")
+        return mode, None
+    if mode == "designed":
+        if entry.get("reference_wav") or entry.get("preset_voice_id"):
+            raise ValueError(f"{speaker}: designed profile cannot combine with sample or preset")
+        prompt = entry.get("design_prompt")
+        if not isinstance(prompt, str) or not prompt.strip() or len(prompt) > 600:
+            raise ValueError(f"{speaker}: design_prompt required, max 600 characters")
+        return mode, None
+    if entry.get("design_prompt") or entry.get("preset_voice_id"):
+        raise ValueError(f"{speaker}: cloned profile cannot include preset/design settings")
+    return mode, verify_reference(entry, speaker, root)
+
+
+def create_profile(base, entry, sample=None):
+    mode = entry.get("voice_type") or ("preset" if entry.get("preset_voice_id") else
+                                      "designed" if entry.get("design_prompt") else "cloned")
     name = entry["profile_name"]
-    data = json.dumps({
-        "name": name, "language": "en", "voice_type": "cloned",
+    profile = {
+        "name": name, "language": "en", "voice_type": mode,
         "description": "Owner-approved original synthetic fictional character voice"
-    }).encode()
+    }
+    if mode == "preset":
+        profile.update(preset_engine=entry["preset_engine"],
+                       preset_voice_id=entry["preset_voice_id"],
+                       default_engine=entry["preset_engine"])
+    elif mode == "designed":
+        profile.update(design_prompt=entry["design_prompt"],
+                       default_engine="qwen_voice_design")
+    data = json.dumps(profile).encode()
     req = urllib.request.Request(base + "/profiles", data=data,
                                  headers={"Content-Type": "application/json"})
     with urllib.request.urlopen(req, timeout=30) as response:
         identity = json.loads(response.read())["id"]
+    if mode != "cloned":
+        return identity
+    if sample is None:
+        raise ValueError("A cloned profile requires a licensed synthetic WAV sample")
     boundary = "----fncast" + hashlib.sha256((name + entry["reference_text"]).encode()).hexdigest()[:14]
     text = entry["reference_text"]
     prefix = (f"--{boundary}\r\nContent-Disposition: form-data; name=\"reference_text\"\r\n\r\n{text}\r\n"
@@ -119,21 +171,23 @@ def main(argv=None):
         for speaker, entry in cast.items():
             if speaker == "narrator":
                 continue  # the regular narrator provisioner owns the permanent narrator
+            mode, sample = choose_voice_type(entry, speaker, args.script.parent.resolve())
             matches = [x for x in existing if isinstance(x, dict)
                        and x.get("name") == entry.get("profile_name")]
             if len(matches) > 1:
                 raise ValueError(f"{speaker}: ambiguous existing profile name")
-            if matches and matches[0].get("sample_count", 1) != 0:
-                print(f"EXISTS {speaker}: {entry['profile_name']}")
-                continue
-            sample = verify_reference(entry, speaker, args.script.parent.resolve())
             if matches:
-                raise ValueError(f"{speaker}: profile already exists without a sample; "
-                                 "repair it in Voicebox UI rather than creating a duplicate")
+                current = matches[0]
+                if current.get("voice_type", "cloned") != mode:
+                    raise ValueError(f"{speaker}: existing Voicebox profile type differs from requested {mode}")
+                if mode == "cloned" and current.get("sample_count", 0) <= 0:
+                    raise ValueError(f"{speaker}: cloned profile has no sample; repair in Voicebox UI")
+                print(f"EXISTS {speaker}: {entry['profile_name']} ({mode})")
+                continue
             pending.append((speaker, entry, sample))
-            print(f"{'CREATE' if args.create else 'NEEDS_SETUP'} {speaker}: {entry['profile_name']} ({sample.name})")
+            print(f"{'CREATE' if args.create else 'NEEDS_SETUP'} {speaker}: {entry['profile_name']} ({mode})")
         if not args.create:
-            print("DRY RUN: no profiles created. Pass --create after reviewing original synthetic references.")
+            print("DRY RUN: no profiles created. Pass --create only with approved original synthetic voice choices.")
             return 0
         for speaker, entry, sample in pending:
             identity = create_profile(base, entry, sample)
