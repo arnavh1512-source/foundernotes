@@ -1,0 +1,380 @@
+{
+  "source": "alchaincyf/huashu-art-motion",
+  "source_index_sha": "6d0b8906c24cc334c52cb2be3dc35bf0737499ab",
+  "entry_count": 53,
+  "production_or_legacy_count": 36,
+  "research_count": 17,
+  "entries": [
+    {
+      "id": "01_cave",
+      "name": "cave",
+      "source_file": "references/风格配方/01_cave.md",
+      "stage": "existing-style-recipe",
+      "note": "Refer to upstream actual quality and license"
+    },
+    {
+      "id": "02_egypt",
+      "name": "egypt",
+      "source_file": "references/风格配方/02_egypt.md",
+      "stage": "existing-style-recipe",
+      "note": "Refer to upstream actual quality and license"
+    },
+    {
+      "id": "03_greek",
+      "name": "greek",
+      "source_file": "references/风格配方/03_greek.md",
+      "stage": "existing-style-recipe",
+      "note": "Refer to upstream actual quality and license"
+    },
+    {
+      "id": "04_roman",
+      "name": "roman",
+      "source_file": "references/风格配方/04_roman.md",
+      "stage": "existing-style-recipe",
+      "note": "Refer to upstream actual quality and license"
+    },
+    {
+      "id": "05_gothic",
+      "name": "gothic",
+      "source_file": "references/风格配方/05_gothic.md",
+      "stage": "existing-style-recipe",
+      "note": "Refer to upstream actual quality and license"
+    },
+    {
+      "id": "06_renaissance",
+      "name": "renaissance",
+      "source_file": "references/风格配方/06_renaissance.md",
+      "stage": "existing-style-recipe",
+      "note": "Refer to upstream actual quality and license"
+    },
+    {
+      "id": "08_impressionism",
+      "name": "impressionism",
+      "source_file": "references/风格配方/08_impressionism.md",
+      "stage": "existing-style-recipe",
+      "note": "Refer to upstream actual quality and license"
+    },
+    {
+      "id": "09_postimp",
+      "name": "postimp",
+      "source_file": "references/风格配方/09_postimp.md",
+      "stage": "existing-style-recipe",
+      "note": "Refer to upstream actual quality and license"
+    },
+    {
+      "id": "10_nouveau",
+      "name": "nouveau",
+      "source_file": "references/风格配方/10_nouveau.md",
+      "stage": "existing-style-recipe",
+      "note": "Refer to upstream actual quality and license"
+    },
+    {
+      "id": "11_cubism",
+      "name": "cubism",
+      "source_file": "references/风格配方/11_cubism.md",
+      "stage": "existing-style-recipe",
+      "note": "Refer to upstream actual quality and license"
+    },
+    {
+      "id": "12_bauhaus",
+      "name": "bauhaus",
+      "source_file": "references/风格配方/12_bauhaus.md",
+      "stage": "existing-style-recipe",
+      "note": "Refer to upstream actual quality and license"
+    },
+    {
+      "id": "13_pop",
+      "name": "pop",
+      "source_file": "references/风格配方/13_pop.md",
+      "stage": "existing-style-recipe",
+      "note": "Refer to upstream actual quality and license"
+    },
+    {
+      "id": "14_8bit",
+      "name": "8bit",
+      "source_file": "references/风格配方/14_8bit.md",
+      "stage": "existing-style-recipe",
+      "note": "Refer to upstream actual quality and license"
+    },
+    {
+      "id": "15_raytrace",
+      "name": "raytrace",
+      "source_file": "references/风格配方/15_raytrace.md",
+      "stage": "existing-style-recipe",
+      "note": "Refer to upstream actual quality and license"
+    },
+    {
+      "id": "16_2026",
+      "name": "2026",
+      "source_file": "references/风格配方/16_2026.md",
+      "stage": "existing-style-recipe",
+      "note": "Refer to upstream actual quality and license"
+    },
+    {
+      "id": "17_ink",
+      "name": "ink",
+      "source_file": "references/风格配方/17_ink.md",
+      "stage": "existing-style-recipe",
+      "note": "Refer to upstream actual quality and license"
+    },
+    {
+      "id": "18_klimt",
+      "name": "klimt",
+      "source_file": "references/风格配方/18_klimt.md",
+      "stage": "existing-style-recipe",
+      "note": "Refer to upstream actual quality and license"
+    },
+    {
+      "id": "19_munch",
+      "name": "munch",
+      "source_file": "references/风格配方/19_munch.md",
+      "stage": "existing-style-recipe",
+      "note": "Refer to upstream actual quality and license"
+    },
+    {
+      "id": "20_dunhuang",
+      "name": "dunhuang",
+      "source_file": "references/风格配方/20_dunhuang.md",
+      "stage": "existing-style-recipe",
+      "note": "Refer to upstream actual quality and license"
+    },
+    {
+      "id": "21_kusama",
+      "name": "kusama",
+      "source_file": "references/风格配方/21_kusama.md",
+      "stage": "existing-style-recipe",
+      "note": "Refer to upstream actual quality and license"
+    },
+    {
+      "id": "22_constructivism",
+      "name": "constructivism",
+      "source_file": "references/风格配方/22_constructivism.md",
+      "stage": "existing-style-recipe",
+      "note": "Refer to upstream actual quality and license"
+    },
+    {
+      "id": "23_dali",
+      "name": "dali",
+      "source_file": "references/风格配方/23_dali.md",
+      "stage": "existing-style-recipe",
+      "note": "Refer to upstream actual quality and license"
+    },
+    {
+      "id": "24_hopper",
+      "name": "hopper",
+      "source_file": "references/风格配方/24_hopper.md",
+      "stage": "existing-style-recipe",
+      "note": "Refer to upstream actual quality and license"
+    },
+    {
+      "id": "25_ghibli",
+      "name": "ghibli",
+      "source_file": "references/风格配方/25_ghibli.md",
+      "stage": "existing-style-recipe",
+      "note": "Refer to upstream actual quality and license"
+    },
+    {
+      "id": "26_vaporwave",
+      "name": "vaporwave",
+      "source_file": "references/风格配方/26_vaporwave.md",
+      "stage": "existing-style-recipe",
+      "note": "Refer to upstream actual quality and license"
+    },
+    {
+      "id": "27_kirby",
+      "name": "kirby",
+      "source_file": "references/风格配方/27_kirby.md",
+      "stage": "existing-style-recipe",
+      "note": "Refer to upstream actual quality and license"
+    },
+    {
+      "id": "28_monet",
+      "name": "monet",
+      "source_file": "references/风格配方/28_monet.md",
+      "stage": "existing-style-recipe",
+      "note": "Refer to upstream actual quality and license"
+    },
+    {
+      "id": "29_seurat",
+      "name": "seurat",
+      "source_file": "references/风格配方/29_seurat.md",
+      "stage": "existing-style-recipe",
+      "note": "Refer to upstream actual quality and license"
+    },
+    {
+      "id": "30_matisse",
+      "name": "matisse",
+      "source_file": "references/风格配方/30_matisse.md",
+      "stage": "existing-style-recipe",
+      "note": "Refer to upstream actual quality and license"
+    },
+    {
+      "id": "31_haring",
+      "name": "haring",
+      "source_file": "references/风格配方/31_haring.md",
+      "stage": "existing-style-recipe",
+      "note": "Refer to upstream actual quality and license"
+    },
+    {
+      "id": "32_rembrandt",
+      "name": "rembrandt",
+      "source_file": "references/风格配方/32_rembrandt.md",
+      "stage": "existing-style-recipe",
+      "note": "Refer to upstream actual quality and license"
+    },
+    {
+      "id": "33_rubberhose",
+      "name": "rubberhose",
+      "source_file": "references/风格配方/33_rubberhose.md",
+      "stage": "existing-style-recipe",
+      "note": "Refer to upstream actual quality and license"
+    },
+    {
+      "id": "34_shadowpuppet",
+      "name": "shadowpuppet",
+      "source_file": "references/风格配方/34_shadowpuppet.md",
+      "stage": "existing-style-recipe",
+      "note": "Refer to upstream actual quality and license"
+    },
+    {
+      "id": "35_shinkai",
+      "name": "shinkai",
+      "source_file": "references/风格配方/35_shinkai.md",
+      "stage": "existing-style-recipe",
+      "note": "Refer to upstream actual quality and license"
+    },
+    {
+      "id": "36_picasso_blue",
+      "name": "picasso blue",
+      "source_file": "references/风格配方/36_picasso_blue.md",
+      "stage": "existing-style-recipe",
+      "note": "Refer to upstream actual quality and license"
+    },
+    {
+      "id": "37_rick_morty",
+      "name": "rick morty",
+      "source_file": "references/风格配方/37_rick_morty.md",
+      "stage": "existing-style-recipe",
+      "note": "Refer to upstream actual quality and license"
+    },
+    {
+      "id": "38_giotto",
+      "name": "giotto",
+      "source_file": "references/风格配方/38_giotto.md",
+      "stage": "research-recipe-not-verified",
+      "note": "Single-scene prototype or research; do not claim production readiness"
+    },
+    {
+      "id": "39_piero",
+      "name": "piero",
+      "source_file": "references/风格配方/39_piero.md",
+      "stage": "research-recipe-not-verified",
+      "note": "Single-scene prototype or research; do not claim production readiness"
+    },
+    {
+      "id": "40_raphael",
+      "name": "raphael",
+      "source_file": "references/风格配方/40_raphael.md",
+      "stage": "research-recipe-not-verified",
+      "note": "Single-scene prototype or research; do not claim production readiness"
+    },
+    {
+      "id": "41_michelangelo",
+      "name": "michelangelo",
+      "source_file": "references/风格配方/41_michelangelo.md",
+      "stage": "research-recipe-not-verified",
+      "note": "Single-scene prototype or research; do not claim production readiness"
+    },
+    {
+      "id": "42_guardi",
+      "name": "guardi",
+      "source_file": "references/风格配方/42_guardi.md",
+      "stage": "research-recipe-not-verified",
+      "note": "Single-scene prototype or research; do not claim production readiness"
+    },
+    {
+      "id": "43_lorenzetti",
+      "name": "lorenzetti",
+      "source_file": "references/风格配方/43_lorenzetti.md",
+      "stage": "research-recipe-not-verified",
+      "note": "Single-scene prototype or research; do not claim production readiness"
+    },
+    {
+      "id": "44_cortona",
+      "name": "cortona",
+      "source_file": "references/风格配方/44_cortona.md",
+      "stage": "research-recipe-not-verified",
+      "note": "Single-scene prototype or research; do not claim production readiness"
+    },
+    {
+      "id": "45_renoir",
+      "name": "renoir",
+      "source_file": "references/风格配方/45_renoir.md",
+      "stage": "research-recipe-not-verified",
+      "note": "Single-scene prototype or research; do not claim production readiness"
+    },
+    {
+      "id": "46_pissarro",
+      "name": "pissarro",
+      "source_file": "references/风格配方/46_pissarro.md",
+      "stage": "research-recipe-not-verified",
+      "note": "Single-scene prototype or research; do not claim production readiness"
+    },
+    {
+      "id": "47_sisley",
+      "name": "sisley",
+      "source_file": "references/风格配方/47_sisley.md",
+      "stage": "research-recipe-not-verified",
+      "note": "Single-scene prototype or research; do not claim production readiness"
+    },
+    {
+      "id": "48_gauguin",
+      "name": "gauguin",
+      "source_file": "references/风格配方/48_gauguin.md",
+      "stage": "research-recipe-not-verified",
+      "note": "Single-scene prototype or research; do not claim production readiness"
+    },
+    {
+      "id": "49_chagall",
+      "name": "chagall",
+      "source_file": "references/风格配方/49_chagall.md",
+      "stage": "research-recipe-not-verified",
+      "note": "Single-scene prototype or research; do not claim production readiness"
+    },
+    {
+      "id": "50_ma_yuan",
+      "name": "ma yuan",
+      "source_file": "references/风格配方/50_ma_yuan.md",
+      "stage": "research-recipe-not-verified",
+      "note": "Single-scene prototype or research; do not claim production readiness"
+    },
+    {
+      "id": "51_persian_miniature",
+      "name": "persian miniature",
+      "source_file": "references/风格配方/51_persian_miniature.md",
+      "stage": "research-recipe-not-verified",
+      "note": "Single-scene prototype or research; do not claim production readiness"
+    },
+    {
+      "id": "52_south_park",
+      "name": "south park",
+      "source_file": "references/风格配方/52_south_park.md",
+      "stage": "research-recipe-not-verified",
+      "note": "Single-scene prototype or research; do not claim production readiness"
+    },
+    {
+      "id": "53_pixar",
+      "name": "pixar",
+      "source_file": "references/风格配方/53_pixar.md",
+      "stage": "research-recipe-not-verified",
+      "note": "Single-scene prototype or research; do not claim production readiness"
+    },
+    {
+      "id": "55_dunhuang",
+      "name": "dunhuang",
+      "source_file": "references/风格配方/55_dunhuang.md",
+      "stage": "research-recipe-not-verified",
+      "note": "Single-scene prototype or research; do not claim production readiness"
+    }
+  ]
+}
