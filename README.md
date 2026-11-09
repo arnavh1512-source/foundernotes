@@ -82,7 +82,34 @@ The existing [eight studio agents](.claude/agents/) handle these responsibilitie
 
 **Voicebox casting.** The principal voice is the authorized, consistent male **Founder Notes Narrator**. An episode can also use distinct **male and female synthetic character voices**, selected per scripted segment for interviews, dramatized interactions or storytelling. Character profiles must exist and be approved in a **local Voicebox** installation. The system produces a sequential master with speaker-aware timings and captions; **simultaneous overlapping dialogue and automatic lip sync are not implemented**. See the [casting guide](.claude/skills/podcast-scout-skill/references/voice-casting.md) and [example cast](.claude/skills/podcast-scout-skill/assets/voice-cast.example.json).
 
-**Visual production.** FounderNotes has a built-in scene/motion workflow plus optional approaches documented in its [production stack](.claude/skills/podcast-scout-skill/references/production-stack.md). Pick the engine that best serves the story and is actually installed. [Raea](.claude/skills/raea-renderer/SKILL.md) is an optional external GPU renderer for TSX/React and 3D scenes—not the default and **not bundled**. Its canary maturity and Functional Source License require review before use. Extensive visual-style references stay in the skill documentation rather than being listed across this homepage.
+**Visual production.** The original [animation-styles skill](.claude/skills/animation-styles/SKILL.md) now searches **592 indexed style, prompt, drawing and art-motion entries** across FounderNotes and upstream libraries, while the studio keeps its 17 native reference styles. See the [library and renderer guide](.claude/skills/animation-styles/references/community-animation-integration.md). A catalog entry is *not* an installed engine or proven render. The optional [Lemo adapter](.claude/skills/podcast-scout-skill/scripts/lemo_backend.py) routes local frame/video exports to a separately installed Lemo-Opuscar; [Raea](.claude/skills/raea-renderer/SKILL.md) remains a separate optional canary GPU renderer with license restrictions. Renderers are selected by story value, actual availability, cost and rights, not sheer style count.
+
+### Animation library at a glance
+
+The **original** `.claude/skills/animation-styles/SKILL.md` is the single entry point for these source-aware choices, not a second competing skill.
+
+| Source | Indexed choices | What they provide |
+| --- | ---: | --- |
+| FounderNotes native styles | **17** | Built-in HTML visual techniques |
+| [Lemo-Opuscar](https://github.com/lemomo-ai/lemo-opuscar) | **66** | Code-built film styles; optional local rendering adapter |
+| [Code Animation Prompts](https://github.com/XiaoyeCodes/code-animation-prompts) | **341** | Metadata references; original mixed-source prompts and stills are not copied |
+| [Anidoodle](https://github.com/alexgreensh/anidoodle) | **32** | Hand-drawn animation styles requiring its separate engine |
+| [Huashu Art Motion](https://github.com/alchaincyf/huashu-art-motion) | **53** | Art-motion recipes, including 17 research-only cards |
+| [Claude Drawing Skill](https://github.com/cloveric/claude-drawing-skill) | **83** | Procedural **still illustration** styles for later animation |
+| **Total catalog entries** | **592** | Searchable creative references, not 592 render engines |
+
+Eight more upstream sources are present in the [source registry](.claude/skills/animation-styles/references/community-animation-sources.json): Bang Motion, Vox Director, ClaudeAnimationBase, LunaAI Motion Skill, LottieFiles Motion Design, HandDraw, Manim, and JavaScript Animation Skills. Their skills and dependency-specific capabilities are selected from upstream as needed; no unsupported individual style counts are claimed.
+
+**Run the selector locally:**
+
+```bash
+python3 .claude/skills/animation-styles/scripts/animation_library.py --sources
+python3 .claude/skills/animation-styles/scripts/animation_library.py --search "investigation timeline"
+python3 .claude/skills/animation-styles/scripts/animation_library.py --search "watercolor"
+python3 .claude/skills/animation-styles/scripts/animation_library.py --show lemo-opuscar:visual-investigation
+```
+
+See the [integration and licensing guide](.claude/skills/animation-styles/references/community-animation-integration.md) for the Lemo frame/MP4 commands, rights limits, prerequisites, native fallbacks and QC. The index and offline CI checks do not prove all 592 entries render successfully; no external engines or paid services are installed automatically.
 
 **Learning and quality control.** The studio records verified defects, successful recipes and skill-specific reviews in [`.claude/memory/`](.claude/memory/). A skill is not considered evaluated merely because it appears in the repository. Technical tools include scene linting, video/audio QC, a creative-plan validator, skill-evaluation gates and lesson recording. Evidence from rendered output and human listening is required.
 
@@ -93,6 +120,10 @@ Run these from the repository root after ensuring Python and any required depend
 ```bash
 # Check the configured public research gateway:
 python3 .claude/skills/podcast-scout-skill/scripts/research_gateway.py status
+
+# Search the original animation-styles library (592 index entries):
+python3 .claude/skills/animation-styles/scripts/animation_library.py --sources
+python3 .claude/skills/animation-styles/scripts/animation_library.py --search "documentary"
 
 # Inspect the available creative routes and evaluation history:
 python3 .claude/skills/podcast-scout-skill/scripts/creative_router.py --list
@@ -117,6 +148,8 @@ To use the optional character cast, first copy the [sample JSON](.claude/skills/
 | [`.claude/agents/`](.claude/agents/) | The eight specialist roles |
 | [`agency-production-system.md`](.claude/skills/podcast-scout-skill/references/agency-production-system.md) | Stage gates, handoffs and approval requirements |
 | [`voice-casting.md`](.claude/skills/podcast-scout-skill/references/voice-casting.md) | Voice profiles, dialogue format and local setup |
+| [`animation-styles/SKILL.md`](.claude/skills/animation-styles/SKILL.md) | Original animation skill with 592-entry catalog |
+| [`community-animation-integration.md`](.claude/skills/animation-styles/references/community-animation-integration.md) | Upstream libraries, Lemo renderer bridge and source-rights gates |
 | [`.claude/memory/`](.claude/memory/) | Verified lessons, production history and evaluations |
 | [`docs/`](docs/) | Extended architecture and engineering reports |
 | [`NOTICE.md`](.claude/skills/podcast-scout-skill/NOTICE.md) | Third-party references, license limitations and attribution |
