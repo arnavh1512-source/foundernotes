@@ -118,6 +118,9 @@ class CastPolicy(unittest.TestCase):
 
     def test_resolves_only_existing_voicebox_profiles(self):
         script = example()
+        for speaker in script["cast"]:
+            if speaker != "narrator":
+                script["cast"][speaker].pop("voice_type", None)  # legacy synthetic-cloned profile
         profiles = [{"name": cast["profile_name"], "id": f"p-{key}", "sample_count": 1}
                     for key, cast in script["cast"].items() if key != "narrator"]
         with patch.object(narrate, "voicebox_channel_profile", return_value="narrator-id"), \
@@ -146,6 +149,28 @@ class LocalCastProvisioning(unittest.TestCase):
             with self.subTest(url=value), self.assertRaises(ValueError):
                 setup_cast.local_base(value)
         self.assertEqual(setup_cast.local_base("http://127.0.0.1:17493"), "http://127.0.0.1:17493")
+
+    def test_preset_and_designed_can_be_provisioned_without_wav(self):
+        preset = example()["cast"]["investor"]
+        self.assertEqual(setup_cast.choose_voice_type(preset, "investor", Path(".")), ("preset", None))
+        designed = {"profile_name": "FN New Original Female",
+                    "voice_type": "designed", "design_prompt": "An original clear female voice.",
+                    "approved": True, "synthetic_voice": True, "gender": "female"}
+        self.assertEqual(setup_cast.choose_voice_type(designed, "designed", Path(".")), ("designed", None))
+        designed["design_prompt"] = ""
+        with self.assertRaisesRegex(ValueError, "design_prompt"):
+            setup_cast.choose_voice_type(designed, "designed", Path("."))
+
+    def test_preset_uses_single_voicebox_profile_api_call(self):
+        entry = example()["cast"]["investor"]
+        with patch.object(setup_cast.urllib.request, "urlopen",
+                          return_value=io.BytesIO(b'{"id":"new-preset"}')) as connection:
+            identity = setup_cast.create_profile("http://127.0.0.1:17493", entry)
+        self.assertEqual(identity, "new-preset")
+        self.assertEqual(connection.call_count, 1)
+        payload = json.loads(connection.call_args.args[0].data)
+        self.assertEqual(payload["voice_type"], "preset")
+        self.assertEqual(payload["preset_engine"], "kokoro")
 
     def test_requires_original_synthetic_wav_and_transcript(self):
         with tempfile.TemporaryDirectory() as folder:
