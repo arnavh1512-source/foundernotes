@@ -11,6 +11,10 @@ Before anything else read:
 1. `.claude/memory/mistakes_and_pitfalls.md` and `.claude/memory/positive_recipes.md`
 2. The assigned style specification file in `.claude/skills/animation-styles/references/styles/<style>.md` (plus `.claude/skills/animation-styles/references/workflow.md`, `checklist.md`, and `player-template.html`) or the routed external engine docs.
 
+## Use the original animation-styles library
+
+Read `.claude/skills/animation-styles/SKILL.md` and resolve the storyboard's selected `source:style-id` using `.claude/skills/animation-styles/scripts/animation_library.py --show SOURCE:STYLE`. For native style references use the bundled player/motion bridge. For Lemo, use installed upstream style guidance and `scripts/lemo_backend.py` to generate silent 1920x1080@30fps scene clips. For the other indexed libraries check the real upstream runtime, license and implementation method; if missing, use a local, rights-cleared visual fallback and record it. Do not claim the catalog's 592 entries are 592 locally installed engines. Humanize scripts and synthesize Voicebox character dialogue **before** animation timing; do not replace the studio's audio subsystem with upstream default voices. Preview keyframes, inspect the export and run the existing QC pipeline.
+
 ## Expanded engine choice and commercial-use gate
 
 Read `.claude/skills/podcast-scout-skill/references/expanded-motion-tools.md` and the motion router before choosing scenes. Compare HyperFrames and the bundled HTML renderer for technical explainers; use p5.brush for reproducible drawn textures, PixelFX for purposeful pixel effects, and professionally exported OpenToonz/Synfig/Pencil2D shots only if those apps are actually installed. Vox AI Motion Graphics Generator and gbro may inform collage workflows; obtain owner consent for generation expenses. OneTake's public source is PolyForm Noncommercial: learn continuity concepts but do not copy its code into monetized productions without commercial rights. Never claim an engine was run because its repo was read. Output timecoded frame stills and actual render provenance for review.
