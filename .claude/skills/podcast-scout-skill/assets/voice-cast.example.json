@@ -1,0 +1,86 @@
+{
+  "_comment": "Illustrative cast: the named Voicebox character profiles must actually exist with approved synthetic voice samples. This file will not create voice profiles or generate audio by itself.",
+  "voice": {
+    "engine": "voicebox",
+    "name": "founder-notes",
+    "speed": 1,
+    "chain": "studio"
+  },
+  "cast": {
+    "narrator": {
+      "profile_name": "Founder Notes Narrator",
+      "gender": "male",
+      "synthetic_voice": true,
+      "approved": true
+    },
+    "founder": {
+      "profile_name": "FN Character Founder M1",
+      "gender": "male",
+      "synthetic_voice": true,
+      "approved": true
+    },
+    "investor": {
+      "profile_name": "FN Character Investor F1",
+      "gender": "female",
+      "synthetic_voice": true,
+      "approved": true
+    },
+    "analyst": {
+      "profile_name": "FN Character Analyst F2",
+      "gender": "female",
+      "synthetic_voice": true,
+      "approved": true
+    },
+    "reporter": {
+      "profile_name": "FN Character Reporter M2",
+      "gender": "male",
+      "synthetic_voice": true,
+      "approved": true
+    }
+  },
+  "lead": 0.3,
+  "tail": 0.8,
+  "segments": [
+    {
+      "id": "s01",
+      "speaker": "narrator",
+      "scene_id": "intro",
+      "text": "What happens when a founder meets an investor who sees an entirely different risk?",
+      "pause_after": 0.3
+    },
+    {
+      "id": "s02",
+      "speaker": "founder",
+      "scene_id": "meeting",
+      "text": "Our first thousand customers arrived without a paid campaign.",
+      "pause_after": 0.25
+    },
+    {
+      "id": "s03",
+      "speaker": "investor",
+      "scene_id": "meeting",
+      "text": "That is promising, but how many of them are still using the product?",
+      "pause_after": 0.25
+    },
+    {
+      "id": "s04",
+      "speaker": "analyst",
+      "scene_id": "review",
+      "text": "We should inspect the data before making any claims.",
+      "pause_after": 0.25
+    },
+    {
+      "id": "s05",
+      "speaker": "reporter",
+      "scene_id": "review",
+      "text": "And what should people look at first?",
+      "pause_after": 0.25
+    },
+    {
+      "id": "s06",
+      "speaker": "narrator",
+      "scene_id": "close",
+      "text": "The answer is not simply growth. It is what that growth means."
+    }
+  ]
+}
