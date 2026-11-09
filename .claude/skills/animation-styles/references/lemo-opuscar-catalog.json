@@ -1,0 +1,405 @@
+{
+  "source": "https://github.com/lemomo-ai/lemo-opuscar",
+  "source_index": "styles/README.md",
+  "source_index_blob_sha": "83be969a5e02f8e5980fff26312dc7a67a0a150e",
+  "license": "MIT (code/docs); demo media CC BY 4.0 subject to exclusions",
+  "style_count": 66,
+  "styles": [
+    {
+      "slug": "caption-news",
+      "name": "Caption News",
+      "category": "Edit & Documentary",
+      "style_file": "styles/caption-news/STYLE.md"
+    },
+    {
+      "slug": "newsreel",
+      "name": "1920s Newsreel",
+      "category": "Edit & Documentary",
+      "style_file": "styles/newsreel/STYLE.md"
+    },
+    {
+      "slug": "countdown",
+      "name": "Live Countdown Split-screen",
+      "category": "Edit & Documentary",
+      "style_file": "styles/countdown/STYLE.md"
+    },
+    {
+      "slug": "city-symphony",
+      "name": "Time-lapse Symphony",
+      "category": "Edit & Documentary",
+      "style_file": "styles/city-symphony/STYLE.md"
+    },
+    {
+      "slug": "visual-investigation",
+      "name": "Visual Investigation",
+      "category": "Edit & Documentary",
+      "style_file": "styles/visual-investigation/STYLE.md"
+    },
+    {
+      "slug": "kino-montage",
+      "name": "Constructivist Montage",
+      "category": "Edit & Documentary",
+      "style_file": "styles/kino-montage/STYLE.md"
+    },
+    {
+      "slug": "telestrator",
+      "name": "Sports Telestrator",
+      "category": "Edit & Documentary",
+      "style_file": "styles/telestrator/STYLE.md"
+    },
+    {
+      "slug": "news-package",
+      "name": "Broadcast News Package",
+      "category": "Edit & Documentary",
+      "style_file": "styles/news-package/STYLE.md"
+    },
+    {
+      "slug": "satellite-briefing",
+      "name": "Satellite Briefing",
+      "category": "Evidence Films",
+      "style_file": "styles/satellite-briefing/STYLE.md"
+    },
+    {
+      "slug": "briefing-board",
+      "name": "Engineering Briefing Board",
+      "category": "Evidence Films",
+      "style_file": "styles/briefing-board/STYLE.md"
+    },
+    {
+      "slug": "lidar-survey",
+      "name": "LiDAR Survey",
+      "category": "Evidence Films",
+      "style_file": "styles/lidar-survey/STYLE.md"
+    },
+    {
+      "slug": "white-model",
+      "name": "Projection on White Model",
+      "category": "Evidence Films",
+      "style_file": "styles/white-model/STYLE.md"
+    },
+    {
+      "slug": "data-physical",
+      "name": "Data Physicalization",
+      "category": "Evidence Films",
+      "style_file": "styles/data-physical/STYLE.md"
+    },
+    {
+      "slug": "teardown",
+      "name": "Exploded Teardown",
+      "category": "Evidence Films",
+      "style_file": "styles/teardown/STYLE.md"
+    },
+    {
+      "slug": "microscope",
+      "name": "Microscope Story",
+      "category": "Evidence Films",
+      "style_file": "styles/microscope/STYLE.md"
+    },
+    {
+      "slug": "archive-lighttable",
+      "name": "Archive Light Table",
+      "category": "Evidence Films",
+      "style_file": "styles/archive-lighttable/STYLE.md"
+    },
+    {
+      "slug": "crayon-book",
+      "name": "Crayon Picture Book",
+      "category": "Hand-drawn & Painting",
+      "style_file": "styles/crayon-book/STYLE.md"
+    },
+    {
+      "slug": "watercolor",
+      "name": "Watercolor Brush",
+      "category": "Hand-drawn & Painting",
+      "style_file": "styles/watercolor/STYLE.md"
+    },
+    {
+      "slug": "ink-wash",
+      "name": "Chinese Ink Wash",
+      "category": "Hand-drawn & Painting",
+      "style_file": "styles/ink-wash/STYLE.md"
+    },
+    {
+      "slug": "impasto",
+      "name": "Impasto Oil Painting",
+      "category": "Hand-drawn & Painting",
+      "style_file": "styles/impasto/STYLE.md"
+    },
+    {
+      "slug": "one-line",
+      "name": "One-line Drawing",
+      "category": "Hand-drawn & Painting",
+      "style_file": "styles/one-line/STYLE.md"
+    },
+    {
+      "slug": "whiteboard",
+      "name": "Whiteboard Explainer",
+      "category": "Hand-drawn & Painting",
+      "style_file": "styles/whiteboard/STYLE.md"
+    },
+    {
+      "slug": "urban-sketch",
+      "name": "Urban Sketch · Pen & Wash",
+      "category": "Hand-drawn & Painting",
+      "style_file": "styles/urban-sketch/STYLE.md"
+    },
+    {
+      "slug": "chalkboard",
+      "name": "Chalkboard",
+      "category": "Hand-drawn & Painting",
+      "style_file": "styles/chalkboard/STYLE.md"
+    },
+    {
+      "slug": "shadow-puppet",
+      "name": "Shadow Puppetry",
+      "category": "East Asian Traditions",
+      "style_file": "styles/shadow-puppet/STYLE.md"
+    },
+    {
+      "slug": "ukiyoe",
+      "name": "Ukiyo-e",
+      "category": "East Asian Traditions",
+      "style_file": "styles/ukiyoe/STYLE.md"
+    },
+    {
+      "slug": "papercut-red",
+      "name": "Red Paper-cut",
+      "category": "East Asian Traditions",
+      "style_file": "styles/papercut-red/STYLE.md"
+    },
+    {
+      "slug": "paper-lantern",
+      "name": "Paper-cut Lightbox",
+      "category": "East Asian Traditions",
+      "style_file": "styles/paper-lantern/STYLE.md"
+    },
+    {
+      "slug": "risograph",
+      "name": "Risograph Print",
+      "category": "Print & Printmaking",
+      "style_file": "styles/risograph/STYLE.md"
+    },
+    {
+      "slug": "halftone-dossier",
+      "name": "Halftone Dossier",
+      "category": "Print & Printmaking",
+      "style_file": "styles/halftone-dossier/STYLE.md"
+    },
+    {
+      "slug": "woodcut",
+      "name": "Woodcut Print",
+      "category": "Print & Printmaking",
+      "style_file": "styles/woodcut/STYLE.md"
+    },
+    {
+      "slug": "engraving",
+      "name": "Copperplate Engraving",
+      "category": "Print & Printmaking",
+      "style_file": "styles/engraving/STYLE.md"
+    },
+    {
+      "slug": "silkscreen-poster",
+      "name": "Silkscreen Travel Poster",
+      "category": "Print & Printmaking",
+      "style_file": "styles/silkscreen-poster/STYLE.md"
+    },
+    {
+      "slug": "printed-long-take",
+      "name": "Printed Long Take",
+      "category": "Print & Printmaking",
+      "style_file": "styles/printed-long-take/STYLE.md"
+    },
+    {
+      "slug": "swiss-motion",
+      "name": "Swiss Motion Graphics",
+      "category": "Graphic & Type",
+      "style_file": "styles/swiss-motion/STYLE.md"
+    },
+    {
+      "slug": "spy-titles",
+      "name": "60s Spy Title Sequence",
+      "category": "Graphic & Type",
+      "style_file": "styles/spy-titles/STYLE.md"
+    },
+    {
+      "slug": "art-deco",
+      "name": "Art Deco",
+      "category": "Graphic & Type",
+      "style_file": "styles/art-deco/STYLE.md"
+    },
+    {
+      "slug": "blueprint",
+      "name": "Blueprint",
+      "category": "Graphic & Type",
+      "style_file": "styles/blueprint/STYLE.md"
+    },
+    {
+      "slug": "stained-glass",
+      "name": "Stained Glass",
+      "category": "Graphic & Type",
+      "style_file": "styles/stained-glass/STYLE.md"
+    },
+    {
+      "slug": "pictogram-motion",
+      "name": "Pictogram Motion",
+      "category": "Graphic & Type",
+      "style_file": "styles/pictogram-motion/STYLE.md"
+    },
+    {
+      "slug": "ascii-crt",
+      "name": "ASCII / CRT Terminal",
+      "category": "Graphic & Type",
+      "style_file": "styles/ascii-crt/STYLE.md"
+    },
+    {
+      "slug": "dataviz",
+      "name": "Data Storytelling",
+      "category": "Information & Keynote",
+      "style_file": "styles/dataviz/STYLE.md"
+    },
+    {
+      "slug": "iso-infographic",
+      "name": "Isometric Infographic",
+      "category": "Information & Keynote",
+      "style_file": "styles/iso-infographic/STYLE.md"
+    },
+    {
+      "slug": "dark-keynote",
+      "name": "Dark Tech Keynote",
+      "category": "Information & Keynote",
+      "style_file": "styles/dark-keynote/STYLE.md"
+    },
+    {
+      "slug": "living-screencast",
+      "name": "Living Screencast",
+      "category": "Information & Keynote",
+      "style_file": "styles/living-screencast/STYLE.md"
+    },
+    {
+      "slug": "hologram-hud",
+      "name": "Sci-fi Hologram HUD",
+      "category": "Information & Keynote",
+      "style_file": "styles/hologram-hud/STYLE.md"
+    },
+    {
+      "slug": "transit-map",
+      "name": "Transit Map",
+      "category": "Information & Keynote",
+      "style_file": "styles/transit-map/STYLE.md"
+    },
+    {
+      "slug": "isometric-picture-book",
+      "name": "Isometric Picture Book",
+      "category": "Information & Keynote",
+      "style_file": "styles/isometric-picture-book/STYLE.md"
+    },
+    {
+      "slug": "circuit-board",
+      "name": "Circuit Board",
+      "category": "Information & Keynote",
+      "style_file": "styles/circuit-board/STYLE.md"
+    },
+    {
+      "slug": "rubber-hose",
+      "name": "1930s Rubber Hose Cartoon",
+      "category": "Cartoon & Anime",
+      "style_file": "styles/rubber-hose/STYLE.md"
+    },
+    {
+      "slug": "cel-anime-80s",
+      "name": "80s Cel Anime",
+      "category": "Cartoon & Anime",
+      "style_file": "styles/cel-anime-80s/STYLE.md"
+    },
+    {
+      "slug": "scifi-toon",
+      "name": "Sci-Fi Sitcom Toon",
+      "category": "Cartoon & Anime",
+      "style_file": "styles/scifi-toon/STYLE.md"
+    },
+    {
+      "slug": "midcentury-toon",
+      "name": "Mid-century Cartoon",
+      "category": "Cartoon & Anime",
+      "style_file": "styles/midcentury-toon/STYLE.md"
+    },
+    {
+      "slug": "pixel-rpg",
+      "name": "16-bit Pixel RPG",
+      "category": "Games",
+      "style_file": "styles/pixel-rpg/STYLE.md"
+    },
+    {
+      "slug": "hd-2d",
+      "name": "HD-2D",
+      "category": "Games",
+      "style_file": "styles/hd-2d/STYLE.md"
+    },
+    {
+      "slug": "microgame",
+      "name": "Microgame Frenzy",
+      "category": "Games",
+      "style_file": "styles/microgame/STYLE.md"
+    },
+    {
+      "slug": "game-show",
+      "name": "Game Show Flat",
+      "category": "Games",
+      "style_file": "styles/game-show/STYLE.md"
+    },
+    {
+      "slug": "silent-film",
+      "name": "1920s Silent Film",
+      "category": "Cinema & Eras",
+      "style_file": "styles/silent-film/STYLE.md"
+    },
+    {
+      "slug": "backrooms",
+      "name": "Liminal Found Footage",
+      "category": "Cinema & Eras",
+      "style_file": "styles/backrooms/STYLE.md"
+    },
+    {
+      "slug": "brick-toy",
+      "name": "Brick Toy",
+      "category": "Materials & 3D",
+      "style_file": "styles/brick-toy/STYLE.md"
+    },
+    {
+      "slug": "paper-popup",
+      "name": "Paper Pop-up Book",
+      "category": "Materials & 3D",
+      "style_file": "styles/paper-popup/STYLE.md"
+    },
+    {
+      "slug": "tilt-shift",
+      "name": "Tilt-Shift Miniature",
+      "category": "Materials & 3D",
+      "style_file": "styles/tilt-shift/STYLE.md"
+    },
+    {
+      "slug": "lowpoly-island",
+      "name": "Low-poly Isometric Island",
+      "category": "Materials & 3D",
+      "style_file": "styles/lowpoly-island/STYLE.md"
+    },
+    {
+      "slug": "glass-product",
+      "name": "Glass Product Render",
+      "category": "Materials & 3D",
+      "style_file": "styles/glass-product/STYLE.md"
+    },
+    {
+      "slug": "memphis-diorama",
+      "name": "Memphis Diorama",
+      "category": "Materials & 3D",
+      "style_file": "styles/memphis-diorama/STYLE.md"
+    },
+    {
+      "slug": "desktop-flythrough",
+      "name": "Desktop Flythrough",
+      "category": "Materials & 3D",
+      "style_file": "styles/desktop-flythrough/STYLE.md"
+    }
+  ]
+}
