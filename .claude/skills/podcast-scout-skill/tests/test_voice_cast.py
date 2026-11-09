@@ -131,7 +131,7 @@ class CastPolicy(unittest.TestCase):
         profiles[0]["sample_count"] = 0
         with patch.object(narrate, "voicebox_channel_profile", return_value="narrator-id"), \
              patch.object(narrate.urllib.request, "urlopen", return_value=io.BytesIO(json.dumps(profiles).encode())):
-            with self.assertRaisesRegex(ValueError, "expected one active"):
+            with self.assertRaisesRegex(ValueError, "cloned profile has no approved audio sample"):
                 narrate.resolve_voice_cast(script["cast"])
 
 
