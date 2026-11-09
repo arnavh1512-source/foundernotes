@@ -730,7 +730,7 @@ def main(argv=None):
             text = " ".join(str(s["text"]).split())
             speaker = s.get("speaker", "narrator") if cast else None
             segment_voice = cast_profiles[speaker] if cast_profiles else voice
-            segment_voice_key = f"{speaker}:{cast[speaker]['profile_name']}" if cast else voice_key
+            segment_voice_key = f"{speaker}:{cast[speaker]['profile_name']}:{segment_voice}" if cast else voice_key
             extra = ""
             if engine == "files":                      # a replaced recording must invalidate the cached take
                 src = Path(a.files_dir or "recordings") / f"{s['id']}.wav"
