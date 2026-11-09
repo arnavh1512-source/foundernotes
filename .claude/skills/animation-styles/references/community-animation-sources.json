@@ -58,9 +58,9 @@
       "kind": "procedural-still-engine",
       "upstream_index": "SKILL.md",
       "upstream_skill": "SKILL.md",
-      "local_catalog": null,
-      "availability": "metadata-indexed; upstream runtime not bundled",
-      "notes": "83 styles upstream as of current README; render still plates, do not claim independent video animation engine."
+      "local_catalog": "references/claude-drawing-catalog.json",
+      "availability": "83 still-style metadata indexed; upstream runtime not bundled",
+      "notes": "83 procedural illustration plates indexed; to animate use actual render workflow and original assets. Upstream skill and dependencies installed separately."
     },
     {
       "id": "bang-motion",
