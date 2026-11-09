@@ -4,7 +4,7 @@
 
 - Every video uses a **male narrator** unless the channel owner explicitly asks otherwise in
   their own words. Record the engine and voice in `timings.json` (narrate.py does this).
-- One voice per video and, ideally, per channel. Change it only with the owner's approval.
+- One **principal narrator identity** per channel. Additional original synthetic character voices, including male and female voices, are allowed for scripted dialogue and character interactions. Preserve each character's profile consistently.
 - Synthetic preset voices only, or the owner's own recordings. **Never clone a podcast guest,
   host, celebrity or any real person.** Voice cloning is allowed only from the owner's own voice
   or a sample they hold a licence for.
@@ -14,6 +14,10 @@
 ## Founder Notes channel override
 
 For **this channel**, the preferred narrator is the owner-authorized **Voicebox male profile `Founder Notes Narrator`** (alias `founder-notes`, normally selected by the narration script JSON). If the Voicebox server/profile is unavailable, use the approved male Parler reference and only then Kokoro `am_michael`. Do not silently substitute a generic default voice: record the actual engine/profile and flag the fallback for review. The generic Kokoro-first engine table below is historical/portable advice, **not the Founder Notes studio order**. Verify the generated WAV, intelligibility, measured timing and rights before visual production.
+
+## Optional multi-character dialogue (Voicebox)
+
+The principal narrator remains male and unchanged; **character** voices can be male or female and as numerous as a scene demands. The repository now supports per-segment Voicebox casting in `scripts/narrate.py`, with `assets/voice-cast.example.json` as a starting format and `references/voice-casting.md` as the canonical policy. Profiles must be owner-approved, original synthetic voices pre-existing in Voicebox; the optional `scripts/provision_voicebox_cast.py` can register them from approved original synthetic WAV references only on explicit `--create`. Do not equate a named cast profile with generated audio, and do not use `--allow-non-male` to change the main narrator simply because a female character is in dialogue. Keep the entire segment timeline and captions synchronized.
 
 ## Engines (in order of preference)
 
