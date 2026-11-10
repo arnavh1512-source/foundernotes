@@ -4,7 +4,7 @@
 
 ## Model and session contract
 
-The owner requests **Claude Sonnet 5.5, medium effort** for crew members. Existing Claude Code agent frontmatter uses `model: sonnet` and `effort: medium`; the alias is **not proof of a particular version**. On the actual host, verify Sonnet 5.5 is offered and selected, or explicitly report the model that did run. No tools are granted beyond the host's permitted permissions. One coordinator controls stage handoffs and budgets. Never claim agent execution when only instructions were edited.
+The studio uses **task-based Opus / Sonnet / Haiku model routing**, not one model for every role. Use the assignments and escalation rules in [`model-routing.md`](model-routing.md): Opus for the coordinator and judgment-heavy research, scripting, direction and independent review; Sonnet for scoped production; Haiku only for optional read-only helper tasks. All roles start at medium effort. The current Claude Code model alias is **not proof of a particular version**. Verify what the host actually ran, and report unsupported models rather than substituting them silently. No tools are granted beyond the host's permitted permissions. One coordinator controls stage handoffs, approvals and budgets. Never claim agent execution when only instructions were edited.
 
 ## Specialists, inputs and required artifacts
 
@@ -20,7 +20,7 @@ The owner requests **Claude Sonnet 5.5, medium effort** for crew members. Existi
 | Independent critic | finished cut, facts, test reports | timecoded defects, grades, fixes, verdict | independent review if they built the scene |
 | Packager | approved master and evidence | titles, thumbnail brief, chapters, source disclosure | video published without owner approval |
 
-Use the eight existing `studio-*.md` agents. Motion director and storyboarder can be two phases of `studio-visual-director`; no extra agent files required.
+Use the eight core production agents. The optional `studio-source-indexer` and `studio-qc-log-reader` helpers are Haiku-powered read-only side tasks; they are not substitutes for the core specialists and need not run on every video. Motion director and storyboarder can be two phases of `studio-visual-director`; no extra creative agent files are required.
 
 ## Narrative-first workflow and handoff gates
 
