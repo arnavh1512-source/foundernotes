@@ -41,6 +41,13 @@ class ClaudeModelRoutingTests(unittest.TestCase):
                 self.assertEqual(meta.get("effort"), "medium")
                 self.assertIn("model-routing.md", body)
 
+    def test_viewer_analyst_is_an_opt_in_opus_preproduction_specialist(self):
+        meta, body = frontmatter("studio-viewer-analyst")
+        self.assertEqual(meta.get("model"), "opus")
+        self.assertEqual(meta.get("effort"), "medium")
+        self.assertIn("competitor", body.lower())
+        self.assertIn("viewer-first-production-rule.md", body)
+
     def test_helpers_are_haiku_and_have_no_write_or_command_tools(self):
         for name in HELPERS:
             with self.subTest(agent=name):
