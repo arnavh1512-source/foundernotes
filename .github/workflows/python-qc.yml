@@ -73,6 +73,10 @@ jobs:
         run: |
           python -m unittest discover -s .claude/skills/podcast-scout-skill/tests -p "test_model_routing.py" -v
 
+      - name: Verify explanation-first storyboarding and matched-audio visual trials
+        run: |
+          python -m unittest discover -s .claude/skills/podcast-scout-skill/tests -p "test_explanation_first_visual_direction.py" -v
+
       - name: Integration smoke test for scene, narration and MP4 QC
         run: |
           python -m unittest discover -s .claude/skills/podcast-scout-skill/tests -p "test_production_smoke.py" -v
