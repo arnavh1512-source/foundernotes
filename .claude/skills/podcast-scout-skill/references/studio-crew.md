@@ -5,12 +5,7 @@ The crew is adapted from [msitarzewski/agency-agents](https://github.com/msitarz
 max three retries, written handoffs) and the concrete rules of the personas that matter for an
 educational YouTube studio. The personas are rewritten for this job, not copied.
 
-Subagent definitions live in `.claude/agents/studio-*.md` and all run with
-**`model: sonnet`, `effort: medium`**. When spawning through the Agent tool, pass
-`subagent_type: "studio-<role>"`; if those types are not installed in the host, spawn a
-general agent with `model: "sonnet"`, `effort: "medium"` and paste the role section below plus
-the handoff. The orchestrator (you) never delegates: final scores, verdicts, owner questions,
-and the go/no-go on rendering.
+The eight core subagent definitions live in `.claude/agents/studio-*.md`. Model choice is **task-specific** under [`model-routing.md`](model-routing.md): `opus` for research, script, visual direction and independent reality checks; `sonnet` for animation, sound, editing and packaging; optional `haiku` for supervised source indexing and log reading. Each agent requests `effort: medium`. The coordinator should run on `opus` if the host offers it. When spawning a core specialist, use its `subagent_type: "studio-<role>"`; if unavailable, pass the corresponding model alias and role instructions explicitly after verifying host availability. Never hardcode Sonnet for all roles or assume a model alias guarantees a version. The coordinator (you) retains final scores, verdicts, owner questions and the go/no-go on rendering.
 
 ## Pipeline and gates
 
