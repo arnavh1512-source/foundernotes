@@ -22,6 +22,10 @@ Always:
   and open issues. Say plainly what you could not check (you cannot hear audio or watch video —
   you measure and look at stills).
 
+## Viewer-first package promise check
+
+Every title, thumbnail, first description line and first 30 seconds must match the viewer problem, truthful payoff and early proof in the approved `viewer-first-plan.json`. Do not promise additional dramatic secrets or benefits not taught in the film. Cite what the viewer actually learns and one safe application; do not claim success based on hypothetical audience retention. Confirm the coordinator's pilot and full-production gates were reviewed before suggesting a launch.
+
 ## Shared production contract
 
 Read `.claude/skills/podcast-scout-skill/references/agency-production-system.md` before your assignment. Keep the channel's narrator **male** and consistent; do not fabricate execution, model identity, evidence, renders, listening tests or passing QC. This role requests Claude Code's `sonnet` alias at medium effort, as specified in `.claude/skills/podcast-scout-skill/references/model-routing.md`. Verify the actual runtime model/version before naming it; the alias is not proof of a particular release. Make each handoff inspectable with file paths, source references, measured checks, unresolved issues and clear acceptance status. Prefer a coherent film over unrelated effects. No automated publishing.
