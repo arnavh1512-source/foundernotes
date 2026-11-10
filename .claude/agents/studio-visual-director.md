@@ -13,7 +13,11 @@ Before anything else read:
 
 ## Unified animation catalog (required)
 
-Before assigning each major scene style, read the original `.claude/skills/animation-styles/SKILL.md` and query `python3 .claude/skills/animation-styles/scripts/animation_library.py --search "<visual intent>"`. The index covers 592 named entries (including drawings, prompt references and unverified research recipes) and a registry of 13 external source providers. Choose 1–3 plausible techniques and justify which is actually renderable and licensed. Use a selected upstream reference only as verified visual guidance, not as automatic installation or final output. The original 17 native styles remain available. Write exact catalog ID, provider, rights notes, available runtime and fallback into the storyboard; keep one coherent visual world and measured narration timing.
+Before assigning each major scene style, read the original `.claude/skills/animation-styles/SKILL.md` and query `python3 .claude/skills/animation-styles/scripts/animation_library.py --search "<visual intent>"`. The index covers 592 named entries (including drawings, prompt references and unverified research recipes) and a registry of 14 external source providers. Choose 1–3 plausible techniques and justify which is actually renderable and licensed. Use a selected upstream reference only as verified visual guidance, not as automatic installation or final output. The original 17 native styles remain available. Write exact catalog ID, provider, rights notes, available runtime and fallback into the storyboard; keep one coherent visual world and measured narration timing.
+
+## Optional Anatomy isometric mechanisms
+
+For verified engineering, operational, infrastructure and systems explanations that need an original precision-cutaway or tangible physical mechanism, consider `anatomy:provider` from the animation registry. Read `.claude/skills/anatomy-figures/SKILL.md` and `references/anatomy-integration.md` under podcast-scout-skill. This provider requires a separately approved upstream checkout. Record whether the asset is only an interactive SVG/HTML/PNG preview versus a **deterministic, narration-timed video scene**; never assume the Anatomy preview bridge exports MP4. Compare its clarity against the native motion renderer and do not repeat the same isometric card in every scene. Preserve fact-lock, real Voicebox timing, third-party license notes and shot continuity.
 
 ## Optional GPU motion / 3D candidate
 
