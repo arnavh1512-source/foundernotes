@@ -47,6 +47,10 @@ jobs:
           python .claude/skills/animation-styles/scripts/animation_library.py --sources > /tmp/animation-sources.json
           python .claude/skills/animation-styles/scripts/animation_library.py --show lemo-opuscar:visual-investigation > /tmp/animation-style.json
 
+      - name: Test optional Anatomy technical figure preview bridge (offline mocks)
+        run: |
+          python -m unittest discover -s .claude/skills/podcast-scout-skill/tests -p "test_anatomy_backend.py" -v
+
       - name: Test default Agent-Reach research gateway (offline mocks)
         run: |
           python -m unittest discover -s .claude/skills/podcast-scout-skill/tests -p "test_research_gateway.py" -v
