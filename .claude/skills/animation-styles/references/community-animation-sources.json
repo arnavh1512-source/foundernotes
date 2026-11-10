@@ -157,6 +157,18 @@
       "local_catalog": null,
       "availability": "metadata-indexed; upstream runtime not bundled",
       "notes": "Canvas/JS film workflow, original score; engine dependencies optional."
+    },
+    {
+      "id": "anatomy",
+      "repo": "wheresryan22/anatomy",
+      "homepage": "https://github.com/wheresryan22/anatomy",
+      "license": "MIT (Copyright 2026 Ryan); preserve source notices if reused",
+      "kind": "isometric-technical-figure-skill",
+      "upstream_index": "README.md",
+      "upstream_skill": "SKILL.md",
+      "local_catalog": null,
+      "availability": "provider-reference-only; upstream Node/Chrome and kit not bundled",
+      "notes": "Detailed original isometric SVG/WebGL/experimental 3D figures. Optional local PNG preview bridge only, not a deterministic video renderer; authorize installation separately."
     }
   ]
 }
