@@ -2,6 +2,8 @@
 
 **Purpose:** answer *why would someone care, what exactly might they find interesting, why watch to the end, what will they learn, and how can they use this knowledge?* The output is a researched **editorial hypothesis**, not a guarantee of CTR, virality, retention, views or audience reactions.
 
+**Production ordering:** This source-specific report is a prerequisite for the independent, **universal** `viewer-first-production-rule.md`. Begin with the viewer's recognizable problem and truthful payoff; the curiosity/hook analysis must support them, not dictate them. A script is blocked until `viewer_first_gate.py --stage pre-script` passes. All new videos get a viewer-first plan; source videos also get this report. The full video is blocked until a reviewed **60–90s pilot** passes the second gate.
+
 ## Trigger and permissions
 
 - **Source mode (default):** whenever the owner supplies a video, video URL, recorded episode, clip or video-derived transcript to *make FounderNotes content from*, run this analysis **before the final angle and script**. Do not require a special command. A standalone topic with no video can also use this framework without falsely inventing source-video observations.
