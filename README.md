@@ -82,7 +82,7 @@ The [eight core studio agents](.claude/agents/) handle these responsibilities un
 
 **Voicebox casting.** The principal voice is the authorized, consistent male **Founder Notes Narrator**. An episode can also use distinct **male and female synthetic character voices**, selected per scripted segment for interviews, dramatized interactions or storytelling. Character profiles must exist and be approved in a **local Voicebox** installation. The system produces a sequential master with speaker-aware timings and captions; **simultaneous overlapping dialogue and automatic lip sync are not implemented**. See the [casting guide](.claude/skills/podcast-scout-skill/references/voice-casting.md) and [example cast](.claude/skills/podcast-scout-skill/assets/voice-cast.example.json).
 
-**Visual production.** The original [animation-styles skill](.claude/skills/animation-styles/SKILL.md) now searches **592 indexed style, prompt, drawing and art-motion entries** across FounderNotes and upstream libraries, while the studio keeps its 17 native reference styles. See the [library and renderer guide](.claude/skills/animation-styles/references/community-animation-integration.md). A catalog entry is *not* an installed engine or proven render. The optional [Lemo adapter](.claude/skills/podcast-scout-skill/scripts/lemo_backend.py) routes local frame/video exports to a separately installed Lemo-Opuscar; [Raea](.claude/skills/raea-renderer/SKILL.md) remains a separate optional canary GPU renderer with license restrictions. Renderers are selected by story value, actual availability, cost and rights, not sheer style count.
+**Visual production.** The original [animation-styles skill](.claude/skills/animation-styles/SKILL.md) now searches **592 indexed style, prompt, drawing and art-motion entries** across FounderNotes and upstream libraries, while the studio keeps its 17 native reference styles. See the [library and renderer guide](.claude/skills/animation-styles/references/community-animation-integration.md). A catalog entry is *not* an installed engine or proven render. The optional [Lemo adapter](.claude/skills/podcast-scout-skill/scripts/lemo_backend.py) routes local frame/video exports to a separately installed Lemo-Opuscar; [Raea](.claude/skills/raea-renderer/SKILL.md) remains a separate optional canary GPU renderer with license restrictions. [Anatomy](.claude/skills/anatomy-figures/SKILL.md) adds a separately installed **MIT-licensed isometric mechanism-figure workflow**: original SVG/WebGL cutaways and a [local PNG preview bridge](.claude/skills/podcast-scout-skill/scripts/anatomy_backend.py). It is not a video exporter; time-stepped motion still uses the studio renderer. Renderers are selected by story value, actual availability, cost and rights, not sheer style count.
 
 ### Animation library at a glance
 
@@ -98,7 +98,7 @@ The **original** `.claude/skills/animation-styles/SKILL.md` is the single entry 
 | [Claude Drawing Skill](https://github.com/cloveric/claude-drawing-skill) | **83** | Procedural **still illustration** styles for later animation |
 | **Total catalog entries** | **592** | Searchable creative references, not 592 render engines |
 
-Eight more upstream sources are present in the [source registry](.claude/skills/animation-styles/references/community-animation-sources.json): Bang Motion, Vox Director, ClaudeAnimationBase, LunaAI Motion Skill, LottieFiles Motion Design, HandDraw, Manim, and JavaScript Animation Skills. Their skills and dependency-specific capabilities are selected from upstream as needed; no unsupported individual style counts are claimed.
+Nine more upstream sources are present in the [source registry](.claude/skills/animation-styles/references/community-animation-sources.json): Bang Motion, Vox Director, ClaudeAnimationBase, LunaAI Motion Skill, LottieFiles Motion Design, HandDraw, Manim, JavaScript Animation Skills, and Anatomy. Their skills and dependency-specific capabilities are selected from upstream as needed; no unsupported individual style counts are claimed.
 
 **Run the selector locally:**
 
@@ -109,7 +109,7 @@ python3 .claude/skills/animation-styles/scripts/animation_library.py --search "w
 python3 .claude/skills/animation-styles/scripts/animation_library.py --show lemo-opuscar:visual-investigation
 ```
 
-See the [integration and licensing guide](.claude/skills/animation-styles/references/community-animation-integration.md) for the Lemo frame/MP4 commands, rights limits, prerequisites, native fallbacks and QC. The index and offline CI checks do not prove all 592 entries render successfully; no external engines or paid services are installed automatically.
+See the [integration and licensing guide](.claude/skills/animation-styles/references/community-animation-integration.md) for the Lemo frame/MP4 commands, rights limits, prerequisites, native fallbacks and QC. Anatomy's provider entry does not increase the 592 style count; its browser preview and real scene adaptation are still untested. The index and offline CI checks do not prove all 592 entries render successfully; no external engines or paid services are installed automatically.
 
 **Learning and quality control.** The studio records verified defects, successful recipes and skill-specific reviews in [`.claude/memory/`](.claude/memory/). A skill is not considered evaluated merely because it appears in the repository. Technical tools include scene linting, video/audio QC, a creative-plan validator, skill-evaluation gates and lesson recording. Evidence from rendered output and human listening is required.
 
@@ -160,7 +160,7 @@ To use the optional character cast, first copy the [sample JSON](.claude/skills/
 - **Consistent storytelling:** Keep characters, dialogue voices and visual worlds recognizable. Measure scene timing from the actual narration WAV rather than an estimated word count.
 - **Rights and approval:** Respect source, audio, asset and engine licenses. No unapproved voice imitation, paid-generation calls, account connections or automatic publishing.
 - **Real QC:** Review rendered frames, complete audio, captions, synchronization and output reports. Record deficiencies and rerun failed checks.
-- **Honest status:** CI runs regression tests and a synthetic FFmpeg production smoke test. It does **not** prove that a local Voicebox cast, live Agent-Reach retrieval, optional Raea GPU engine or a complete real-world episode has been validated.
+- **Honest status:** CI runs regression tests and a synthetic FFmpeg production smoke test. It does **not** prove that a local Voicebox cast, live Agent-Reach retrieval, optional Raea GPU engine, Anatomy figure preview or a complete real-world episode has been validated.
 
 **Next milestone:** a reviewed 30–60-second pilot with real research, natural narration, coherent action, edited sound, accurate captions and evidence-backed QC. Only then scale up to an 8+ minute production.
 
