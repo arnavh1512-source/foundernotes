@@ -7,6 +7,7 @@ This guide accompanies the **original** `.claude/skills/animation-styles/SKILL.m
 | Library | Indexed entries | Local capability | External requirement |
 | --- | ---: | --- | --- |
 | Native FounderNotes | 17 | Original HTML style references and motion-export workflow | Locally working Chromium, FFmpeg |
+| Anatomy | **0** counted styles (provider-only) | Original optional local PNG preview bridge for new technical SVG/WebGL mechanisms | Separate Anatomy checkout, Node 20.10+, Chrome; a PNG is not a video clip |
 | Lemo-Opuscar | 66 | Named style catalog + optional subprocess render bridge | Upstream checkout with Node 20+, Chromium and FFmpeg |
 | Code Animation Prompts | 341 | Metadata (names/tags/upstream file links), not original prompts or stills | Review original source and mixed-source sharing restrictions; implement scene in owned renderer |
 | Anidoodle | 32 | Indexed style descriptions/source modules | Separate Anidoodle code engine and its dependencies |
@@ -47,6 +48,10 @@ python3 .claude/skills/podcast-scout-skill/scripts/lemo_backend.py render \
 ```
 
 Use `--library /path/to/lemo-opuscar` or `FOUNDERNOTES_LEMO_HOME` when the upstream source is somewhere else. The adapter invokes the upstream `core/render/still.mjs` and `core/render/video.mjs`, requests **1920×1080 at 30 fps**, refuses to overwrite an MP4, and uses `ffprobe` to verify video specs/duration. This does **not** prove a real render or artwork quality: inspect the actual frames and run FounderNotes scene lint, assembly and QC.
+
+## Anatomy original mechanism previews
+
+Use [`wheresryan22/anatomy`](https://github.com/wheresryan22/anatomy) only for detailed **original isometric working-machine explanations** that fit a verified shot. It is an MIT licensed upstream Agent Skill with an interactive SVG/WebGL/experimental 3D kit. It is **not** installed or vendored. The local original `scripts/anatomy_backend.py` under podcast-scout-skill has `status` and `still` commands for trusted locally created HTML/SVG, producing a PNG only. It does not export video or guarantee time-deterministic motion; follow the full [`anatomy-integration.md`](../../podcast-scout-skill/references/anatomy-integration.md) guide for a frame-accurate FounderNotes handoff. The provider `anatomy:provider` adds zero styles to the 592-count catalog.
 
 ## Other engines
 
