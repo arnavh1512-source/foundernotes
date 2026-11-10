@@ -1,5 +1,11 @@
 # Workflow: script → beats → frames
 
+## 0. Choose what to explain before choosing how to draw
+
+For FounderNotes videos, read [explanation-first visual direction](../../podcast-scout-skill/references/explanation-first-visual-direction.md) and complete the viewer-first pre-script gate before treating any style as chosen. Per scene, identify the viewer question, precise concept to clarify, visible action or transformation and any research claim. Decide if the shot needs a familiar situation, expressive reaction, metaphor, diagram, comparison or intentional hold. Then search suitable styles.
+
+For an approved narration passage, compare 2–3 **actual 20–40-second animation treatments** with the exact same recorded audio, captions and shot objective, using the template [visual-treatment-comparison](../../podcast-scout-skill/assets/visual-treatment-comparison.template.md). Pick the clearest; then render and review the separate 60–90-second pilot before scaling up. The comparison never substitutes for a verified export or original/cleared assets.
+
 ## 1. Break the script into beats
 Read the script once for the story, then once for pictures. Every sentence usually holds something to show: a subject, an action, a change, a comparison, a number, a payoff. Write a beat list before any code:
 
