@@ -1,0 +1,126 @@
+{
+  "schema_version": 1,
+  "viewer_need": {
+    "who": "<specific viewer>",
+    "struggling_with": "<frustrating recognizable problem>",
+    "daily_life_situation": "<when they face it>",
+    "why_care_now": "<why now, or explain evergreen relevance>"
+  },
+  "learning_promise": {
+    "understand": "<specific mental model or fact>",
+    "how_to": "<practical use or better reasoning>",
+    "specific_outcome": "<measurable/useful takeaway>"
+  },
+  "viewer_promise_sentence": "This video is for someone struggling with <frustrating recognizable problem>; they'll understand <specific mental model or fact> and leave knowing how to <practical use or better reasoning>.",
+  "evidence_and_angle": {
+    "fresh_explanation": "<original angle>",
+    "relevant_limit": "<limits or counterexamples>",
+    "evidence": [
+      {
+        "id": "E1",
+        "locator": "<actual evidence URL, file location or timestamp>",
+        "what_it_supports": "<verified fact>",
+        "reviewed": false
+      }
+    ],
+    "what_people_find_interesting": [
+      {
+        "detail": "<specific detail>",
+        "why_this_viewer_cares": "<reason>",
+        "evidence_ids": [
+          "E1"
+        ]
+      },
+      {
+        "detail": "<different specific detail>",
+        "why_this_viewer_cares": "<reason>",
+        "evidence_ids": [
+          "E1"
+        ]
+      }
+    ]
+  },
+  "opening": {
+    "recognizable_problem": "<opening situation>",
+    "curiosity_question": "<interesting honest question>",
+    "early_insight": "<real useful insight delivered within 30s>",
+    "first_visual": "<concrete action>",
+    "first_15_to_30_seconds": "<beats in order>",
+    "first_insight_at_seconds": 15,
+    "evidence_ids": [
+      "E1"
+    ]
+  },
+  "chapters": [
+    {
+      "title": "<title 1>",
+      "new_question": "<unique question>",
+      "new_insight": "<different knowledge>",
+      "distinct_payoff": "<payoff 1>",
+      "daily_life_application_or_knowledge_gain": "<example>",
+      "evidence_ids": [
+        "E1"
+      ]
+    },
+    {
+      "title": "<title 2>",
+      "new_question": "<unique question>",
+      "new_insight": "<different knowledge>",
+      "distinct_payoff": "<payoff 2>",
+      "daily_life_application_or_knowledge_gain": "<example>",
+      "evidence_ids": [
+        "E1"
+      ]
+    }
+  ],
+  "visual_storytelling": {
+    "coherent_style": "<consistent visual system>",
+    "continuity_rule": "<how same world/objects carry over>",
+    "scenes": [
+      {
+        "chapter_index": 0,
+        "visible_action": "<what happens>",
+        "why_this_scene_earns_its_place": "<reason>",
+        "meaningful_change": "<what new idea is revealed>"
+      },
+      {
+        "chapter_index": 1,
+        "visible_action": "<what happens>",
+        "why_this_scene_earns_its_place": "<reason>",
+        "meaningful_change": "<what new idea is revealed>"
+      }
+    ]
+  },
+  "narration_and_sound": {
+    "natural_phrasing": "<how spoken language stays natural>",
+    "deliberate_emphasis": "<key emphases>",
+    "comfortable_transitions": "<how chapters flow>",
+    "explain_limits_with_claims": "<what qualification is spoken when>"
+  },
+  "runtime_substance": {
+    "no_padding": true,
+    "insufficient_substance_action": "stop_and_research_or_rescope",
+    "why_this_length_is_earned": "<why the full episode has enough substance>",
+    "substance_per_chapter": "<which distinct evidence, demonstrations and examples justify the duration>"
+  },
+  "pilot": {
+    "target_seconds": 75,
+    "review_questions": {
+      "outsider_understands_problem": true,
+      "outsider_wants_answer": true,
+      "outsider_already_learned_something": true
+    },
+    "actual_review": {
+      "status": "pending",
+      "actual_seconds": null,
+      "reviewer": "",
+      "evidence_path": "",
+      "one_insight_already_delivered": "",
+      "outsider_test": {
+        "outsider_understands_problem": false,
+        "outsider_wants_answer": false,
+        "outsider_already_learned_something": false
+      }
+    }
+  }
+}
