@@ -6,6 +6,12 @@
 
 The studio uses **task-based Opus / Sonnet / Haiku model routing**, not one model for every role. Use the assignments and escalation rules in [`model-routing.md`](model-routing.md): Opus for the coordinator and judgment-heavy research, scripting, direction and independent review; Sonnet for scoped production; Haiku only for optional read-only helper tasks. All roles start at medium effort. The current Claude Code model alias is **not proof of a particular version**. Verify what the host actually ran, and report unsupported models rather than substituting them silently. No tools are granted beyond the host's permitted permissions. One coordinator controls stage handoffs, approvals and budgets. Never claim agent execution when only instructions were edited.
 
+## Hard Gate V: viewer problem and learning payoff FIRST
+
+Read [`viewer-first-production-rule.md`](viewer-first-production-rule.md) for the **mandatory** eight-stage preparation order. The coordinator must refuse script handoff until `scripts/viewer_first_gate.py <episode>/research/viewer-first-plan.json --stage pre-script` returns PASS **and** evidence and payoff are independently checked. The opening must make the problem recognizable, create true curiosity, and provide an actual insight by 30 seconds. Each chapter asks a distinct question and delivers a distinct lesson. Show meaningful visual changes in a coherent style. No invented characters before the viewer understands their own problem. Avoid repeating the same learning to fill time. Prior to **full production**, a real 60–90-second pilot must be rendered, reviewed and approved through `--stage full-production`; a FAIL blocks expansion. Unverified marks in a JSON plan are not a real pilot review. The core audience test is: did a newcomer understand the problem, want the answer and already learn something?
+
+When the owner provides a source video, the optional Opus `studio-viewer-analyst` pre-production specialist is **required** for the source-specific interest/value analysis. When no source video is provided, still run the viewer-first plan. Competitor benchmarking is opt-in only. Do not bypass Gate V for speed, or overrule it with a generic first-3-second visual or 8-minute quota.
+
 ## Specialists, inputs and required artifacts
 
 | Specialist | Reads | Writes | Must not claim |
@@ -23,6 +29,8 @@ The studio uses **task-based Opus / Sonnet / Haiku model routing**, not one mode
 Use the eight core production agents. The optional `studio-source-indexer` and `studio-qc-log-reader` helpers are Haiku-powered read-only side tasks; they are not substitutes for the core specialists and need not run on every video. Motion director and storyboarder can be two phases of `studio-visual-director`; no extra creative agent files are required.
 
 ## Narrative-first workflow and handoff gates
+
+**Stage zero: Gate V = viewer need → learning promise → evidence + specific interests → first 15–30s insight → chapters' distinct payoff → coherent visuals → natural voice → 60–90s reviewed pilot.** No script until the pre-script gate passes and no full video until the pilot gate passes.
 
 1. **Research lock:** identify claim IDs, independent sources and what cannot be verified. Reject unsupported assertions.
 2. **Script lock:** clear audience promise, first 15-second hook, five-to-seven chapter causal progression, non-repetitive reveals and original exposition. Confirm 8-minute minimum on actual recorded audio, not guessed text length.
