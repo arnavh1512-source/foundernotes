@@ -25,6 +25,12 @@ The machine-checkable contract is `assets/viewer-first-plan.template.json`. Comp
 
 Source videos automatically trigger `references/viewer-value-analysis.md` for interest/hook/learning analysis; full competitor teardown requires **explicit request**. If analysis-only is requested, deliver the report and stop (no script or video). Model aliases remain Opus/Sonnet/Haiku; no extra model required.
 
+## Explanation-first animation direction (owner preference)
+
+Read [`references/explanation-first-visual-direction.md`](references/explanation-first-visual-direction.md) after setting the viewer promise, explanatory mechanism and evidence. For upcoming **psychology explainers**, treat **consistent simple illustrated characters, expressive postures and reactions, restrained colors, tactile settings and occasional explanatory diagrams** as the preferred **candidate**, not a universal mandate. Place expressive human action, context, object inserts, comparisons and intentional holds where they make the viewer understand something. Keep the world coherent without repeating the same scene layout.
+
+Visual director must compare **2–3 actually rendered treatments** on one identical **20–40s narrated passage**, preserving voice, timings, captions and claims; record the decision with [`assets/visual-treatment-comparison.template.md`](assets/visual-treatment-comparison.template.md) before selecting a look. Then render and review the separate **60–90s pilot** using existing viewer-first gates. An animation index entry or pretty still is not proof of a useful scene.
+
 ## Production constitution (read before every video)
 
 Read `references/agency-production-system.md` and `references/production-stack.md` first. The studio is an accountable crew, not a preset shuffler: **researcher → scriptwriter → visual director/storyboarder → animator → sound engineer → editor → independent reality checker → packager**. Every handoff includes actual files and evidence. Do not manufacture QC reports, citations, model versions, voice checks or rendered outputs. A film is complete only when its master has been played, inspected, and approved. Read `references/agent-reach.md` for the **default Agent-Reach research gateway** and its honest native fallback. At the beginning of each research task, the researcher must attempt `python3 .claude/skills/podcast-scout-skill/scripts/research_gateway.py status`, then the relevant read-only search/read/subtitle operation. Do not treat a noninstalled CLI as successfully integrated.
