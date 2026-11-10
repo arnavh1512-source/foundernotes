@@ -1,6 +1,6 @@
 ---
 name: animation-styles
-description: Choose from 17 local FounderNotes visual looks and 575 individually indexed upstream styles/recipes/prompts (592 catalog entries total), with 13 named animation sources, story-first direction, license-aware engine selection, and real QC. Use for any original animated scene, storyboard, documentary visual or illustration-to-video production.
+description: Choose from 17 local FounderNotes visual looks and 575 individually indexed upstream styles/recipes/prompts (592 catalog entries total), with 14 named animation sources, story-first direction, license-aware engine selection, and real QC. Use for any original animated scene, storyboard, documentary visual or illustration-to-video production.
 ---
 
 # Animation Styles
@@ -24,6 +24,8 @@ Read `references/community-animation-sources.json` for source URLs, license cons
 If several styles match, explain the narrative rationale and choose **one coherent visual grammar per sequence**. A style lookup is not permission to install software, pay for generation, or copy a third-party film. Prefer the local native engine when the relevant upstream runtime is unavailable. After each real render, perform still/continuity review, the usual `lint_scenes.py`, `assemble.py`, and `qc_video.py` checks, and evaluate actual output—not just the registry entry.
 
 **Lemo-specific working adapter:** `python3 .claude/skills/podcast-scout-skill/scripts/lemo_backend.py status`; then `still` or `render` on an **original** `index.html` project using an independently installed Lemo library. See `references/community-animation-integration.md` for exact commands, output contract and limitations. Voicebox remains responsible for all narrator and character speech.
+
+**Anatomy mechanical-figure provider:** The searchable `anatomy:provider` entry points to [wheresryan22/anatomy](https://github.com/wheresryan22/anatomy), an MIT-licensed, separately installed tool for sophisticated original isometric SVG/WebGL mechanisms and interactive explanatory figures. It is **provider-only**, adds **zero** styles to the 592 counted entries, and its FounderNotes adapter previews trusted local pages to PNG, **not MP4**. For the opt-in workflow and frame-accurate adaptation requirements, read `../podcast-scout-skill/references/anatomy-integration.md` and `../anatomy-figures/SKILL.md`. Do not turn every scene into a technical isometric card.
 
 ## 1. Pick the style
 Match the user's words to a style file in `references/styles/` (case doesn't matter, the slash is optional):
