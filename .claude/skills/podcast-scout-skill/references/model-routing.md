@@ -8,6 +8,7 @@ Adapted from the **9 November 2026** Claude model-selection playbook by Addy Osm
 | --- | --- | --- | --- |
 | Main session / production coordinator | `opus` | `medium` | Story angle, scope, evidence gates, review budgets and consequential decisions |
 | `studio-researcher` | `opus` | `medium` | Primary-source interpretation, conflicting evidence and ambiguity |
+| `studio-viewer-analyst` (source-video preparation) | `opus` | `medium` | Viewer need, interesting details, honest hooks, learning outcomes and usable applications; competitor benchmarking only on request |
 | `studio-scriptwriter` | `opus` | `medium` | Story architecture, argument quality, original narration and editorial trade-offs |
 | `studio-visual-director` | `opus` | `medium` | Choosing a coherent visual language, shot logic and continuity |
 | `studio-animator` | `sonnet` | `medium` | Implementing approved shot specifications in known engines |
