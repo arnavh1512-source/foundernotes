@@ -74,7 +74,7 @@ Show me the resulting files, remaining blockers, and what you verified.
 | **Independent review** | Inspect claims, continuity, audio, frames, rights and technical QC | QC report and corrective actions |
 | **Publishing preparation** | Draft accurate titles, thumbnail concepts, chapters and description | Upload-ready package (**manual publishing**) |
 
-The existing [eight studio agents](.claude/agents/) handle these responsibilities under one production coordinator. Their prompts are **workflow definitions**, not evidence that a real agent or generator ran. The [production plan](.claude/skills/podcast-scout-skill/assets/production-plan.md) describes the expected handoffs and output folders under `studio-output/<slug>/`.
+The [eight core studio agents](.claude/agents/) handle these responsibilities under one production coordinator. The [model-routing policy](.claude/skills/podcast-scout-skill/references/model-routing.md) assigns **Opus** to judgment-heavy work, **Sonnet** to well-scoped production and **Haiku** to two optional read-only helper roles. The precise Claude model/version must be checked on your host; no unsupported model is required. Agent definitions are **workflow instructions**, not evidence that a production was run. The [production plan](.claude/skills/podcast-scout-skill/assets/production-plan.md) describes expected handoffs and output folders under `studio-output/<slug>/`.
 
 ## Key capabilities
 
