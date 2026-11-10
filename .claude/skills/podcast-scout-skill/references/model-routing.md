@@ -34,5 +34,5 @@ The original **eight production roles** are unchanged as roles. Two small helper
 
 - High-level narrative choices and editorial verification require human review regardless of model.
 - Every character voice is the selected approved Voicebox profile, not a model-dependent substitution; preserve the established male principal narrator with optional original male/female character voices.
-- Lemo, Raea, Obscura, Agent-Reach, Humanizer and any third-party utilities remain **separate tools**, not model roles. Their install status, license and rights still apply.
+- Lemo, Raea, Anatomy, Obscura, Agent-Reach, Humanizer and any third-party utilities remain **separate tools**, not model roles. Their install status, license and rights still apply.
 - Manual publishing and paid-tool permission gates remain unchanged.
