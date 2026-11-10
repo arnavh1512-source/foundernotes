@@ -1,0 +1,154 @@
+{
+  "schema_version": 1,
+  "mode": "source",
+  "source": {
+    "title": "Fictional school-planning training fixture — NOT an actual video",
+    "locator": "fictional demonstration sample; no real URL",
+    "access": "video_plus_transcript",
+    "coverage": "complete",
+    "inspected_scope": "fictional test only; no media actually retrieved",
+    "limitations": [
+      "This is fictional schema demonstration, never use as evidence."
+    ]
+  },
+  "evidence": [
+    {
+      "id": "T1",
+      "basis": "transcript",
+      "locator": "fictional fixture:paragraph-1",
+      "observation": "A student describes difficulty deciding which task to begin"
+    },
+    {
+      "id": "T2",
+      "basis": "transcript",
+      "locator": "fictional fixture:paragraph-2",
+      "observation": "The fictional speaker compares a deadline with how long an assignment takes"
+    },
+    {
+      "id": "V1",
+      "basis": "frame",
+      "locator": "fictional fixture:scene-2",
+      "observation": "Two task cards are compared on a desk"
+    }
+  ],
+  "audience": {
+    "segment": "students choosing what to study first",
+    "prior_problem": "multiple tasks due the same week",
+    "why_relevant": "everyone needs a way to pick the next task"
+  },
+  "viewer_interest": [
+    {
+      "detail": "Two assignments look equally urgent but are not",
+      "interest_mechanism": "everyday paradox",
+      "why_it_might_interest": "viewer recognizes a frustrating decision",
+      "confidence": "editorial_hypothesis",
+      "evidence_ids": [
+        "T1",
+        "V1"
+      ]
+    },
+    {
+      "detail": "The easiest task is not necessarily the best starting point",
+      "interest_mechanism": "correcting a mistaken shortcut",
+      "why_it_might_interest": "viewer sees a new way to decide",
+      "confidence": "editorial_hypothesis",
+      "evidence_ids": [
+        "T2"
+      ]
+    }
+  ],
+  "why_watch": {
+    "why_it_matters": "decisions become easier with a clear order",
+    "stakes": "less confused planning",
+    "why_now": "evergreen daily planning",
+    "promised_payoff": "a simple task-prioritization method",
+    "what_is_missed_if_skipped": "a difference between urgency and effort"
+  },
+  "learning_outcomes": [
+    {
+      "before": "all assignments compete in one mental list",
+      "after": "tasks can be sorted by clear criteria",
+      "learn": "urgency and effort differ",
+      "caveat": "this alone will not guarantee improved grades",
+      "evidence_ids": [
+        "T2"
+      ],
+      "application": {
+        "who": "a student",
+        "situation": "several tasks are due",
+        "action": "write down actual due dates and required effort",
+        "what_to_notice": "which task needs attention first",
+        "boundary": "adapt around deadlines and rest"
+      }
+    },
+    {
+      "before": "large work feels like one block",
+      "after": "one piece of work can be a few steps",
+      "learn": "break one project into concrete starting steps",
+      "caveat": "fictional training lesson; verify before using in a real video",
+      "evidence_ids": [
+        "T1"
+      ],
+      "application": {
+        "who": "someone planning a project",
+        "situation": "they do not know where to begin",
+        "action": "choose one measurable first step",
+        "what_to_notice": "whether the starting point becomes clear",
+        "boundary": "the plan may need revision"
+      }
+    }
+  ],
+  "hooks": [
+    {
+      "opening": "Which deadline would you start with?",
+      "curiosity_gap": "The easiest task might be the wrong choice",
+      "payoff": "Learn how to prioritize two assignments",
+      "first_visual": "Two cards sit beside a calendar",
+      "honesty_risk": "No promise of guaranteed results",
+      "originality_note": "An original card-based explanation",
+      "proof_evidence_ids": [
+        "T1"
+      ]
+    },
+    {
+      "opening": "Your to-do list is hiding a decision.",
+      "curiosity_gap": "How do you choose one task?",
+      "payoff": "Separate urgency from effort",
+      "first_visual": "One task card splits into two labels",
+      "honesty_risk": "Don't imply clinical evidence",
+      "originality_note": "New explanatory metaphor",
+      "proof_evidence_ids": [
+        "T2"
+      ]
+    },
+    {
+      "opening": "Two tasks, one evening: what comes first?",
+      "curiosity_gap": "One criterion is usually missing",
+      "payoff": "Use deadline and effort information",
+      "first_visual": "A notebook opens to two rows",
+      "honesty_risk": "No universal answer for every task",
+      "originality_note": "Distinct scenario rather than source reenactment",
+      "proof_evidence_ids": [
+        "V1"
+      ]
+    }
+  ],
+  "attention_risks": [
+    {
+      "moment": "A long introduction explaining definitions",
+      "why_loses_interest": "the viewer already recognizes the situation",
+      "fix": "demonstrate the difference immediately",
+      "evidence_ids": [
+        "T1"
+      ]
+    }
+  ],
+  "script_handoff": {
+    "premise": "An original lesson about choosing the next task",
+    "first_15_seconds": "Show recognizable confusion then deliver a distinction",
+    "proof_beat": "Compare two dated cards directly",
+    "useful_end": "A small decision method viewers can try",
+    "difference_from_source": "A new visual demo and practical concluding exercise",
+    "best_hook_index": 2
+  }
+}
