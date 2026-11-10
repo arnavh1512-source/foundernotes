@@ -11,4 +11,8 @@
 9. **Audio:** the user's audio is complete and in sync; nothing invented.
 10. **Export:** the video file exists, plays, and has the right size, frame rate and length. Never call a still image or an untested file a finished video.
 
+11. **Explanation-first:** state the exact viewer question and the visible action, mechanism, comparison or meaningful reflection each beat communicates. An attractive shot that teaches nothing is a fix.
+12. **Acting and clarity:** where human behavior matters, original recurring characters have purposeful gestures, readable postures/expressions and reaction shots; settings and framing vary with the story, not randomly. Diagrams remain truthful, simple and legible. A deliberate still hold is allowed if documented and inspected.
+13. **Treatment choice evidence:** for new FounderNotes videos, find 2–3 actually rendered candidate treatments using the **same audio passage** and review them with the decision log; a palette-only or still-only comparison is not a verified motion bake-off.
+
 If something fails and you can't fix it, say exactly which item and why.
