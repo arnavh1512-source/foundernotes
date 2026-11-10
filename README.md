@@ -59,7 +59,17 @@ Do not publish, invent citations, fabricate tests, or call a prompt a render.
 Show me the resulting files, remaining blockers, and what you verified.
 ```
 
-**Recommended sequence:** finish and review a **30–60-second pilot** before commissioning the channel's **8+ minute** full-length format. You can also ask for **research only**, **script and storyboard**, **a dialogue scene**, **QC on an existing video**, or **YouTube packaging** without running the whole pipeline.
+**Recommended sequence:** finish and review a **60–90-second pilot** before commissioning the channel's **8+ minute** full-length format. You can also ask for **research only**, **script and storyboard**, **a dialogue scene**, **QC on an existing video**, or **YouTube packaging** without running the whole pipeline.
+
+## Non-negotiable: viewer first, then the script
+
+Before **any new video**, FounderNotes requires a completed viewer-first plan. The guiding sentence is:
+
+> **“This video is for someone struggling with ___; they’ll understand ___ and leave knowing how to ___.”**
+
+The mandated order is **viewer need → specific learning promise → verified evidence, original angle and interesting details → a recognizable opening with a useful insight within 30 seconds → distinct chapter payoffs → meaningful visuals in one coherent style → natural narration and sound → reviewed 60–90-second pilot**. No script may begin until the [pre-script gate](.claude/skills/podcast-scout-skill/scripts/viewer_first_gate.py) passes. No full video may proceed until the actual 60–90-second pilot is watched and reviewed and the **full-production gate** passes. If there is not enough distinct substance for the required 8+ minutes, research/rescope rather than pad. Characters serve the viewer's problem; they don't precede it.
+
+For each **source video**, the [Viewer Value & Hook Analysis](.claude/skills/podcast-scout-skill/references/viewer-value-analysis.md) examines what people may find interesting, why they should watch, what they'll learn, how it improves their knowledge and possible applications. **Competitor analysis is an explicitly requested separate mode; never automatic.** See the [mandatory rule](.claude/skills/podcast-scout-skill/references/viewer-first-production-rule.md) and [editable plan template](.claude/skills/podcast-scout-skill/assets/viewer-first-plan.template.json). Automated PASS means the structure is complete, **not** that claims or viewer reactions have been proven.
 
 ## How the studio works
 
@@ -162,7 +172,7 @@ To use the optional character cast, first copy the [sample JSON](.claude/skills/
 - **Real QC:** Review rendered frames, complete audio, captions, synchronization and output reports. Record deficiencies and rerun failed checks.
 - **Honest status:** CI runs regression tests and a synthetic FFmpeg production smoke test. It does **not** prove that a local Voicebox cast, live Agent-Reach retrieval, optional Raea GPU engine, Anatomy figure preview or a complete real-world episode has been validated.
 
-**Next milestone:** a reviewed 30–60-second pilot with real research, natural narration, coherent action, edited sound, accurate captions and evidence-backed QC. Only then scale up to an 8+ minute production.
+**Next milestone:** a reviewed 60–90-second pilot with real research, natural narration, coherent action, edited sound, accurate captions and evidence-backed QC. Only then scale up to an 8+ minute production.
 
 ---
 
