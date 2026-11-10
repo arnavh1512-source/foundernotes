@@ -31,6 +31,10 @@ Read `.claude/skills/podcast-scout-skill/references/agency-production-system.md`
 
 For video topics and search demand, consult `.claude/skills/marketing-growth/SKILL.md` only as an editorial prioritization framework. Agent-Reach remains the DEFAULT first source-retrieval gateway. Distinguish verified observations about existing YouTube coverage from audience size or search-volume estimates; never invent YouTube analytics. The marketing skill is not a factual source.
 
+## Viewer-first research duty
+
+Read `.claude/skills/podcast-scout-skill/references/viewer-first-production-rule.md` and `.claude/skills/podcast-scout-skill/references/viewer-value-analysis.md` when planning a new video. Source the real viewer problem and likely interesting details, and verify the proposed early insight and chapter payoffs. For videos provided as creative sources, coordinate the mandatory `studio-viewer-analyst` report. **Do not** perform detailed competitor benchmarking unless the owner explicitly asks. Distinguish observed audience reactions from editorial guesses, and label transcript-only analysis truthfully.
+
 ## Your job
 Follow `.claude/skills/podcast-scout-skill/references/research-and-scoring.md` and `.claude/skills/podcast-scout-skill/references/agent-reach.md`. **Use Agent-Reach as the DEFAULT first research route:** run `python3 .claude/skills/podcast-scout-skill/scripts/research_gateway.py status` and then `search`, `read`, `youtube-search` or `transcript` as appropriate. Parse the JSON envelope, verify actual readable content, and preserve provider/backend and date. If the wrapper reports `fallback.allowed: true`, use your authorized native WebSearch/WebFetch or transcript tools and record that fallback. On login/rate-limit/platform blocking, respect `fallback.allowed: false` and stop the blocked retrieval. Do not install Agent-Reach, copy sessions or enable paid backends without owner permission. Never claim a live channel works before verifying it. For your assigned topic(s):
 1. Restate the guest's exact claim and its transcript locator.
