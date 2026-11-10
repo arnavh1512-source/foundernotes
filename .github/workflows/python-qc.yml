@@ -51,6 +51,11 @@ jobs:
         run: |
           python -m unittest discover -s .claude/skills/podcast-scout-skill/tests -p "test_anatomy_backend.py" -v
 
+      - name: Verify viewer-first production gate and opt-in competitor reports
+        run: |
+          python -m unittest discover -s .claude/skills/podcast-scout-skill/tests -p "test_viewer_first_gate.py" -v
+          python -m unittest discover -s .claude/skills/podcast-scout-skill/tests -p "test_viewer_value.py" -v
+
       - name: Test default Agent-Reach research gateway (offline mocks)
         run: |
           python -m unittest discover -s .claude/skills/podcast-scout-skill/tests -p "test_research_gateway.py" -v
