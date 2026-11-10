@@ -23,9 +23,9 @@ lemo = load_module("lemo_backend", SCRIPTS / "lemo_backend.py")
 
 
 class AnimationLibraryTests(unittest.TestCase):
-    def test_all_13_external_sources_and_592_entries_indexed(self):
+    def test_all_14_external_sources_and_592_entries_indexed(self):
         sources = catalog.source_registry()
-        self.assertEqual(len(sources), 13)
+        self.assertEqual(len(sources), 14)
         items = catalog.entries()
         self.assertEqual(len(items), 592)
         self.assertEqual(len({item["id"] for item in items}), len(items))
@@ -48,12 +48,14 @@ class AnimationLibraryTests(unittest.TestCase):
 
     def test_all_remaining_providers_are_searchable_without_false_styles(self):
         providers = catalog.provider_entries()
-        self.assertEqual(len(providers), 8)
+        self.assertEqual(len(providers), 9)
         self.assertEqual(len(catalog.entries()), 592)
         self.assertTrue(any(x["id"] == "bang-motion:provider"
                             for x in catalog.search("bang motion")))
         self.assertTrue(any(x["id"] == "manim_skill:provider"
                             for x in catalog.search("manim")))
+        self.assertTrue(any(x["id"] == "anatomy:provider"
+                            for x in catalog.search("isometric technical")))
         self.assertTrue(all(x["status"] == "upstream-skill-not-installed" for x in providers))
         self.assertTrue(all(x["source_url"].startswith("https://github.com/") for x in providers))
 
