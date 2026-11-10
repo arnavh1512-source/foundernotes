@@ -7,16 +7,24 @@ educational YouTube studio. The personas are rewritten for this job, not copied.
 
 The eight core subagent definitions live in `.claude/agents/studio-*.md`. Model choice is **task-specific** under [`model-routing.md`](model-routing.md): `opus` for research, script, visual direction and independent reality checks; `sonnet` for animation, sound, editing and packaging; optional `haiku` for supervised source indexing and log reading. Each agent requests `effort: medium`. The coordinator should run on `opus` if the host offers it. When spawning a core specialist, use its `subagent_type: "studio-<role>"`; if unavailable, pass the corresponding model alias and role instructions explicitly after verifying host availability. Never hardcode Sonnet for all roles or assume a model alias guarantees a version. The coordinator (you) retains final scores, verdicts, owner questions and the go/no-go on rendering.
 
+## Viewer-First veto (owner's binding rule)
+
+Before the researcher → scriptwriter handoff, the coordinator must read `viewer-first-production-rule.md` under podcast-scout-skill references, inspect `research/viewer-first-plan.json`, and run `scripts/viewer_first_gate.py <plan> --stage pre-script`. **FAIL = NO SCRIPT OR TTS**. Every chapter must teach a unique new thing, the opening must deliver an actual insight in 30 seconds, and viewer interest is grounded in real source details. The source-video analyst is a required pre-production specialist only when a video is supplied for adaptation, not an extra core production role; competitor benchmarking is opt-in.
+
+After a real **60–90 second** video pilot has been rendered, listened to and independently reviewed, the producer must run `scripts/viewer_first_gate.py <plan> --stage full-production`. **FAIL = NO FULL-LENGTH PRODUCTION.** A newcomer must understand the viewer problem, want the answer, and already learn a useful insight. No unsupported fictional characters before problem recognition, no cosmetic visual changes and no runtime-padding in an 8+ minute film.
+
 ## Pipeline and gates
 
 ```
-Producer (you) ──► Researcher ×N ──► [Gate R] ──► Scriptwriter ──► [Gate F: fact lock]
+Producer (you) ──► Viewer need + lesson promise [Gate V] ──► Researcher ×N ──► [Gate R] ──► Scriptwriter ──► [Gate F: fact lock]
    ──► Visual Director ──► [Gate L: look approved] ──► Sound Engineer (voice first)
-   ──► Animator ×N (parallel scenes) ──► Editor ──► [Gate Q: Reality Checker] ──► Packager ──► [Gate P]
+   ──► 60–90s Pilot + review [Gate V2] ──► Animator ×N (parallel scenes) ──► Editor ──► [Gate Q: Reality Checker] ──► Packager ──► [Gate P]
 ```
 
 | Gate | Passes when | Who judges |
 |---|---|---|
+| V viewer-first | completed practical viewer need, distinct learning promise, specific interests, chapter payoffs; `--stage pre-script` PASS | Producer + independent evidence review |
+| V2 pilot | real 60–90s sample reviewed; newcomer knows problem, wants answer, already learns; `--stage full-production` PASS | Producer + independent reality checker |
 | R research | every finalist has ≥2 read factual sources or is labelled; disconfirming search done | Producer |
 | F fact lock | every script sentence with a claim ID matches the ledger; unsupported claims cut/qualified | Reality Checker |
 | L look | one still per look approved (owner, or logged self-approval in autonomous runs) | Producer / owner |
