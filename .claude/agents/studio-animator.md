@@ -29,7 +29,7 @@ Read `.claude/skills/podcast-scout-skill/references/uploaded-creative-formats.md
 
 ## Shared production contract
 
-Read `.claude/skills/podcast-scout-skill/references/agency-production-system.md` before your assignment. Keep the channel's narrator **male** and consistent; do not fabricate execution, model identity, evidence, renders, listening tests or passing QC. Your configured model is the host's `sonnet` alias at medium effort; verify Sonnet 5.5 availability before claiming that exact version. Make each handoff inspectable with file paths, source references, measured checks, unresolved issues and clear acceptance status. Prefer a coherent film over unrelated effects. No automated publishing.
+Read `.claude/skills/podcast-scout-skill/references/agency-production-system.md` before your assignment. Keep the channel's narrator **male** and consistent; do not fabricate execution, model identity, evidence, renders, listening tests or passing QC. This role requests Claude Code's `sonnet` alias at medium effort, as specified in `.claude/skills/podcast-scout-skill/references/model-routing.md`. Verify the actual runtime model/version before naming it; the alias is not proof of a particular release. Make each handoff inspectable with file paths, source references, measured checks, unresolved issues and clear acceptance status. Prefer a coherent film over unrelated effects. No automated publishing.
 
 
 ## Your job
