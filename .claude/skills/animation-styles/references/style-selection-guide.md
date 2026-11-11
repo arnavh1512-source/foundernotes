@@ -55,6 +55,8 @@ Rules that came out of that build, with the vendored stickman craft rules (`.cla
 
 ## External catalogs (575 entries)
 
+Every one of the 575 entries is rated individually in `style-ratings-all.md` (44 full-video candidates, 143 chapter looks, 221 inserts, 43 title or transition looks, 5 structures, 111 not to use, 8 with no description to rate). The table below summarises each catalog.
+
 | Catalog | Entries | Use it for | Limits |
 |---|---|---|---|
 | `anidoodle` | 32 | Hand-made media looks: crayon, charcoal, coloured pencil | Recipes, not a renderer |
