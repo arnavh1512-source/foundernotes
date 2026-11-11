@@ -37,6 +37,49 @@ def mark_failure(qc_report, message):
     qc_report["errors"].append(message)
 
 
+SRT_TIMING = re.compile(
+    r"(\d+):(\d\d):(\d\d)[,.](\d{3})\s*-->\s*"
+    r"(\d+):(\d\d):(\d\d)[,.](\d{3})"
+)
+
+
+def parse_srt_strict(text):
+    """Return ([(start, end, text)], [problems]) for an SRT string."""
+    cues = []
+    problems = []
+
+    for number, block in enumerate(
+        re.split(r"\n\s*\n", text.strip()),
+        start=1,
+    ):
+        match = SRT_TIMING.search(block)
+
+        if not match:
+            problems.append(f"cue {number}: no valid timing line")
+            continue
+
+        h1, m1, s1, ms1, h2, m2, s2, ms2 = map(int, match.groups())
+        start = h1 * 3600 + m1 * 60 + s1 + ms1 / 1000
+        end = h2 * 3600 + m2 * 60 + s2 + ms2 / 1000
+        body = block[match.end():].strip()
+
+        if end <= start:
+            problems.append(f"cue {number}: ends before it starts")
+        elif cues and start < cues[-1][1] - 0.001:
+            problems.append(f"cue {number}: overlaps the previous cue")
+
+        if not body:
+            problems.append(f"cue {number}: no text")
+
+        cues.append((start, end, body))
+
+    return cues, problems
+
+
+def parse_srt(text):
+    return parse_srt_strict(text)[0]
+
+
 def run_ffprobe(file_path):
     cmd = [
         "ffprobe", "-v", "quiet",
@@ -105,11 +148,14 @@ def audit_audio_gaps_and_lufs(
     video_path,
     qc_report,
     max_silence_gap=1.2,
+    target_lufs=-14.0,
 ):
     cmd = [
         "ffmpeg",
         "-i", video_path,
-        "-af", f"silencedetect=noise=-35dB:d={max_silence_gap}",
+        "-af",
+        f"silencedetect=noise=-35dB:d={max_silence_gap},"
+        "ebur128=framelog=verbose",
         "-f", "null", "-",
     ]
 
@@ -135,6 +181,26 @@ def audit_audio_gaps_and_lufs(
             "FFmpeg processing.",
         )
         return
+
+    loudness = re.findall(
+        r"\bI:\s*(-?[0-9.]+) LUFS",
+        res.stderr or "",
+    )
+
+    if loudness:
+        lufs = float(loudness[-1])
+
+        if abs(lufs - target_lufs) <= 1.5:
+            qc_report["checks"].append(
+                f"Loudness {lufs:.1f} LUFS "
+                f"(target {target_lufs:.0f})"
+            )
+        else:
+            mark_failure(
+                qc_report,
+                f"Loudness {lufs:.1f} LUFS is more than 1.5 LU "
+                f"from the {target_lufs:.0f} LUFS target.",
+            )
 
     gaps = []
     pending_start = None
@@ -510,7 +576,7 @@ def run_film_gate(
         )
 
 
-def main():
+def main(argv=None):
     parser = argparse.ArgumentParser(
         description=(
             "Quality Control Video for Founder Notes Studio"
@@ -565,7 +631,7 @@ def main():
         help="Allow blue-purple palette when intentionally required",
     )
 
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     qc_report = {
         "status": "PASS",
@@ -753,7 +819,10 @@ def main():
                 timing_data = json.load(file)
 
             timing_duration = float(
-                timing_data.get("total_duration", 0.0)
+                timing_data.get(
+                    "duration",
+                    timing_data.get("total_duration", 0.0),
+                )
             )
 
             if abs(duration - timing_duration) > 1.0:
@@ -766,6 +835,46 @@ def main():
         except (OSError, ValueError, TypeError) as exc:
             qc_report["warnings"].append(
                 f"Failed to parse timings.json: {exc}"
+            )
+
+    # Audio must cover the picture (a truncated track is not silence)
+    if audio_stream is not None and duration > 0:
+        try:
+            audio_duration = float(
+                audio_stream.get("duration", duration)
+            )
+        except (TypeError, ValueError):
+            audio_duration = duration
+
+        if audio_duration < duration - 1.0:
+            mark_failure(
+                qc_report,
+                f"audio stream covers {audio_duration:.2f}s "
+                f"of {duration:.2f}s of video",
+            )
+
+    # Optional captions
+    if args.captions:
+        try:
+            with open(args.captions, encoding="utf-8-sig") as file:
+                cues, problems = parse_srt_strict(file.read())
+        except (OSError, ValueError) as exc:
+            cues, problems = [], [f"cannot read: {exc}"]
+
+        if cues and cues[-1][1] > duration + 0.5:
+            problems.append(
+                f"last cue ends at {cues[-1][1]:.2f}s, "
+                f"after the video ({duration:.2f}s)"
+            )
+
+        if problems:
+            mark_failure(
+                qc_report,
+                "Captions invalid: " + "; ".join(problems[:5]),
+            )
+        else:
+            qc_report["checks"].append(
+                f"Captions: {len(cues)} valid cues"
             )
 
     # Audio inspection
@@ -834,6 +943,8 @@ def main():
             qc_report["warnings"],
         )
 
+    return 0
+
 
 def write_report(output_path, qc_report):
     os.makedirs(
@@ -854,4 +965,4 @@ def write_report(output_path, qc_report):
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

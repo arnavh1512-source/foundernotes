@@ -37,4 +37,3 @@ The **principal male narrator** stays `Founder Notes Narrator`. For dialogue sce
    - Match SFX and BGM to the active style in `storyboard.md` (e.g., mechanical brick clacks for `lego`, chalk scratches + dust puffs for `chalkboard`, 124 BPM minimal techno + keypress clicks for `ascii-terminal`, marimba plucks + suction pops for `zackd-films`).
    - Align every SFX transient to its perceptual sync point in `cues.json` (`<= 1 frame / 33ms` tolerance): impact transients at slam frame 0, `whoosh` peak at camera pan midpoint, and risers ending on the cut frame.
    - Duck BGM (`0.6` gain) under Voicebox narration (`1.25` gain) and normalize master audio to **`-14 LUFS`** (`<= -1 dBTP` true peak).
-AGENT4_EOF

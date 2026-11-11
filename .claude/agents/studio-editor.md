@@ -28,4 +28,3 @@ Before full assembly, request the reviewed 60–90 second pilot and `viewer_firs
 3. **Run Upgraded 6-Gate `qc_video.py`:**
    - Run `python3 .claude/skills/podcast-scout-skill/scripts/qc_video.py final/video.mp4 --timings narration/timings.json --sheet final/sheet.jpg --json final/qc.json --min-duration 480`.
    - If `qc_video.py` flags ANY error (duration `< 480s`, fast-motion ratio `< 0.035` static PPT feel, any `>= 0.3s` mid-video blank/frozen gap, audio-video drift `> 0.3s`, or audio silence gaps `> 1.2s`), send the exact timecodes back to `studio-animator` or `studio-sound-engineer` for repair before calling `studio-reality-checker`.
-AGENT5_EOF

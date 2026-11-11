@@ -28,10 +28,12 @@ class H1TruncatedAudio(unittest.TestCase):
                "-t", "4", "-filter_complex", "[1:a]atrim=0:1[a]", "-map", "0:v", "-map", "[a]", "-c:v", "libx264",
                "-pix_fmt", "yuv420p", "-c:a", "aac", str(v))
             (td / "t.json").write_text(json.dumps({"duration": 4.0}))
-            code = qc.main([str(v), "--timings", str(td / "t.json"), "--json", str(td / "r.json")])
+            with self.assertRaises(SystemExit) as cm:
+                qc.main([str(v), "--timings", str(td / "t.json"), "--json", str(td / "r.json"),
+                         "--sheet", str(td / "sheet.jpg"), "--min-duration", "3"])
             r = json.loads((td / "r.json").read_text())
-            self.assertEqual(code, 1)
-            self.assertTrue(any("audio stream covers" in x["msg"] for x in r["results"]))
+            self.assertEqual(cm.exception.code, 1)
+            self.assertTrue(any("audio stream covers" in e for e in r["errors"]), r)
 
 
 class H2TopicMode(unittest.TestCase):
