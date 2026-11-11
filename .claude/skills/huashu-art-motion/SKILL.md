@@ -1,6 +1,6 @@
 ---
 name: huashu-art-motion
-description: "辅助艺术动画与解说任务：35 种艺术风格配方、9 种解说语法、分镜与确定性 Canvas 绘制工具。按宿主时间轴实现，素材与导出使用宿主能力。"
+description: "Art-animation and explainer helper (text mostly in Chinese): 35 art-style recipes, 9 explainer grammars, shot-list workflow and deterministic Canvas drawing helper source. Use when choosing an art style or explainer grammar, or drawing a seeded, time-driven Canvas scene. It supplies recipes and helper code only; rendering and export use the studio's own tools."
 en_name: huashu-art-motion
 zh_name: "花叔 · 艺术与解说动效"
 zh_description: "辅助艺术动画与解说任务：35 种艺术风格配方、9 种解说语法、分镜与确定性 Canvas 绘制工具。按宿主时间轴实现，素材与导出使用宿主能力。"
