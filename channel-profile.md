@@ -51,4 +51,3 @@ Values left as `TBD` fall back to the defaults shown.
 - **The ending of every video:**
   - the **closing narration line** asks viewers to subscribe and asks the comment question.
   - the **end card** is `K.endCard(S)`: logo, "Subscribe to FOUNDER NOTES", a cursor clicking the subscribe button, and next-video card placeholder.
-PROFILE_EOF

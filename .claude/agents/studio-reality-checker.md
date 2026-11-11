@@ -66,4 +66,3 @@ When `.claude/skills/humanizer/SKILL.md` has been used, verify the edited script
      - Every defect caught (and its permanent fix) into `.claude/memory/mistakes_and_pitfalls.md`
      - Every high-scoring (`>= 8.5/10`) visual/motion recipe into `.claude/memory/positive_recipes.md`
      - The completed video's style fingerprint into `.claude/memory/production_ledger.json`
-AGENT6_EOF

@@ -84,7 +84,7 @@ For each **source video**, the [Viewer Value & Hook Analysis](.claude/skills/pod
 | **Independent review** | Inspect claims, continuity, audio, frames, rights and technical QC | QC report and corrective actions |
 | **Publishing preparation** | Draft accurate titles, thumbnail concepts, chapters and description | Upload-ready package (**manual publishing**) |
 
-The [eight core studio agents](.claude/agents/) handle these responsibilities under one production coordinator. The [model-routing policy](.claude/skills/podcast-scout-skill/references/model-routing.md) assigns **Opus** to judgment-heavy work, **Sonnet** to well-scoped production and **Haiku** to two optional read-only helper roles. The precise Claude model/version must be checked on your host; no unsupported model is required. Agent definitions are **workflow instructions**, not evidence that a production was run. The [production plan](.claude/skills/podcast-scout-skill/assets/production-plan.md) describes expected handoffs and output folders under `studio-output/<slug>/`.
+The [eight core studio agents](.claude/agents/) handle these responsibilities under one production coordinator; a viewer analyst and two read-only helpers bring the total to eleven agent files. The [model-routing policy](.claude/skills/podcast-scout-skill/references/model-routing.md) assigns **Opus** to judgment-heavy work, **Sonnet** to well-scoped production and **Haiku** to two optional read-only helper roles. The precise Claude model/version must be checked on your host; no unsupported model is required. Agent definitions are **workflow instructions**, not evidence that a production was run. The [production plan](.claude/skills/podcast-scout-skill/assets/production-plan.md) describes expected handoffs and output folders under `studio-output/<slug>/`.
 
 ## Key capabilities
 
@@ -157,7 +157,7 @@ To use the optional character cast, first copy the [sample JSON](.claude/skills/
 | [`CLAUDE.md`](CLAUDE.md) | Claude Code's standing project instructions |
 | [`channel-profile.md`](channel-profile.md) | Audience, tone, voice identity and editorial constraints |
 | [`.claude/skills/podcast-scout-skill/`](.claude/skills/podcast-scout-skill/) | Main end-to-end workflow, scripts, assets and references |
-| [`.claude/agents/`](.claude/agents/) | The eight specialist roles |
+| [`.claude/agents/`](.claude/agents/) | Eight core roles, the viewer analyst and two optional read-only helpers |
 | [`agency-production-system.md`](.claude/skills/podcast-scout-skill/references/agency-production-system.md) | Stage gates, handoffs and approval requirements |
 | [`voice-casting.md`](.claude/skills/podcast-scout-skill/references/voice-casting.md) | Voice profiles, dialogue format and local setup |
 | [`animation-styles/SKILL.md`](.claude/skills/animation-styles/SKILL.md) | Original animation skill with 592-entry catalog |

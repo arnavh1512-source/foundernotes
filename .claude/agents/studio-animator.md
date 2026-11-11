@@ -57,4 +57,3 @@ For each assigned scene:
    - Visually inspect every PNG to verify: (a) **bottom `180px` subtitle safe zone** is completely clear of critical text/graphics, (b) outer `80px` margins are clear, (c) text size `>= 30px` on 1080p (`<= 7 words` per label), (d) zero text-on-text or text-on-object overlap, and (e) zero frozen stretches `> 2.5s` or blank gaps `>= 0.3s`.
 4. **Run Scene Linter Before Handoff:**
    - Run `python3 .claude/skills/podcast-scout-skill/scripts/lint_scenes.py --scenes scenes/list.txt --timings narration/timings.json --storyboard storyboard.md` and fix every error/warning before rendering final `1920x1080 @ 30fps` MP4 clips (`scenes/NN-<id>.mp4`) and ending the final scene with `K.endCard(S)`.
-AGENT3_EOF

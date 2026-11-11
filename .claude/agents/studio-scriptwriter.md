@@ -30,7 +30,6 @@ Always:
 - **Natural-language editorial pass:** After research-backed drafting, read `.claude/skills/humanizer/SKILL.md` and `.claude/skills/podcast-scout-skill/references/editorial-humanizer.md`. Edit spoken lines for natural rhythm and cut formulaic AI prose, but preserve claim IDs, exact numbers, caveats and source links. Do the pass **before** final narration and timestamps, then send the revised copy back through reality-checker fact lock and word-count review. Do not hallucinate anecdotes or flatten legitimate storytelling.
 - **Optional interactive cast writing:** Preserve the same established male narrator for narration, but allow natural spoken exchanges between any number of original Voicebox male and female characters when the script warrants it. Declare `cast` profiles and a named `speaker` per dialogue segment as documented in `.claude/skills/podcast-scout-skill/references/voice-casting.md`. Humanizer can edit all speakers' dialogue **before** voice production; verify citations and facts again. Do not invent real quotations or clone podcast guests. No unnecessary voices in a single-person explainer.
 - **Closing CTA:** End with the spoken subscribe + comment question cue for `K.endCard(S)`.
-AGENT1_EOF
 
 ## Shared production contract
 

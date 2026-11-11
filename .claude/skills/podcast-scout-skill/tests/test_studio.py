@@ -124,7 +124,8 @@ class AssembleAndQC(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             td = Path(td)
             ff = ["ffmpeg", "-y", "-loglevel", "error"]
-            subprocess.run(ff + ["-f", "lavfi", "-i", "testsrc2=size=1280x720:rate=30", "-t", "3", str(td / "a.mp4")], check=True)
+            subprocess.run(ff + ["-f", "lavfi", "-i", "testsrc2=size=1920x1080:rate=30,rotate=2*t", "-t", "3",
+                                 "-pix_fmt", "yuv420p", str(td / "a.mp4")], check=True)
             subprocess.run(ff + ["-f", "lavfi", "-i", "sine=f=180:sample_rate=48000", "-t", "3",
                                  "-ac", "1", str(td / "n.wav")], check=True)
             (td / "c.srt").write_text("1\n00:00:00,200 --> 00:00:02,500\nA test caption.\n")
@@ -134,10 +135,13 @@ class AssembleAndQC(unittest.TestCase):
                                capture_output=True, text=True)
             self.assertEqual(r.returncode, 0, r.stderr)
             self.assertTrue(out.with_suffix(".srt").exists())
-            code = qc.main([str(out), "--captions", str(td / "c.srt"), "--json", str(td / "qc.json")])
+            code = qc.main([str(out), "--captions", str(td / "c.srt"), "--json", str(td / "qc.json"),
+                            "--sheet", str(td / "sheet.jpg"), "--min-duration", "2"])
             report = json.loads((td / "qc.json").read_text())
             self.assertEqual(code, 0, report)
-            self.assertTrue(any(x["check"] == "loudness" and x["level"] == "OK" for x in report["results"]))
+            self.assertEqual(report["errors"], [], report)
+            self.assertTrue(any(c.startswith("Loudness") for c in report["checks"]), report)
+            self.assertTrue(any(c.startswith("Captions") for c in report["checks"]), report)
 
 
 if __name__ == "__main__":
