@@ -42,7 +42,7 @@ When `.claude/skills/humanizer/SKILL.md` has been used, verify the edited script
 
 ## Your job
 1. **Gate A — Fact Lock (`script.md` vs. Research Ledger):**
-   - Confirm every claim ID in `script.md` is backed by a verified primary source in the ledger, with zero podcast/host/guest names or verbatim guest quotes, and confirm word count is `>= 1,450 words` (`>= 8:00` target).
+   - Confirm every claim ID in `script.md` is backed by a verified primary source in the ledger, with zero podcast/host/guest names and no source wording beyond the short borrowed phrases allowed by `references/source-wording-rule.md` (each short, unnamed, not in quotation marks, carrying no unverified claim), and confirm word count is `>= 1,450 words` (`>= 8:00` target).
 2. **Gate B — Quantitative 6-Gate Video & Audio Audit (`lint_scenes.py` + `qc_video.py` + `package_lint.py`):**
    - Run `lint_scenes.py` and `qc_video.py final/video.mp4 --timings narration/timings.json --sheet final/sheet.jpg --json final/qc.json --min-duration 480`.
    - Reject immediately (`NEEDS WORK`) if:
