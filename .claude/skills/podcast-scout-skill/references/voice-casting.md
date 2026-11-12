@@ -1,5 +1,7 @@
 # Voicebox character casting: many voices, one recognizable narrator
 
+**Update 2026-11-12:** the channel narrator is now the owner-supplied voice (profile `Owner-Supplied Narrator (consented)`, reference clip kept local and git-ignored; see `CLAUDE.md`). The cast key `narrator` and the alias `founder-notes` resolve to it; the synthetic `Founder Notes Narrator` named below is the fallback when the clip is absent. Extra character voices must still be original synthetic profiles.
+
 The **main voice of Founder Notes remains the established male `Founder Notes Narrator`**. Scene storytelling can additionally use any number of original, approved synthetic Voicebox male or female characters. Examples: a founder/investor conversation, two historical actors in a clearly marked reenactment, an interviewer and guest, an argument between hypothetical perspectives, or one narrator alone. **Do not force a second voice when the script has no dramatic need.**
 
 The integration is implemented in `../scripts/narrate.py` and works with its existing `assemble.py`, `captions.srt` and `timings.json` pipeline: each **sequential** script segment can select a different `speaker`. The result is **one narration.wav** with recorded per-segment speaker/scene/profile metadata. Full **simultaneous overlapping voices, performance-driven facial lip synchronization and voice-design generation from text prompts are not implemented**. Don't claim those work.

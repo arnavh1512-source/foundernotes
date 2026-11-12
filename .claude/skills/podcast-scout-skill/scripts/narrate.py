@@ -276,21 +276,42 @@ def voicebox_url():
     return os.environ.get("VOICEBOX_URL", "http://127.0.0.1:17493")
 
 
+# Owner rule 2026-11-12: the owner-supplied voice is the channel narrator. It is a real person's voice (consent stated
+# by the owner), so its reference clip lives in a git-ignored folder and is never committed to this public repo.
+OWNER_NARRATOR_NAME = "Owner-Supplied Narrator (consented)"
+OWNER_NARRATOR_REF = VOICE_DIR_REPO / "local" / "owner-narrator-ref.wav"
+
+
+def pick_channel_profile(profiles, owner_ref_exists):
+    """Choose the channel narrator. Returns (profile_id or None, kind): the owner voice if its profile or local
+    reference exists, otherwise the synthetic fallback. None means the profile has to be created from the reference."""
+    by = {p.get("name"): p["id"] for p in profiles if p.get("sample_count", 1)}
+    if OWNER_NARRATOR_NAME in by:
+        return by[OWNER_NARRATOR_NAME], "owner"
+    if owner_ref_exists:
+        return None, "owner"
+    return by.get(CHANNEL_NARRATOR_NAME), "synthetic"
+
+
 def voicebox_channel_profile():
-    """Find (or create once) the channel narrator profile in the local voicebox server. The voice is cloned from a
-    SYNTHETIC reference kept in the repo (assets/voice/founder-notes-narrator-ref.wav, a Parler take; not a real
-    person), so every video, on every machine, gets the same narrator."""
+    """Find (or create once) the channel narrator profile in the local voicebox server: the owner-supplied voice when
+    its local reference is on this machine, else the SYNTHETIC repo reference (founder-notes-narrator-ref.wav)."""
     base = voicebox_url()
     with urllib.request.urlopen(f"{base}/profiles", timeout=30) as r:
-        for p in json.loads(r.read()):
-            if p.get("name") == CHANNEL_NARRATOR_NAME and p.get("sample_count", 1):
-                return p["id"]
+        pid, kind = pick_channel_profile(json.loads(r.read()), OWNER_NARRATOR_REF.exists())
+    if kind == "synthetic":
+        print(f"narrate: WARNING owner narrator reference not found at {OWNER_NARRATOR_REF}; using the synthetic "
+              "fallback voice. Ask the owner for the clip before narrating a real video.", file=sys.stderr)
+    if pid:
+        return pid
+    name, desc, ref = ((OWNER_NARRATOR_NAME, "Cloned from an owner-supplied recording; speaker consent stated by owner", OWNER_NARRATOR_REF)
+                       if kind == "owner" else
+                       (CHANNEL_NARRATOR_NAME, "Synthetic channel narrator (owner-approved). Not a real person.", VOICE_DIR_REPO / "founder-notes-narrator-ref.wav"))
     req = urllib.request.Request(f"{base}/profiles", headers={"Content-Type": "application/json"}, data=json.dumps(
-        {"name": CHANNEL_NARRATOR_NAME, "language": "en", "voice_type": "cloned",
-         "description": "Synthetic channel narrator (owner-approved). Not a real person."}).encode())
+        {"name": name, "language": "en", "voice_type": "cloned", "description": desc}).encode())
     with urllib.request.urlopen(req, timeout=30) as r:
         pid = json.loads(r.read())["id"]
-    ref, txt = VOICE_DIR_REPO / "founder-notes-narrator-ref.wav", (VOICE_DIR_REPO / "founder-notes-narrator-ref.txt").read_text().strip()
+    txt = ref.with_suffix(".txt").read_text().strip()
     bnd = "----narrate" + hashlib.sha1(txt.encode()).hexdigest()[:12]
     body = (f"--{bnd}\r\nContent-Disposition: form-data; name=\"reference_text\"\r\n\r\n{txt}\r\n"
             f"--{bnd}\r\nContent-Disposition: form-data; name=\"file\"; filename=\"ref.wav\"\r\nContent-Type: audio/wav\r\n\r\n").encode() \
@@ -298,7 +319,7 @@ def voicebox_channel_profile():
     req = urllib.request.Request(f"{base}/profiles/{pid}/samples", data=body,
                                  headers={"Content-Type": f"multipart/form-data; boundary={bnd}"})
     urllib.request.urlopen(req, timeout=60).read()
-    print(f"narrate: created the voicebox profile '{CHANNEL_NARRATOR_NAME}' from the repo reference", file=sys.stderr)
+    print(f"narrate: created the voicebox profile '{name}' from {ref.name}", file=sys.stderr)
     return pid
 
 
