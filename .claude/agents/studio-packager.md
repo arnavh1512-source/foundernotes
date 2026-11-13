@@ -48,3 +48,5 @@ Read `.claude/skills/podcast-scout-skill/references/youtube-packaging.md`.
    credits for independently used sources and media where required (never reveal source podcast/host/guest under the channel policy), synthetic-narration note.
 4. `package/package.json` then `python3 .claude/skills/podcast-scout-skill/scripts/package_lint.py package/package.json --duration <s>`.
 5. `package/upload-checklist.md` including the altered/synthetic content disclosure decision.
+
+**Delivery package (owner rule, 2026-11-13):** every video also needs a summary Short, thumbnail, title and description. Follow `.claude/skills/podcast-scout-skill/references/video-delivery-package.md`.

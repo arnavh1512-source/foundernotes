@@ -13,6 +13,8 @@
 
 ## Founder Notes channel override
 
+**Update 2026-11-12:** the channel narrator is the owner-supplied voice. `narrate.py` uses it whenever `assets/voice/local/owner-narrator-ref.wav` (git-ignored, never committed) or its Voicebox profile exists, and falls back to the synthetic narrator described below with a warning. Use chain `none` for it.
+
 For **this channel**, the preferred narrator is the owner-authorized **Voicebox male profile `Founder Notes Narrator`** (alias `founder-notes`, normally selected by the narration script JSON). If the Voicebox server/profile is unavailable, use the approved male Parler reference and only then Kokoro `am_michael`. Do not silently substitute a generic default voice: record the actual engine/profile and flag the fallback for review. The generic Kokoro-first engine table below is historical/portable advice, **not the Founder Notes studio order**. Verify the generated WAV, intelligibility, measured timing and rights before visual production.
 
 ## Optional multi-character dialogue (Voicebox)

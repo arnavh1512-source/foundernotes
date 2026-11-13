@@ -6,3 +6,6 @@ __pycache__/
 *.pyc
 *.onnx
 voices-v1.0.bin
+
+# real-person voice reference for the channel narrator: never commit (public repo)
+.claude/skills/podcast-scout-skill/assets/voice/local/

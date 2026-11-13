@@ -85,6 +85,7 @@ jobs:
         run: |
           python -m unittest discover -s .claude/skills/podcast-scout-skill/tests -p "test_studio.py" -v
           python -m unittest discover -s .claude/skills/podcast-scout-skill/tests -p "test_review_regressions.py" -v
+          python -m unittest discover -s .claude/skills/podcast-scout-skill/tests -p "test_channel_narrator.py" -v
           python -m unittest discover -s .claude/skills/podcast-scout-skill/tests -p "test_report.py" -v
 
       - name: Test real video decoding
