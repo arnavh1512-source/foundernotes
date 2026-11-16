@@ -1,0 +1,104 @@
+{
+  "_note": "ORIGINAL 60–90-second pilot dialogue. Not an adaptation of copyrighted book dialogue. Replace the two profile IDs with locally approved VoiceStudio voices.",
+  "project": "The Map on the Wall — original philosophical dialogue pilot",
+  "voice_source": "voicestudio",
+  "format": "16:9 hand-painted 2D; characters and voices must be independently approved before rendering",
+  "speakers": {
+    "youth": {
+      "profile_id": "REPLACE_WITH_YOUTH_PROFILE_ID",
+      "direction": "A restless, quick-thinking young adult; energetic and questioning. Distinct original synthetic voice."
+    },
+    "philosopher": {
+      "profile_id": "REPLACE_WITH_PHILOSOPHER_PROFILE_ID",
+      "direction": "An older adult speaking patiently, with gentle authority and no hurry. Distinct original synthetic voice."
+    }
+  },
+  "lead": 0.3,
+  "tail": 1.2,
+  "segments": [
+    {
+      "id": "s01",
+      "scene_id": "hook",
+      "speaker": "youth",
+      "text": "You keep telling people there's another way through this town. Look at this map. Every road into the old quarter ends at a locked gate.",
+      "pause_after": 0.35
+    },
+    {
+      "id": "s02",
+      "scene_id": "hook",
+      "speaker": "philosopher",
+      "text": "I believe you about the gates. May I ask who drew the map?",
+      "pause_after": 0.25
+    },
+    {
+      "id": "s03",
+      "scene_id": "study",
+      "speaker": "youth",
+      "text": "The council. It's supposed to show every route.",
+      "pause_after": 0.2
+    },
+    {
+      "id": "s04",
+      "scene_id": "study",
+      "speaker": "philosopher",
+      "text": "Does it show the stairs behind the bakery?",
+      "pause_after": 0.25
+    },
+    {
+      "id": "s05",
+      "scene_id": "stairs",
+      "speaker": "youth",
+      "text": "No. Those are too narrow for a cart.",
+      "pause_after": 0.25
+    },
+    {
+      "id": "s06",
+      "scene_id": "stairs",
+      "speaker": "philosopher",
+      "text": "Exactly. This map was made for delivery carts. You came here on foot.",
+      "pause_after": 0.45
+    },
+    {
+      "id": "s07",
+      "scene_id": "gates",
+      "speaker": "youth",
+      "text": "So all the roads are open after all?",
+      "pause_after": 0.25
+    },
+    {
+      "id": "s08",
+      "scene_id": "gates",
+      "speaker": "philosopher",
+      "text": "No. A locked gate is still a locked gate. But a map can be accurate and still leave something important out.",
+      "pause_after": 0.4
+    },
+    {
+      "id": "s09",
+      "scene_id": "question",
+      "speaker": "youth",
+      "text": "Then how do I know which map to trust?",
+      "pause_after": 0.2
+    },
+    {
+      "id": "s10",
+      "scene_id": "question",
+      "speaker": "philosopher",
+      "text": "Ask what question it was made to answer. Then go outside and check the ground. If neither map helps, draw what you've learned.",
+      "pause_after": 0.55
+    },
+    {
+      "id": "s11",
+      "scene_id": "close",
+      "speaker": "youth",
+      "text": "You don't make the journey sound easier.",
+      "pause_after": 0.3
+    },
+    {
+      "id": "s12",
+      "scene_id": "close",
+      "speaker": "philosopher",
+      "text": "Maybe it isn't. But at least now you're looking for a path, instead of arguing with the paper.",
+      "pause_after": 1.2
+    }
+  ]
+}
