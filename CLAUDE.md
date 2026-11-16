@@ -30,3 +30,29 @@ This repo holds the skills, self-improving memory, and subagents used to researc
 - **Ponytail for code changes:** When writing, fixing or refactoring this repo's scripts, tests or CI, follow the vendored MIT `.claude/skills/ponytail/SKILL.md` (smallest complete change; never cut validation, error handling or security; leave a small test for new logic). It applies to **code only**; it does not shorten research, scripts, narration or the 8-minute rule.
 - Work goes in `studio-output/<slug>/` (gitignore). Never upload or publish; the owner uploads.
 - Setup per machine/session: `bash .claude/skills/podcast-scout-skill/scripts/setup_studio.sh`.
+
+## Opt-in painted character motion kit (original implementation)
+
+For scene-driven dialogue, hand-posed characters, meaningful object interactions,
+or a 16:9 parallax environment, consult
+`.claude/skills/painted-character-motion/SKILL.md` after the viewer-first visual plan.
+This new skill provides **original** deterministic SVG character art, arm gestures
+and attached props, a five-beat Philosopher pilot, and a
+`scripts/build_from_timings.py` adapter for FounderNotes `timings.json`.
+It feeds the existing `.claude/skills/motion/scripts/render.mjs` rather than
+replacing the editor or adding a separate Remotion dependency.
+
+**Rights:** The useful technique ideas were evaluated against
+`SahilScripts/mahabharat-motion-kit`, but that upstream repository showed no
+explicit license in the inspected source tree. Its code, artwork, character
+designs, demo footage, music and voices must **not** be copied into FounderNotes
+without explicit permission or a compatible published license. The new kit
+contains an independent SVG design and common animation methods.
+
+**Production constraints remain:** source-backed writing, approved narration
+(Voicebox or separately integrated VoiceStudio), human listening, frame review,
+caption accuracy, audio/visual synchronization, measurable QC and manual
+publication approval. The example has **no actual voiceover**; the local motion
+test does **not** prove a fully rendered long-form video. The original
+8-minute long-form policy is unchanged. The new implementation does not
+automatically integrate with unmerged VoiceStudio PR changes.
