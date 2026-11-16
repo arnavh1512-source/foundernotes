@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FounderNotes — Painted Character Animation Kit</title>
+<style>html,body{margin:0;background:#111921;width:100%;height:100%;display:grid;place-items:center}svg{width:100%;height:100%;display:block}</style>
+</head>
+<body>
+<svg id="stage" role="img" aria-label="Original painterly animated scene: young visitor and philosopher discussing a map"></svg>
+<script src="../engine.js"></script>
+<script>
+  // This program is an original visual motion test, NOT an adaptation of published dialogue.
+  // For a real film: replace each duration with the measured segments from narration/timings.json.
+  const beats = FNPaintedMotion.DEFAULT_BEATS.map(b => ({...b}));
+  const film = FNPaintedMotion.mount(document.getElementById('stage'), {beats, captions:true});
+  window.MOTION = {width:1280,height:720,fps:30,duration:film.duration};
+  window.seek = async (t) => film.seek(t);
+  film.seek(Number(new URLSearchParams(location.search).get('t')) || 0);
+</script>
+</body></html>
