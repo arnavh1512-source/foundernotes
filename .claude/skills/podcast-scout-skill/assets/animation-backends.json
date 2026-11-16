@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "backends": {
+    "remotion": {
+      "purpose": "Deterministic React/SVG animation, camera layers and reusable character rigs",
+      "connection": "direct-local-cli",
+      "status": "requires-install"
+    },
+    "synfig": {
+      "purpose": "Vector/bitmap tweened character animation",
+      "connection": "render-import",
+      "status": "optional-external"
+    },
+    "friction": {
+      "purpose": "Vector/raster motion design and expressive 2D scenes",
+      "connection": "render-import",
+      "status": "optional-external"
+    },
+    "theatre": {
+      "purpose": "Visual animation authoring for JS, React/SVG or Three.js",
+      "connection": "authoring-data-to-remotion",
+      "status": "optional-authoring"
+    },
+    "opentoonz": {
+      "purpose": "Hand-drawn animation and frame-by-frame acting",
+      "connection": "render-import",
+      "status": "optional-external"
+    },
+    "freemocap": {
+      "purpose": "Capture performer motion for retargeting and stylization",
+      "connection": "retarget-then-render-import",
+      "status": "optional-external"
+    },
+    "effekseer": {
+      "purpose": "Reusable particle accents and effects",
+      "connection": "render-import",
+      "status": "optional-external"
+    },
+    "openvdb": {
+      "purpose": "Sparse volumes for atmospheric effects through a compatible 3D renderer",
+      "connection": "volume-renderer-then-import",
+      "status": "optional-external"
+    },
+    "natron": {
+      "purpose": "Node-based compositing, masks, tracking and color finishing",
+      "connection": "render-import",
+      "status": "optional-external"
+    }
+  }
+}
