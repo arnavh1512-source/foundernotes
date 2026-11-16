@@ -122,3 +122,16 @@ These entries describe **visual techniques and references**, not 592 complete vi
 - **Benchmark:** compare representative rendered results across genuinely available engines, including relevant entries from the unified library; check source and asset licenses first. Not every catalog entry or upstream prompt can render on its own.
 
 Use `docs/ANIMATION_STYLES_AUDIT.md` as the style inventory and known limitations. Do not claim the 17 styles are independently benchmarked merely because their Markdown references exist.
+
+## Optional 16:9 articulated character renderer (original)
+
+For meaningful character acting and moving camera planes, the **new**
+`../painted-character-motion/SKILL.md` implements an independent local
+SVG/HTML renderer that works with the existing `motion` tool. It has:
+two illustrated characters, wrist-relative props, facial expressions, 2.5D
+depth planes, deterministic seek, a short original storyboard and a measured
+narration-timing adapter. This is **one optional local technique**, not a
+new entry in the 17 native looks or the 592-entry external style catalog.
+Try it only after the viewer's explanatory action and visual requirements are
+clear. Measure output before upgrading any quality rating.
+It does not copy the source/assets of the unlicensed Mahabharat Motion Kit.
