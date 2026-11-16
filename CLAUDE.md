@@ -30,3 +30,9 @@ This repo holds the skills, self-improving memory, and subagents used to researc
 - **Ponytail for code changes:** When writing, fixing or refactoring this repo's scripts, tests or CI, follow the vendored MIT `.claude/skills/ponytail/SKILL.md` (smallest complete change; never cut validation, error handling or security; leave a small test for new logic). It applies to **code only**; it does not shorten research, scripts, narration or the 8-minute rule.
 - Work goes in `studio-output/<slug>/` (gitignore). Never upload or publish; the owner uploads.
 - Setup per machine/session: `bash .claude/skills/podcast-scout-skill/scripts/setup_studio.sh`.
+
+
+
+## Creative production loop and animation backends
+
+Use [.claude/skills/podcast-scout-skill/references/creative-production-loop.md](/.claude/skills/podcast-scout-skill/references/creative-production-loop.md) for the executable reference → knowledge → production → critic → revision workflow. Read [animation backend assessment](/.claude/skills/podcast-scout-skill/references/animation-backends.md) before choosing optional external tools. Preserve narrator, evidence, rights, pilot-review and owner-approval requirements. Host AI performs creative analysis; the coordinator does not invent model runs or audiovisual review.

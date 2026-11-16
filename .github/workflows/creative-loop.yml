@@ -1,0 +1,36 @@
+name: Creative loop and motion proof
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+jobs:
+  loop:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - run: python -m unittest discover -s .claude/skills/podcast-scout-skill/tests -p 'test_studio_loop.py' -v
+      - run: python -m unittest discover -s .claude/skills/podcast-scout-skill/tests -p 'test_review_frames.py' -v
+      - run: python -m unittest discover -s .claude/skills/podcast-scout-skill/tests -p 'test_animation_backends.py' -v
+  remotion:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: .claude/skills/motion/remotion
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test ../tests/*.test.mjs
+      - run: npm install --no-audit --no-fund
+      - run: npm run check
+      - run: npx remotion browser ensure
+      - run: npm run render:proof -- proof.mp4
+      - uses: actions/upload-artifact@v4
+        with:
+          name: original-motion-proof
+          path: .claude/skills/motion/remotion/proof.mp4

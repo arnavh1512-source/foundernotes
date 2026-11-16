@@ -76,3 +76,9 @@ The memory files and `scripts/record_lesson.py` now exist. Use the recorder with
 11. **Edit, Assembly & Automated QC (`studio-editor.md`):** Assemble scenes, Voicebox narration, burned-in captions (`karaoke_ass.py`), ducked BGM (`0.6` under `1.25` VO), and `K.endCard(S)` via `assemble.py`. Run `qc_video.py` (enforcing `>= 480.0s`, `< 3.5%` anti-PPT motion gate, no unexplained `>= 0.3s` blank/dead gaps, and audio sync).
 12. **Blind Critic Jury & Memory Reflow (`studio-reality-checker.md` & `studio-packager.md`):** Run 2 rounds of 7-dimension rubric grading (`>= 8.0/10` required), package YouTube metadata, and append all lessons learned and style fingerprints to `.claude/memory/` via `scripts/record_lesson.py`.
 
+
+
+
+## Creative production loop and animation backends
+
+Use [.claude/skills/podcast-scout-skill/references/creative-production-loop.md](/.claude/skills/podcast-scout-skill/references/creative-production-loop.md) for the executable reference → knowledge → production → critic → revision workflow. Read [animation backend assessment](/.claude/skills/podcast-scout-skill/references/animation-backends.md) before choosing optional external tools. Preserve narrator, evidence, rights, pilot-review and owner-approval requirements. Host AI performs creative analysis; the coordinator does not invent model runs or audiovisual review.

@@ -179,3 +179,9 @@ To use the optional character cast, first copy the [sample JSON](.claude/skills/
 ---
 
 FounderNotes is an independent creator project. External projects have their own terms and prerequisites; see the [third-party notices](.claude/skills/podcast-scout-skill/NOTICE.md).
+
+
+
+## Creative production loop and animation backends
+
+Use [.claude/skills/podcast-scout-skill/references/creative-production-loop.md](/.claude/skills/podcast-scout-skill/references/creative-production-loop.md) for the executable reference → knowledge → production → critic → revision workflow. Read [animation backend assessment](/.claude/skills/podcast-scout-skill/references/animation-backends.md) before choosing optional external tools. Preserve narrator, evidence, rights, pilot-review and owner-approval requirements. Host AI performs creative analysis; the coordinator does not invent model runs or audiovisual review.
