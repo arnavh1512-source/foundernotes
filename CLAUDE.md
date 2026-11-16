@@ -30,3 +30,31 @@ This repo holds the skills, self-improving memory, and subagents used to researc
 - **Ponytail for code changes:** When writing, fixing or refactoring this repo's scripts, tests or CI, follow the vendored MIT `.claude/skills/ponytail/SKILL.md` (smallest complete change; never cut validation, error handling or security; leave a small test for new logic). It applies to **code only**; it does not shorten research, scripts, narration or the 8-minute rule.
 - Work goes in `studio-output/<slug>/` (gitignore). Never upload or publish; the owner uploads.
 - Setup per machine/session: `bash .claude/skills/podcast-scout-skill/scripts/setup_studio.sh`.
+
+
+## Optional VoiceStudio character dialogue (2026-11-16 owner request)
+For the *philosopher-and-youth animated dialogue pilot only*, the owner selected
+[VoiceStudio](https://github.com/debpalash/VoiceStudio) as the **two-character
+speech source**, instead of Voicebox. This **does not change the permanent
+Founder Notes narrator**, and no AI assistant may automatically switch the
+channel-wide narrator to a different service.
+
+Read `.claude/skills/podcast-scout-skill/references/voicestudio-dialogue.md`
+and use the original script sample
+`.claude/skills/podcast-scout-skill/assets/voicestudio-philosopher-pilot.example.json`.
+The local integration bridge is
+`.claude/skills/podcast-scout-skill/scripts/voicestudio_narrate.py`.
+It calls VoiceStudio's loopback `POST /generate` with distinct approved voice
+profile IDs, then routes individual WAV files through FounderNotes' existing
+`narrate.py --engine files` to preserve measured timings and captions.
+Run a dry-run first; **do not claim the TTS generated speech unless the actual
+local engine responded with valid audio files and the resulting master was
+auditioned**. Never install external software or use account credentials without
+approval; never clone someone without their permission.
+
+The original proposed source script closely followed published copyrighted
+dialogue. Do not render or publish that near-verbatim adaptation without
+permission. The sample **The Map on the Wall** is a new, independent story to
+test scene direction and voice separation. It is a short private pilot, *not*
+an exception allowing publication under the existing 8-minute long-form policy.
+Actual audio/animation QC and human viewing must precede any full-length film.
