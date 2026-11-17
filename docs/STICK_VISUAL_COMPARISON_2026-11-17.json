@@ -1,0 +1,109 @@
+{
+  "template_only": false,
+  "episode": "stick-performance-craft-study",
+  "cut": "visual-payoff-revision",
+  "render_path": null,
+  "render_sha256": null,
+  "preview_source_sha256": "5335a9b46db18c3e3cf2b8aec2e16e5c47b68866b9aa7913219ba75f77e5a3bf",
+  "reviewer": "Codex coordinator; not independent",
+  "method": "Displayed browser poses and six screenshots sampled from running loopback preview; reopened decimated reference overview",
+  "coverage": {
+    "our_intervals_s": [],
+    "our_sample_times_s": [
+      0,
+      2.5,
+      3.5,
+      4.15,
+      5.8,
+      14.5,
+      0.3,
+      3.45,
+      6.59,
+      9.72,
+      12.85
+    ],
+    "listened": false,
+    "limitations": [
+      "No continuous encoded-video inspection",
+      "Silent exercise",
+      "Reference sampled frames only; exact timestamps unverified"
+    ]
+  },
+  "references": [
+    {
+      "url": "https://www.youtube.com/@alanbecker",
+      "video_url": "https://www.newgrounds.com/portal/view/316541",
+      "status": "sampled_frames_only",
+      "reviewed_intervals_s": [],
+      "evidence": [
+        "Existing overview sheet from the creator upload reopened in this session; docs/STICK_VISUAL_REVIEW_2026-11-17.md"
+      ]
+    },
+    {
+      "url": "https://www.youtube.com/@dayonefilmsofficial",
+      "video_url": null,
+      "status": "pending",
+      "reviewed_intervals_s": [],
+      "evidence": []
+    },
+    {
+      "url": "https://www.youtube.com/@psychtoonshq",
+      "video_url": null,
+      "status": "pending",
+      "reviewed_intervals_s": [],
+      "evidence": []
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=gly2wBcnZUQ",
+      "video_url": null,
+      "status": "pending",
+      "reviewed_intervals_s": [],
+      "evidence": []
+    },
+    {
+      "url": "https://www.youtube.com/@psychdoodletv",
+      "video_url": null,
+      "status": "pending",
+      "reviewed_intervals_s": [],
+      "evidence": []
+    }
+  ],
+  "criteria": {
+    "viewer_clarity": {
+      "status": "pending",
+      "comparisons": []
+    },
+    "character_acting": {
+      "status": "pending",
+      "comparisons": []
+    },
+    "meaningful_motion": {
+      "status": "pending",
+      "comparisons": []
+    },
+    "shot_variety_and_continuity": {
+      "status": "pending",
+      "comparisons": []
+    },
+    "visual_explanation": {
+      "status": "pending",
+      "comparisons": []
+    },
+    "pacing": {
+      "status": "pending",
+      "comparisons": []
+    },
+    "voice_and_sound": {
+      "status": "pending",
+      "comparisons": []
+    },
+    "finish_and_readability": {
+      "status": "pending",
+      "comparisons": []
+    }
+  },
+  "technical_qc": "Five geometry tests and offline bundler passed; full encoded QC pending",
+  "independent_critique": "pending",
+  "owner_review": "pending",
+  "overall": "needs_work"
+}
