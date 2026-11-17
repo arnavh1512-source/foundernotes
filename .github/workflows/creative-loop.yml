@@ -15,6 +15,8 @@ jobs:
       - run: python -m unittest discover -s .claude/skills/podcast-scout-skill/tests -p 'test_studio_loop.py' -v
       - run: python -m unittest discover -s .claude/skills/podcast-scout-skill/tests -p 'test_review_frames.py' -v
       - run: python -m unittest discover -s .claude/skills/podcast-scout-skill/tests -p 'test_animation_backends.py' -v
+      - run: python -m unittest discover -s .claude/skills/podcast-scout-skill/tests -p 'test_voicestudio_narrate.py' -v
+      - run: python -m unittest discover -s .claude/skills/painted-character-motion/tests -p 'test_*.py' -v
   remotion:
     runs-on: ubuntu-latest
     defaults:
@@ -34,3 +36,35 @@ jobs:
         with:
           name: original-motion-proof
           path: .claude/skills/motion/remotion/proof.mp4
+
+  painted:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - run: node --test .claude/skills/painted-character-motion/tests/test_engine.cjs
+      - run: npm ci --prefix .claude/skills/motion --no-audit --no-fund
+      - run: npx playwright install --with-deps chromium
+        working-directory: .claude/skills/motion
+      - name: Render original silent technical sample and frame strip
+        run: |
+          node .claude/skills/motion/scripts/render.mjs .claude/skills/painted-character-motion/examples/philosopher-map.html --out studio-output/painted-ci/proof.mp4 --draft
+          node .claude/skills/motion/scripts/render.mjs .claude/skills/painted-character-motion/examples/philosopher-map.html --out studio-output/painted-ci/stills --stills 0,5,10,15,20.9
+      - name: Verify decoded draft duration and dimensions
+        run: |
+          ffmpeg -v error -i studio-output/painted-ci/proof.mp4 -f null -
+          python - <<'PYTHON'
+          import json, subprocess
+          data=json.loads(subprocess.check_output(['ffprobe','-v','error','-show_streams','-show_format','-of','json','studio-output/painted-ci/proof.mp4']))
+          video=next(s for s in data['streams'] if s['codec_type']=='video')
+          assert (video['width'],video['height']) == (640,360), video
+          assert abs(float(data['format']['duration'])-21)<.1, data
+          assert int(video['nb_frames'])==315, video
+          PYTHON
+      - uses: actions/upload-artifact@v4
+        with:
+          name: painted-character-technical-proof
+          path: studio-output/painted-ci/

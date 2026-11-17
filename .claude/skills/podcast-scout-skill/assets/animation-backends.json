@@ -45,6 +45,11 @@
       "purpose": "Node-based compositing, masks, tracking and color finishing",
       "connection": "render-import",
       "status": "optional-external"
+    },
+    "painted-character-motion": {
+      "purpose": "Original deterministic SVG character scenes timed to narration",
+      "connection": "render-import",
+      "status": "bundled-optional"
     }
   }
 }

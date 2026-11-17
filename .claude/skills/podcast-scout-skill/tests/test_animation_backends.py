@@ -9,7 +9,7 @@ spec.loader.exec_module(backend)
 
 class BackendTests(unittest.TestCase):
     def test_every_requested_tool_is_routed_without_claiming_installation(self):
-        self.assertEqual(set(backend.catalog()), {"remotion","synfig","friction","theatre","opentoonz","freemocap","effekseer","openvdb","natron"})
+        self.assertEqual(set(backend.catalog()), {"painted-character-motion","remotion","synfig","friction","theatre","opentoonz","freemocap","effekseer","openvdb","natron"})
         self.assertEqual(backend.catalog()["opentoonz"]["status"], "optional-external")
 
     def test_import_requires_real_media_path_and_rights(self):
@@ -28,3 +28,4 @@ class BackendTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
