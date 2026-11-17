@@ -1,7 +1,7 @@
 import test from 'node:test';
 import {progress} from '../assets/story-motion.mjs';
 import assert from 'node:assert/strict';
-import {PILOT_DURATION,PILOT_SHOTS,pilotShotAt,pilotCupAt,pilotActorAt,pilotExitAt,pilotTaskAt,pilotSharedEventAt,pilotViewActorAt} from '../assets/pilot-performance.mjs';
+import {PILOT_DURATION,PILOT_SHOTS,pilotShotAt,pilotCupAt,pilotActorAt,pilotExitAt,pilotTaskAt,pilotSharedEventAt,pilotViewActorAt,pilotRoomCameraAt,pilotEndingViewAt} from '../assets/pilot-performance.mjs';
 const distance=(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1]);
 test('pilot shots cover the measured take with no gaps',()=>{
  assert.equal(PILOT_SHOTS[0].start,0);assert.equal(PILOT_SHOTS.at(-1).end,PILOT_DURATION);
@@ -110,4 +110,32 @@ test('the attempted catch reaches toward the paper and lands in a specific defea
  assert.ok(distance(end.arms[0].wrist,end.pose.head)<35,'reaction hand must reach the forehead');
  assert.equal(end.pose.intent,'defeated');
  assert.deepEqual(end.arms[1].wrist,[835,615]);
+});
+
+
+test('challenge, rebuttal and attention have distinct supported intentions',()=>{
+ const young=t=>pilotActorAt(t,'youth'),mentor=t=>pilotActorAt(t,'philosopher');
+ assert.equal(young(18.8).pose.intent,'claim');assert.equal(young(21.3).pose.intent,'challenge');
+ assert.ok(young(21.3).pose.chest[0]>young(18.8).pose.chest[0]+30);
+ assert.equal(young(43.8).pose.intent,'defensive');assert.equal(young(44.9).pose.intent,'skeptical');
+ assert.equal(mentor(45).pose.intent,'explain');
+ assert.ok(distance(mentor(45).arms[1].wrist,pilotCupAt(45).center)>100);
+ assert.deepEqual(mentor(45).pose.hip,[1320,650]);
+ for(const t of [31,34.4,36.5,38.3]){
+  const g=pilotActorAt(t,'youth','burden'),task=pilotTaskAt(t);
+  assert.deepEqual(g.pose.gaze,t<32.6?g.pose.hands[1]:t<35.5?task.phoneCenter:task.pages[0].center);
+ }
+});
+
+test('room framing and ending separate claim, reaction, unchanged lock and chosen route',()=>{
+ assert.equal(pilotRoomCameraAt(18.8).scale,2);assert.equal(pilotRoomCameraAt(21.3).scale,1.7);
+ assert.deepEqual(pilotRoomCameraAt(43.8),{scale:2.05,x:760,y:500});
+ assert.equal(pilotRoomCameraAt(45).scale,1.6);
+ assert.equal(pilotEndingViewAt(56).mode,'constraint');assert.equal(pilotEndingViewAt(60).mode,'context');
+ assert.equal(pilotEndingViewAt(64.4).mode,'route');
+ const [x,y,w,h]=pilotEndingViewAt(57).crop;
+ assert.ok(x>=0&&y>=0&&x+w<=1920&&y+h<=1080);
+ const lock=[(1.3*895+219-x)*1920/w,(1.3*537-71-y)*900/h];
+ assert.ok(lock[0]>800&&lock[0]<1120&&lock[1]>350&&lock[1]<650,'actual closed lock stays central');
+ assert.throws(()=>pilotRoomCameraAt(NaN),/finite/);assert.throws(()=>pilotEndingViewAt(NaN),/finite/);
 });

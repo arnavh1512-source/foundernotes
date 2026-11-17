@@ -16,6 +16,25 @@ export function pilotShotAt(time){
  const t=Math.max(0,Math.min(PILOT_DURATION,time));
  return PILOT_SHOTS.find(s=>t>=s.start&&t<s.end)||PILOT_SHOTS.at(-1);
 }
+// Framing follows changes of intention, with one room axis throughout the exchange.
+export function pilotRoomCameraAt(time){
+ if(!Number.isFinite(time))throw new TypeError('time must be finite');
+ if(time>=41&&time<42.7)return {scale:2.6,x:1240,y:550};
+ if(time>=42.7&&time<44.5)return {scale:2.05,x:760,y:500};
+ if(time>=44.5&&time<46)return {scale:1.6,x:1030,y:530};
+ if(time>=32.6&&time<34.5)return {scale:2,x:825,y:525};
+ if(time>=29&&time<41)return {scale:1.25,x:930,y:520};
+ if(time>=22.5&&time<29)return {scale:1.65,x:1190,y:530};
+ if(time>=17.7&&time<20.3)return {scale:2,x:790,y:510};
+ if(time>=16.4&&time<22.5)return {scale:1.7,x:850,y:520};
+ return {scale:1,x:960,y:450};
+}
+export function pilotEndingViewAt(time){
+ if(!Number.isFinite(time))throw new TypeError('time must be finite');
+ if(time<58.6)return {mode:'constraint',crop:[932,389,900,421.875]};
+ if(time<61.7)return {mode:'context',scale:1,x:960,y:450};
+ return {mode:'route',scale:1.4,x:540,y:450};
+}
 export function pilotCupAt(time){
  // Keep the cup down while replying; the raised cup at41 follows the intervening vignette.
  const lift=time>=41&&time<46?1-progress(time,41.4,.6):0;
@@ -49,6 +68,13 @@ export function pilotActorAt(time,role,mode='study'){
    p.hands[1]=pilotBlend(p.hands[1],[1150,490],invite);
    p.intent=invite>.2?'invite':reply>.1?'reply':'listen';
   }
+  if(time>=41&&time<46){
+   const respond=progress(time,43.9,.65);
+   p.chest[0]-=12*respond;p.head[0]-=18*respond;p.head[1]+=5*respond;
+   p.hands[1]=pilotBlend(p.hands[1],[1175,490],respond);
+   p.gaze=time<42.2?pilotCupAt(time).center:[710,385];
+   if(respond>.2)p.intent='explain';
+  }
  }else if(mode==='burden'){
   const task=pilotTaskAt(time),notice=progress(time,32.6,.35)*(1-progress(time,35.5,.5));
   const miss=progress(time,37.35,.5),settle=progress(time,39.2,1.0);
@@ -63,10 +89,20 @@ export function pilotActorAt(time,role,mode='study'){
   // The failed reach lands in a supported, specific reaction rather than another generic strain.
   p.hands[0]=pilotBlend(p.hands[0],[790,465],settle);p.hands[0][0]-=30*Math.sin(Math.PI*settle);p.head[1]+=10*settle;
   if(settle>.8)p.intent='defeated';
+  p.gaze=time<32.6?p.hands[1]:time<35.5?task.phoneCenter:task.pages[0].center;
  }else{
   const lean=progress(time,14.5,1.2)*(1-progress(time,22,.8));
   const point=progress(time,15.2,.4)*(1-progress(time,17.5,.5))+.65*progress(time,20,.4)*(1-progress(time,21.4,.4));
   p={hip:pilotBlend([650,610],[690,640],lean),chest:pilotBlend([690,470],[745,510],lean),head:pilotBlend([710,385],[775,425],lean),feet:[[590,830],[710,830]],hands:[pilotBlend([665,630],[810,620],lean),pilotBlend([720,630],[820+50*point,570-80*point],lean)],facing:1,intent:lean>.3?'argue':'listen'};
+  if(time>=14.5&&time<22.8){
+   const claim=progress(time,17.7,.4)*(1-progress(time,19.7,.5));
+   const insist=progress(time,20.3,.45)*(1-progress(time,22.1,.65));
+   p.chest[0]-=8*claim;p.head[0]-=12*claim;
+   p.hands[1]=pilotBlend(p.hands[1],[790,565],claim);
+   p.hip[0]+=18*insist;p.chest[0]+=26*insist;p.head[0]+=34*insist;
+   p.hands[1][0]+=30*insist;p.hands[1][1]-=25*insist;
+   if(claim>.3)p.intent='claim';if(insist>.3)p.intent='challenge';
+  }
   const listening=progress(time,22,.8);
   if(time<29){
    p.hip=pilotBlend(p.hip,[675,640],listening);p.chest=pilotBlend(p.chest,[715,500],listening);p.head=pilotBlend(p.head,[740,420],listening);
@@ -79,6 +115,11 @@ export function pilotActorAt(time,role,mode='study'){
   const recoil=progress(time,43.1,.45)*(1-progress(time,45.2,.6));
   p.hip[0]-=12*recoil;p.chest[0]-=18*recoil;p.head[0]-=28*recoil;
   p.hands[0]=pilotBlend(p.hands[0],[650,600],recoil);p.hands[1]=pilotBlend(p.hands[1],[770,550],recoil);
+  if(time>=42.7&&time<46){
+   const check=progress(time,44.2,.8);p.hands[1]=pilotBlend(p.hands[1],[745,590],check);
+   p.intent=recoil>.2?(check>.5?'skeptical':'defensive'):'listen';
+  }
+  p.gaze=[1290,435];
  }
  const normalSide=p.facing===1?-1:1;
  const shoulders=[-5,5].map(d=>[p.chest[0]+d,p.chest[1]]);
