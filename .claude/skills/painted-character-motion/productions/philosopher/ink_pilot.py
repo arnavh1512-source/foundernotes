@@ -9,7 +9,8 @@ from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
 
 ROOT=Path(__file__).resolve().parent
-OUT=ROOT/'studio-output/philosopher-ink'
+OUT=ROOT/'studio-output/philosopher-ink-v2'
+STUDY_PLATE=ROOT/'assets/study-painted.png'
 W,H,FPS,DURATION=1920,1080,30,64.5
 INK='#393b36'; PAPER='#f0e9db'; TEAL='#668c83'; RUST='#bb7860'
 VOICE=ROOT.parent/'reference-media/approved-dialogue.wav'
@@ -67,6 +68,8 @@ def word(d,xy,text,size=36,fill=INK,anchor='mm',bold=False):d.text(xy,text,font=
 
 @lru_cache(None)
 def background(kind):
+    if kind=='study' and STUDY_PLATE.is_file():
+        with Image.open(STUDY_PLATE) as plate:return plate.convert('RGB').resize((W,H),Image.Resampling.LANCZOS)
     im=Image.new('RGB',(W,H),'#71877a' if kind=='study' else PAPER);d=ImageDraw.Draw(im)
     rng=random.Random(53)
     # Translucent pigment blooms are fixed in world space; they never flicker.
@@ -100,30 +103,63 @@ def background(kind):
         for i in range(80):
             x=rng.randrange(W);y=rng.randrange(610,820)
             line(d,[(x,y),(x+5,y-15)],'#899d80',2)
+    elif kind in ('office','home'):
+        d.rectangle((0,690,W,H),fill='#baae94')
+        line(d,[(0,690),(W,690)],'#8c917c',4)
+        d.rectangle((1220,100,1730,565),fill='#b1c2b8',outline='#7d927f',width=8)
+        line(d,[(1475,100),(1475,565)],'#7d927f',8)
+        for xx in range(1240,1730,60):d.rectangle((xx,440-rng.randrange(100),xx+42,560),fill='#8da599')
+        if kind=='office':
+            d.ellipse((210,120,340,250),fill='#e4dcc4',outline='#767d6b',width=5)
+            line(d,[(275,145),(275,185),(311,185)],'#767d6b',4)
+            d.polygon([(1130,655),(1780,655),(1850,740),(1080,740)],fill='#a28e73',outline=INK)
+            for xx in (1170,1750):line(d,[(xx,740),(xx,900)],'#7f7c64',13)
+            d.polygon([(1330,645),(1300,480),(1550,480),(1580,645)],fill='#717f75',outline=INK)
+            d.polygon([(1340,625),(1318,497),(1530,497),(1555,625)],fill='#c2d0c2')
+            for yy in (525,547,569):line(d,[(1345,yy),(1500,yy)],'#9aaa9c',3)
+        else:
+            d.rectangle((180,220,540,705),fill='#a5977c',outline='#777a64',width=6)
+            d.rectangle((220,245,500,705),fill='#c2b498',outline='#777a64',width=4)
+            d.ellipse((448,472,463,487),fill='#7f7d64')
+            d.polygon([(1210,645),(1710,645),(1770,740),(1160,740)],fill='#b19b79',outline=INK)
+            line(d,[(1270,740),(1260,900)],'#827b63',13);line(d,[(1680,740),(1690,900)],'#827b63',13)
+            d.ellipse((1495,535,1565,605),fill='#c2bba1',outline='#7c8c73',width=3)
+            for j in range(5):curve(d,[(1530,550),(1500+j*18,490),(1500+j*20,460),(1460+j*31,430)],'#7c9678',10)
     for i in range(13000):
         x=rng.randrange(W);y=rng.randrange(H);d.point((x,y),fill='#ded7c8' if i%2 else '#f9f3e5')
     return im
 
-def hand(d,p,angle=0,s=1,open=True):
+@lru_cache(None)
+def study_closeup(who):
+    # Fixed shot lenses project the room and character together: 2.0 / 1.1.
+    # These are motivated cuts, not animated zooms used to supply missing acting.
+    left=137 if who=='youth' else 762
+    return background('study').crop((left,250,left+1056,844)).resize((W,H),Image.Resampling.LANCZOS)
+
+def hand(d,p,angle=0,s=1,open=True,gesture='open'):
     def q(x,y):return(p[0]+s*(x*math.cos(angle)-y*math.sin(angle)),p[1]+s*(x*math.sin(angle)+y*math.cos(angle)))
     # Connected palm and separate fingers replace floating circular fists.
     points=[q(-8,3),q(-11,-6),q(-6,-15),q(0,-18),q(10,-12),q(12,2),q(7,9),q(-3,10)]
     d.polygon(points,fill='#f3e8d4');line(d,points+[points[0]],INK,2*s)
-    if open:
-        for j in range(3):line(d,[q(-4+j*5,-5),q(-6+j*6,-19-2*(j==1))],INK,2*s)
+    if gesture=='point':
+        line(d,[q(3,-10),q(30,-17)],INK,5*s)
+        line(d,[q(3,-10),q(30,-17)],'#f3e8d4',2.5*s)
+    elif open:
+        for j in range(4):line(d,[q(-6+j*4,-5),q(-8+j*5,-18-3*(j in (1,2)))],INK,1.8*s)
     line(d,[q(-7,0),q(-17,-5),q(-17,-10)],INK,2*s)
 
-def actor(d,x,y,t,who='youth',s=1,mood='neutral',pose='rest',energy=0,mouth=0,lean=0,look=1,headtilt=0):
+def actor(d,x,y,t,who='youth',s=1,mood='neutral',pose='rest',energy=0,mouth=0,lean=0,look=1,headtilt=0,wrists=None,turn=0):
     old=who=='host';shirt=RUST if old else TEAL
     breath=1.2*math.sin(t*2.1);a=math.radians(lean)
     def p(xx,yy):return (x+s*(xx*math.cos(a)-yy*math.sin(a)),y+s*(xx*math.sin(a)+yy*math.cos(a)+breath))
     def ln(pts,c=INK,w=4):line(d,[p(*v) for v in pts],c,w*s)
     # One continuous silhouette: shoes, knees, hip, spine and attentive shoulders.
     for sign in (-1,1):
-        bend=energy*sign*12 if pose=='walk' else 0
-        leg=[(sign*27,-94),(sign*37+bend,10),(sign*42-bend,115)]
+        bend=energy*sign*29 if pose=='walk' else 0
+        lift=max(0,energy*sign)*25 if pose=='walk' else 0
+        leg=[(sign*27,-94),(sign*37+bend,10-lift*.5),(sign*42-bend,115-lift)]
         ln(leg,INK,19);ln(leg,'#747c70' if old else '#6c7a73',12)
-        ln([(sign*42-bend,115),(sign*42-bend+25,119)],INK,10)
+        ln([(sign*42-bend,115-lift),(sign*42-bend+25,119-lift)],INK,10)
     torso=[(-49,-250),(-28,-263),(28,-263),(50,-250),(39,-95),(-35,-95)]
     smooth_shape(d,[p(*v) for v in torso],shirt,width=4*s)
     ln([(-32,-211),(-27,-153),(-33,-126)],'#a66f5b' if old else '#78978c',2)
@@ -141,13 +177,17 @@ def actor(d,x,y,t,who='youth',s=1,mood='neutral',pose='rest',energy=0,mouth=0,le
     if pose=='knot':l=(-105,-210-35*energy);r=(105,-210-35*energy)
     if pose=='chest':r=(12,-231);l=(-80,-120)
     if pose=='walk':l=(-75,-110+30*energy);r=(75,-110-30*energy)
+    if pose=='fold':l=(28,-200);r=(-28,-180)
+    if pose=='carry':l=(-86,-160);r=(86,-160)
+    if wrists is not None:l,r=wrists
     for sign,target in [(-1,l),(1,r)]:
         sh=(sign*47,-244);el=(sign*(74+abs(target[0])*.15),mix(-181,target[1],.25))
         ln([sh,el,target],INK,18);ln([sh,el,target],shirt,12)
-        hand(d,p(*target),angle=sign*.4+a,s=s,open=pose!='slam')
+        hand(d,p(*target),angle=sign*.4+a,s=s,open=pose!='slam',gesture='point' if pose=='point' and sign==1 else 'open')
     # Head has its own acting pivot, separate from the spine.
     ha=math.radians(headtilt);hx,hy=p(0,-337)
     def hp(xx,yy):return(hx+s*(xx*math.cos(ha)-yy*math.sin(ha)),hy+s*(xx*math.sin(ha)+yy*math.cos(ha)))
+    def fp(xx,yy):return hp(xx*(1-.25*abs(turn))+turn*18,yy)
     def hline(pts,c=INK,w=3):line(d,[hp(*v) for v in pts],c,w*s)
     # Outline is slightly asymmetrical, an original drawn shape instead of a perfect emoji circle.
     face=[(-56,-25),(-48,-61),(-20,-78),(15,-78),(48,-60),(60,-23),(54,23),(31,54),(-7,61),(-42,40),(-58,9)]
@@ -164,25 +204,26 @@ def actor(d,x,y,t,who='youth',s=1,mood='neutral',pose='rest',energy=0,mouth=0,le
     blink=(t+(1.7 if old else .2))%4.3<.11
     for sign in (-1,1):
         ex=sign*23;ey=-7
-        if blink:hline([(ex-10,ey),(ex+10,ey)],INK,3)
+        if blink:line(d,[fp(ex-7,ey),fp(ex+7,ey)],INK,2*s)
         else:
-            xx,yy=hp(ex,ey);d.ellipse((xx-10*s,yy-12*s,xx+10*s,yy+11*s),fill='#fffaf0',outline=INK,width=max(1,round(2*s)))
-            xx,yy=hp(ex+look*4,ey+(4 if mood=='worried' else 0));d.ellipse((xx-3*s,yy-6*s,xx+3*s,yy+6*s),fill=INK)
+            xx,yy=fp(ex+look*3,ey+(4 if mood=='worried' else 0));d.ellipse((xx-3.2*s,yy-5.5*s,xx+3.2*s,yy+5.5*s),fill=INK)
         if old:
-            xx,yy=hp(ex,ey);d.ellipse((xx-17*s,yy-18*s,xx+17*s,yy+17*s),outline=INK,width=max(1,round(2*s)))
+            xx,yy=fp(ex,ey);d.ellipse((xx-17*s,yy-18*s,xx+17*s,yy+17*s),outline=INK,width=max(1,round(2*s)))
         b=-31-(10 if mood=='shock' else 0)
         slope=sign*9 if mood=='angry' else (-sign*9 if mood=='worried' else sign*1)
-        hline([(ex-12,b-slope),(ex+12,b+slope)],INK,3)
+        line(d,[fp(ex-12,b-slope),fp(ex+12,b+slope)],INK,3*s)
     if old:hline([(-6,-9),(6,-9)],INK,2)
-    hline([(4,-1),(10,14),(1,17)],'#a49a85',2)
+    line(d,[fp(4,-1),fp(10+turn*6,14),fp(1,17)],'#a49a85',2*s)
     if mouth>.08:
-        xx,yy=hp(0,34);d.ellipse((xx-11*s,yy-2*s,xx+11*s,yy+(4+15*mouth)*s),fill='#6e4e43',outline=INK,width=max(1,round(s)))
+        xx,yy=fp(0,34);d.ellipse((xx-11*s,yy-2*s,xx+11*s,yy+(4+15*mouth)*s),fill='#6e4e43',outline=INK,width=max(1,round(s)))
         if mouth>.5:hline([(-7,35),(7,35)],'#f6ead5',2)
     elif mood=='shock':
-        xx,yy=hp(0,37);d.ellipse((xx-6*s,yy-5*s,xx+6*s,yy+7*s),outline=INK,width=max(1,round(2*s)))
-    else:hline([(-11,37),(0,33 if mood in ('angry','worried') else 40),(11,37)],INK,2.5)
+        xx,yy=fp(0,37);d.ellipse((xx-6*s,yy-5*s,xx+6*s,yy+7*s),outline=INK,width=max(1,round(2*s)))
+    else:line(d,[fp(-11,37),fp(0,33 if mood in ('angry','worried') else 40),fp(11,37)],INK,2.5*s)
 
-def desk(d):
+def desk(d,im=None):
+    if STUDY_PLATE.is_file() and im is not None:
+        im.paste(background('study').crop((0,643,W,H)),(0,643));return
     d.polygon([(330,647),(1570,647),(1670,735),(245,735)],fill='#b89d79',outline=INK)
     line(d,[(245,735),(1670,735)],'#726c57',9)
     for x in (330,1550):line(d,[(x,735),(x-12,870)],'#726c57',15)
@@ -193,6 +234,9 @@ def cup(d,x,y,t,scale=1):
     d.rounded_rectangle((x-30*scale,y-64*scale,x+30*scale,y-5*scale),radius=8*scale,fill='#eee6cd',outline=INK,width=max(1,int(3*scale)))
     d.ellipse((x+19*scale,y-51*scale,x+57*scale,y-16*scale),outline=INK,width=max(1,int(4*scale)))
     d.ellipse((x-29*scale,y-70*scale,x+29*scale,y-53*scale),fill='#9c8667',outline=INK,width=2)
+    curve(d,[(x-15*scale,y-18*scale),(x,y-24*scale),(x+10*scale,y-35*scale),(x+17*scale,y-41*scale)],'#7f8b61',1.5*scale)
+    for sign in (-1,1):
+        d.ellipse((x+(sign*8-4)*scale,y-(31+sign*3)*scale,x+(sign*8+4)*scale,y-(26+sign*3)*scale),fill='#8d996d')
     for j in range(2):curve(d,[(x+j*18*scale,y-80*scale),(x-14*scale,y-100*scale),(x+13*scale,y-120*scale),(x-4*scale,y-135*scale)],'#bdb6a2',2)
 
 def prop_card(d,x,y,kind,s=1):
@@ -217,6 +261,29 @@ def knot(d,cx,cy,t,size=170,release=0):
                     cy+(1-release)*math.cos(a*1.13)*size*(.28+.16*math.cos(a*.41))))
     line(d,pts,'#ae735e',5)
 
+def anchor(x,y,s,lean,t,xx,yy):
+    a=math.radians(lean)
+    return(x+s*(xx*math.cos(a)-yy*math.sin(a)),y+s*(xx*math.sin(a)+yy*math.cos(a)+1.2*math.sin(t*2.1)))
+
+def folders(d,x,y,angle,count=4):
+    a=math.radians(angle)
+    def p(xx,yy):return(x+xx*math.cos(a)-yy*math.sin(a),y+xx*math.sin(a)+yy*math.cos(a))
+    for j in range(count):
+        yy=-j*40
+        pts=[p(-160,yy),p(160,yy),p(150,yy-31),p(-170,yy-31)]
+        d.polygon(pts,fill=['#b98f6c','#d0bd8f','#8b9b82','#bf8b6c'][j%4]);line(d,pts+[pts[0]],'#766c57',3)
+        line(d,[p(-145,yy-11),p(146,yy-11)],'#e9ddbf',8)
+        line(d,[p(-145,yy-21),p(144,yy-21)],'#e4d8b9',6)
+        if j==count-1:
+            for k in range(3):line(d,[p(-90,yy-33-k*5),p(98,yy-33-k*5)],'#a9a28b',2)
+
+def latch_pose(t,u):
+    k=ramp(u,.2,1.5);x=mix(800,990,k);s=1.12
+    fingertip=(30*math.cos(.4)+17*math.sin(.4),30*math.sin(.4)-17*math.cos(.4))
+    target=((1215-x)/s-fingertip[0],(436-655)/s-1.2*math.sin(t*2.1)-fingertip[1])
+    wrist=(mix(79,target[0],k),mix(-110,target[1],k))
+    return x,wrist,fingertip
+
 def voice_data():
     with wave.open(str(VOICE),'rb') as f:
         import array
@@ -230,13 +297,20 @@ def voice_data():
         rms.append(min(1,math.sqrt(sum(v*v for v in a)/max(1,len(a)))/4200))
     return rms
 RMS=[]
+def performance(u,keys):
+    """Interpolate authored root, spine, head and wrist poses on recorded beats."""
+    if u<=keys[0][0]:return keys[0][1:]
+    for a,b in zip(keys,keys[1:]):
+        if u<=b[0]:return tuple(mix(x,y,ramp(u,a[0],b[0])) for x,y in zip(a[1:],b[1:]))
+    return keys[-1][1:]
 def speaking(t,who):return next((RMS[min(len(RMS)-1,int(t*FPS))] for a,b,w,_ in SEGMENTS if a<=t<b and w==who),0) if RMS else 0
 
 def frame(t,treatment='story',captions=True):
     start,end,scene=next((row for row in SHOTS if row[0]<=t<row[1]),SHOTS[-1]);u=t-start
     if treatment=='chamber' and 30.049<=t<40.789:scene='youth'
-    bg='field' if scene in ('arrival','field') else 'study' if scene not in ('work','load','knot','lens','perspective','barrier','question') else 'paper'
-    im=background(bg).copy();d=ImageDraw.Draw(im)
+    bg='office' if scene=='work' else 'home' if scene=='load' else 'field' if scene in ('arrival','field') else 'study' if scene not in ('knot','lens','perspective','barrier','question') else 'paper'
+    close_who='youth' if scene in ('challenge','youth','youthlisten','reaction') else 'host' if scene in ('host','hostlisten') else None
+    im=(study_closeup(close_who) if close_who else background(bg)).copy();d=ImageDraw.Draw(im)
     ym=speaking(t,'youth');hm=speaking(t,'host');beat=math.sin(t*2.8)*.5+.5
     if scene=='arrival':
         # Youth actively climbs toward the lit study; no title-card preamble.
@@ -245,10 +319,21 @@ def frame(t,treatment='story',captions=True):
         d.rectangle((1390,530,1450,700),fill='#d9b77a',outline=INK,width=4)
         x=690+150*ramp(u,0,2);actor(d,x,680,t,s=.7,pose='walk',energy=math.sin(t*9),lean=8,look=1)
     elif scene in ('two','slam'):
-        k=ramp(u,.15,.65)*(1-ramp(u,1.6,2.8))
-        actor(d,610,708,t,s=1.1,mood='angry',pose='slam' if scene=='slam' else 'question',energy=k if scene=='slam' else beat*.3,mouth=ym,look=1,headtilt=4)
-        actor(d,1345,706,t,'host',s=1.08,pose='offer' if hm else 'rest',energy=beat*.5,mouth=hm,look=-1,headtilt=-3)
-        desk(d);cup(d,1310,685,t)
+        k=ramp(u,.3,.7)*(1-ramp(u,1.15,1.65))
+        actor(d,610,800,t,s=1.1,mood='angry',pose='slam' if scene=='slam' else 'fold',energy=k if scene=='slam' else 0,mouth=ym,look=1,headtilt=4,turn=.65)
+        actor(d,1345,800,t,'host',s=1.08,pose='offer' if hm else 'rest',energy=beat*.5,mouth=hm,look=-1,headtilt=-3,turn=-.65)
+        desk(d,im);cup(d,1465,775,t)
+        if scene=='slam' and k>.05:
+            for side,target in [(-1,(-100,-200+140*k)),(1,(115,-200+140*k))]:
+                shoulder=anchor(610,800,1.1,0,t,side*47,-244)
+                elbow=anchor(610,800,1.1,0,t,side*(74+abs(target[0])*.15),mix(-181,target[1],.25))
+                wrist=anchor(610,800,1.1,0,t,*target)
+                line(d,[shoulder,elbow,wrist],INK,20);line(d,[shoulder,elbow,wrist],TEAL,13)
+                hand(d,wrist,angle=side*.4,s=1.1,open=False)
+        # One shared table plane: hands and the disturbed sheet meet it at impact.
+        if scene=='slam':
+            lift=math.sin(math.pi*ramp(u,.7,1.25))*28 if .7<u<1.25 else 0
+            d.polygon([(670,744-lift),(870,744-lift*.6),(895,786),(690,786)],fill='#e8d6ae',outline='#8d765b')
         if scene=='slam' and .63<u<1.05:
             k=1-(u-.63)/.42
             for x in (500,730):line(d,[(x,625),(x-18,609)],'#a7735a',max(1,4*k))
@@ -256,27 +341,41 @@ def frame(t,treatment='story',captions=True):
         mood='shock' if scene=='reaction' else 'worried' if scene=='youthlisten' else 'angry'
         action='chest' if scene=='reaction' else 'question' if scene!='youthlisten' else 'rest'
         # A listening reaction changes eyes, spine and hands; it is not just another zoom.
-        hit=ramp(u,.08,.38);settle=ramp(u,.65,1.15)
-        lean=(-8*hit+5*settle if scene in ('reaction','youthlisten') else 10*hit-7*settle)
-        actor(d,860,1000,t,s=2.0,mood=mood,pose=action,energy=hit*(1-ramp(u,1.7,2.2)),mouth=ym,lean=lean,look=1,headtilt=mix(3,-6,ramp(u,.2,.65)))
+        if scene=='challenge':
+            keys=[(0,-190,-3,3,28,-200,-28,-180),(.75,0,11,-8,-140,-255,140,-250),(1.5,0,4,-3,-120,-230,160,-270),(2.3,0,2,4,-95,-170,130,-230),(3.3,100,-5,8,-130,-230,150,-250),(4.2,100,-2,3,-77,-108,79,-110)]
+        elif scene=='youth':
+            keys=[(0,-80,3,4,-77,-108,70,-130),(.6,80,10,-4,-80,-150,160,-265),(1.3,80,5,-5,-60,-145,130,-260),(2.1,0,-4,3,-130,-260,12,-230),(3.4,0,5,-5,-155,-210,155,-210)]
+            action='point' if u<1.8 else 'question'
+        elif scene=='reaction':
+            keys=[(0,0,0,0,-77,-108,79,-110),(.22,-85,-13,11,-110,-170,90,-190),(.65,-60,-7,-8,-80,-125,12,-231),(1.3,-60,-5,-5,-80,-125,12,-231)]
+        else:
+            keys=[(0,20,3,2,28,-200,-28,-180),(.8,-45,-4,-7,15,-180,35,-210),(1.5,-45,-3,-12,-65,-345,35,-210),(2.5,-45,-3,-9,-65,-345,35,-210)]
+        xo,lean,tilt,lx,ly,rx,ry=performance(u,keys)
+        actor(d,860+xo,1000,t,s=2.0,mood=mood,pose=action,mouth=ym,lean=lean,look=1,headtilt=tilt,wrists=((lx,ly),(rx,ry)),turn=.5)
     elif scene in ('host','hostlisten'):
-        offer=ramp(u,.12,.48)*(1-ramp(u,1.7,2.2))
-        lean=(-7*ramp(u,.12,.45)+5*ramp(u,.7,1.2)) if scene=='host' else 6*ramp(u,.15,.5)-4*ramp(u,.8,1.3)
-        actor(d,1060,1000,t,'host',s=2,pose='offer' if scene=='host' else 'rest',energy=offer,mouth=hm,lean=lean,look=-1,headtilt=-5+4*ramp(u,.4,.8))
+        if scene=='host':
+            keys=[(0,40,-3,-3,-77,-108,79,-110),(.65,-30,6,-8,-165,-265,85,-140),(1.4,-30,3,-3,-155,-250,90,-160),(2.3,0,0,4,-120,-215,100,-180),(3.5,0,0,1,-90,-160,80,-130)]
+        else:
+            keys=[(0,0,0,-2,-77,-108,79,-110),(.7,70,-7,6,-80,-120,30,-230),(1.5,70,-5,2,-80,-120,30,-230),(3.3,25,1,-5,-105,-180,80,-130)]
+        xo,lean,tilt,lx,ly,rx,ry=performance(u,keys)
+        actor(d,1060+xo,1000,t,'host',s=2,pose='offer' if scene=='host' else 'rest',mouth=hm,lean=lean,look=-1,headtilt=tilt,wrists=((lx,ly),(rx,ry)),turn=-.5)
     elif scene=='field':
         k=ramp(u,.3,2.5)
         actor(d,880,650,t,s=1.06,pose='question',energy=1-k,mood='worried' if k>.5 else 'neutral',mouth=ym,headtilt=-6*k)
         # Warm recollection drains into the concrete obligations shown next.
         for j in range(7):line(d,[(170+j*230,730),(210+j*230,730)],'#97a18d',3)
     elif scene in ('work','load'):
-        actor(d,960,650,t,s=1.18,pose='head' if scene=='load' else 'question',energy=beat,mood='worried',mouth=ym,lean=5)
-        props=[(380,330,'work'),(1530,330,'home'),(440,650,'people')]
-        for j,(x,y,kind) in enumerate(props):
-            amount=ramp(u,j*.2,j*.2+.7)
-            if scene=='work' and j>0:continue
-            prop_card(d,x,y,kind,s=.85)
-            curve(d,[(x+70,y+35),(x+230,y+100),(750,530),(880,495)],'#b87b65',4*amount+.1)
-        if scene=='load':knot(d,960,530,t,90)
+        # Feet, wrists and carried folders share the same moving root and lean.
+        x=mix(1200,660,ramp(u,.15,1.8)) if scene=='work' else mix(660,820,ramp(u,.15,1.5))
+        lean=-4-3*ramp(u,.4,1.1);scale=1.25;y=675
+        walking=math.sin(u*8)*(1-ramp(u,1.5,1.8))
+        actor(d,x,y,t,s=scale,pose='walk',energy=walking,mood='worried',mouth=ym,lean=lean,turn=.5,wrists=((40,-160),(190,-160)),headtilt=5)
+        center=anchor(x,y,scale,lean,t,115,-160)
+        folders(d,*center,lean,3 if scene=='work' else 5)
+        for xx in (40,190):hand(d,anchor(x,y,scale,lean,t,xx,-160),angle=-.6,s=scale,open=False)
+        # A physical load obscures more of his view when it follows him home.
+        if scene=='load':
+            line(d,[(x-70,790),(x+230,790)],'#b1a386',3)
     elif scene=='knot':
         actor(d,690,910,t,s=1.8,pose='knot',energy=ramp(u,.1,.8),mood='angry',mouth=ym,headtilt=-6)
         knot(d,1370,400,t,260)
@@ -284,8 +383,12 @@ def frame(t,treatment='story',captions=True):
     elif scene=='cup':
         # The wrist follows the handle until release. The cup ends exactly on the table.
         k=ramp(u,0,.822);cy=mix(425,650,k);cx=mix(1020,1130,k);withdraw=ramp(u,.88,1.65)
-        d.polygon([(0,650),(1920,650),(1920,1080),(0,1080)],fill='#c0aa87')
-        line(d,[(0,650),(1920,650)],'#8c8068',5)
+        if STUDY_PLATE.is_file():
+            im=im.filter(ImageFilter.GaussianBlur(5))
+            wood=background('study').crop((120,670,1800,850)).resize((W,640),Image.Resampling.LANCZOS)
+            im.paste(wood,(0,440));d=ImageDraw.Draw(im)
+        else:
+            d.polygon([(0,650),(1920,650),(1920,1080),(0,1080)],fill='#c0aa87')
         wrist=(cx+78+100*withdraw,cy-35-130*withdraw)
         sleeve=[(1900,250),(1620,385),(1420,520),(wrist[0]+65,wrist[1]-35)]
         curve(d,sleeve,INK,56);curve(d,sleeve,RUST,48)
@@ -320,10 +423,15 @@ def frame(t,treatment='story',captions=True):
         line(d,[(1020,400),(1560,400)],'#838c78',10)
         line(d,[(1020,660),(1560,660)],'#838c78',10)
         d.rounded_rectangle((1180,410,1250,462),radius=7,fill='#b8a17c',outline=INK,width=4)
-        actor(d,800,655,t,s=1.12,pose='head' if scene=='barrier' else 'point',energy=ramp(u,.25,1.7),mood='worried' if scene=='barrier' else 'neutral',headtilt=-4,look=1)
         if scene=='question':
-            # Circle the latch, the newly considered question, not a magical open gate.
-            if u>.7:d.arc((1140,365,1290,510),-70,-70+int(350*ramp(u,.7,1.6)),fill='#a66e53',width=5)
+            x,wrist,_=latch_pose(t,u)
+            actor(d,x,655,t,s=1.12,pose='point',wrists=((-77,-108),wrist),mood='neutral',headtilt=-4,look=1,turn=.7)
+            # The finger reaches the actual latch and stays on it while he considers it.
+            if u>1.5:d.ellipse((1210,431,1220,441),outline='#d2a963',width=2)
+        else:actor(d,800,655,t,s=1.12,pose='head',mood='worried',headtilt=-4,look=1,turn=.4)
+    if close_who and STUDY_PLATE.is_file():
+        # The same foreground tabletop masks the body in the matching close angle.
+        im.paste(study_closeup(close_who).crop((0,715,W,H)),(0,715));d=ImageDraw.Draw(im)
     if captions:caption(d,t)
     return im
 
@@ -351,6 +459,15 @@ def self_check():
     assert frame(39).tobytes()==frame(39).tobytes(), 'render must scrub deterministically'
     assert frame(39).tobytes()!=frame(39.5).tobytes(), 'acting cannot be a frozen pose'
     assert frame(39,'story').tobytes()!=frame(39,'chamber').tobytes()
+    assert performance(-1,[(0,1,2),(1,3,4)])==(1,2)
+    assert performance(2,[(0,1,2),(1,3,4)])==(3,4)
+    assert performance(.5,[(0,1,2),(1,3,4)])==(2,3)
+    assert anchor(100,200,2,0,0,10,-30)==(120,140)
+    for t in (62,63,64):
+        x,wrist,tip=latch_pose(t,t-60.25)
+        wx,wy=anchor(x,655,1.12,0,t,*wrist)
+        assert abs(wx+1.12*tip[0]-1215)<1e-6
+        assert abs(wy+1.12*tip[1]-436)<1e-6
     print('Timing, deterministic scrub, motion and treatment checks passed.',flush=True)
 
 def render(name,start=0,end=DURATION,treatment='story'):
@@ -370,9 +487,12 @@ def render(name,start=0,end=DURATION,treatment='story'):
     return output
 
 if __name__=='__main__':
-    ap=argparse.ArgumentParser();ap.add_argument('--render',action='store_true');ap.add_argument('--comparison',action='store_true');ap.add_argument('--audio',type=Path);ap.add_argument('--out',type=Path);a=ap.parse_args()
+    ap=argparse.ArgumentParser();ap.add_argument('--render',action='store_true');ap.add_argument('--preview',action='store_true');ap.add_argument('--comparison',action='store_true');ap.add_argument('--audio',type=Path);ap.add_argument('--out',type=Path);ap.add_argument('--study-plate',type=Path);a=ap.parse_args()
     if a.audio:VOICE=a.audio.resolve()
     if a.out:OUT=a.out.resolve()
+    if a.study_plate:
+        STUDY_PLATE=a.study_plate.resolve()
+        if not STUDY_PLATE.is_file():ap.error('The study plate does not exist.')
     if not VOICE.is_file():ap.error('Provide the approved pilot master with --audio (48 kHz, mono, 16-bit PCM WAV).')
     OUT.mkdir(parents=True,exist_ok=True);RMS=voice_data();self_check()
     sample=[3,7.5,14,18,25,31.5,34.5,36.5,39.5,41.8,44,47.9,50,54,58,62]
@@ -383,5 +503,6 @@ if __name__=='__main__':
     frame(39.5).save(OUT/'acting-preview.png')
     (OUT/'shot-plan.json').write_text(json.dumps(SHOTS,indent=2),encoding='utf-8')
     if a.render:print(render('Philosopher-Ink-Acting-Pilot'),flush=True)
+    if a.preview:print(render('Philosopher-Acting-Preview',26.5,48.84),flush=True)
     if a.comparison:print(render('Philosopher-Chamber-Treatment',30.049,56.915,'chamber'),flush=True)
 
