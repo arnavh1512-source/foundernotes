@@ -31,8 +31,8 @@ export function pilotTaskAt(time){
  const gripWeight=progress(time,33.1,.6)*(1-progress(time,37.1,.3));
  const writing=1-progress(time,32.6,.4);
  const spill=progress(time,37.4,1.2);
- const delivery=progress(time,35.6,1.2),deliveryX=1820-590*delivery;
- const pages=[0,1].map(i=>{const k=progress(time,37.4+i*.2,1.0);return {center:pilotBlend([deliveryX+i*30,603-i*6],[1250+i*80,805],k),angle:(i===0?-.45:.6)*Math.sin(Math.PI*k),fallen:k===1};});
+ const delivery=progress(time,35.6,1.2),deliveryX=1820-745*delivery;
+ const pages=[0,1].map(i=>{const k=progress(time,37.4+i*.2,1.0);return {center:pilotBlend([deliveryX+i*30,603-i*6],[1040+i*80,805],k),angle:(i===0?-.45:.6)*Math.sin(Math.PI*k),fallen:k===1};});
  return {phoneCenter,phoneGrip,gripWeight,writing,spill,pages,deliveryX,deliveryVisible:time>=35.6,deliveryHand:progress(time,35.6,.3)*(1-progress(time,36.9,.4))};
 }
 export function pilotActorAt(time,role,mode='study'){
@@ -51,15 +51,18 @@ export function pilotActorAt(time,role,mode='study'){
   }
  }else if(mode==='burden'){
   const task=pilotTaskAt(time),notice=progress(time,32.6,.35)*(1-progress(time,35.5,.5));
-  const miss=progress(time,37.5,.5),settle=progress(time,39.2,1.0);
-  p={hip:pilotBlend(pilotBlend([690,640],[700,660],miss),[690,680],settle),
-   chest:pilotBlend(pilotBlend([750,510],[780,540],miss),[750,550],settle),
-   head:pilotBlend(pilotBlend([775+15*notice,425+6*notice],[815,455],miss),[770,475],settle),
+  const miss=progress(time,37.35,.5),settle=progress(time,39.2,1.0);
+  p={hip:pilotBlend(pilotBlend([690,640],[730,660],miss),[690,680],settle),
+   chest:pilotBlend(pilotBlend([750,510],[850,540],miss),[750,550],settle),
+   head:pilotBlend(pilotBlend([775+15*notice,425+6*notice],[880,455],miss),[770,475],settle),
    feet:[[590,830],[710,830]],hands:[[810,620],[825+40*progress(time,29,3.6),597+2*Math.cos((time-29)*9)*task.writing]],facing:1,intent:time<32.6?'work':'strain'};
   p.hands[1]=pilotBlend(p.hands[1],task.phoneGrip,task.gripWeight);
-  p.hands[1]=pilotBlend(p.hands[1],[910,650],miss);
+  p.hands[1]=pilotBlend(p.hands[1],[1005,615],miss);
   p.hands[1]=pilotBlend(p.hands[1],[835,615],settle);
   p.hip[0]+=15*task.gripWeight;p.chest[0]+=45*task.gripWeight;p.head[0]+=40*task.gripWeight;
+  // The failed reach lands in a supported, specific reaction rather than another generic strain.
+  p.hands[0]=pilotBlend(p.hands[0],[790,465],settle);p.hands[0][0]-=30*Math.sin(Math.PI*settle);p.head[1]+=10*settle;
+  if(settle>.8)p.intent='defeated';
  }else{
   const lean=progress(time,14.5,1.2)*(1-progress(time,22,.8));
   const point=progress(time,15.2,.4)*(1-progress(time,17.5,.5))+.65*progress(time,20,.4)*(1-progress(time,21.4,.4));

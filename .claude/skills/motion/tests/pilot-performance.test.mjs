@@ -47,7 +47,7 @@ test('the task interruption preserves phone grip, planted support and an unfinis
  for(let f=0;f<360;f++){
   const t=29+f/30,g=pilotActorAt(t,'youth','burden'),task=pilotTaskAt(t);
   assert.deepEqual(g.pose.feet,[[590,830],[710,830]]);
-  assert.deepEqual(g.pose.hands[0],[810,620]);
+  if(t<=39.2)assert.deepEqual(g.pose.hands[0],[810,620]);
   if(t>=33.7&&t<=37.1)assert.ok(distance(g.arms[1].wrist,task.phoneGrip)<1e-6,'phone detached '+t);
  }
  for(const t of [29,30,31,32,32.6])assert.ok(Math.abs(pilotActorAt(t,'youth','burden').arms[1].wrist[0]-(825+40*progress(t,29,3.6)))<1e-6);
@@ -96,4 +96,18 @@ test('paired views preserve the external event while reactions and planted suppo
  assert.ok(pilotViewActorAt(50,'youth').pose.hip[1]>pilotViewActorAt(48,'youth').pose.hip[1]+50);
  assert.ok(pilotViewActorAt(51,'philosopher').pose.head[1]<pilotViewActorAt(48,'philosopher').pose.head[1]);
  assert.throws(()=>pilotSharedEventAt(NaN),/finite/);
+});
+
+
+test('the attempted catch reaches toward the paper and lands in a specific defeat pose',()=>{
+ const before=pilotActorAt(37.3,'youth','burden'),reach=pilotActorAt(37.9,'youth','burden');
+ assert.ok(reach.pose.chest[0]>before.pose.chest[0]+75,'whole torso must commit to the catch');
+ assert.ok(reach.arms[1].wrist[0]>990,'catch cannot remain beside the phone');
+ const page=pilotTaskAt(37.9).pages[0];
+ assert.ok(Math.abs(page.center[0]-52-reach.arms[1].wrist[0])<30,'failed catch must approach the actual paper edge');
+ assert.ok(page.center[1]>reach.arms[1].wrist[1]+30,'paper has already fallen below the late hand');
+ const end=pilotActorAt(40.5,'youth','burden');
+ assert.ok(distance(end.arms[0].wrist,end.pose.head)<35,'reaction hand must reach the forehead');
+ assert.equal(end.pose.intent,'defeated');
+ assert.deepEqual(end.arms[1].wrist,[835,615]);
 });
