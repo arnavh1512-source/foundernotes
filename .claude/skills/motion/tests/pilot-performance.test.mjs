@@ -50,6 +50,7 @@ test('the task interruption preserves phone grip, planted support and an unfinis
   if(t>=33.7&&t<=37.1)assert.ok(distance(g.arms[1].wrist,task.phoneGrip)<1e-6,'phone detached '+t);
  }
  assert.equal(pilotTaskAt(33.1).writing,0);
+ assert.ok(pilotTaskAt(35.6).pages.every(p=>p.center[0]-52>1700),'incoming work must enter from outside the frame');
  assert.deepEqual(pilotTaskAt(37.1).phoneCenter,[865,583]);
  assert.ok(pilotTaskAt(40.9).pages.every(p=>p.fallen));
  assert.deepEqual(pilotTaskAt(40.5).pages,pilotTaskAt(40.9).pages);

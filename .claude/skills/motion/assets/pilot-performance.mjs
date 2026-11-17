@@ -30,7 +30,7 @@ export function pilotTaskAt(time){
  const gripWeight=progress(time,33.1,.6)*(1-progress(time,37.1,.3));
  const writing=1-progress(time,32.6,.4);
  const spill=progress(time,37.4,1.2);
- const delivery=progress(time,35.6,1.2),deliveryX=1600-370*delivery;
+ const delivery=progress(time,35.6,1.2),deliveryX=1820-590*delivery;
  const pages=[0,1].map(i=>{const k=progress(time,37.4+i*.2,1.0);return {center:pilotBlend([deliveryX+i*30,603-i*6],[1250+i*80,805],k),angle:(i===0?-.45:.6)*Math.sin(Math.PI*k),fallen:k===1};});
  return {phoneCenter,phoneGrip,gripWeight,writing,spill,pages,deliveryX,deliveryVisible:time>=35.6,deliveryHand:progress(time,35.6,.3)*(1-progress(time,36.9,.4))};
 }

@@ -74,7 +74,8 @@ function burden(t){
  s.beginPath();s.arc(1110,385,45,0,Math.PI*2);s.fillStyle='#f5efdf';s.fill();s.strokeStyle='#899880';s.lineWidth=5;s.stroke();
  const minute=-Math.PI/2+progress(t,29,12)*.9;stroke(s,[[1110,385],[1110+32*Math.cos(minute),385+32*Math.sin(minute)]],4,youthColor);stroke(s,[[1110,385],[1088,397]],4,youthColor);
  actor(g,youthColor);
- if(task.writing>.01){const hand=g.arms[1].wrist;stroke(s,[[hand[0]-6,hand[1]-16],[hand[0]+3,608]],3,'#95684d');}
+ const penHand=t<33.1?g.arms[1].wrist:[865,597];
+ stroke(s,[[840+19*task.writing,608-27*task.writing],[penHand[0]+3,608]],3,'#95684d');
  const [x,y]=task.phoneCenter;s.fillStyle='#354c51';s.strokeStyle='#354c51';s.lineWidth=3;s.fillRect(x-20,y-35,40,70);s.fillStyle='#b9cdd0';s.fillRect(x-15,y-27,30,49);
  s.beginPath();s.arc(x,y-10,6,0,Math.PI*2);s.fillStyle='#667981';s.fill();stroke(s,[[x-8,y+10],[x,y+3],[x+8,y+10]],3,'#667981');
  if(t>=32.6&&t<33.7){const pulse=5+4*Math.sin((t-32.6)*18);for(const side of [-1,1])stroke(s,[[x+side*(27+pulse),y-13],[x+side*(31+pulse),y],[x+side*(27+pulse),y+13]],3,'#a38148');}
