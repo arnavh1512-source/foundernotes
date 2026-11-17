@@ -22,12 +22,18 @@ function actor(g,color){
  g.legs.forEach((a,i)=>stroke(s,[a.wrist,g.toeTargets[i]],6,color));
  s.beginPath();s.arc(...p.head,31,0,Math.PI*2);s.fillStyle='#f5efdf';s.fill();s.strokeStyle=color;s.lineWidth=6;s.stroke();
  const dir=p.facing||1;
- s.beginPath();s.arc(p.head[0]+dir*12,p.head[1]-4,3,0,Math.PI*2);s.fillStyle=color;s.fill();
+ s.beginPath();s.arc(p.head[0]+dir*(12-8*(p.lookUp||0)),p.head[1]-4-11*(p.lookUp||0),3,0,Math.PI*2);s.fillStyle=color;s.fill();
  if(p.intent==='withhold')stroke(s,[[p.head[0]+dir*5,p.head[1]-18],[p.head[0]+dir*20,p.head[1]-17]],3,color);
  if(p.intent==='argue'||p.intent==='strain')stroke(s,[[p.head[0]+dir*5,p.head[1]-16],[p.head[0]+dir*20,p.head[1]-9]],3,color);
- if(p.intent==='invite'){
+ if(p.intent==='startle'){s.beginPath();s.arc(p.head[0]+dir*12,p.head[1]+13,5,0,Math.PI*2);s.strokeStyle=color;s.lineWidth=3;s.stroke();}
+ else if(p.intent==='invite'||p.intent==='curious'){
   s.beginPath();s.moveTo(p.head[0]+dir*7,p.head[1]+11);s.quadraticCurveTo(p.head[0]+dir*14,p.head[1]+19,p.head[0]+dir*21,p.head[1]+10);s.strokeStyle=color;s.lineWidth=3;s.stroke();
-  const hand=g.arms[1].wrist;stroke(s,[[hand[0]+8,hand[1]+2],[hand[0]-14,hand[1]+2]],5,color);stroke(s,[[hand[0]-14,hand[1]+2],[hand[0]-20,hand[1]-5]],4,color);
+  const hand=g.arms[1].wrist;
+  if(p.intent==='curious'){
+   stroke(s,[hand,[hand[0]+5,hand[1]-16]],4,color);stroke(s,[hand,[hand[0]-7,hand[1]+2]],3,color);
+  }else{
+   stroke(s,[[hand[0]+8,hand[1]+2],[hand[0]-14,hand[1]+2]],5,color);stroke(s,[[hand[0]-14,hand[1]+2],[hand[0]-20,hand[1]-5]],4,color);
+  }
  }else stroke(s,[[p.head[0]+dir*8,p.head[1]+13],[p.head[0]+dir*18,p.head[1]+11]],3,color);
 }
 function room(){
@@ -90,14 +96,17 @@ function hill(x,palette,t){
  s.fillStyle=palette[1];s.beginPath();s.moveTo(0,450);s.bezierCurveTo(190,420,250,200,460,230);s.bezierCurveTo(600,240,650,350,780,330);s.lineTo(780,570);s.lineTo(0,570);s.closePath();s.fill();
  for(const [tx,ty]of [[180,370],[545,270],[650,335]]){stroke(s,[[tx,ty],[tx,ty-100]],8,palette[2]);stroke(s,[[tx-28,ty-55],[tx,ty-85],[tx+26,ty-60]],6,palette[2]);}
  s.fillStyle=palette[2];s.fillRect(380,260,55,65);s.beginPath();s.moveTo(370,260);s.lineTo(407,225);s.lineTo(447,260);s.closePath();s.fill();
- const birdX=-30+(t-46)*84,wing=9+5*Math.sin(t*6);stroke(s,[[birdX-12,120-wing],[birdX,120],[birdX+12,120-wing]],4,palette[2]);s.restore();
+ const event=pilotSharedEventAt(t),[birdX,birdY]=event.bird;stroke(s,[[birdX-12,birdY-event.wing],[birdX,birdY],[birdX+12,birdY-event.wing]],4,'#455c61');s.restore();
 }
 function views(t){
  s.fillStyle='#e9e5d9';s.fillRect(0,0,1920,1080);
- hill(120,['#667981','#455c61','#c2c9b4'],t);hill(1020,['#dfd2a8','#9eaf85','#657c6c'],t);
+ const palette=['#e6e1cb','#c2cbb0','#8b9d86'];
+ hill(120,palette,t);hill(1020,palette,t);
+ for(const [x,role,color]of [[120,'youth',youthColor],[1020,'philosopher',mentorColor]]){
+  s.save();s.beginPath();s.rect(x,180,780,570);s.clip();s.translate(x+240,180+535);s.scale(.66,.66);s.translate(-690,-830);actor(pilotViewActorAt(t,role),color);s.restore();
+ }
  words('YOUTH',510,135,28,youthColor);words('PHILOSOPHER',1410,135,28,mentorColor);
- words('Same hill. Same event. Different readings.',960,830,32);
- const k=progress(t,49,.8);s.strokeStyle='#b78c4b';s.lineWidth=4;s.globalAlpha=k;s.strokeRect(495,430,70,90);s.strokeRect(1395,430,70,90);s.globalAlpha=1;
+ words('Same event. Different readings. Different reactions.',960,830,32);
 }
 function gateOpening(t){
  drawGate(t,true);s.drawImage(gateCanvas,160,0,1600,900);

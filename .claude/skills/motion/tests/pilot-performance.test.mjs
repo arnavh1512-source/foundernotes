@@ -1,7 +1,7 @@
 import test from 'node:test';
 import {progress} from '../assets/story-motion.mjs';
 import assert from 'node:assert/strict';
-import {PILOT_DURATION,PILOT_SHOTS,pilotShotAt,pilotCupAt,pilotActorAt,pilotExitAt,pilotTaskAt} from '../assets/pilot-performance.mjs';
+import {PILOT_DURATION,PILOT_SHOTS,pilotShotAt,pilotCupAt,pilotActorAt,pilotExitAt,pilotTaskAt,pilotSharedEventAt,pilotViewActorAt} from '../assets/pilot-performance.mjs';
 const distance=(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1]);
 test('pilot shots cover the measured take with no gaps',()=>{
  assert.equal(PILOT_SHOTS[0].start,0);assert.equal(PILOT_SHOTS.at(-1).end,PILOT_DURATION);
@@ -75,4 +75,25 @@ test('conversation beats distinguish listening, withheld interruption and invita
  assert.ok(mentor(17).pose.head[0]<mentor(14.5).pose.head[0]-15);
  assert.ok(mentor(27).arms[1].wrist[0]<mentor(23).arms[1].wrist[0]-100);
  assert.ok(young(25.8).arms[1].wrist[1]<young(27).arms[1].wrist[1]-60);
+});
+
+
+test('paired views preserve the external event while reactions and planted supports differ',()=>{
+ for(let f=0;f<=300;f++){
+  const t=46+f/30;
+  for(const role of ['youth','philosopher']){
+   const g=pilotViewActorAt(t,role);assert.deepEqual(g.pose.feet,[[620,830],[760,830]]);
+   for(const [limbs,lengths]of [[g.arms,[84,90]],[g.legs,[115,120]]])for(const a of limbs){
+    assert.equal(a.clamped,false,role+' unreachable at '+t);
+    assert.ok(Math.abs(distance(a.shoulder,a.elbow)-lengths[0])<1e-6);
+    assert.ok(Math.abs(distance(a.elbow,a.wrist)-lengths[1])<1e-6);
+   }
+  }
+  assert.equal(pilotSharedEventAt(t).bird[1],120);
+ }
+ assert.equal(pilotViewActorAt(50,'youth').pose.intent,'startle');
+ assert.equal(pilotViewActorAt(51,'philosopher').pose.intent,'curious');
+ assert.ok(pilotViewActorAt(50,'youth').pose.hip[1]>pilotViewActorAt(48,'youth').pose.hip[1]+50);
+ assert.ok(pilotViewActorAt(51,'philosopher').pose.head[1]<pilotViewActorAt(48,'philosopher').pose.head[1]);
+ assert.throws(()=>pilotSharedEventAt(NaN),/finite/);
 });

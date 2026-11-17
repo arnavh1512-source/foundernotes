@@ -105,3 +105,24 @@ export function pilotExitAt(time){
  return {pose:p,shoulders,arms,legs,toeTargets:legs.map(a=>[a.wrist[0]-19,a.wrist[1]]),spineControl:[170,480],depth};
 }
 
+
+// The external event is shared exactly; only the authored character response differs.
+export function pilotSharedEventAt(time){
+ if(!Number.isFinite(time))throw new TypeError('time must be finite');
+ return {bird:[-30+(time-46)*84,120],wing:9+5*Math.sin(time*6)};
+}
+export function pilotViewActorAt(time,role){
+ if(!Number.isFinite(time))throw new TypeError('time must be finite');
+ if(!['youth','philosopher'].includes(role))throw new TypeError('unknown actor');
+ const startle=role==='youth'?progress(time,49,.28)*(1-progress(time,52.1,1.0)):0;
+ const notice=progress(time,48.7,.5),follow=role==='philosopher'?progress(time,49.8,.7)*(1-progress(time,54.3,.7)):0;
+ const p={hip:pilotBlend([690,610],[680,680],startle),chest:pilotBlend([700,470],[680,550],startle),head:pilotBlend([710,385],[690,465],startle),feet:[[620,830],[760,830]],hands:[pilotBlend([690,630],[650,410],startle),pilotBlend([745,625],[730,410],startle)],facing:1,intent:startle>.25?'startle':'observe',lookUp:notice};
+ if(role==='philosopher'){
+  p.chest[0]-=8*notice;p.chest[1]-=6*notice;p.head[0]-=15*notice;p.head[1]-=15*notice;
+  p.hands[1]=pilotBlend(p.hands[1],[810,395],follow);p.intent=follow>.2?'curious':'observe';
+ }
+ const shoulders=[-5,5].map(d=>[p.chest[0]+d,p.chest[1]]);
+ const arms=shoulders.map((a,i)=>solveArm(a,p.hands[i],84,90,i===0?-1:1));
+ const legs=p.feet.map(f=>solveArm(p.hip,f,115,120,-1));
+ return {pose:p,shoulders,arms,legs,toeTargets:legs.map(a=>[a.wrist[0]+19,a.wrist[1]]),spineControl:[(p.hip[0]+p.chest[0])/2-16,(p.hip[1]+p.chest[1])/2+8]};
+}
