@@ -44,6 +44,17 @@
       "evidence": "Code0ca144a; CI44162153584/artifact14364186513; exact picture/assembly hashes and sample intervals in PHILOSOPHER_STICK_PILOT_CHECKPOINT.json and review2026-11-18.",
       "verification": "15 tests; exact encoded reaction/caption samples inspected; full decode and unchanged decoded audio hash. No continuous playback, listening or independent approval; full production FAIL.",
       "recorded_at": "2026-11-17T19:57:25+00:00"
+    },
+    {
+      "type": "video",
+      "video_id": "philosopher-stick-pilot-catch-99c1284",
+      "summary": "Committed late paper catch and specific supported defeated reaction",
+      "evidence": "Source99c1284ffe58a69840e2c55b7b8789ef5a1df41f; CI44165022116/artifact14365956057; exact picture/assembly hashes and13 task/6 captioned sample intervals in checkpoint/review.",
+      "verification": "Sixteen tests, full decode/probe, exact encoded selected-frame self-review and unchanged decoded audio hash. No continuous, auditory, independent or owner approval; full production FAIL.",
+      "status": "needs_work",
+      "owner_approved": false,
+      "style_fingerprint": "Original slender stick cast; full64.5-second measured dialogue pilot; committed late catch, original forehead-in-hand reaction, persistent work consequence; existing audio unchanged.",
+      "recorded_at": "2026-11-17T20:10:15+00:00"
     }
   ]
 }

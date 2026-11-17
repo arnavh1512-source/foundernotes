@@ -175,3 +175,19 @@ The initial entries preserve documented observations from the 2026-11-11 study a
 - Cause / rationale: The panels retained the same hill and bird but used palette changes and a house outline to stand for interpretation, without a character action showing what the reading changed.
 - Correction / recipe: Keep geometry, event and palette identical and show two original stick-character reactions to the same passing bird: protective crouch versus curious attention. Preserve the external event, supports and established character identities. Inspect actual changed frames and eventually comprehension in full playback; do not claim a universal psychology finding.
 - Verification: Baseline frame/source gap verified. Fifteen geometry/contact tests and browser-script parse pass for source0ca144a8786ecfd6060d7882de9c0383020bb156. Follow-up: CI44162153584/artifact14364186513, pictureed04aeffe71bb733822c8d58518506b5fb78c96f47c12d2c97f824e738fe6a6d; eleven reaction samples and six V6 captioned samples inspected. Shared event and distinct crouch/curious responses are visible; continuous comprehension, artistic/audio/independent approval remain open.
+
+### philosopher-pilot-remote-catch — The supposed missed catch stayed far from the falling work
+
+- Recorded (UTC): 2026-11-17T20:03:23+00:00
+- Evidence: V6 exact picture ed04aeffe71bb733822c8d58518506b5fb78c96f47c12d2c97f824e738fe6a6d; decoded34.5,35.6,36.5,37.3,37.7,38.1,38.6,39.2 seconds. Source catch target910/650 versus paper centers1230/1260 before spill.
+- Cause / rationale: The hand and paper trajectories were authored separately; arm reach passed without establishing a plausible attempted interaction. Earlier records called this a missed catch too confidently.
+- Correction / recipe: Stage the arriving work at the front of the desk closer to the Youth, move hips/chest/head into a committed late reach, keep the brace/support and phone grip, and land the failure with a specific forehead-in-hand reaction. Check the exact new picture; sampled poses do not validate continuous timing.
+- Verification: Baseline separation verified in actual encoded frames and source. Source99c1284ffe58a69840e2c55b7b8789ef5a1df41f passes16 tests and browser-script parse. Follow-up: CI44165022116/artifact14365956057, picture SHA8e831772525985e9036085c0446b59e09b9e8f5bdf47795907b3ec0aba48ff8b;13 exact task and6 V7 captioned samples inspected. Torso/reach near the page edge and supported forehead-in-hand reaction are visible. Full decode and unchanged decoded audio verified. Continuous performance, listening and independent/owner approval remain pending.
+
+### reference-browser-identity-2026-11-18 — Remote Chrome was incorrectly described as the owner local Chrome
+
+- Recorded (UTC): 2026-11-17T20:09:50+00:00
+- Evidence: Available browser inventory exposed a cdp Chrome inside the cloud environment; its docs identify it as remote. Owner corrected the wording after the Newgrounds attempt. Plugin discovery exposed no usable local Chrome connection.
+- Cause / rationale: A browser named Chrome and an existing search tab were incorrectly taken to establish ownership/location.
+- Correction / recipe: Check the actual provider/environment and local-connection availability before claiming to use the owner computer. Label cloud attempts as remote; do not use a remote failure as evidence about the owner local browser.
+- Verification: Wording corrected to owner. Newgrounds limitation applies to the remote session only; local Chrome access remains unavailable and untested.

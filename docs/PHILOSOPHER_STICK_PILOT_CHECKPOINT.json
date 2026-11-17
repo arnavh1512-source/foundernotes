@@ -1,6 +1,6 @@
 {
-  "code_commit": "0ca144a8786ecfd6060d7882de9c0383020bb156",
-  "workflow_run": 44162153584,
+  "code_commit": "99c1284ffe58a69840e2c55b7b8789ef5a1df41f",
+  "workflow_run": 44165022116,
   "previous_pr": {
     "number": 12,
     "observed_state": "merged",
@@ -8,14 +8,14 @@
   },
   "continuation_pr": 13,
   "previous_picture": {
-    "artifact": 14362741826,
-    "sha256": "093ebefb97b3726a0f689ac0f30d6cb78a3fe76fa2d56012282df98b57d63547",
+    "artifact": 14364186513,
+    "sha256": "ed04aeffe71bb733822c8d58518506b5fb78c96f47c12d2c97f824e738fe6a6d",
     "duration_s": 64.5,
     "width": 1920,
     "height": 1080,
     "fps": 30,
     "frames": 1935,
-    "review_scope": "18 decoded overview plus12 study samples17,22.4,23.5,25.2,25.6,26,26.4,26.8,27.4,28,28.4,28.9 seconds. Listener reception, withheld interruption, invitation and prepared reply inspected; palm clears cup/steam in final samples. Not continuous playback, listening or independent approval."
+    "review_scope": "CI overview plus eleven decoded paired-view samples46.5,48.7,49,49.3,49.8,50.5,51.5,52.3,53.1,54.5,55.8 inspected. Same hill/palette/bird with protective crouch versus curious look/gesture. Selected frames only; no continuous, auditory or independent approval."
   },
   "private_audio": {
     "library_id": "libfile_c99d2bfdf94c819198bad6d6fd27be65",
@@ -36,50 +36,52 @@
   ],
   "fresh_reference_access": {
     "agent_reach": "NOT_INSTALLED; native fallback allowed",
-    "alan_youtube": "Text shell only, no playable footage",
+    "alan_youtube": "Fresh native GW_fdXHOWp4 read gave footer/text shell only, no footage.",
     "day_one_youtube": "Text shell only, no playable footage",
     "psychtoons_youtube": "Online fetch throttled",
     "psychdoodle_youtube": "DisabledError",
     "gly2wBcnZUQ": "DisabledError",
-    "supplied_discipline": "Opening 0\u201348 s sampled every 2 s; actual frames inspected. Attribution unknown. No listening or precise cadence judgment. Additional exact decoded6,30,42-second reaction frames inspected in the listener pass; no dialogue/sound or attribution judgment.",
-    "thatguy": "Official candidates OAWl6F_9HJ8 and SjMpWrZBpXQ identified from metadata. Actual SjMpWrZBpXQ browser playback stalled at0:00/readyState0; thumbnail is not footage review. See THATGUY_REFERENCE_2026-11-18.md."
+    "supplied_discipline": "Opening 0\u201348 s sampled every 2 s; actual frames inspected. Attribution unknown. No listening or precise cadence judgment. Additional exact decoded6,30,42-second reaction frames inspected in the listener pass; no dialogue/sound or attribution judgment. This pass additionally inspected exact28,30,32,40,42,44-second frames: head-supported/slumped poses provide a body-language comparison only; no listening/cadence or creator attribution.",
+    "thatguy": "Official candidates OAWl6F_9HJ8 and SjMpWrZBpXQ identified from metadata. Actual SjMpWrZBpXQ browser playback stalled at0:00/readyState0; thumbnail is not footage review. See THATGUY_REFERENCE_2026-11-18.md.",
+    "alan_newgrounds": "Fresh normal cloud-browser visit to original portal316541 returned Site Unavailable / Unable to access this site. No fresh frames/audio; no bot-block cause inferred.",
+    "owner_local_chrome": "No local Chrome connection exposed in this session. Remote Chrome was initially mislabeled as owner Chrome; wording corrected and lesson recorded. Remote failure establishes nothing about owner local playback."
   },
   "pre_script_gate": "PASS structural preparation only",
   "full_production_approved": false,
   "workflow_conclusion": "success",
   "latest_picture": {
-    "artifact": 14364186513,
-    "sha256": "ed04aeffe71bb733822c8d58518506b5fb78c96f47c12d2c97f824e738fe6a6d",
+    "artifact": 14365956057,
+    "sha256": "8e831772525985e9036085c0446b59e09b9e8f5bdf47795907b3ec0aba48ff8b",
     "duration_s": 64.5,
     "width": 1920,
     "height": 1080,
     "fps": 30,
     "frames": 1935,
-    "review_scope": "CI overview plus eleven decoded paired-view samples46.5,48.7,49,49.3,49.8,50.5,51.5,52.3,53.1,54.5,55.8 inspected. Same hill/palette/bird with protective crouch versus curious look/gesture. Selected frames only; no continuous, auditory or independent approval."
+    "review_scope": "CI overview plus13 exact task samples37.1,37.35,37.5,37.7,37.85,38,38.3,38.6,39.2,39.5,39.7,40,40.5 inspected. Committed torso/reach approaches falling page edge, followed by forehead-in-hand reaction and persistent papers. Selected frames only; continuous motion/listening/independent approval pending."
   },
   "latest_private_assembly": {
-    "name": "internal-pilot-v6.mp4",
-    "sha256": "6c39fb196743dbacf4d59350e120caa65e1752666bf16df435c2d42ab7ecd0d5",
+    "name": "internal-pilot-v7.mp4",
+    "sha256": "dc54e17d24f8ea4bfbf31dd46faf665ab659cca2ac9540f2622f127a7479c65f",
     "duration_s": 64.5,
     "video_frames": 1935,
     "audio_stream_duration_s": 64.482,
-    "review_scope": "Full video/audio decode succeeded. Six captioned samples47.5,49.3,50.5,51.5,53.1,55.8 inspected; visible captions remain below panels. No full temporal, auditory or independent review.",
+    "review_scope": "Full decode/probe succeeded; six captioned task samples37.5,37.85,38.3,39.5,40,40.5 inspected. Captions stay below the main action in those samples. No continuous playback, auditory or independent review.",
     "decoded_audio_sha256": "d6ea2c401862c70b5b48597ad0883fbbf30102a83d28c1ac7c889e6d009334da",
-    "audio_verification": "Decoded audio SHA matches V3/V4/V5 exactly; existing take and speed preserved. No profile identity or auditory approval inferred."
+    "audio_verification": "Prior V6 encoded AAC stream copied into V7 without filtering or re-encoding; decoded audio SHA identical. Existing take preserved, no profile identity or auditory approval inferred."
   },
   "tests": {
-    "node_tests_passed": 15,
+    "node_tests_passed": 16,
     "artistic_approval": false
   },
   "full_production_gate": "FAIL; actual approval, reviewer/evidence/insight and outsider fields remain incomplete.",
-  "next_priority": "Preserve completed gate, task, listener and paired-view passes. Review whole-pilot normal-speed continuity, especially the phone insert return and missed catch, and whether the paired reaction is understood without relying on its footer. Resolve actual narrator identity/listening, caption boundaries and cup sound before approval. Retry accessible exact benchmark footage including ThatGuy without inventing audiovisual findings.",
+  "next_priority": "Preserve gate/task/listener/paired-view progress and the committed late catch/defeated reaction. Review whole-pilot normal-speed continuity, including phone insert return, support transitions and paired-view comprehension without footer. Actual approved-profile identity/listening, caption wording/timing, cup sound sync and independent/owner pilot review remain unresolved; do not generate replacement voice or begin full production.",
   "private_continuation_bundle": {
     "library_file_id": "libfile_2a2569310a8481919a251bf91621ecb0",
-    "file_id": "file_0000000045e082088a3263a54fb6b797",
+    "file_id": "file_00000000cd188208ad833cbb9010f6d9",
     "name": "FounderNotes-Internal-Pilot-Checkpoint-eac2e46.zip",
-    "version": 3,
-    "contents": "Current V6 picture/assembly, unchanged dialogue, provisional captions, manifests and exact decoded reaction/caption-review evidence. Prior versions preserve earlier checkpoints; filename retains its original identifier. No reference assets or public source included.",
+    "version": 4,
+    "contents": "Current V7 picture/assembly, unchanged dialogue, provisional captions, manifests, baseline and exact decoded catch/caption-review evidence. Prior versions preserve earlier checkpoints; filename retains its original identifier. No reference assets or public source included.",
     "delivery_status": "Internal, not approved."
   },
-  "previous_code_commit": "a23acad9aa37cc51fcc96cedec954bd3c8a8a0d3"
+  "previous_code_commit": "0ca144a8786ecfd6060d7882de9c0383020bb156"
 }
