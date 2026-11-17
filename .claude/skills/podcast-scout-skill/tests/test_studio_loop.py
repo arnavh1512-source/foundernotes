@@ -151,5 +151,106 @@ class StudioLoopTests(unittest.TestCase):
         self.assertIn("Do not claim", packet["rules"])
 
 
+class ApprovalAndShortFilmTests(unittest.TestCase):
+    setUp = StudioLoopTests.setUp
+    start = StudioLoopTests.start
+    evidence = StudioLoopTests.evidence
+    ready = StudioLoopTests.ready
+    rendered = StudioLoopTests.rendered
+    review = StudioLoopTests.review
+
+    def test_changed_critique_evidence_blocks_owner_approval(self):
+        run = self.rendered()
+        run.critic(self.review(run))
+        self.evidence(run, 'evidence.txt', 'changed after creative review')
+        with self.assertRaisesRegex(ValueError, 'evidence changed'):
+            run.approve('owner', 'evidence.txt')
+        self.assertEqual(run.state['stage'], 'owner_review')
+
+    def test_deleted_critique_evidence_blocks_owner_approval(self):
+        run = self.rendered()
+        run.critic(self.review(run))
+        (run.root / 'evidence.txt').unlink()
+        self.evidence(run, 'owner.txt')
+        with self.assertRaises(ValueError):
+            run.approve('owner', 'owner.txt')
+
+    def test_approved_workflow_rechecks_owner_evidence(self):
+        run = self.rendered()
+        run.critic(self.review(run))
+        self.evidence(run, 'owner.txt')
+        run.approve('owner', 'owner.txt')
+        self.evidence(run, 'owner.txt', 'replaced owner review')
+        with self.assertRaises(ValueError):
+            run.verify_approval()
+
+    def test_approval_must_bind_to_the_current_render(self):
+        run = self.rendered()
+        run.critic(self.review(run))
+        run.approve('owner', 'evidence.txt')
+        run.state['owner_approval']['render_sha256'] = 'wrong'
+        with self.assertRaises(ValueError):
+            run.verify_approval()
+
+    def test_evidence_can_be_reviewed_again_without_new_render(self):
+        run = self.rendered()
+        run.critic(self.review(run))
+        self.evidence(run, 'evidence.txt', 'updated review evidence')
+        run.critic(self.review(run))
+        run.approve('owner', 'evidence.txt')
+        run.verify_approval()
+
+    def test_short_film_accepts_245_seconds_without_weakening_long_form(self):
+        run = self.ready()
+        self.evidence(run, 'short.mp4', 'synthetic transition fixture')
+        self.evidence(run, 'qc.json', json.dumps({'status':'PASS','errors':[]}))
+        run.register_render('short.mp4', 'qc.json', 245, 'artist', 'short-film')
+        self.assertEqual(run.state['renders'][-1]['mode'], 'short-film')
+        for mode, duration in [('full',245),('short-film',90),('short-film',480),('short-film',float('nan')),('unknown',245)]:
+            with self.subTest(mode=mode, duration=duration), self.assertRaises(ValueError):
+                loop.validate_duration(mode,duration)
+        loop.validate_duration('full',480)
+        loop.validate_duration('pilot',60)
+
+    def test_producer_checks_pilot_evidence_before_rendering(self):
+        import shutil
+        from types import SimpleNamespace
+        from unittest.mock import patch
+        pilot = self.rendered()
+        pilot.critic(self.review(pilot))
+        self.evidence(pilot, 'owner.txt')
+        pilot.approve('owner', 'owner.txt')
+        film = loop.StudioLoop.create(self.root / 'film', 'short-film')
+        shutil.copytree(pilot.root, film.root / 'pilot')
+        self.evidence(film, 'evidence.txt')
+        film.reference(pilot.state['references'][0]['analysis'])
+        film.learn(pilot.state['knowledge'][0])
+        for name, data in [('viewer.json', {}), ('shots.json', {'narration_duration_s':245})]:
+            self.evidence(film, name, json.dumps(data))
+        self.evidence(film, 'voice.wav', 'not real audio; ffprobe mocked for gate test')
+        self.evidence(film, 'captions.srt')
+        recipe = {'mode':'short-film','viewer_plan':'viewer.json','shot_plan':'shots.json',
+                  'narration':'voice.wav','captions':'captions.srt',
+                  'approved_pilot_workflow':'pilot/workflow.json'}
+        self.evidence(film, 'recipe.json', json.dumps(recipe))
+        self.evidence(film, 'pilot/owner.txt', 'changed after approval')
+        gate_calls = []
+        gate = SimpleNamespace(validate=lambda plan, **kw: gate_calls.append(kw) or [],
+                               validate_plan=lambda plan: [])
+        with patch.object(loop, 'module', return_value=gate), \
+                patch.object(loop, 'probe_duration', return_value=245), \
+                patch.object(loop.subprocess, 'run') as render:
+            with self.assertRaisesRegex(ValueError, 'evidence changed'):
+                loop.produce(film, 'recipe.json')
+            render.assert_not_called()
+        self.assertEqual(gate_calls, [{'stage':'full-production'}])
+        self.assertEqual(film.state['stage'], 'production')
+
+    def test_short_film_uses_reviewed_pilot_gates_and_90_second_qc_floor(self):
+        self.assertEqual(loop.production_policy('short-film'), ('full-production',90))
+        self.assertEqual(loop.production_policy('full'), ('full-production',480))
+        self.assertEqual(loop.production_policy('pilot'), ('pre-script',60))
+
+
 if __name__ == "__main__":
     unittest.main()

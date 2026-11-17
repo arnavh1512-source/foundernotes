@@ -36,3 +36,8 @@ This repo holds the skills, self-improving memory, and subagents used to researc
 ## Creative production loop and animation backends
 
 Use [.claude/skills/podcast-scout-skill/references/creative-production-loop.md](/.claude/skills/podcast-scout-skill/references/creative-production-loop.md) for the executable reference → knowledge → production → critic → revision workflow. Read [animation backend assessment](/.claude/skills/podcast-scout-skill/references/animation-backends.md) before choosing optional external tools. Preserve narrator, evidence, rights, pilot-review and owner-approval requirements. Host AI performs creative analysis; the coordinator does not invent model runs or audiovisual review.
+
+
+## Explicit short-film requests
+
+When the owner explicitly requests a film shorter than eight minutes, use `studio_loop.py` recipe `mode: "short-film"` (>90 seconds and <480 seconds). This applies to the requested ~4:05 philosopher film. Keep the normal `full` mode minimum at 480 seconds. Short films still require the full-production viewer gate, an actual 60–90-second owner-approved pilot, evidence revalidation, measured natural-speed narration, captions, technical QC and creative review. Never pad or change narration speed to meet either duration range.
