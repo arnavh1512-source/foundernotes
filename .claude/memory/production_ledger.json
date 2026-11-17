@@ -11,6 +11,17 @@
       "style_fingerprint": "Original slender stick Youth and Philosopher; restrained sage/slate/bronze; gate illustration, room argument, responsibility cords, identical hill-event panels, qualified gate return.",
       "owner_approved": false,
       "recorded_at": "2026-11-17T18:52:03+00:00"
+    },
+    {
+      "type": "video",
+      "video_id": "philosopher-stick-pilot-task-33e7c24",
+      "summary": "Responsibility scene now uses interrupted work and a failed catch within the complete64.5-second pilot",
+      "evidence": "docs/PHILOSOPHER_STICK_PILOT_CHECKPOINT.json; CI44155539009/artifact14361645915; source33e7c24390bdb53fd77665ab77631fa8ad39a0c6; assembled SHA21a20157f8d8fc06f66b361c6f3474b7e2e80e7f36d36add5a2fc7f9b0da6d52",
+      "verification": "Thirteen tests and CI pass; full decode; overview, eighteen task/transition and six captioned samples inspected. Audio samples match previous cut. No auditory, continuous or independent/owner approval.",
+      "status": "needs_work",
+      "style_fingerprint": "Original stick cast; sage/slate/bronze room; visible written work, interruption, phone grip, missed catch and persistent physical consequence.",
+      "owner_approved": false,
+      "recorded_at": "2026-11-17T19:15:35+00:00"
     }
   ]
 }

@@ -1,6 +1,6 @@
 {
-  "code_commit": "eac2e46ffa4526c481a41541a2387c10ffcbf7c8",
-  "workflow_run": 44151191616,
+  "code_commit": "33e7c24390bdb53fd77665ab77631fa8ad39a0c6",
+  "workflow_run": 44155539009,
   "previous_pr": {
     "number": 12,
     "observed_state": "merged",
@@ -42,37 +42,38 @@
   "full_production_approved": false,
   "workflow_conclusion": "success",
   "latest_picture": {
-    "artifact": 14358329040,
-    "sha256": "e141561465f36b4256502908e5debda5aa66521c810d1794d7493ac721e4a743",
+    "artifact": 14361645915,
+    "sha256": "e1c1f8790f631c4168d16d3074647e3fbc97b762d900dea4f1734d461773be56",
     "duration_s": 64.5,
     "width": 1920,
     "height": 1080,
     "fps": 30,
     "frames": 1935,
-    "review_scope": "18 decoded overview samples plus ten cup/rest/hold/lowering samples at 20,25,41.3,41.4,41.5,41.6,41.7,41.8,41.9,42 seconds. Elbow no longer invades the face in these samples. Not continuous playback or listening."
+    "review_scope": "18 decoded overview samples plus18 task/transition samples at29,29.5,31,32.5,32.6,33.2,33.8,34.3,34.5,35.8,36.5,37.1,37.4,37.8,38.4,39.5,40.8,41 seconds. Writing/phone separation, grip, physical delivery-arm retreat, fallen-paper persistence and footer protection inspected in these samples. Not continuous playback or listening."
   },
   "latest_private_assembly": {
-    "name": "internal-pilot-v2.mp4",
-    "sha256": "1092aee903fdb34f5281b42540e7ec0c42193c289380465fd40cdac8620b80d0",
+    "name": "internal-pilot-v3.mp4",
+    "sha256": "21a20157f8d8fc06f66b361c6f3474b7e2e80e7f36d36add5a2fc7f9b0da6d52",
     "duration_s": 64.5,
     "video_frames": 1935,
     "audio_stream_duration_s": 64.482,
-    "review_scope": "Full FFmpeg decode succeeded; eight decoded captioned samples inspected at 16.5,24,27,41.7,43.5,50,60,63 seconds. Previous assembly had 24 samples across all scenes. No auditory, full temporal or independent review.",
+    "review_scope": "Full decode succeeded; six new captioned task samples at30.5,33.8,36.5,37.8,39.5,40.8 seconds inspected. Other scenes retain earlier review. No continuous, auditory or independent review.",
     "decoded_audio_sha256": "d6ea2c401862c70b5b48597ad0883fbbf30102a83d28c1ac7c889e6d009334da",
-    "audio_verification": "Decoded AAC samples match V1 exactly; V1/source zero-lag correlation0.999989. This is not a listening or voice-identity verification."
+    "audio_verification": "Decoded audio SHA matches V2 exactly. No new voice, retiming or processing; profile identity and listening remain pending."
   },
   "tests": {
-    "node_tests_passed": 12,
+    "node_tests_passed": 13,
     "artistic_approval": false
   },
   "full_production_gate": "FAIL; actual approval, reviewer/evidence/insight and outsider fields remain incomplete.",
-  "next_priority": "Continue richer cause/effect acting in the responsibility and listening beats; resolve actual listening, source-profile identity, caption word/speaker boundaries and cup sync before pilot approval. Do not restart the gate exercise or treat sampled frames/tests as approval.",
+  "next_priority": "Review normal-speed phone insert return, attempted-catch spacing and listening/speech boundaries. Continue stronger listener acting in study and paired-view explanation once a verified gap is identified. Preserve exact source/media identities; do not restart responsibility cards or gate studies. Resolve actual listening, profile identity and independent/owner gates before approval.",
   "private_continuation_bundle": {
     "library_file_id": "libfile_2a2569310a8481919a251bf91621ecb0",
-    "file_id": "file_00000000d4008211810eafe599d5937e",
+    "file_id": "file_00000000c7048207b0f3ad53e72dda46",
     "name": "FounderNotes-Internal-Pilot-Checkpoint-eac2e46.zip",
-    "version": 0,
-    "contents": "Latest picture and assembled pilot, unchanged existing dialogue, provisional captions, private manifests and selected decoded review evidence. No third-party/reference footage or public source included.",
+    "version": 1,
+    "contents": "Current V3 picture and assembly, unchanged dialogue, provisional captions, manifest and decoded review evidence. Version0 preserves the prior V2 checkpoint; filename retains its original identifier. No third-party/reference footage or public source included.",
     "delivery_status": "Internal, not approved."
-  }
+  },
+  "previous_code_commit": "eac2e46ffa4526c481a41541a2387c10ffcbf7c8"
 }

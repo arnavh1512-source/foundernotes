@@ -135,3 +135,19 @@ The initial entries preserve documented observations from the 2026-11-11 study a
 - Cause / rationale: The held-cup arm reused the Youth bend direction; the wrist passes close to its shoulder while lowering the prop, forcing the elbow around the high side.
 - Correction / recipe: Use one consistent opposite bend for the Philosopher cup arm for both lift and lowering. Keep wrist attached to the actual handle; require elbow clearance below the head over the set-down. Re-render and inspect held, intermediate and settled silhouettes.
 - Verification: Defect verified in encoded samples and matching geometry. Twelve tests pass after the correction, including the new elbow clearance check. Follow-up: CI44151191616/artifact14358329040, picture SHAe141561465f36b4256502908e5debda5aa66521c810d1794d7493ac721e4a743; ten decoded cup/rest/lowering samples inspected. Elbow clears the face in those samples. Full temporal and auditory review remain pending.
+
+### philosopher-pilot-responsibility-cards — Responsibility cards named the idea without a concrete attempted task or consequence
+
+- Recorded (UTC): 2026-11-17T19:00:17+00:00
+- Evidence: Baseline picture e141561465f36b4256502908e5debda5aa66521c810d1794d7493ac721e4a743; decoded samples at31,34,36,39 seconds in the previous assembly review. docs/PHILOSOPHER_STICK_PILOT_REVIEW_2026-11-18.md.
+- Cause / rationale: The scene drew three labeled rectangles on cords while the Youth changed pose; there was no everyday goal, interruption, prop handling or failed action for the viewer to follow.
+- Correction / recipe: Stage written work interrupted by a phone, then incoming work and a missed catch. Preserve phone-hand contact during lift/lowering, leave the released pen on the table, start incoming work outside the frame and keep fallen papers visible. Compare changed encoded samples against the exact baseline before claiming improvement.
+- Verification: Baseline defect verified in decoded samples. Thirteen geometry/contact tests pass and the viewer-first pre-script preparation still passes. Follow-up: source33e7c24390bdb53fd77665ab77631fa8ad39a0c6, CI44155539009/artifact14361645915; eighteen decoded task/transition samples inspected. The attempted work, interruption, missed catch and persistent papers are visible in those samples. Continuous/auditory/independent review and creative approval remain pending.
+
+### philosopher-pilot-workspace-overlap — A correctly gripped phone covered the action it was supposed to interrupt
+
+- Recorded (UTC): 2026-11-17T19:12:37+00:00
+- Evidence: Intermediate task picture67e37aea, CI44153691660/artifact14359024825, SHA9d7ab20de45cdbc5d052cf0e33e23a2f8f88ee7841fe1dc2afdac26769a9ee33; decoded29.5/31/32.6 seconds plus source bounds phone845–885, writing endpoint868.
+- Cause / rationale: The phone was placed on the same part of the table as the writing stroke. Bone/contact checks did not protect the visible task area.
+- Correction / recipe: Move the resting phone beside the paper and shift the torso/hip/head into a supported reach. Preserve grip while lifting/lowering and require clear writing/phone bounds. Inspect the actual picture before claiming that the task reads.
+- Verification: Defect verified in intermediate decoded frames and matching source bounds. Source33e7c24390bdb53fd77665ab77631fa8ad39a0c6 passes thirteen tests; Follow-up: final picture SHAe1c1f8790f631c4168d16d3074647e3fbc97b762d900dea4f1734d461773be56; decoded writing and pickup samples show the phone beside the writing stroke, preserving its visibility. Full motion/listening/approval remain pending.
