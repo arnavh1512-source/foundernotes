@@ -30,3 +30,35 @@ The initial entries preserve documented observations from the 2026-11-11 study a
 - Cause / rationale: Local media transfer failed; Agent-Reach was absent and its official release host could not be resolved. Browser playback also hit verification and the analysis service lacked credits.
 - Correction / recipe: Run the gateway status at session start, preserve actual retrieval results, and mark unavailable reference footage pending. Complete useful production documentation, report the blocker plainly, and obtain accessible footage before assigning motion/voice passes.
 - Verification: Blockers observed in this session. No fresh comparison, animation improvement or successful Agent-Reach installation is claimed.
+
+### philosopher-motion-study-cut-1a — Scaled drawing strokes failed before encoding
+
+- Recorded (UTC): 2026-11-17T13:22:17+00:00
+- Evidence: docs/PHILOSOPHER_MOTION_REVIEW_2026-11-17.md; first-cut hash 9661084f4092c2793af6fdad62de87eb281c6f366bb7dba2c7467a69932b2307; revised hash 21b4286b78ec40f207ba74afde8327512859c684fa99a0b59942f08c4294a394
+- Cause / rationale: Pillow ImageDraw.line expects integer widths; scaled character limbs produced float widths.
+- Correction / recipe: Round widths in the shared line helper. Run the all-shot deterministic rendering test before encoding.
+- Verification: Two local tests passed and the revised 24-second MP4 encoded successfully. This verifies rendering, not artistic quality.
+
+### philosopher-motion-study-cut-1a — Pointing hand was hidden by the table
+
+- Recorded (UTC): 2026-11-17T13:22:17+00:00
+- Evidence: docs/PHILOSOPHER_MOTION_REVIEW_2026-11-17.md; first-cut hash 9661084f4092c2793af6fdad62de87eb281c6f366bb7dba2c7467a69932b2307; revised hash 21b4286b78ec40f207ba74afde8327512859c684fa99a0b59942f08c4294a394
+- Cause / rationale: Characters were drawn before the tabletop, which then occluded the hand.
+- Correction / recipe: Composite the pointing forearm and hand above the tabletop. Check occlusion in all prop interactions before final render.
+- Verification: Revised stills at 5.8 and 7.7 seconds show the hand visible. Complete motion and anatomy remain pending.
+
+### philosopher-motion-study-cut-1a — Map finger shortcut and premature route reveal
+
+- Recorded (UTC): 2026-11-17T13:22:17+00:00
+- Evidence: docs/PHILOSOPHER_MOTION_REVIEW_2026-11-17.md; first-cut hash 9661084f4092c2793af6fdad62de87eb281c6f366bb7dba2c7467a69932b2307; revised hash 21b4286b78ec40f207ba74afde8327512859c684fa99a0b59942f08c4294a394
+- Cause / rationale: Finger position used one straight interpolation while the map route had two segments; ink was drawn by whole segment.
+- Correction / recipe: Use matching segmented positions and progressive ink reveal. Preserve a regression check that later ink is absent early.
+- Verification: Revised map samples and the ink-reveal regression passed; full temporal review is pending.
+
+### philosopher-motion-study-cut-1a — Stair traversal lacked planted foot positions
+
+- Recorded (UTC): 2026-11-17T13:22:17+00:00
+- Evidence: docs/PHILOSOPHER_MOTION_REVIEW_2026-11-17.md; first-cut hash 9661084f4092c2793af6fdad62de87eb281c6f366bb7dba2c7467a69932b2307; revised hash 21b4286b78ec40f207ba74afde8327512859c684fa99a0b59942f08c4294a394
+- Cause / rationale: Root moved along a diagonal while legs used a generic horizontal walking stride.
+- Correction / recipe: Compute alternate planted and lifted feet from the actual stair coordinates. Check foot contact, weight transfer and sliding in playback.
+- Verification: Revised samples at 15.8 and 18.3 seconds show tread contacts; complete walking cycle and weight transfer remain pending.
