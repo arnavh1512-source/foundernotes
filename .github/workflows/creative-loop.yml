@@ -69,8 +69,20 @@ jobs:
       - name: Render internal whole-body stick performance rebuild
         run: |
           node .claude/skills/motion/scripts/build-stick-performance.mjs studio-output/stick-rebuild/index.html
-          node .claude/skills/motion/scripts/render.mjs studio-output/stick-rebuild/index.html --out studio-output/stick-rebuild/draft.mp4 --draft
-          python .claude/skills/podcast-scout-skill/scripts/review_frames.py studio-output/stick-rebuild/draft.mp4 --out studio-output/stick-rebuild/review --times 0 1.2 2.5 3.5 4.15 4.8 5.8 6.4 7 8.3 9.4 10.5 11.4 12.3 13.3 14.4
+          node .claude/skills/motion/scripts/render.mjs studio-output/stick-rebuild/index.html --out studio-output/stick-rebuild/draft.mp4
+          python .claude/skills/podcast-scout-skill/scripts/review_frames.py studio-output/stick-rebuild/draft.mp4 --out studio-output/stick-rebuild/review --times 0 0.2 1.2 2.5 2.78 3.5 3.8 3.9 4.0 4.1 4.15 4.8 5.8 6.0 6.2 6.4 7 8.3 9.4 10.5 11.4 12.3 13.3 14.4
+      - name: Verify full-rate stick timing render
+        run: |
+          ffmpeg -v error -i studio-output/stick-rebuild/draft.mp4 -f null -
+          python - <<'PYTHON'
+          import json, subprocess
+          data=json.loads(subprocess.check_output(['ffprobe','-v','error','-show_streams','-show_format','-of','json','studio-output/stick-rebuild/draft.mp4']))
+          video=next(s for s in data['streams'] if s['codec_type']=='video')
+          assert (video['width'],video['height']) == (1920,1080), video
+          assert video['avg_frame_rate']=='30/1', video
+          assert int(video['nb_frames'])==435, video
+          assert abs(float(data['format']['duration'])-14.5)<.05, data
+          PYTHON
       - uses: actions/upload-artifact@v4
         with:
           name: internal-stick-performance-rebuild

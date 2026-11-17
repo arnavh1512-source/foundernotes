@@ -6,9 +6,10 @@ const keys = [
   {t:0, hip:[650,610], chest:[690,470], head:[710,385], feet:[[590,830],[710,830]], hands:[[665,630],[720,630]], label:'inspect'},
   {t:1.2, hip:[650,625], chest:[705,490], head:[735,405], feet:[[590,830],[710,830]], hands:[[790,560],[790,530]], label:'grip'},
   {t:1.8, hip:[645,650], chest:[690,515], head:[695,425], feet:[[590,830],[710,830]], hands:[[790,560],[790,530]], label:'test'},
-  {t:2.5, hip:[600,650], chest:[690,530], head:[690,440], feet:[[590,830],[770,720]], hands:[[790,560],[790,530]], label:'brace'},
-  {t:3.5, hip:[570,640], chest:[650,520], head:[630,435], feet:[[590,830],[770,720]], hands:[[790,560],[790,530]], label:'strain'},
-  {t:3.8, hip:[570,640], chest:[650,520], head:[630,435], feet:[[590,830],[770,720]], hands:[[790,560],[790,530]], label:'limit'},
+  {t:2.5, hip:[600,650], chest:[690,530], head:[690,440], feet:[[590,830],[770,770]], hands:[[790,560],[790,530]], label:'brace'},
+  {t:2.78, hip:[610,655], chest:[705,535], head:[710,450], feet:[[590,830],[770,770]], hands:[[790,560],[790,530]], label:'load'},
+  {t:3.5, hip:[580,640], chest:[650,520], head:[630,435], feet:[[590,830],[770,770]], hands:[[790,560],[790,530]], label:'strain'},
+  {t:3.8, hip:[580,640], chest:[650,520], head:[630,435], feet:[[590,830],[770,770]], hands:[[790,560],[790,530]], label:'limit'},
   {t:4.15, hip:[560,700], chest:[575,590], head:[590,500], feet:[[470,830],[650,830]], hands:[[700,650],[670,675]], label:'slip'},
   {t:4.8, hip:[550,680], chest:[540,550], head:[550,460], feet:[[470,830],[650,830]], hands:[[640,680],[590,700]], label:'catch'},
   {t:5.8, hip:[560,613], chest:[550,475], head:[570,390], feet:[[470,830],[650,830]], hands:[[480,620],[610,625]], label:'recover'},
@@ -28,10 +29,20 @@ export function poseAt(time) {
   const t=Math.max(0,Math.min(DURATION,time));
   let i=keys.findIndex(k=>k.t>t)-1;
   if(i<0)i=t>=DURATION?keys.length-2:0;
-  const a=keys[i], b=keys[i+1], k=progress(t,a.t,b.t-a.t);
+  const a=keys[i], b=keys[i+1], u=(t-a.t)/(b.t-a.t);
+  // Losing support accelerates into impact; walking carries the body through foot plants.
+  const k=a.label==='limit'?u*u:progress(t,a.t,b.t-a.t);
+  const moving=['choose','step','continue','climb','approach'].includes(a.label);
+  const bodyK=moving?u:k;
   const p={time:t,label:a.label};
-  for(const field of ['hip','chest','head'])p[field]=blendPoint(a[field],b[field],k);
-  for(const field of ['feet','hands'])p[field]=a[field].map((v,j)=>blendPoint(v,b[field][j],k));
+  for(const field of ['hip','chest','head']){
+    const lead=field==='head'&&a.label==='recover'?progress(t,a.t+.2,.2):bodyK;
+    p[field]=blendPoint(a[field],b[field],lead);
+  }
+  for(const field of ['feet','hands']){
+    const reach=field==='hands'&&a.label==='inspect'?progress(t,.35,.85):k;
+    p[field]=a[field].map((v,j)=>blendPoint(v,b[field][j],reach));
+  }
   const lifts={test:[0,28],limit:[20,0],notice:[0,48],choose:[48,0],step:[0,70],continue:[70,0],climb:[0,70],approach:[60,0]}[a.label]||[0,0];
   p.feet.forEach((v,j)=>{v[1]-=Math.sin(Math.PI*k)*lifts[j];});
   return p;
@@ -56,5 +67,7 @@ export function geometryAt(time) {
     legs[1]=solveArm(p.hip,p.feet[1],115,120,kneeBend);
   }
   const spineControl=[(p.hip[0]+p.chest[0])*.5-22,(p.hip[1]+p.chest[1])*.5+8];
-  return {pose:p,arms,legs,shoulders,handTargets:hands,spineControl,gateOffset,gripping};
+  const toeAngle=Math.PI*progress(p.time,6.1,.6);
+  const toeTargets=legs.map(a=>[a.wrist[0]+19*Math.cos(toeAngle),a.wrist[1]-19*Math.sin(toeAngle)]);
+  return {pose:p,arms,legs,shoulders,handTargets:hands,spineControl,gateOffset,gripping,toeTargets};
 }

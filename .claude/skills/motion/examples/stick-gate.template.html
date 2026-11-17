@@ -43,7 +43,7 @@ function draw(t){
  path([p.chest,[p.head[0],p.head[1]+28]],7);
  path([g.legs[1].shoulder,g.legs[1].elbow,g.legs[1].wrist]);
  path([g.arms[1].shoulder,g.arms[1].elbow,g.arms[1].wrist]);
- for(const limb of g.legs)path([limb.wrist,[limb.wrist[0]+19,limb.wrist[1]]],6);
+ g.legs.forEach((limb,i)=>path([limb.wrist,g.toeTargets[i]],6));
  c.fillStyle='#f5efdf';c.strokeStyle=INK;c.lineWidth=6;c.beginPath();c.arc(...p.head,31,0,Math.PI*2);c.fill();c.stroke();
  for(const a of g.arms){c.fillStyle=INK;c.beginPath();c.arc(...a.wrist,4,0,Math.PI*2);c.fill();}
  // No captions or dialogue are fabricated for this internal movement exercise.

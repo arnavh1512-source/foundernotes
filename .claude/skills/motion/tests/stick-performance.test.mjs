@@ -55,3 +55,27 @@ test('the selected route reaches the arch with alternating supports',()=>{
  }
  assert.deepEqual(poseAt(DURATION).feet,[[170,740],[210,740]]);
 });
+
+test('acting separates a delayed reach, accelerating fall and continuous stair travel',()=>{
+ assert.deepEqual(poseAt(.2).hands,poseAt(0).hands);
+ assert.notDeepEqual(poseAt(.2).head,poseAt(0).head);
+ assert.ok(poseAt(2.78).hip[0]>poseAt(2.5).hip[0]);
+ const early=distance(poseAt(3.85).hip,poseAt(3.8).hip);
+ const late=distance(poseAt(4.15).hip,poseAt(4.1).hip);
+ assert.ok(late>early*5);
+ assert.deepEqual(poseAt(6).head,poseAt(5.8).head);
+ assert.deepEqual(poseAt(6.2).head,poseAt(6.3).head);
+ for(const t of [9.4,10.5,11.4,12.3]){
+  assert.ok(distance(poseAt(t-.001).hip,poseAt(t).hip)/.001>20);
+  assert.ok(distance(poseAt(t).hip,poseAt(t+.001).hip)/.001>20);
+ }
+});
+
+test('feet turn toward the chosen route without changing foot length',()=>{
+ for(let f=0;f<=Math.round(DURATION*30);f++){
+  const g=geometryAt(f/30);
+  g.legs.forEach((a,i)=>assert.ok(Math.abs(distance(a.wrist,g.toeTargets[i])-19)<1e-6));
+ }
+ assert.ok(geometryAt(0).toeTargets[0][0]>geometryAt(0).legs[0].wrist[0]);
+ assert.ok(geometryAt(8).toeTargets[0][0]<geometryAt(8).legs[0].wrist[0]);
+});
