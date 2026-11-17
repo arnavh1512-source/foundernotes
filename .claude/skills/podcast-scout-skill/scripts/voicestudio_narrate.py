@@ -29,7 +29,10 @@ def fail(message: str) -> None:
 
 
 def load_episode(path: Path) -> dict:
-    data = json.loads(path.read_text(encoding="utf-8"))
+    return validate_episode(json.loads(path.read_text(encoding="utf-8")))
+
+
+def validate_episode(data):
     if not isinstance(data, dict):
         fail("episode must be a JSON object")
     roles, segments = data.get("speakers"), data.get("segments")
@@ -69,7 +72,7 @@ def validate_pause(value, name):
         fail(f"{name} must be finite and between 0 and 60 seconds")
 
 
-def attach_metadata(timings, data):
+def attach_metadata(timings, data, engine="voicestudio"):
     rows = timings.get("segments")
     sources = {seg["id"]: seg for seg in data["segments"]}
     if (not isinstance(rows, list) or len(rows) != len(sources)
@@ -81,8 +84,8 @@ def attach_metadata(timings, data):
         role = source["speaker"]
         item.update({"speaker": role, "scene_id": source.get("scene_id"),
                      "role": "character", "voice_profile": data["speakers"][role]["profile_id"],
-                     "voice_engine": "voicestudio"})
-    timings["voice_source"] = "voicestudio"
+                     "voice_engine": engine})
+    timings["voice_source"] = engine
     return timings
 
 
