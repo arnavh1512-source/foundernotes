@@ -151,3 +151,19 @@ The initial entries preserve documented observations from the 2026-11-11 study a
 - Cause / rationale: The phone was placed on the same part of the table as the writing stroke. Bone/contact checks did not protect the visible task area.
 - Correction / recipe: Move the resting phone beside the paper and shift the torso/hip/head into a supported reach. Preserve grip while lifting/lowering and require clear writing/phone bounds. Inspect the actual picture before claiming that the task reads.
 - Verification: Defect verified in intermediate decoded frames and matching source bounds. Source33e7c24390bdb53fd77665ab77631fa8ad39a0c6 passes thirteen tests; Follow-up: final picture SHAe1c1f8790f631c4168d16d3074647e3fbc97b762d900dea4f1734d461773be56; decoded writing and pickup samples show the phone beside the writing stroke, preserving its visibility. Full motion/listening/approval remain pending.
+
+### philosopher-pilot-inactive-listeners — Shot changes hid static listener acting during the study exchange
+
+- Recorded (UTC): 2026-11-17T19:23:00+00:00
+- Evidence: Baseline source33e7c24390bdb53fd77665ab77631fa8ad39a0c6; exact picture e1c1f8790f631c4168d16d3074647e3fbc97b762d900dea4f1734d461773be56; eight decoded samples15,17,21.5,23,24,25.8,27,28.7 seconds. Mentor head[1310,435] and chest[1320,520] stay fixed in source; Youth returns to the same arms-down listening stance.
+- Cause / rationale: The shot/cup changes supplied movement, but the non-speaking character had no defined reception, withheld response or turn-taking intention. Camera changes were not a substitute for acting.
+- Correction / recipe: Keep the seated mentor anchored while leaning attentively, give the Youth a withheld interruption and prepared reply, and use an open-hand invitation as the speaking handoff. Keep the cup down during that reply window; preserve all actual prop/foot contacts. Review exact new frames and eventually listened normal-speed playback; do not add periodic idle movement.
+- Verification: Baseline sampled-frame/source finding verified. Fourteen geometry/contact/intent tests pass for source68ac1fe0059ddae4409a8b2cba25f61c67a05751. Follow-up: final sourcea23acad9aa37cc51fcc96cedec954bd3c8a8a0d3/CI44158619348/artifact14362741826, overview plus12 study samples inspected. New listener states and speaking handoff are visible; normal-speed performance, listening, independent/owner approval remain pending.
+
+### philosopher-pilot-invitation-over-cup — The invitation palm overlapped the steaming cup region
+
+- Recorded (UTC): 2026-11-17T19:27:47+00:00
+- Evidence: Intermediate picture394fb7fcf19d9d4c26ff35aea806a2833fa855d4247daae7d75e2f77dbbd1b94; decoded26.6/27/27.8/28.4/28.9 seconds; palm[1190,565] versus cup center[1200,597].
+- Cause / rationale: The free-hand target was defined for reach but not its relation to the nearby prop. The palm above the steaming cup could read as warming a hand instead of offering the floor.
+- Correction / recipe: Move the invitation up and toward the Youth, clear of cup/steam; keep reach, seated support and cup-hand contact. Require palm/cup separation and inspect the exact new encoded frames.
+- Verification: Overlap verified in actual encoded samples and source bounds. Corrected sourcea23acad9aa37cc51fcc96cedec954bd3c8a8a0d3 passes fourteen tests; Follow-up: final picture SHA093ebefb97b3726a0f689ac0f30d6cb78a3fe76fa2d56012282df98b57d63547; final26.8/27.4/28/28.4/28.9 samples show the palm away from cup/steam. Continuous timing and semantic comprehension remain pending.

@@ -1,6 +1,6 @@
 {
-  "code_commit": "33e7c24390bdb53fd77665ab77631fa8ad39a0c6",
-  "workflow_run": 44155539009,
+  "code_commit": "a23acad9aa37cc51fcc96cedec954bd3c8a8a0d3",
+  "workflow_run": 44158619348,
   "previous_pr": {
     "number": 12,
     "observed_state": "merged",
@@ -36,44 +36,44 @@
     "psychtoons_youtube": "Online fetch throttled",
     "psychdoodle_youtube": "DisabledError",
     "gly2wBcnZUQ": "DisabledError",
-    "supplied_discipline": "Opening 0\u201348 s sampled every 2 s; actual frames inspected. Attribution unknown. No listening or precise cadence judgment."
+    "supplied_discipline": "Opening 0\u201348 s sampled every 2 s; actual frames inspected. Attribution unknown. No listening or precise cadence judgment. Additional exact decoded6,30,42-second reaction frames inspected in the listener pass; no dialogue/sound or attribution judgment."
   },
   "pre_script_gate": "PASS structural preparation only",
   "full_production_approved": false,
   "workflow_conclusion": "success",
   "latest_picture": {
-    "artifact": 14361645915,
-    "sha256": "e1c1f8790f631c4168d16d3074647e3fbc97b762d900dea4f1734d461773be56",
+    "artifact": 14362741826,
+    "sha256": "093ebefb97b3726a0f689ac0f30d6cb78a3fe76fa2d56012282df98b57d63547",
     "duration_s": 64.5,
     "width": 1920,
     "height": 1080,
     "fps": 30,
     "frames": 1935,
-    "review_scope": "18 decoded overview samples plus18 task/transition samples at29,29.5,31,32.5,32.6,33.2,33.8,34.3,34.5,35.8,36.5,37.1,37.4,37.8,38.4,39.5,40.8,41 seconds. Writing/phone separation, grip, physical delivery-arm retreat, fallen-paper persistence and footer protection inspected in these samples. Not continuous playback or listening."
+    "review_scope": "18 decoded overview plus12 study samples17,22.4,23.5,25.2,25.6,26,26.4,26.8,27.4,28,28.4,28.9 seconds. Listener reception, withheld interruption, invitation and prepared reply inspected; palm clears cup/steam in final samples. Not continuous playback, listening or independent approval."
   },
   "latest_private_assembly": {
-    "name": "internal-pilot-v3.mp4",
-    "sha256": "21a20157f8d8fc06f66b361c6f3474b7e2e80e7f36d36add5a2fc7f9b0da6d52",
+    "name": "internal-pilot-v5.mp4",
+    "sha256": "5c69e182829c78659a73a066b26fc5172468bbc335b14579eac6e1a65224123c",
     "duration_s": 64.5,
     "video_frames": 1935,
     "audio_stream_duration_s": 64.482,
-    "review_scope": "Full decode succeeded; six new captioned task samples at30.5,33.8,36.5,37.8,39.5,40.8 seconds inspected. Other scenes retain earlier review. No continuous, auditory or independent review.",
+    "review_scope": "Full decode succeeded; six new captioned study samples23.5,25.6,26.4,26.8,27.4,28.9 inspected. Other scenes retain earlier reviews. No full temporal, auditory or independent review.",
     "decoded_audio_sha256": "d6ea2c401862c70b5b48597ad0883fbbf30102a83d28c1ac7c889e6d009334da",
-    "audio_verification": "Decoded audio SHA matches V2 exactly. No new voice, retiming or processing; profile identity and listening remain pending."
+    "audio_verification": "Decoded audio SHA matches V3/V4 exactly; original take and speed preserved. No profile-identity or auditory approval inferred."
   },
   "tests": {
-    "node_tests_passed": 13,
+    "node_tests_passed": 14,
     "artistic_approval": false
   },
   "full_production_gate": "FAIL; actual approval, reviewer/evidence/insight and outsider fields remain incomplete.",
-  "next_priority": "Review normal-speed phone insert return, attempted-catch spacing and listening/speech boundaries. Continue stronger listener acting in study and paired-view explanation once a verified gap is identified. Preserve exact source/media identities; do not restart responsibility cards or gate studies. Resolve actual listening, profile identity and independent/owner gates before approval.",
+  "next_priority": "Preserve the completed task and listener passes. Inspect the paired-hill explanation beyond palette differences, keeping the same external facts/events; identify a concrete explanatory action before adding detail. Check normal-speed study handoff, withheld-interruption timing and actual audio/caption boundaries when accessible. Full production remains blocked on actual listening, profile identity, independent/owner review.",
   "private_continuation_bundle": {
     "library_file_id": "libfile_2a2569310a8481919a251bf91621ecb0",
-    "file_id": "file_00000000c7048207b0f3ad53e72dda46",
+    "file_id": "file_000000002bb4820888f1484cbaa6f363",
     "name": "FounderNotes-Internal-Pilot-Checkpoint-eac2e46.zip",
-    "version": 1,
-    "contents": "Current V3 picture and assembly, unchanged dialogue, provisional captions, manifest and decoded review evidence. Version0 preserves the prior V2 checkpoint; filename retains its original identifier. No third-party/reference footage or public source included.",
+    "version": 2,
+    "contents": "Current V5 picture/assembly, unchanged dialogue, provisional captions, manifests and decoded study-review evidence. Prior versions preserve V2/V3 checkpoints; filename retains its original identifier. No reference footage, reference frames or public source included.",
     "delivery_status": "Internal, not approved."
   },
-  "previous_code_commit": "eac2e46ffa4526c481a41541a2387c10ffcbf7c8"
+  "previous_code_commit": "33e7c24390bdb53fd77665ab77631fa8ad39a0c6"
 }

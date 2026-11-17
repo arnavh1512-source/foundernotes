@@ -22,6 +22,17 @@
       "style_fingerprint": "Original stick cast; sage/slate/bronze room; visible written work, interruption, phone grip, missed catch and persistent physical consequence.",
       "owner_approved": false,
       "recorded_at": "2026-11-17T19:15:35+00:00"
+    },
+    {
+      "type": "video",
+      "video_id": "philosopher-stick-pilot-listeners-a23acad",
+      "summary": "Study now includes attentive reception, withheld interruption, invitation and prepared response",
+      "evidence": "docs/PHILOSOPHER_STICK_PILOT_CHECKPOINT.json; sourcea23acad9aa37cc51fcc96cedec954bd3c8a8a0d3; CI44158619348/artifact14362741826; assembled SHA5c69e182829c78659a73a066b26fc5172468bbc335b14579eac6e1a65224123c",
+      "verification": "Fourteen tests and successful CI; full decode; overview,12 study and6 captioned samples inspected. Dialogue audio exactly matches previous cut. Normal-speed, auditory, independent and owner review remain pending; full-production FAIL preserved.",
+      "status": "needs_work",
+      "style_fingerprint": "Original slender stick cast and shared study; distinct listener intentions, fixed seated support, cup down while replying and open palm clear of cup.",
+      "owner_approved": false,
+      "recorded_at": "2026-11-17T19:34:47+00:00"
     }
   ]
 }
