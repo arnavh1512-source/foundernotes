@@ -46,7 +46,7 @@ export function pilotActorAt(time,role,mode='study'){
   p={hip:pilotBlend(pilotBlend([690,640],[700,660],miss),[690,680],settle),
    chest:pilotBlend(pilotBlend([750,510],[780,540],miss),[750,550],settle),
    head:pilotBlend(pilotBlend([775+15*notice,425+6*notice],[815,455],miss),[770,475],settle),
-   feet:[[590,830],[710,830]],hands:[[810,620],[865+3*Math.sin((time-29)*9)*task.writing,597+2*Math.cos((time-29)*9)*task.writing]],facing:1,intent:time<32.6?'work':'strain'};
+   feet:[[590,830],[710,830]],hands:[[810,620],[825+40*progress(time,29,3.6),597+2*Math.cos((time-29)*9)*task.writing]],facing:1,intent:time<32.6?'work':'strain'};
   p.hands[1]=pilotBlend(p.hands[1],task.phoneGrip,task.gripWeight);
   p.hands[1]=pilotBlend(p.hands[1],[910,650],miss);
   p.hands[1]=pilotBlend(p.hands[1],[835,615],settle);

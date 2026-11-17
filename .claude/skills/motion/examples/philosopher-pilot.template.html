@@ -65,7 +65,7 @@ function burden(t){
  s.save();s.translate(960,450);s.scale(scale,scale);s.translate(-cx,-cy);room();
  // A real work surface persists through the interruption and failed catch.
  taskPaper(855,608);s.strokeStyle=youthColor;s.lineWidth=2;
- const ink=progress(t,29,3.6);stroke(s,[[820,607],[820+60*ink,607]],2,youthColor);
+ const ink=progress(t,29,3.6);stroke(s,[[828,608],[828+40*ink,608]],2,youthColor);
  taskPaper(1100,606);
  if(task.deliveryVisible)for(const page of task.pages)taskPaper(...page.center,page.angle);
  if(task.deliveryHand>0){s.save();s.globalAlpha=task.deliveryHand;const x=task.deliveryX+62;stroke(s,[[x+220,570],[x+100,590],[x,600]],9,'#899880');stroke(s,[[x,600],[x-14,598]],7,'#899880');s.restore();}
@@ -75,7 +75,7 @@ function burden(t){
  const minute=-Math.PI/2+progress(t,29,12)*.9;stroke(s,[[1110,385],[1110+32*Math.cos(minute),385+32*Math.sin(minute)]],4,youthColor);stroke(s,[[1110,385],[1088,397]],4,youthColor);
  actor(g,youthColor);
  const penHand=t<33.1?g.arms[1].wrist:[865,597];
- stroke(s,[[840+19*task.writing,608-27*task.writing],[penHand[0]+3,608]],3,'#95684d');
+ stroke(s,[[840+(penHand[0]-846)*task.writing,608-27*task.writing],[penHand[0]+3,608]],3,'#95684d');
  const [x,y]=task.phoneCenter;s.fillStyle='#354c51';s.strokeStyle='#354c51';s.lineWidth=3;s.fillRect(x-20,y-35,40,70);s.fillStyle='#b9cdd0';s.fillRect(x-15,y-27,30,49);
  s.beginPath();s.arc(x,y-10,6,0,Math.PI*2);s.fillStyle='#667981';s.fill();stroke(s,[[x-8,y+10],[x,y+3],[x+8,y+10]],3,'#667981');
  if(t>=32.6&&t<33.7){const pulse=5+4*Math.sin((t-32.6)*18);for(const side of [-1,1])stroke(s,[[x+side*(27+pulse),y-13],[x+side*(31+pulse),y],[x+side*(27+pulse),y+13]],3,'#a38148');}

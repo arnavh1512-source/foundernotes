@@ -1,4 +1,5 @@
 import test from 'node:test';
+import {progress} from '../assets/story-motion.mjs';
 import assert from 'node:assert/strict';
 import {PILOT_DURATION,PILOT_SHOTS,pilotShotAt,pilotCupAt,pilotActorAt,pilotExitAt,pilotTaskAt} from '../assets/pilot-performance.mjs';
 const distance=(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1]);
@@ -49,6 +50,7 @@ test('the task interruption preserves phone grip, planted support and an unfinis
   assert.deepEqual(g.pose.hands[0],[810,620]);
   if(t>=33.7&&t<=37.1)assert.ok(distance(g.arms[1].wrist,task.phoneGrip)<1e-6,'phone detached '+t);
  }
+ for(const t of [29,30,31,32,32.6])assert.ok(Math.abs(pilotActorAt(t,'youth','burden').arms[1].wrist[0]-(825+40*progress(t,29,3.6)))<1e-6);
  assert.equal(pilotTaskAt(33.1).writing,0);
  assert.ok(pilotTaskAt(35.6).pages.every(p=>p.center[0]-52>1700),'incoming work must enter from outside the frame');
  assert.deepEqual(pilotTaskAt(37.1).phoneCenter,[865,583]);
