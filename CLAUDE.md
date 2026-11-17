@@ -35,6 +35,10 @@ This repo holds the skills, self-improving memory, and subagents used to researc
 
 ## Creative production loop and animation backends
 
+### Mandatory reference comparison and mistake recording (owner request, 2026-11-17)
+
+Before every animation and every revised cut, read `docs/REFERENCE_REVIEW.md` and `.claude/memory/mistakes_and_pitfalls.md`. Use the owner's DayOne Films, PsychToonsHQ, PsychDoodleTV and `gly2wBcnZUQ` reference set. Save a per-cut comparison using `docs/reference-comparison.template.json` in the episode's `review/` folder. Watch actual accessible footage and listen before judging motion or voice; blocked access stays pending. Every failed criterion needs a timestamped finding, a concrete fix, a new render when media changes, and re-review of that exact render. Record verified mistakes with `record_lesson.py`, preserving evidence and whether the fix has actually been verified. A checklist or technical QC pass alone never establishes reference quality. At the cut budget limit, report remaining gaps and rescope; never silently pass or promise indefinite background work.
+
 Use [.claude/skills/podcast-scout-skill/references/creative-production-loop.md](/.claude/skills/podcast-scout-skill/references/creative-production-loop.md) for the executable reference → knowledge → production → critic → revision workflow. Read [animation backend assessment](/.claude/skills/podcast-scout-skill/references/animation-backends.md) before choosing optional external tools. Preserve narrator, evidence, rights, pilot-review and owner-approval requirements. Host AI performs creative analysis; the coordinator does not invent model runs or audiovisual review.
 
 
@@ -46,3 +50,4 @@ When the owner explicitly requests a film shorter than eight minutes, use `studi
 ## Opt-in two-character dialogue and painted SVG scenes
 
 The owner has requested the VoiceStudio dialogue and original painted-character integrations. For episode-specific character dialogue, use `.claude/skills/podcast-scout-skill/scripts/voicestudio_narrate.py` with locally approved profiles; see `references/voicestudio-dialogue.md`. This does not replace the standing channel narrator or authorize creating/cloning a voice. The bridge calls only loopback HTTP, refuses redirects and preserves measured scene/speaker metadata. Use `.claude/skills/painted-character-motion/scripts/build_from_timings.py` for the optional five-scene SVG treatment, the existing motion renderer for pictures, and the `painted-character-motion` picture-import backend in studio_loop.py. Pilot/full/short-film gates remain mandatory; fixture tests do not establish live synthesis or artistic quality.
+
