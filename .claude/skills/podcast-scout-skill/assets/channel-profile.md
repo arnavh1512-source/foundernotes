@@ -16,8 +16,7 @@ Values left as `TBD` fall back to the defaults shown.
 - **Pronunciation notes:** TBD (respellings for recurring names/terms)
 
 ## Look
-- **Visual language:** TBD — pick one: clean diagram (motion skill) · chalkboard (anidoodle/HandDraw) ·
-  3b1b maths (Manim) · paper-craft/collage · stickman · watercolour storybook
+- **Visual language:** original expressive stick animation is the core (owner rule, 2026-11-17). Use diagrams, collage or textured backgrounds as supporting treatments when they improve the explanation. See `docs/ALAN_BECKER_STUDY.md` and `docs/REFERENCE_REVIEW.md`; do not copy a reference cast or force unrelated style rotation.
 - **Palette:** background `#101418`, ink `#F2EFE9`, accent 1 `#F2B134`, accent 2 `#4E79A7`, alert `#E15759`
 - **Type:** headings Inter/Space Grotesk Bold; labels Inter Medium (ship font files locally)
 - **Motion personality:** Premium/calm — signature easing cubic-bezier(0.4,0,0.2,1); durations 0.4 / 0.7 / 1.2 s
@@ -33,3 +32,4 @@ Values left as `TBD` fall back to the defaults shown.
 ## Approvals
 - **Autonomous end-to-end allowed:** no (stop at script+storyboard and at look stills)  ← change to yes to skip
 - **Paid tools allowed:** no (ask with a cost estimate first)
+

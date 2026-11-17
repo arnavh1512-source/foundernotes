@@ -6,6 +6,7 @@ Owner request: 2026-11-17. Make videos, compare them with the supplied reference
 
 | Reference | URL | Current evidence status |
 | --- | --- | --- |
+| Alan Becker | https://www.youtube.com/@alanbecker | Core stick-animation benchmark; tutorials and creator process sources studied in `ALAN_BECKER_STUDY.md`; finished-film audiovisual review pending |
 | DayOne Films | https://www.youtube.com/@dayonefilmsofficial | Owner-selected channel; representative video and timestamped study pending |
 | PsychToonsHQ | https://www.youtube.com/@psychtoonshq | Owner-selected channel; representative video and timestamped study pending |
 | Individual reference | https://www.youtube.com/watch?v=gly2wBcnZUQ | Playback blocked on 2026-11-17; not watched in this session |

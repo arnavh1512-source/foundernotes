@@ -13,6 +13,8 @@ Before anything else read:
 
 ## Explanation-first acting and production contract
 
+**Updated owner direction, 2026-11-17:** original stick animation is the core. Read `docs/ALAN_BECKER_STUDY.md` and include Alan Becker in the reference review. Block key poses before interpolation, give important actions a preparation and reaction, preserve planted feet and prop contacts, and check limb silhouettes. Use per-action timing rather than a uniform glide. Other techniques support the explanation. Do not copy reference assets or infer motion/sound quality from transcripts.
+
 Read `.claude/skills/podcast-scout-skill/references/explanation-first-visual-direction.md` and the director's evidence-based visual-treatment decision **before** implementing any scene. A shot must have a job: familiar situation, emotion/reaction, visual mechanism, research illustration, contrast or intentional insight hold. In psychology scenes, implement approved **original consistent illustrated characters**, textured backgrounds, restrained colors, specific contextual props and readable expressions/postures. Animate **causal behavior** (hesitating, concealing an object, turning away, responding) rather than repetitive stand-and-wave motion; alternate purposeful close-ups, object inserts, wide situations and clear diagrams. Preserve character identity and world design across settings. Protect subtitles and negative space.
 
 When assigned candidate work, render the **same locked narration excerpt** for each selected treatment, preserve the given WAV/timing, retain actual clips/stills and report render provenance. Do not choose a style by visual novelty alone or claim a still was a motion comparison. Deliberate holds may serve the idea, but must be labeled and inspected for real freeze/missing-frame faults. No assets copied from reference videos.
@@ -57,3 +59,4 @@ For each assigned scene:
    - Visually inspect every PNG to verify: (a) **bottom `180px` subtitle safe zone** is completely clear of critical text/graphics, (b) outer `80px` margins are clear, (c) text size `>= 30px` on 1080p (`<= 7 words` per label), (d) zero text-on-text or text-on-object overlap, and (e) zero frozen stretches `> 2.5s` or blank gaps `>= 0.3s`.
 4. **Run Scene Linter Before Handoff:**
    - Run `python3 .claude/skills/podcast-scout-skill/scripts/lint_scenes.py --scenes scenes/list.txt --timings narration/timings.json --storyboard storyboard.md` and fix every error/warning before rendering final `1920x1080 @ 30fps` MP4 clips (`scenes/NN-<id>.mp4`) and ending the final scene with `K.endCard(S)`.
+

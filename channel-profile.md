@@ -17,6 +17,7 @@ Values left as `TBD` fall back to the defaults shown.
 - **Pronunciation notes:** TBD (respellings for recurring names/terms)
 
 ## Visual direction (purposeful and consistent)
+- **Core style, owner rule 2026-11-17:** original expressive stick animation. Alan Becker is a craft benchmark alongside Day One Films, PsychToons and PsychDoodle. See `docs/ALAN_BECKER_STUDY.md` and `docs/REFERENCE_REVIEW.md`. Establish clear performance with simple silhouettes first; use backgrounds, diagrams and other catalog treatments in support of the explanation. Do not force style rotation away from this core or copy a reference cast.
 - **Visual language router:** Each video selects the technique that best conveys its factual claims and narrative. Consult `.claude/memory/production_ledger.json` to avoid repetitive *creative treatment*, without forcing gratuitous style switches. Available reference sources include:
   1. **17 Native Code-Drawn Styles (`.claude/skills/animation-styles/references/styles/*.md`):** `zackd-films`, `dan-koe`, `one-ball-showreel`, `one-line-graph`, `cgi-motion`, `lego`, `ascii-terminal`, `ink-in-water`, `ps2`, `risograph-cutout`, `renaissance-codex`, `comic-art`, `chalkboard`, `glow-sketch`, `pixel-art`, `pixel-dither`, `flat-vector`.
   2. **5 External Master Engines:** `bang-motion` (6 explainer worlds & 19 opener concepts), `vox-director` / `collage-director` (9 tactile paper-collage themes + `local-engine` element assembly), `huashu-art-motion` (9 explainer grammars + 53 living art recipes), `claude-drawing-skill` (77 CPU physical media modules + `--stages` draw-on), and `code-animation-prompts` (341 style prompts + `mg-styles-15`).
@@ -51,3 +52,4 @@ Values left as `TBD` fall back to the defaults shown.
 - **The ending of every video:**
   - the **closing narration line** asks viewers to subscribe and asks the comment question.
   - the **end card** is `K.endCard(S)`: logo, "Subscribe to FOUNDER NOTES", a cursor clicking the subscribe button, and next-video card placeholder.
+

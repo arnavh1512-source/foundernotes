@@ -6,29 +6,94 @@
   "render_sha256": "REPLACE",
   "reviewer": "REPLACE_WITH_ACTUAL_IDENTITY",
   "method": "REPLACE_WITH_ACTUAL_METHOD",
-  "coverage": {"our_intervals_s": [], "listened": false, "limitations": []},
+  "coverage": {
+    "our_intervals_s": [],
+    "listened": false,
+    "limitations": []
+  },
   "references": [
-    {"url": "https://www.youtube.com/@dayonefilmsofficial", "video_url": null, "status": "pending", "reviewed_intervals_s": [], "evidence": []},
-    {"url": "https://www.youtube.com/@psychtoonshq", "video_url": null, "status": "pending", "reviewed_intervals_s": [], "evidence": []},
-    {"url": "https://www.youtube.com/watch?v=gly2wBcnZUQ", "video_url": "https://www.youtube.com/watch?v=gly2wBcnZUQ", "status": "pending", "reviewed_intervals_s": [], "evidence": []},
-    {"url": "https://www.youtube.com/@psychdoodletv", "video_url": null, "status": "pending", "reviewed_intervals_s": [], "evidence": []}
+    {
+      "url": "https://www.youtube.com/@alanbecker",
+      "video_url": null,
+      "status": "pending",
+      "reviewed_intervals_s": [],
+      "evidence": []
+    },
+    {
+      "url": "https://www.youtube.com/@dayonefilmsofficial",
+      "video_url": null,
+      "status": "pending",
+      "reviewed_intervals_s": [],
+      "evidence": []
+    },
+    {
+      "url": "https://www.youtube.com/@psychtoonshq",
+      "video_url": null,
+      "status": "pending",
+      "reviewed_intervals_s": [],
+      "evidence": []
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=gly2wBcnZUQ",
+      "video_url": "https://www.youtube.com/watch?v=gly2wBcnZUQ",
+      "status": "pending",
+      "reviewed_intervals_s": [],
+      "evidence": []
+    },
+    {
+      "url": "https://www.youtube.com/@psychdoodletv",
+      "video_url": null,
+      "status": "pending",
+      "reviewed_intervals_s": [],
+      "evidence": []
+    }
   ],
   "criteria": {
-    "viewer_clarity": {"status": "pending", "comparisons": []},
-    "character_acting": {"status": "pending", "comparisons": []},
-    "meaningful_motion": {"status": "pending", "comparisons": []},
-    "shot_variety_and_continuity": {"status": "pending", "comparisons": []},
-    "visual_explanation": {"status": "pending", "comparisons": []},
-    "pacing": {"status": "pending", "comparisons": []},
-    "voice_and_sound": {"status": "pending", "comparisons": []},
-    "finish_and_readability": {"status": "pending", "comparisons": []}
+    "viewer_clarity": {
+      "status": "pending",
+      "comparisons": []
+    },
+    "character_acting": {
+      "status": "pending",
+      "comparisons": []
+    },
+    "meaningful_motion": {
+      "status": "pending",
+      "comparisons": []
+    },
+    "shot_variety_and_continuity": {
+      "status": "pending",
+      "comparisons": []
+    },
+    "visual_explanation": {
+      "status": "pending",
+      "comparisons": []
+    },
+    "pacing": {
+      "status": "pending",
+      "comparisons": []
+    },
+    "voice_and_sound": {
+      "status": "pending",
+      "comparisons": []
+    },
+    "finish_and_readability": {
+      "status": "pending",
+      "comparisons": []
+    }
   },
   "comparison_entry_shape": {
-    "our_start_s": null, "our_end_s": null,
-    "reference_video_url": "REPLACE", "reference_start_s": null, "reference_end_s": null,
-    "observed_difference": "REPLACE", "evidence": [],
-    "finding_id": "REPLACE_IF_FAILED", "fix": "REPLACE_IF_FAILED",
-    "recheck_evidence": [], "resolution": "pending"
+    "our_start_s": null,
+    "our_end_s": null,
+    "reference_video_url": "REPLACE",
+    "reference_start_s": null,
+    "reference_end_s": null,
+    "observed_difference": "REPLACE",
+    "evidence": [],
+    "finding_id": "REPLACE_IF_FAILED",
+    "fix": "REPLACE_IF_FAILED",
+    "recheck_evidence": [],
+    "resolution": "pending"
   },
   "technical_qc": "pending",
   "independent_critique": "pending",

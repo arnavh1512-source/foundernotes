@@ -23,6 +23,8 @@
 
 ## Preferred direction for upcoming **psychology explainers**
 
+**Owner update, 2026-11-17: stick animation is the core visual language.** Use original expressive stick characters for character-led scenes, with supporting backgrounds and honest diagrams as needed. Alan Becker joins the existing reference set as an animation-craft benchmark; read `docs/ALAN_BECKER_STUDY.md` from the repository root. Test alternate staging, acting and composition within this core before switching to unrelated aesthetics. Viewer need and explanation still come first; keep measured narration, originality, pilot review and QC intact.
+
 Use **original illustrated characters** with **simple silhouettes, expressive poses, restrained colors, tactile/textured backgrounds and occasional clean explanatory diagrams** as the preferred candidate **when it serves the specific explanation**. This is *not* a mandate to make engineering, documentary, data-heavy or unrelated episodes look like psychology cartoons.
 
 - **Acting, not standing and gesturing:** characters slump, hesitate, lean back, turn away, interrupt, reach or visibly react to another person's behavior. Design a reaction chain with a cause and payoff.
@@ -50,3 +52,4 @@ For each treatment record measured `actual_excerpt_seconds`, voice WAV path, sta
 6. **Rights and practical renderability**: original assets, licensed dependencies, installed engine, deterministic export and budget.
 
 Use recorded observations with timecodes rather than inventing automated "clarity" scores. Prefer the more understandable treatment even if it is technically simpler. The existing `viewer-first`, `lint_scenes.py`, `qc_video.py`, fact lock and independent review gates still apply. If no full clips were rendered, label the comparison **unverified** and do not approve full production.
+
