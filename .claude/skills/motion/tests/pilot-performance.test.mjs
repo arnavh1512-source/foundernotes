@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {PILOT_DURATION,PILOT_SHOTS,pilotShotAt,pilotCupAt,pilotActorAt,pilotExitAt} from '../assets/pilot-performance.mjs';
+import {PILOT_DURATION,PILOT_SHOTS,pilotShotAt,pilotCupAt,pilotActorAt,pilotExitAt,pilotTaskAt} from '../assets/pilot-performance.mjs';
 const distance=(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1]);
 test('pilot shots cover the measured take with no gaps',()=>{
  assert.equal(PILOT_SHOTS[0].start,0);assert.equal(PILOT_SHOTS.at(-1).end,PILOT_DURATION);
@@ -39,4 +39,18 @@ test('the cup arm stays below the face throughout the set-down',()=>{
   const g=pilotActorAt(41+f/30,'philosopher');
   assert.ok(g.arms[0].elbow[1]>=g.pose.head[1]+60,`elbow invades the face at ${41+f/30}`);
  }
+});
+
+
+test('the task interruption preserves phone grip, planted support and an unfinished consequence',()=>{
+ for(let f=0;f<360;f++){
+  const t=29+f/30,g=pilotActorAt(t,'youth','burden'),task=pilotTaskAt(t);
+  assert.deepEqual(g.pose.feet,[[590,830],[710,830]]);
+  assert.deepEqual(g.pose.hands[0],[810,620]);
+  if(t>=33.7&&t<=37.1)assert.ok(distance(g.arms[1].wrist,task.phoneGrip)<1e-6,'phone detached '+t);
+ }
+ assert.equal(pilotTaskAt(33.1).writing,0);
+ assert.deepEqual(pilotTaskAt(37.1).phoneCenter,[865,583]);
+ assert.ok(pilotTaskAt(40.9).pages.every(p=>p.fallen));
+ assert.deepEqual(pilotTaskAt(40.5).pages,pilotTaskAt(40.9).pages);
 });

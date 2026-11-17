@@ -21,6 +21,19 @@ export function pilotCupAt(time){
  const center=[1200+80*lift,597-122*lift];
  return {center,grip:[center[0]+30,center[1]+1]};
 }
+// One attempted task, interrupted by a phone, followed by a missed paper catch.
+export function pilotTaskAt(time){
+ if(!Number.isFinite(time))throw new TypeError('time must be finite');
+ const lift=progress(time,33.7,.6)*(1-progress(time,36.3,.7));
+ const phoneCenter=pilotBlend([865,583],[815,490],lift);
+ const phoneGrip=[phoneCenter[0]+22,phoneCenter[1]+15];
+ const gripWeight=progress(time,33.1,.6)*(1-progress(time,37.1,.3));
+ const writing=1-progress(time,32.6,.4);
+ const spill=progress(time,37.4,1.2);
+ const delivery=progress(time,35.6,1.2),deliveryX=1600-370*delivery;
+ const pages=[0,1].map(i=>{const k=progress(time,37.4+i*.2,1.0);return {center:pilotBlend([deliveryX+i*30,603-i*6],[1250+i*80,805],k),angle:(i===0?-.45:.6)*Math.sin(Math.PI*k),fallen:k===1};});
+ return {phoneCenter,phoneGrip,gripWeight,writing,spill,pages,deliveryX,deliveryVisible:time>=35.6,deliveryHand:progress(time,35.6,.3)*(1-progress(time,36.9,.4))};
+}
 export function pilotActorAt(time,role,mode='study'){
  if(!Number.isFinite(time))throw new TypeError('time must be finite');
  if(!['youth','philosopher'].includes(role))throw new TypeError('unknown actor');
@@ -28,9 +41,15 @@ export function pilotActorAt(time,role,mode='study'){
  if(role==='philosopher'){
   p={hip:[1320,650],chest:[1320,520],head:[1310,435],feet:[[1240,830],[1400,830]],hands:[pilotCupAt(time).grip,[1370,678]],facing:-1,intent:'listen'};
  }else if(mode==='burden'){
-  const weight=progress(time,29,7);
-  const surge=progress(time,37.6,.35)*(1-progress(time,39.7,.8));
-  p={hip:[690-20*surge,660+20*weight+10*surge],chest:[720-20*surge,520+20*weight+10*surge],head:[740-30*surge,435+20*weight+15*surge],feet:[[620,830],[760,830]],hands:[[800+20*surge,580+20*weight-20*surge],[820+20*surge,550+20*weight-20*surge]],facing:1,intent:'strain'};
+  const task=pilotTaskAt(time),notice=progress(time,32.6,.35)*(1-progress(time,35.5,.5));
+  const miss=progress(time,37.5,.5),settle=progress(time,39.2,1.0);
+  p={hip:pilotBlend(pilotBlend([690,640],[700,660],miss),[690,680],settle),
+   chest:pilotBlend(pilotBlend([750,510],[780,540],miss),[750,550],settle),
+   head:pilotBlend(pilotBlend([775+15*notice,425+6*notice],[815,455],miss),[770,475],settle),
+   feet:[[590,830],[710,830]],hands:[[810,620],[865+3*Math.sin((time-29)*9)*task.writing,597+2*Math.cos((time-29)*9)*task.writing]],facing:1,intent:time<32.6?'work':'strain'};
+  p.hands[1]=pilotBlend(p.hands[1],task.phoneGrip,task.gripWeight);
+  p.hands[1]=pilotBlend(p.hands[1],[910,650],miss);
+  p.hands[1]=pilotBlend(p.hands[1],[835,615],settle);
  }else{
   const lean=progress(time,14.5,1.2)*(1-progress(time,22,.8));
   const point=progress(time,15.2,.4)*(1-progress(time,17.5,.5))+.65*progress(time,20,.4)*(1-progress(time,21.4,.4));
