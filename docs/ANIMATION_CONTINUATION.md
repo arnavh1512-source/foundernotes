@@ -4,10 +4,10 @@ Owner direction: continue independently without waiting for another "next"; keep
 ## Resume here
 Repository: https://github.com/arnavh1512-source/foundernotes. Existing draft PR: https://github.com/arnavh1512-source/foundernotes/pull/12. Branch: codex/benchmark-performance-rebuild. Inspect the current head before any edit; do not assume this document identifies the latest commit. Keep the PR draft and preserve existing user changes.
 
-Read CLAUDE.md, PRODUCTION_ROUTE.md, STICK_VISUAL_REVIEW_2026-11-17.md, STICK_TIMING_REVIEW_2026-11-17.md and the persistent mistakes first. The latest source is the original 14.5-second gate-to-arch craft exercise in the motion assets/template. Reuse the existing builder, renderer, tests, frame-review scripts and lesson recorder. The local workspace is a partial export, not a complete git checkout.
+Read CLAUDE.md, PRODUCTION_ROUTE.md, STICK_VISUAL_REVIEW_2026-11-17.md, STICK_TIMING_REVIEW_2026-11-17.md, PHILOSOPHER_PILOT_READINESS_2026-11-17.md and the persistent mistakes first. The latest source is the original 14.5-second gate-to-arch craft exercise in the motion assets/template. Reuse the existing builder, renderer, tests, frame-review scripts and lesson recorder. The local workspace is a partial export, not a complete git checkout.
 
 ## Latest completed work
-Selected browser poses and running-preview screenshots were reviewed. Fixes cover neutral limb silhouettes, physical bracing, a completed route payoff, delayed reach, preload, accelerated slipping, carried stair travel and toe direction. Seven local tests passed and the offline builder ran. A full-rate 1080p/30 fps CI render is configured with exact-frame/duration checks. Confirm its actual result.
+Selected browser poses and running-preview screenshots were reviewed. Fixes cover neutral limb silhouettes, physical bracing, a completed route payoff, delayed reach, preload, accelerated slipping, carried stair travel and toe direction. Seven local tests passed and the offline builder ran. A full-rate 1080p/30 fps CI render is configured with exact-frame/duration checks. CI run 44108873897 passed for code commit ee733178326c3a2eedfbe2129a9fcfcdaf9ec167: 1080p/30 fps, 435 frames and full decode checks passed. The exact encoded artifact still needs audiovisual review.
 
 ## Next pass order
 1. Check the latest CI run and retrieve its exact encoded artifact. Inspect the full motion and critical release/contact/turn boundaries; log the real source hash, review scope and pending criteria. A prior successful run cannot verify a newer revision.

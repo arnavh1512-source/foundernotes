@@ -25,3 +25,6 @@ The final browser preview was displayed at 2.78 and 3.5 seconds after the brace 
 
 ## Next verification
 CI now renders this exercise at 1920×1080 and 30 fps rather than the former half-size 15 fps. It verifies 435 frames, 14.5-second duration and successful full decoding, and extracts additional contact/turn review frames. CI results must be checked before claiming encoding success for this revision. Full temporal comparison, sound, other references, independent critique and the narrated pilot remain pending. The full-rate render does not grant creative approval.
+
+## Confirmed CI encoding result
+GitHub Actions run 44108873897 passed all three jobs for code commit ee733178326c3a2eedfbe2129a9fcfcdaf9ec167. The full-rate render step and subsequent verification passed, establishing 1920×1080, 30 fps, 435 frames, 14.5-second duration and successful full decoding. This is encoding evidence; the exact MP4 has not yet received continuous audiovisual review.
