@@ -70,6 +70,7 @@ test('conversation beats distinguish listening, withheld interruption and invita
   if(t>=22.8)assert.deepEqual(young(t).pose.hands[0],[810,620]);
  }
  assert.equal(young(25.8).pose.intent,'withhold');assert.equal(young(27).pose.intent,'listen');
+ assert.ok(distance(mentor(27).arms[1].wrist,pilotCupAt(27).center)>100,'invitation must clear the cup and steam');
  assert.equal(young(28.7).pose.intent,'ready');assert.equal(mentor(27).pose.intent,'invite');
  assert.ok(mentor(17).pose.head[0]<mentor(14.5).pose.head[0]-15);
  assert.ok(mentor(27).arms[1].wrist[0]<mentor(23).arms[1].wrist[0]-100);

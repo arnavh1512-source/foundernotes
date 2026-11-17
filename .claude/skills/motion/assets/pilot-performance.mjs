@@ -46,7 +46,7 @@ export function pilotActorAt(time,role,mode='study'){
    const reply=progress(time,22.9,.55),invite=progress(time,26.1,.65);
    p.chest[0]-=14*attention+14*reply;p.chest[1]+=5*attention+5*reply;
    p.head[0]-=18*attention+20*reply;p.head[1]+=8*attention+5*reply;
-   p.hands[1]=pilotBlend(p.hands[1],[1190,565],invite);
+   p.hands[1]=pilotBlend(p.hands[1],[1150,490],invite);
    p.intent=invite>.2?'invite':reply>.1?'reply':'listen';
   }
  }else if(mode==='burden'){
