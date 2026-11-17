@@ -1,0 +1,20 @@
+{
+  "kind": "reference-pattern",
+  "confidence": "hypothesis",
+  "lesson": {
+    "reference_index": 0,
+    "pattern": "Prepare the viewer for the main physical event with an understandable preceding action.",
+    "application": "In an original gate interaction, block a readable grip and planted stance before the Youth exerts effort; later review the actual motion and source footage.",
+    "tags": [
+      "stick-animation",
+      "anticipation",
+      "Alan-Becker",
+      "hypothesis"
+    ],
+    "confidence": "hypothesis",
+    "source_url": "https://www.youtube.com/watch?v=uDqjIdI4bF4"
+  },
+  "video_id": "philosopher-stick-pilot",
+  "workflow_stage": "production",
+  "source_workflow_sha256": "42bbe54a306e412e7272bbea00d9fa1c13a794a603ed39930c7f14f18421ee8c"
+}
