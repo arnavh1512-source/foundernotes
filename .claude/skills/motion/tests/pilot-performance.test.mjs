@@ -53,7 +53,8 @@ test('the task interruption preserves phone grip, planted support and an unfinis
  for(const t of [29,30,31,32,32.6])assert.ok(Math.abs(pilotActorAt(t,'youth','burden').arms[1].wrist[0]-(825+40*progress(t,29,3.6)))<1e-6);
  assert.equal(pilotTaskAt(33.1).writing,0);
  assert.ok(pilotTaskAt(35.6).pages.every(p=>p.center[0]-52>1700),'incoming work must enter from outside the frame');
- assert.deepEqual(pilotTaskAt(37.1).phoneCenter,[865,583]);
+ assert.deepEqual(pilotTaskAt(37.1).phoneCenter,[925,583]);
+ assert.ok(pilotTaskAt(29).phoneCenter[0]-20>868,'phone must leave the complete writing stroke visible');
  assert.ok(pilotTaskAt(40.9).pages.every(p=>p.fallen));
  assert.deepEqual(pilotTaskAt(40.5).pages,pilotTaskAt(40.9).pages);
 });

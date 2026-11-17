@@ -25,7 +25,7 @@ export function pilotCupAt(time){
 export function pilotTaskAt(time){
  if(!Number.isFinite(time))throw new TypeError('time must be finite');
  const lift=progress(time,33.7,.6)*(1-progress(time,36.3,.7));
- const phoneCenter=pilotBlend([865,583],[815,490],lift);
+ const phoneCenter=pilotBlend([925,583],[815,490],lift);
  const phoneGrip=[phoneCenter[0]+22,phoneCenter[1]+15];
  const gripWeight=progress(time,33.1,.6)*(1-progress(time,37.1,.3));
  const writing=1-progress(time,32.6,.4);
@@ -50,6 +50,7 @@ export function pilotActorAt(time,role,mode='study'){
   p.hands[1]=pilotBlend(p.hands[1],task.phoneGrip,task.gripWeight);
   p.hands[1]=pilotBlend(p.hands[1],[910,650],miss);
   p.hands[1]=pilotBlend(p.hands[1],[835,615],settle);
+  p.hip[0]+=15*task.gripWeight;p.chest[0]+=45*task.gripWeight;p.head[0]+=40*task.gripWeight;
  }else{
   const lean=progress(time,14.5,1.2)*(1-progress(time,22,.8));
   const point=progress(time,15.2,.4)*(1-progress(time,17.5,.5))+.65*progress(time,20,.4)*(1-progress(time,21.4,.4));
