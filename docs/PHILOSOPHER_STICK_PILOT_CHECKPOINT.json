@@ -1,6 +1,6 @@
 {
-  "code_commit": "a23acad9aa37cc51fcc96cedec954bd3c8a8a0d3",
-  "workflow_run": 44158619348,
+  "code_commit": "0ca144a8786ecfd6060d7882de9c0383020bb156",
+  "workflow_run": 44162153584,
   "previous_pr": {
     "number": 12,
     "observed_state": "merged",
@@ -8,10 +8,14 @@
   },
   "continuation_pr": 13,
   "previous_picture": {
-    "sha256": "a4b4a927336d6595776133e3008037ae9abbb1e2bd4792360b23872e3895f7c5",
-    "artifact": 14356749290,
-    "duration": 64.5,
-    "review": "18 decoded samples from the exact encoded file"
+    "artifact": 14362741826,
+    "sha256": "093ebefb97b3726a0f689ac0f30d6cb78a3fe76fa2d56012282df98b57d63547",
+    "duration_s": 64.5,
+    "width": 1920,
+    "height": 1080,
+    "fps": 30,
+    "frames": 1935,
+    "review_scope": "18 decoded overview plus12 study samples17,22.4,23.5,25.2,25.6,26,26.4,26.8,27.4,28,28.4,28.9 seconds. Listener reception, withheld interruption, invitation and prepared reply inspected; palm clears cup/steam in final samples. Not continuous playback, listening or independent approval."
   },
   "private_audio": {
     "library_id": "libfile_c99d2bfdf94c819198bad6d6fd27be65",
@@ -27,7 +31,8 @@
     "Independent outsider: understands the problem, wants the answer and has learned the intended limited distinction.",
     "Owner pilot approval and full-production gate; no final/full-video approval.",
     "Fresh exact-footage Alan performance and sound comparison; retain historical sampled evidence only.",
-    "Direct Day One Films, PsychToonsHQ, PsychDoodleTV and gly2wBcnZUQ footage comparison."
+    "Direct Day One Films, PsychToonsHQ, PsychDoodleTV and gly2wBcnZUQ footage comparison.",
+    "ThatGuy: actual opening and explanatory/reaction intervals, continuous motion, listening and cut timing. Official SjMpWrZBpXQ watch page loaded but stayed at0:00/readyState0 after ordinary play/reload; no decoded footage obtained."
   ],
   "fresh_reference_access": {
     "agent_reach": "NOT_INSTALLED; native fallback allowed",
@@ -36,44 +41,45 @@
     "psychtoons_youtube": "Online fetch throttled",
     "psychdoodle_youtube": "DisabledError",
     "gly2wBcnZUQ": "DisabledError",
-    "supplied_discipline": "Opening 0\u201348 s sampled every 2 s; actual frames inspected. Attribution unknown. No listening or precise cadence judgment. Additional exact decoded6,30,42-second reaction frames inspected in the listener pass; no dialogue/sound or attribution judgment."
+    "supplied_discipline": "Opening 0\u201348 s sampled every 2 s; actual frames inspected. Attribution unknown. No listening or precise cadence judgment. Additional exact decoded6,30,42-second reaction frames inspected in the listener pass; no dialogue/sound or attribution judgment.",
+    "thatguy": "Official candidates OAWl6F_9HJ8 and SjMpWrZBpXQ identified from metadata. Actual SjMpWrZBpXQ browser playback stalled at0:00/readyState0; thumbnail is not footage review. See THATGUY_REFERENCE_2026-11-18.md."
   },
   "pre_script_gate": "PASS structural preparation only",
   "full_production_approved": false,
   "workflow_conclusion": "success",
   "latest_picture": {
-    "artifact": 14362741826,
-    "sha256": "093ebefb97b3726a0f689ac0f30d6cb78a3fe76fa2d56012282df98b57d63547",
+    "artifact": 14364186513,
+    "sha256": "ed04aeffe71bb733822c8d58518506b5fb78c96f47c12d2c97f824e738fe6a6d",
     "duration_s": 64.5,
     "width": 1920,
     "height": 1080,
     "fps": 30,
     "frames": 1935,
-    "review_scope": "18 decoded overview plus12 study samples17,22.4,23.5,25.2,25.6,26,26.4,26.8,27.4,28,28.4,28.9 seconds. Listener reception, withheld interruption, invitation and prepared reply inspected; palm clears cup/steam in final samples. Not continuous playback, listening or independent approval."
+    "review_scope": "CI overview plus eleven decoded paired-view samples46.5,48.7,49,49.3,49.8,50.5,51.5,52.3,53.1,54.5,55.8 inspected. Same hill/palette/bird with protective crouch versus curious look/gesture. Selected frames only; no continuous, auditory or independent approval."
   },
   "latest_private_assembly": {
-    "name": "internal-pilot-v5.mp4",
-    "sha256": "5c69e182829c78659a73a066b26fc5172468bbc335b14579eac6e1a65224123c",
+    "name": "internal-pilot-v6.mp4",
+    "sha256": "6c39fb196743dbacf4d59350e120caa65e1752666bf16df435c2d42ab7ecd0d5",
     "duration_s": 64.5,
     "video_frames": 1935,
     "audio_stream_duration_s": 64.482,
-    "review_scope": "Full decode succeeded; six new captioned study samples23.5,25.6,26.4,26.8,27.4,28.9 inspected. Other scenes retain earlier reviews. No full temporal, auditory or independent review.",
+    "review_scope": "Full video/audio decode succeeded. Six captioned samples47.5,49.3,50.5,51.5,53.1,55.8 inspected; visible captions remain below panels. No full temporal, auditory or independent review.",
     "decoded_audio_sha256": "d6ea2c401862c70b5b48597ad0883fbbf30102a83d28c1ac7c889e6d009334da",
-    "audio_verification": "Decoded audio SHA matches V3/V4 exactly; original take and speed preserved. No profile-identity or auditory approval inferred."
+    "audio_verification": "Decoded audio SHA matches V3/V4/V5 exactly; existing take and speed preserved. No profile identity or auditory approval inferred."
   },
   "tests": {
-    "node_tests_passed": 14,
+    "node_tests_passed": 15,
     "artistic_approval": false
   },
   "full_production_gate": "FAIL; actual approval, reviewer/evidence/insight and outsider fields remain incomplete.",
-  "next_priority": "Preserve the completed task and listener passes. Inspect the paired-hill explanation beyond palette differences, keeping the same external facts/events; identify a concrete explanatory action before adding detail. Check normal-speed study handoff, withheld-interruption timing and actual audio/caption boundaries when accessible. Full production remains blocked on actual listening, profile identity, independent/owner review.",
+  "next_priority": "Preserve completed gate, task, listener and paired-view passes. Review whole-pilot normal-speed continuity, especially the phone insert return and missed catch, and whether the paired reaction is understood without relying on its footer. Resolve actual narrator identity/listening, caption boundaries and cup sound before approval. Retry accessible exact benchmark footage including ThatGuy without inventing audiovisual findings.",
   "private_continuation_bundle": {
     "library_file_id": "libfile_2a2569310a8481919a251bf91621ecb0",
-    "file_id": "file_000000002bb4820888f1484cbaa6f363",
+    "file_id": "file_0000000045e082088a3263a54fb6b797",
     "name": "FounderNotes-Internal-Pilot-Checkpoint-eac2e46.zip",
-    "version": 2,
-    "contents": "Current V5 picture/assembly, unchanged dialogue, provisional captions, manifests and decoded study-review evidence. Prior versions preserve V2/V3 checkpoints; filename retains its original identifier. No reference footage, reference frames or public source included.",
+    "version": 3,
+    "contents": "Current V6 picture/assembly, unchanged dialogue, provisional captions, manifests and exact decoded reaction/caption-review evidence. Prior versions preserve earlier checkpoints; filename retains its original identifier. No reference assets or public source included.",
     "delivery_status": "Internal, not approved."
   },
-  "previous_code_commit": "33e7c24390bdb53fd77665ab77631fa8ad39a0c6"
+  "previous_code_commit": "a23acad9aa37cc51fcc96cedec954bd3c8a8a0d3"
 }

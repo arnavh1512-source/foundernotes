@@ -33,6 +33,17 @@
       "style_fingerprint": "Original slender stick cast and shared study; distinct listener intentions, fixed seated support, cup down while replying and open palm clear of cup.",
       "owner_approved": false,
       "recorded_at": "2026-11-17T19:34:47+00:00"
+    },
+    {
+      "type": "video",
+      "video_id": "philosopher-stick-pilot-paired-0ca144a",
+      "summary": "Same external event with contrasting original stick reactions",
+      "status": "needs_work",
+      "owner_approved": false,
+      "style_fingerprint": "Original stick cast; whole64.5-second dialogue pilot; same hill and bird, protective versus curious response",
+      "evidence": "Code0ca144a; CI44162153584/artifact14364186513; exact picture/assembly hashes and sample intervals in PHILOSOPHER_STICK_PILOT_CHECKPOINT.json and review2026-11-18.",
+      "verification": "15 tests; exact encoded reaction/caption samples inspected; full decode and unchanged decoded audio hash. No continuous playback, listening or independent approval; full production FAIL.",
+      "recorded_at": "2026-11-17T19:57:25+00:00"
     }
   ]
 }

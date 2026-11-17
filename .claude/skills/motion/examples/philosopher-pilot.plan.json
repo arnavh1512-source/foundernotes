@@ -101,7 +101,7 @@
   ],
   "visual_storytelling": {
     "coherent_style": "Original slender stick characters, restrained slate/sage/amber palette and one consistent line language; no copied benchmark artwork.",
-    "continuity_rule": "Maintain stable Youth/Philosopher colors and proportions. Keep the gate locked, map routes fixed, and both views of the hill geometrically identical. Reserve the lower 180 pixels for captions.",
+    "continuity_rule": "Maintain stable Youth/Philosopher colors and proportions. Keep the gate locked and routes fixed. Both comparison panels use the exact same hill geometry, palette and bird position/wing state; only the original character responses differ. Reserve the lower180 pixels for captions.",
     "scenes": [
       {
         "chapter_index": 0,
@@ -113,7 +113,7 @@
         "chapter_index": 1,
         "visible_action": "The Youth challenges the Philosopher, then listens, starts to interrupt and holds back. The seated Philosopher leans attentively and offers the floor with an open hand while keeping the cup down during the reply. The Youth prepares to answer. The task vignette shows writing interrupted by a phone, arriving work and a failed catch with papers left on the floor; the later cup response precedes identical hill events.",
         "why_this_scene_earns_its_place": "Performance, prop contact and paired geometry carry the dispute.",
-        "meaningful_change": "A crowded interpretation can be distinguished from the underlying scene without deleting its facts."
+        "meaningful_change": "The same authored bird event, hill geometry and palette are held fixed while the Youth protects his head and the Philosopher looks up curiously; the comparison shows different reactions without altering the external facts."
       },
       {
         "chapter_index": 2,

@@ -167,3 +167,11 @@ The initial entries preserve documented observations from the 2026-11-11 study a
 - Cause / rationale: The free-hand target was defined for reach but not its relation to the nearby prop. The palm above the steaming cup could read as warming a hand instead of offering the floor.
 - Correction / recipe: Move the invitation up and toward the Youth, clear of cup/steam; keep reach, seated support and cup-hand contact. Require palm/cup separation and inspect the exact new encoded frames.
 - Verification: Overlap verified in actual encoded samples and source bounds. Corrected sourcea23acad9aa37cc51fcc96cedec954bd3c8a8a0d3 passes fourteen tests; Follow-up: final picture SHA093ebefb97b3726a0f689ac0f30d6cb78a3fe76fa2d56012282df98b57d63547; final26.8/27.4/28/28.4/28.9 samples show the palm away from cup/steam. Continuous timing and semantic comprehension remain pending.
+
+### philosopher-pilot-palette-only-readings — Different readings were represented mainly by different background colors
+
+- Recorded (UTC): 2026-11-17T19:49:51+00:00
+- Evidence: Baseline picture093ebefb97b3726a0f689ac0f30d6cb78a3fe76fa2d56012282df98b57d63547; decoded46.5/49.5/51/54.5 seconds plus the shared hill drawing source.
+- Cause / rationale: The panels retained the same hill and bird but used palette changes and a house outline to stand for interpretation, without a character action showing what the reading changed.
+- Correction / recipe: Keep geometry, event and palette identical and show two original stick-character reactions to the same passing bird: protective crouch versus curious attention. Preserve the external event, supports and established character identities. Inspect actual changed frames and eventually comprehension in full playback; do not claim a universal psychology finding.
+- Verification: Baseline frame/source gap verified. Fifteen geometry/contact tests and browser-script parse pass for source0ca144a8786ecfd6060d7882de9c0383020bb156. Follow-up: CI44162153584/artifact14364186513, pictureed04aeffe71bb733822c8d58518506b5fb78c96f47c12d2c97f824e738fe6a6d; eleven reaction samples and six V6 captioned samples inspected. Shared event and distinct crouch/curious responses are visible; continuous comprehension, artistic/audio/independent approval remain open.
