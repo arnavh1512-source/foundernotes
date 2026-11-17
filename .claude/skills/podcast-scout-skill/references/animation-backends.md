@@ -28,3 +28,8 @@ Theatre README says newer development temporarily moved to a private repository;
 Studied [mahabharat-motion-kit](https://github.com/SahilScripts/mahabharat-motion-kit) at 1f7349369be58bc1d7dfb5b7c97a537d7f370909. Useful general techniques: word-anchored action, depth-layer camera movement, two-bone reach with a prop nested under the actual hand transform, and strip/close-up review. Independently implemented in motion/assets/story-motion.mjs and motion/remotion. No license file was present in the inspected tree; no source or artwork was copied. Its Hindi, vertical and no-caption choices do not override FounderNotes channel rules.
 
 Remotion has its own license terms; do not describe it as MIT. Check [current licensing](https://www.remotion.dev/license) for your organization before production use.
+
+
+## Bundled painted-character route
+
+`painted-character-motion` is an original optional SVG kit with five scene types and measured narration timing. Generate its picture using the existing HTML motion renderer, then import that picture through studio_loop.py for narration, captions and QC. It is not hand-painted footage, anatomical motion capture, phoneme lip sync or a general scene generator. VoiceStudio is an integrated opt-in dialogue adapter, tested with local HTTP tone fixtures; no actual voice quality is established by those tests.

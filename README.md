@@ -185,3 +185,8 @@ FounderNotes is an independent creator project. External projects have their own
 ## Creative production loop and animation backends
 
 Use [.claude/skills/podcast-scout-skill/references/creative-production-loop.md](/.claude/skills/podcast-scout-skill/references/creative-production-loop.md) for the executable reference → knowledge → production → critic → revision workflow. Read [animation backend assessment](/.claude/skills/podcast-scout-skill/references/animation-backends.md) before choosing optional external tools. Preserve narrator, evidence, rights, pilot-review and owner-approval requirements. Host AI performs creative analysis; the coordinator does not invent model runs or audiovisual review.
+
+
+## VoiceStudio dialogue and original character animation
+
+The optional [VoiceStudio dialogue adapter](.claude/skills/podcast-scout-skill/references/voicestudio-dialogue.md) connects approved local profiles to the existing narration assembler. The [original character SVG kit](.claude/skills/painted-character-motion/SKILL.md) consumes measured timings and uses the existing HTML renderer. Both feed the normal assembly/QC/approval workflow. VoiceStudio must be installed separately; offline fixtures and render smoke tests are not voice or art approval.

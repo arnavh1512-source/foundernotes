@@ -122,3 +122,8 @@ These entries describe **visual techniques and references**, not 592 complete vi
 - **Benchmark:** compare representative rendered results across genuinely available engines, including relevant entries from the unified library; check source and asset licenses first. Not every catalog entry or upstream prompt can render on its own.
 
 Use `docs/ANIMATION_STYLES_AUDIT.md` as the style inventory and known limitations. Do not claim the 17 styles are independently benchmarked merely because their Markdown references exist.
+
+
+## Optional original character scenes
+
+For a coherent two-character 16:9 SVG treatment, read `../painted-character-motion/SKILL.md`. Its five scene types consume measured narration timings and render via the existing motion renderer. Use only when they explain the script; this does not expand the style catalog counts or imply hand-painted footage/lip sync.

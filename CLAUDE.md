@@ -41,3 +41,8 @@ Use [.claude/skills/podcast-scout-skill/references/creative-production-loop.md](
 ## Explicit short-film requests
 
 When the owner explicitly requests a film shorter than eight minutes, use `studio_loop.py` recipe `mode: "short-film"` (>90 seconds and <480 seconds). This applies to the requested ~4:05 philosopher film. Keep the normal `full` mode minimum at 480 seconds. Short films still require the full-production viewer gate, an actual 60–90-second owner-approved pilot, evidence revalidation, measured natural-speed narration, captions, technical QC and creative review. Never pad or change narration speed to meet either duration range.
+
+
+## Opt-in two-character dialogue and painted SVG scenes
+
+The owner has requested the VoiceStudio dialogue and original painted-character integrations. For episode-specific character dialogue, use `.claude/skills/podcast-scout-skill/scripts/voicestudio_narrate.py` with locally approved profiles; see `references/voicestudio-dialogue.md`. This does not replace the standing channel narrator or authorize creating/cloning a voice. The bridge calls only loopback HTTP, refuses redirects and preserves measured scene/speaker metadata. Use `.claude/skills/painted-character-motion/scripts/build_from_timings.py` for the optional five-scene SVG treatment, the existing motion renderer for pictures, and the `painted-character-motion` picture-import backend in studio_loop.py. Pilot/full/short-film gates remain mandatory; fixture tests do not establish live synthesis or artistic quality.
