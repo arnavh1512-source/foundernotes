@@ -31,3 +31,11 @@ test('frames are deterministic, finite and distinct across meaningful action',()
 test('preview explicitly identifies missing narration',()=>{
  assert.ok(pilot);assert.match(pilot.render(20),/VISUAL DRAFT/);assert.match(pilot.render(20),/dialogue not recorded/);
 });
+test('measured dialogue can replace draft captions and drive the active mouth',()=>{
+ const options={captions:false,label:'PERFORMANCE PREVIEW',speaker:'philosopher',mouth:1};
+ const speaking=pilot.render(25,options);
+ assert.match(speaking,/PERFORMANCE PREVIEW/);
+ assert.doesNotMatch(speaking,/dialogue not recorded|A circumstance and its meaning/);
+ assert.notEqual(speaking,pilot.render(25,{...options,mouth:0}));
+ assert.notEqual(pilot.render(25,{reveal:0}),pilot.render(25,{reveal:1}));
+});

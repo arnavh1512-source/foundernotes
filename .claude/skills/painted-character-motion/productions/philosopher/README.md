@@ -22,3 +22,14 @@ file decoding, frame count, aspect ratio and duration, not artistic success.
 Record and approve the two dialogue performances before retiming the scene cuts
 and expanding into the requested short film. Real circumstances and obstacles
 are not depicted as disappearing when a character's interpretation changes.
+
+## Measured-dialogue preview
+
+The renderer also accepts render(time, options) with captions=false, a truthful
+label, speaker/mouth activity, and a camera reveal between 0 and 1. These permit
+retiming the original visual actions to measured dialogue without changing
+speech speed. Mouth activity is an approximate audio-envelope animation, not
+phoneme lip sync. The 64.482-second ElevenLabs performance and its editable
+preview are kept outside Git under studio-output; the silent 75-second demo
+remains a separate provisional test. Close-up scenery extends beyond the camera
+frame to avoid transparent edges. Final playback and owner approval are pending.
