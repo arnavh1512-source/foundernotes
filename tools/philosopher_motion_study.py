@@ -11,6 +11,8 @@ import math
 import random
 import shutil
 import subprocess
+import struct
+import wave
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
 
 W, H, FPS, DURATION = 960, 540, 24, 24
@@ -27,7 +29,7 @@ def ease(t, a, b):
 def lerp(a, b, k):
     return a+(b-a)*k
 
-def arm_joint(shoulder,hand,upper=70,lower=75):
+def arm_joint(shoulder,hand,upper=70,lower=75,bend=1):
     """Solve a reachable two-link arm without changing either bone length."""
     dx,dy=hand[0]-shoulder[0],hand[1]-shoulder[1]
     distance=math.hypot(dx,dy)
@@ -36,7 +38,7 @@ def arm_joint(shoulder,hand,upper=70,lower=75):
     a=(upper*upper-lower*lower+distance*distance)/(2*distance)
     h=math.sqrt(max(0,upper*upper-a*a))
     ux,uy=dx/distance,dy/distance
-    return shoulder[0]+ux*a+uy*h,shoulder[1]+uy*a-ux*h
+    return shoulder[0]+ux*a+bend*uy*h,shoulder[1]+uy*a-bend*ux*h
 
 def line(d, pts, fill, width=3):
     width=max(1,round(width))
@@ -263,28 +265,162 @@ def frame(t,cut):
 rng=random.Random(17)
 TEXTURE=Image.new('RGB',(W,H)); TEXTURE.putdata([(v,v,v) for v in (rng.randrange(256) for _ in range(W*H))])
 
+def stick_background():
+    im=Image.new('RGB',(W,H),'#eee8da')
+    d=ImageDraw.Draw(im)
+    for x,h in [(70,110),(135,145),(225,94),(785,130),(865,165)]:
+        d.rectangle((x,425-h,x+52,425),fill='#d9d9cb')
+        for y in range(425-h+15,414,24):
+            d.rectangle((x+12,y,x+20,y+10),fill='#c3cabb')
+    d.rectangle((0,425,W,H),fill='#d8cbb4')
+    d.line((0,425,W,425),fill='#b9aa91',width=3)
+    for n in range(5):
+        x,y=55+n*34,425-n*17
+        d.rectangle((x,y,x+48,445),fill='#a7b5a7')
+        d.line((x,y,x+48,y),fill='#6f8c7f',width=3)
+    d.rounded_rectangle((580,92,826,427),radius=110,fill='#b6b6a5')
+    d.rectangle((580,215,826,427),fill='#b6b6a5')
+    d.rounded_rectangle((600,115,806,427),radius=94,fill='#40565a')
+    d.rectangle((600,220,806,427),fill='#40565a')
+    for x in range(612,803,24):
+        line(d,[(x,205),(x,423)],'#82928c',6)
+    line(d,[(600,310),(806,310)],'#b8b29a',8)
+    d.rounded_rectangle((684,302,715,331),radius=5,fill='#d3aa64')
+    d.text((703,158),'CLOSED',font=SMALL,anchor='mm',fill='#eee8da')
+    d.text((44,35),'FOUNDER NOTES / ORIGINAL MOTION STUDY',font=SMALL,fill='#6d7d72')
+    return im
+
+STICK_BG=stick_background()
+
+def stick_arm(shoulder,target,weight,side):
+    upper,lower=44,46
+    a0=math.radians(65 if side==1 else 115)
+    b0=math.radians(80 if side==1 else 100)
+    a,b=a0,b0
+    if weight>0:
+        joint=arm_joint(shoulder,target,upper,lower,bend=-1)
+        a1=math.atan2(joint[1]-shoulder[1],joint[0]-shoulder[0])
+        b1=math.atan2(target[1]-joint[1],target[0]-joint[0])
+        a=a0+((a1-a0+math.pi)%(2*math.pi)-math.pi)*weight
+        b=b0+((b1-b0+math.pi)%(2*math.pi)-math.pi)*weight
+    elbow=(shoulder[0]+upper*math.cos(a),shoulder[1]+upper*math.sin(a))
+    hand=(elbow[0]+lower*math.cos(b),elbow[1]+lower*math.sin(b))
+    return elbow,hand
+
+def stick_actor(d,x,lean=0,gaze=1,old=False,grip=None,phase=0,point=0,walk=0,contact_weight=1):
+    ink='#345d59' if old else '#734f32'
+    ground=425
+    pelvis=(x,ground-66)
+    chest=(x+lean,ground-120)
+    head=(chest[0]+gaze*3,ground-158+abs(lean)*.12)
+    d.ellipse((x-38,420,x+40,433),fill='#bdb8a5')
+    stride=math.sin(walk)*14
+    for side in (-1,1):
+        foot=(x+side*20+side*stride,ground-max(0,side*math.sin(walk))*12)
+        knee=(x+side*14+side*stride*.4,ground-31)
+        line(d,[pelvis,knee,foot],ink,8)
+        line(d,[foot,(foot[0]+10,foot[1])],ink,6)
+    line(d,[pelvis,(x+lean*.6,ground-91),chest],ink,9)
+    neck=(chest[0],chest[1]-17)
+    line(d,[chest,neck],ink,7)
+    hx,hy=head
+    d.ellipse((hx-20,hy-22,hx+20,hy+20),fill='#f8f1e3',outline=ink,width=4)
+    # Original small facial cues; body language carries the performance.
+    ex=hx+gaze*8
+    d.ellipse((ex-1.6,hy-4,ex+1.6,hy-.8),fill=ink)
+    line(d,[(ex-4,hy+8),(ex+3,hy+8+phase*2)],ink,2)
+    if old:
+        line(d,[(hx-13,hy-7),(hx+12,hy-7)],ink,2)
+        d.polygon([(hx-11,hy+15),(hx+12,hy+15),(hx+2,hy+33)],fill='#b7bbaa')
+    for side in (-1,1):
+        shoulder=(chest[0]+side*8,chest[1]+3)
+        if grip is not None:
+            target=(grip[0],grip[1]+(15 if side==-1 else 0))
+            elbow,hand=stick_arm(shoulder,target,contact_weight,side)
+        elif old and side==-1 and point:
+            hand=(shoulder[0]-65*point,shoulder[1]-14*point+34*(1-point))
+            elbow=((shoulder[0]+hand[0])/2,shoulder[1]+17)
+        else:
+            hand=(shoulder[0]+side*(22+phase*13),shoulder[1]+52-phase*17)
+            elbow=(shoulder[0]+side*18,shoulder[1]+28)
+        line(d,[shoulder,elbow,hand],ink,7)
+        d.ellipse((hand[0]-4,hand[1]-4,hand[0]+4,hand[1]+4),fill='#f8f1e3',outline=ink,width=2)
+
+def grip_weight(t):
+    return ease(t,2.2,3.25)*(1-ease(t,7.2,8.0))
+
+def stick_frame(t):
+    im=STICK_BG.copy(); d=ImageDraw.Draw(im)
+    approach=ease(t,0,1.8)
+    x=lerp(400,545,approach)
+    effort=ease(t,4.1,4.8)*(1-ease(t,6.7,7.3))
+    recoil=ease(t,8.0,8.6)
+    x-=recoil*28
+    lean=lerp(7,-12,effort)-6*recoil
+    contact=3.25<=t<7.2
+    grip=(612,310)
+    gaze=-1 if t>8.6 else 1
+    if 1.8<=t<3.1:
+        # A preparatory hand lift precedes contact, rather than teleporting the entire action.
+        phase=ease(t,1.8,3.1)
+    else:
+        phase=effort if contact else recoil*.6
+    stick_actor(d,x,lean,gaze,grip=grip,phase=phase,walk=t*9 if t<1.8 else 0,contact_weight=grip_weight(t))
+    arrival=ease(t,7.1,8.6)
+    if arrival>0:
+        stick_actor(d,lerp(-50,363,arrival),lean=2,gaze=-1,old=True,point=ease(t,8.8,10.4),walk=t*7 if arrival<1 else 0)
+    if t<4.1: title='A familiar route. A real obstacle.'
+    elif t<8.6: title='More effort does not open every gate.'
+    else: title='First notice what else is there.'
+    d.text((480,475),title,font=FONT,anchor='mm',fill='#344c4c')
+    d.text((480,511),'STICK PERFORMANCE TEST / ORIGINAL FOLEY / NO NARRATION',font=SMALL,anchor='mm',fill='#77847a')
+    return Image.blend(im,TEXTURE,.025)
+
+def write_foley(path,duration):
+    """Small original contact cues; not synthesized speech or a final mastered mix."""
+    rate=24000; rnd=random.Random(44)
+    events=[(.25,'step'),(.68,'step'),(1.1,'step'),(1.53,'step'),(3.25,'metal'),(4.6,'metal'),(5.55,'metal'),(7.4,'step'),(7.8,'step'),(8.2,'step')]
+    samples=[]
+    for i in range(int(duration*rate)):
+        t=i/rate; sample=0
+        for at,kind in events:
+            q=t-at
+            if not 0<=q<.55: continue
+            if kind=='step': sample+=.12*math.exp(-q*34)*(math.sin(2*math.pi*95*q)+rnd.uniform(-.4,.4))
+            else: sample+=.065*math.exp(-q*10)*(math.sin(2*math.pi*690*q)+.4*math.sin(2*math.pi*1137*q))
+        samples.append(struct.pack('<h',int(max(-.8,min(.8,sample))*32767)))
+    with wave.open(str(path),'wb') as f:
+        f.setnchannels(1);f.setsampwidth(2);f.setframerate(rate);f.writeframes(b''.join(samples))
+
 def main():
     ap=argparse.ArgumentParser(); ap.add_argument('--out',type=Path,required=True); ap.add_argument('--cut',type=int,choices=[1,2,3],required=True)
+    ap.add_argument('--style',choices=['blocking','stick'],default='blocking')
     args=ap.parse_args()
     if args.out.exists(): raise SystemExit('Use a fresh output path; prior cuts are retained')
     args.out.parent.mkdir(parents=True,exist_ok=True)
     ffmpeg=shutil.which('ffmpeg')
     if not ffmpeg: raise SystemExit('FFmpeg is required')
+    duration=12 if args.style=='stick' else DURATION
+    draw=stick_frame if args.style=='stick' else lambda t:frame(t,args.cut)
     cmd=[ffmpeg,'-v','error','-f','rawvideo','-pix_fmt','rgb24','-s',f'{W}x{H}','-r',str(FPS),'-i','-','-an','-vf','scale=1280:720:flags=lanczos','-c:v','libx264','-preset','fast','-crf','19','-pix_fmt','yuv420p','-movflags','+faststart',str(args.out)]
+    if args.style=='stick':
+        audio=args.out.with_suffix('.wav');write_foley(audio,duration)
+        cmd[cmd.index('-an'):cmd.index('-an')+1]=['-i',str(audio),'-c:a','aac','-b:a','128k','-shortest']
     p=subprocess.Popen(cmd,stdin=subprocess.PIPE)
     try:
-        for i in range(FPS*DURATION):
-            p.stdin.write(frame(i/FPS,args.cut).tobytes())
-            if i%120==0: print(f'{i}/{FPS*DURATION}',flush=True)
+        for i in range(FPS*duration):
+            p.stdin.write(draw(i/FPS).tobytes())
+            if i%120==0: print(f'{i}/{FPS*duration}',flush=True)
         p.stdin.close()
         if p.wait(timeout=90): raise RuntimeError('FFmpeg encode failed')
     except BaseException:
         p.kill();p.wait();raise
     times=[.8,2.8,5.8,7.7,10.3,12.7,15.8,18.3,20.5,23]
+    if args.style=='stick':times=[.2,1.5,2.5,3.3,4.5,5.7,7.2,8.1,9.5,11.5]
     sheet=Image.new('RGB',(W*2,H*5),'#172e35')
-    for i,t in enumerate(times): sheet.paste(frame(t,args.cut),(i%2*W,i//2*H))
+    for i,t in enumerate(times): sheet.paste(draw(t),(i%2*W,i//2*H))
     sheet.save(args.out.with_suffix('.jpg'))
-    args.out.with_suffix('.json').write_text(json.dumps({'duration_s':DURATION,'fps':FPS,'cut':args.cut,'audio':False,'status':'unreviewed-motion-study','sha256':hashlib.sha256(args.out.read_bytes()).hexdigest(),'sample_times_s':times},indent=2),encoding='utf-8')
+    args.out.with_suffix('.json').write_text(json.dumps({'duration_s':duration,'fps':FPS,'cut':args.cut,'style':args.style,'audio':args.style=='stick','status':'unreviewed-motion-study','sha256':hashlib.sha256(args.out.read_bytes()).hexdigest(),'sample_times_s':times},indent=2),encoding='utf-8')
     print(args.out,flush=True)
 
 if __name__=='__main__': main()

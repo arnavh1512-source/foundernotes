@@ -1,6 +1,6 @@
 import unittest
 from PIL import Image, ImageDraw
-from philosopher_motion_study import frame, map_sheet, arm_joint
+from philosopher_motion_study import frame, map_sheet, arm_joint, stick_frame, grip_weight, stick_arm
 import math
 
 class MotionStudyTests(unittest.TestCase):
@@ -30,5 +30,24 @@ class MotionStudyTests(unittest.TestCase):
             self.assertAlmostEqual(math.dist(elbow,hand),75)
         with self.assertRaises(ValueError):
             arm_joint((0,0),(1000,0))
+
+    def test_stick_contact_reach_and_release_are_continuous(self):
+        self.assertEqual(grip_weight(2.2),0)
+        self.assertEqual(grip_weight(3.25),1)
+        self.assertEqual(grip_weight(7.2),1)
+        self.assertEqual(grip_weight(8),0)
+        for t in (0,1.79,1.8,2.2,3.249,3.25,4.8,6.7,7.2,7.99,8,8.6,11.99):
+            self.assertEqual(stick_frame(t).tobytes(),stick_frame(t).tobytes())
+        for boundary in (2.2,3.25,7.2,8):
+            self.assertLess(abs(grip_weight(boundary-.001)-grip_weight(boundary+.001)),.001)
+
+    def test_stick_arm_preserves_lengths_during_reach_not_only_at_contact(self):
+        shoulder,target=(545,308),(612,310)
+        for side in (-1,1):
+            for n in range(101):
+                elbow,hand=stick_arm(shoulder,target,n/100,side)
+                self.assertAlmostEqual(math.dist(shoulder,elbow),44)
+                self.assertAlmostEqual(math.dist(elbow,hand),46)
+            self.assertAlmostEqual(math.dist(stick_arm(shoulder,target,1,side)[1],target),0)
 
 if __name__=='__main__': unittest.main()

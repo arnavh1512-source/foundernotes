@@ -70,3 +70,19 @@ The initial entries preserve documented observations from the 2026-11-11 study a
 - Cause / rationale: The character drew its original right arm before the table; a separately composited foreground arm was added without suppressing the original.
 - Correction / recipe: Suppress the original arm when a foreground replacement is drawn. Inspect complete limb silhouettes and count hands in all replacement poses; preserve two-link length checks.
 - Verification: Cut 3a frame at 7.7 seconds inspected after rerender; duplicate absent there. Full playback, independent critique and reference comparison remain pending.
+
+### philosopher-stick-performance-v1 — Hand contact and second-character arrival snapped between states
+
+- Recorded (UTC): 2026-11-17T13:49:02+00:00
+- Evidence: docs/STICK_PERFORMANCE_REVIEW_2026-11-17.md; v1 decoded sample positions at 2.95/3.125 and 7.2/7.4 seconds; v3 source hash 644f25a1f2112b81938c0c2981c3bbbd458572e9eda79e393828f9c89256968a
+- Cause / rationale: A Boolean grip state switched hand position instantly; the entering character first appeared already inside the frame.
+- Correction / recipe: Interpolate a full reach and release and start the second character beyond the frame edge. Review entry, contact and release boundaries in decoded frames and actual playback.
+- Verification: v3 sampled poses inspected and grip-weight boundary tests passed. Full motion, foot sliding and sound review remain pending.
+
+### philosopher-stick-performance-v2 — Resting stick arms folded into awkward triangles
+
+- Recorded (UTC): 2026-11-17T13:49:02+00:00
+- Evidence: docs/STICK_PERFORMANCE_REVIEW_2026-11-17.md; v2 sampled render and v3 decoded frames at 1.5/2.8/3.25/5.7/7.5/10.5 seconds
+- Cause / rationale: The rest pose reused a long contact-arm IK configuration and an unsuitable bend direction; moving the hand alone did not define a readable rest silhouette.
+- Correction / recipe: Define resting upper/forearm angles and rotate fixed-length segments toward the contact pose. Place the torso within reach instead of stretching bones. Check rest silhouette as well as final contact.
+- Verification: v3 sampled arms read without the prior folded rest triangles. All intermediate arm lengths and the final contact endpoint pass a geometry test. Natural full playback and reference parity remain pending.
