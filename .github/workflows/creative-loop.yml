@@ -83,6 +83,24 @@ jobs:
           assert int(video['nb_frames'])==435, video
           assert abs(float(data['format']['duration'])-14.5)<.05, data
           PYTHON
+      - name: Render internal dialogue-timed pilot picture
+        run: |
+          node .claude/skills/motion/scripts/build-philosopher-pilot.mjs studio-output/philosopher-pilot-ci/index.html
+          node .claude/skills/motion/scripts/render.mjs studio-output/philosopher-pilot-ci/index.html --out studio-output/philosopher-pilot-ci/picture.mp4
+          python .claude/skills/podcast-scout-skill/scripts/review_frames.py studio-output/philosopher-pilot-ci/picture.mp4 --out studio-output/philosopher-pilot-ci/review --times 0 8 14.4 14.5 20 25 29 33 38 41 42 45.9 46 50 55.9 56 60 64.4
+          python - <<'PYTHON'
+          import json, subprocess
+          data=json.loads(subprocess.check_output(['ffprobe','-v','error','-show_streams','-show_format','-of','json','studio-output/philosopher-pilot-ci/picture.mp4']))
+          video=next(s for s in data['streams'] if s['codec_type']=='video')
+          assert (video['width'],video['height']) == (1920,1080), video
+          assert video['avg_frame_rate']=='30/1', video
+          assert int(video['nb_frames'])==1935, video
+          assert abs(float(data['format']['duration'])-64.5)<.05, data
+          PYTHON
+      - uses: actions/upload-artifact@v4
+        with:
+          name: internal-philosopher-pilot-picture
+          path: studio-output/philosopher-pilot-ci/
       - uses: actions/upload-artifact@v4
         with:
           name: internal-stick-performance-rebuild

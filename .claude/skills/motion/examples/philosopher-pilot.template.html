@@ -1,0 +1,103 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Internal Philosopher stick pilot picture</title>
+<style>html,body{margin:0;background:#e9e5d9;overflow:hidden}canvas{display:block;width:100vw;height:100vh;object-fit:contain}</style>
+<canvas id="stage" width="1920" height="1080" aria-label="Original stick animation dialogue pilot"></canvas>
+<script>
+const gateCanvas=document.createElement('canvas');gateCanvas.width=1920;gateCanvas.height=1080;
+// @INLINE_PILOT@
+const stage=document.getElementById('stage'),s=stage.getContext('2d');
+const youthColor='#354c51',mentorColor='#95684d';
+function stroke(ctx,points,width=8,color=youthColor){
+ ctx.beginPath();ctx.moveTo(...points[0]);for(const p of points.slice(1))ctx.lineTo(...p);
+ ctx.strokeStyle=color;ctx.lineWidth=width;ctx.lineCap='round';ctx.lineJoin='round';ctx.stroke();
+}
+function words(text,x,y,size=30,color=youthColor,align='center'){
+ s.fillStyle=color;s.font='500 '+size+'px sans-serif';s.textAlign=align;s.fillText(text,x,y);
+}
+function actor(g,color){
+ const p=g.pose;
+ for(const a of [g.legs[0],g.arms[0]])stroke(s,[a.shoulder,a.elbow,a.wrist],7,color+'99');
+ s.beginPath();s.moveTo(...p.hip);s.quadraticCurveTo(...g.spineControl,...p.chest);s.strokeStyle=color;s.lineWidth=10;s.stroke();
+ stroke(s,[p.chest,[p.head[0],p.head[1]+28]],7,color);
+ for(const a of [g.legs[1],g.arms[1]])stroke(s,[a.shoulder,a.elbow,a.wrist],8,color);
+ g.legs.forEach((a,i)=>stroke(s,[a.wrist,g.toeTargets[i]],6,color));
+ s.beginPath();s.arc(...p.head,31,0,Math.PI*2);s.fillStyle='#f5efdf';s.fill();s.strokeStyle=color;s.lineWidth=6;s.stroke();
+ const dir=p.facing||1;
+ s.beginPath();s.arc(p.head[0]+dir*12,p.head[1]-4,3,0,Math.PI*2);s.fillStyle=color;s.fill();
+ if(p.intent==='argue'||p.intent==='strain')stroke(s,[[p.head[0]+dir*5,p.head[1]-16],[p.head[0]+dir*20,p.head[1]-9]],3,color);
+ stroke(s,[[p.head[0]+dir*8,p.head[1]+13],[p.head[0]+dir*18,p.head[1]+11]],3,color);
+}
+function room(){
+ s.fillStyle='#e9e5d9';s.fillRect(0,0,1920,1080);
+ s.fillStyle='#d3d3bd';s.fillRect(0,650,1920,250);
+ stroke(s,[[0,650],[1920,650]],3,'#a6ac99');
+ s.fillStyle='#a4b7a6';s.fillRect(110,170,300,355);
+ for(let j=0;j<3;j++){stroke(s,[[110,280+j*105],[410,280+j*105]],5,'#6e8375');for(let i=0;i<9;i++){s.fillStyle=['#9d7a59','#bec4a4','#728f8c'][i%3];s.fillRect(125+i*30,195+j*105+(i%3)*6,21,78-(i%3)*6);}}
+ s.fillStyle='#b9cdd0';s.fillRect(1510,150,270,350);
+ stroke(s,[[1645,150],[1645,500]],5,'#7b8f8c');stroke(s,[[1510,325],[1780,325]],5,'#7b8f8c');
+ s.fillStyle='#b6a383';s.fillRect(790,620,470,25);
+ stroke(s,[[815,645],[815,840]],11,'#8d8169');stroke(s,[[1235,645],[1235,840]],11,'#8d8169');
+ stroke(s,[[1400,550],[1400,650],[1270,650]],7,'#899880');
+ stroke(s,[[1400,650],[1400,830]],5,'#899880');stroke(s,[[1270,650],[1270,830]],5,'#899880');
+}
+function cup(t){
+ const [x,y]=pilotCupAt(t).center;s.fillStyle='#f5efdf';s.strokeStyle=mentorColor;s.lineWidth=5;
+ s.beginPath();s.rect(x-19,y-20,38,43);s.fill();s.stroke();
+ s.beginPath();s.arc(x+23,y+1,9,-Math.PI/2,Math.PI/2);s.stroke();
+ for(let i=0;i<2;i++){s.beginPath();s.moveTo(x-7+i*14,y-28);s.quadraticCurveTo(x-14+i*14,y-42,x-6+i*14,y-54);s.strokeStyle='#b1af9b';s.lineWidth=2;s.stroke();}
+}
+function study(t){
+ room();actor(pilotActorAt(t,'youth'),youthColor);actor(pilotActorAt(t,'philosopher'),mentorColor);cup(t);
+ words('A fictional argument',960,95,26,'#778174');
+}
+function burden(t){
+ s.fillStyle='#e9e5d9';s.fillRect(0,0,1920,1080);s.fillStyle='#d3d3bd';s.fillRect(0,830,1920,70);
+ const g=pilotActorAt(t,'youth','burden');
+ const cards=[['Work',1090,350,29],['Home',1280,520,32],['People',1100,710,35]];
+ for(let i=0;i<cards.length;i++){
+  const [label,x,y,start]=cards[i],k=progress(t,start,.7);if(k===0)continue;
+  s.save();s.globalAlpha=k;const yy=y-50*(1-k),hand=g.arms[i%2].wrist;
+  s.beginPath();s.moveTo(...hand);s.quadraticCurveTo((hand[0]+x)/2,yy+50,x-65,yy);s.strokeStyle='#9b8b72';s.lineWidth=5;s.stroke();
+  s.fillStyle=['#b5bfa8','#d5c29e','#a9bcbc'][i];s.fillRect(x-65,yy-40,130,80);words(label,x,yy+9,25);s.restore();
+ }
+ actor(g,youthColor);words('Responsibilities remain real',960,110,28,'#778174');
+}
+function hill(x,palette){
+ s.save();s.translate(x,180);s.beginPath();s.rect(0,0,780,570);s.clip();s.fillStyle=palette[0];s.fillRect(0,0,780,570);
+ s.fillStyle=palette[1];s.beginPath();s.moveTo(0,450);s.bezierCurveTo(190,420,250,200,460,230);s.bezierCurveTo(600,240,650,350,780,330);s.lineTo(780,570);s.lineTo(0,570);s.closePath();s.fill();
+ for(const [tx,ty]of [[180,370],[545,270],[650,335]]){stroke(s,[[tx,ty],[tx,ty-100]],8,palette[2]);stroke(s,[[tx-28,ty-55],[tx,ty-85],[tx+26,ty-60]],6,palette[2]);}
+ s.fillStyle=palette[2];s.fillRect(380,260,55,65);s.beginPath();s.moveTo(370,260);s.lineTo(407,225);s.lineTo(447,260);s.closePath();s.fill();s.restore();
+}
+function views(t){
+ s.fillStyle='#e9e5d9';s.fillRect(0,0,1920,1080);
+ hill(120,['#667981','#455c61','#c2c9b4']);hill(1020,['#dfd2a8','#9eaf85','#657c6c']);
+ words('YOUTH',510,135,28,youthColor);words('PHILOSOPHER',1410,135,28,mentorColor);
+ words('Same hill. Different readings.',960,830,32);
+ const k=progress(t,49,.8);s.strokeStyle='#b78c4b';s.lineWidth=4;s.globalAlpha=k;s.strokeRect(495,430,70,90);s.strokeRect(1395,430,70,90);s.globalAlpha=1;
+}
+function gateOpening(t){
+ drawGate(t,true);s.drawImage(gateCanvas,160,0,1600,900);
+ if(t<5)words('An illustrative problem',960,75,28,'#778174');
+ if(t>=10)words('The gate is still locked. The approach changes.',960,875,28);
+}
+function exit(t){
+ drawGate(14.5,false);
+ s.drawImage(gateCanvas,160,0,1600,900);
+ const g=pilotExitAt(t);s.save();s.translate(160,0);s.scale(1600/1920,900/1080);s.transform(...cameraAt(14.5).matrix);
+ s.translate(...g.depth.anchor);s.scale(g.depth.scale,g.depth.scale);s.translate(-190,-740);actor(g,youthColor);s.restore();
+ words('What is fixed? What can I try differently?',960,875,28);
+}
+function pilotFrame(time){
+ if(!Number.isFinite(time))throw new TypeError('time must be finite');
+ const t=Math.max(0,Math.min(PILOT_DURATION,time)),shot=pilotShotAt(t);
+ s.setTransform(1,0,0,1,0,0);s.clearRect(0,0,1920,1080);s.fillStyle='#e9e5d9';s.fillRect(0,0,1920,1080);
+ if(shot.name==='gate')gateOpening(t);
+ else if(shot.name==='study'||shot.name==='cup')study(t);
+ else if(shot.name==='burden')burden(t);
+ else if(shot.name==='views')views(t);
+ else exit(t);
+ s.fillStyle='#e9e5d9';s.fillRect(0,900,1920,180);
+}
+window.MOTION={width:1920,height:1080,fps:30,duration:PILOT_DURATION};
+window.seek=async t=>pilotFrame(t);window.seek(0);
+</script></html>
+
