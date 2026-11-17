@@ -41,7 +41,26 @@ Additional revised details: downward gaze in the study, a strained gate expressi
 
 Next cycle: review actual playback, refine one character interaction and its anatomy before expanding the scene count, obtain usable narration and measured timings, then produce the actual 60-90-second pilot through the existing evidence-bound workflow. Read the mistakes file before starting. This work does not run indefinitely or continue unattended after the session.
 
-## Reproduce on this host
+## Third cut: reference-guided craft revision
+
+Owner reaffirmed: always use Day One Films, PsychToons and PsychDoodle as improvement references. The fourth supplied link is Bahaa AI's production tutorial. All remain in the reference register. Consulted evidence from this session supports **editorial structure only**, not audiovisual quality:
+
+- Day One Films, `https://www.youtube.com/watch?v=8atK0pF4oJY`: accessible description/chapter list presents obstacle, effort and resolution. Test in our study: show effort and a reaction at the gate before the discovery. No matching motion timestamp was reviewed.
+- PsychToons, `https://www.youtube.com/watch?v=f1gkkzHZxNg`: retrieved caption text via `https://prepublish.ai/youtube-transcript/f1gkkzHZxNg` moves from a recognizable difficulty to a concrete explanatory analogy. Test: maintain the map-to-action explanation and a visible Youth reaction. No visual lesson is attributed to this transcript.
+- PsychDoodle, `https://www.youtube.com/watch?v=SeCZiVkVuuE`: accessible description connects a familiar problem, mechanisms and practical actions. Test: the discovery should lead to trying the stairs. Research claims in that video were not revalidated and are not reused here.
+- Bahaa AI, `https://www.youtube.com/watch?v=gly2wBcnZUQ`: its accompanying page `https://bahaa-ai.com/why-your-stickman-animation-videos-fail-secrets-revealed/` describes a repeatable production workflow. This does not establish successful character animation or audience outcomes.
+
+These descriptions/captions are limited evidence, not proof of channel-wide visual style. All motion, voice and sound comparisons with the references remain **pending**.
+
+Cut 3a: SHA-256 `e6b174358ac802132ad7523d1bbfb77d6dadbc86d6d8cf487b49f0de48fccabf`, 24.000 seconds, H.264, 1280 x 720, 24 fps, silent. Updated the same shared motion-study video above; prior versions remain in its history.
+
+Changes: reach/effort/release at the gate; Youth lean-in and eye movement at the map; fixed-length two-link pointing arm; a settling pose and hand lift at the overlook. Source-side tests pass for all three cuts, premature ink reveal and fixed arm-segment lengths across the full reach (three tests).
+
+The author inspected ten sampled Cut 3 stills, then detected and removed a duplicate arm caused by drawing the base arm and a foreground replacement. Cut 3a was rerendered and inspected at 3.5, 7.7 and 22.8 seconds. This confirms the revised sampled poses and absence of the duplicate at 7.7 seconds; it does not establish complete temporal quality, independent critique or approval. Fine acting, anatomy, final art, narration, full playback and reference audiovisual review still need work.
+
+This completes the third conceptual cut in this small craft cycle. Do not keep expanding an unreviewed test into a full film. Resolve reference access and full playback, select a stronger art treatment and then begin a new reviewed pilot cycle. A default budget is not permission to mark remaining failures passed.
+
+## Reproduce on this host (continued)
 
 Requirements: Python with Pillow and FFmpeg on PATH. The drawing script currently uses Windows Georgia/Arial fonts; configure equivalent licensed font paths before porting it to another OS.
 
@@ -49,6 +68,7 @@ Requirements: Python with Pillow and FFmpeg on PATH. The drawing script currentl
 python -m unittest discover -s tools -p 'test_philosopher_motion_study.py' -v
 python tools/philosopher_motion_study.py --out studio-output/philosopher-study/cut-1.mp4 --cut 1
 python tools/philosopher_motion_study.py --out studio-output/philosopher-study/cut-2.mp4 --cut 2
+python tools/philosopher_motion_study.py --out studio-output/philosopher-study/cut-3.mp4 --cut 3
 ```
 
 Use new output names for later runs; the script refuses to overwrite a prior cut. Keep source, reviews and correction history in git; rendered media belongs with the episode artifacts.

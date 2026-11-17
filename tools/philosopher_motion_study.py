@@ -27,6 +27,17 @@ def ease(t, a, b):
 def lerp(a, b, k):
     return a+(b-a)*k
 
+def arm_joint(shoulder,hand,upper=70,lower=75):
+    """Solve a reachable two-link arm without changing either bone length."""
+    dx,dy=hand[0]-shoulder[0],hand[1]-shoulder[1]
+    distance=math.hypot(dx,dy)
+    if not abs(upper-lower)<distance<upper+lower:
+        raise ValueError('Hand target is outside the arm reach')
+    a=(upper*upper-lower*lower+distance*distance)/(2*distance)
+    h=math.sqrt(max(0,upper*upper-a*a))
+    ux,uy=dx/distance,dy/distance
+    return shoulder[0]+ux*a+uy*h,shoulder[1]+uy*a-ux*h
+
 def line(d, pts, fill, width=3):
     width=max(1,round(width))
     d.line(pts, fill=fill, width=width, joint='curve')
@@ -90,7 +101,7 @@ def background(kind):
 
 BACKGROUNDS={k:background(k) for k in ['gate','study','stairs','dawn']}
 
-def character(d,x,y,s=1,old=False,tilt=0,reach=None,gaze=1,walk=0,lean=0,feet=None,eyes_down=False,expression='neutral'):
+def character(d,x,y,s=1,old=False,tilt=0,reach=None,gaze=1,walk=0,lean=0,feet=None,eyes_down=False,expression='neutral',blink=False,left_reach=None,front_arm=False):
     """Feet origin; hand targets and limbs share a character-local transform."""
     skin='#d5ac84' if not old else '#d4b393'
     coat='#719493' if not old else '#ad815c'
@@ -116,15 +127,20 @@ def character(d,x,y,s=1,old=False,tilt=0,reach=None,gaze=1,walk=0,lean=0,feet=No
         d.polygon([(hx-25*s,hy-17*s),(hx-12*s,hy-40*s),(hx+23*s,hy-22*s),(hx+10*s,hy-8*s)],fill='#263a3e')
     ex=hx+gaze*8*s
     ey=hy+(5 if eyes_down else -3)*s
-    d.ellipse((ex-2*s,ey-2*s,ex+2*s,ey+2*s),fill='#25363b')
+    if blink:
+        line(d,[(ex-3*s,ey),(ex+3*s,ey)],'#25363b',1*s)
+    else:
+        d.ellipse((ex-2*s,ey-2*s,ex+2*s,ey+2*s),fill='#25363b')
     brow=4 if expression=='strained' else 0
     line(d,[(ex-5*s,ey-8*s-brow),(ex+4*s,ey-7*s+brow)],'#4a4940',2*s)
     if not old:
         mouth=2 if expression=='strained' else -1
         line(d,[(hx+3*s,hy+14*s),(hx+11*s,hy+(14+mouth)*s)],'#805d4c',2*s)
-    left=(-34,-91+math.sin(walk)*8)
+    left=left_reach or (-34,-91+math.sin(walk)*8)
     right=reach or (34,-91-math.sin(walk)*8)
     for side,hand in [(-1,left),(1,right)]:
+        if front_arm and side==1:
+            continue
         shoulder=(side*20,-137)
         elbow=((shoulder[0]+hand[0])*.5+side*12,(shoulder[1]+hand[1])*.5+16)
         line(d,[p(*shoulder),p(*elbow),p(*hand)],coat,12*s)
@@ -171,13 +187,20 @@ def frame(t,cut):
         walking=u<1.4
         stop=ease(u,1.3,2)
         d.ellipse((x-40,441,x+50,458),fill='#776f5e')
-        character(d,x,449,1.18,reach=(lerp(33,63,stop),lerp(-92,-138,stop)),gaze=1,walk=u*8 if walking else 0,lean=4*stop,expression='strained' if cut>=2 and stop>.5 else 'neutral')
+        if cut>=3:
+            release=ease(u,3.15,4.15)
+            lean=stop*(4+2*math.sin(u*9)*(1-release))-8*release
+            hand_x=lerp(33,(597-x)/1.18-lean*138/150,stop)
+            character(d,x,449,1.18,reach=(lerp(hand_x,29,release),lerp(lerp(-92,-138,stop),-95,release)),gaze=1,walk=u*8 if walking else 0,lean=lean,tilt=-5*release,eyes_down=release>.5,expression='strained' if stop>.5 else 'neutral',blink=2.45<u<2.58)
+        else:
+            character(d,x,449,1.18,reach=(lerp(33,63,stop),lerp(-92,-138,stop)),gaze=1,walk=u*8 if walking else 0,lean=4*stop,expression='strained' if cut>=2 and stop>.5 else 'neutral')
         d.text((670,80),'CLOSED',font=SMALL,fill='#ded0ad')
         caption(im,'The familiar way is closed.','01 / THE OBSTACLE')
     elif shot==1:
         k=ease(u,1.2,2.8)
-        character(d,355,455,1.12,tilt=lerp(9,0,k),gaze=1,reach=(58,-99),lean=8,eyes_down=cut>=2)
-        character(d,660,455,1.16,old=True,gaze=-1,reach=(-45,-108),eyes_down=cut>=2)
+        reaction=ease(u,2.5,3.7) if cut>=3 else 0
+        character(d,355,455,1.12,tilt=lerp(9,-5,reaction) if cut>=3 else lerp(9,0,k),gaze=1,reach=(58,-99),lean=8+6*reaction,eyes_down=cut>=2,blink=cut>=3 and 2.3<u<2.45)
+        character(d,660,455,1.16,old=True,gaze=-1,reach=(-45,-108),eyes_down=cut>=2,blink=cut>=3 and .6<u<.75,front_arm=cut>=3)
         d.polygon([(230,350),(730,350),(790,417),(190,417)],fill='#9b7755')
         d.polygon([(190,417),(790,417),(790,434),(190,434)],fill='#684e3d')
         d.rectangle((238,434,250,468),fill='#4e4036')
@@ -187,7 +210,8 @@ def frame(t,cut):
         if cut>=2:
             q=ease(u,.7,2.2)
             hx,hy=lerp(613,563,q),lerp(343,369,q)
-            line(d,[(683,296),(625,331),(hx,hy)],'#ad815c',14)
+            joint=arm_joint((683,296),(hx,hy)) if cut>=3 else (625,331)
+            line(d,[(683,296),joint,(hx,hy)],'#ad815c',14)
             d.ellipse((hx-6,hy-6,hx+6,hy+6),fill='#d4b393')
         caption(im,'He looks again. This time, at the gaps.','02 / THE QUESTION')
     elif shot==2:
@@ -225,7 +249,12 @@ def frame(t,cut):
         d.ellipse((650,56,748,154),fill='#e9c88a')
         d.polygon([(0,456),(440,328),(960,452),(960,540),(0,540)],fill='#314b4b')
         k=ease(u,0,1.4)
-        character(d,lerp(370,440,k),395,.78,gaze=1,walk=u*6 if u<1.4 else 0)
+        if cut>=3:
+            settle=ease(u,1.4,2.3)
+            lift=ease(u,2.4,3.6)
+            character(d,lerp(370,440,k),395,.78,gaze=1,walk=u*6 if u<1.4 else 0,lean=lerp(6,-3,settle)+math.sin(u*2)*.8*settle,tilt=4*lift,reach=(lerp(34,54,lift),lerp(-91,-124,lift)),blink=1.6<u<1.75)
+        else:
+            character(d,lerp(370,440,k),395,.78,gaze=1,walk=u*6 if u<1.4 else 0)
         caption(im,'The map was old. The world was not.','05 / THE CHANGE  ·  SILENT MOTION STUDY')
     # Reproducible paper grain is part of the original drawing, not external media.
     im=Image.blend(im,TEXTURE,.045)
@@ -235,7 +264,7 @@ rng=random.Random(17)
 TEXTURE=Image.new('RGB',(W,H)); TEXTURE.putdata([(v,v,v) for v in (rng.randrange(256) for _ in range(W*H))])
 
 def main():
-    ap=argparse.ArgumentParser(); ap.add_argument('--out',type=Path,required=True); ap.add_argument('--cut',type=int,choices=[1,2],required=True)
+    ap=argparse.ArgumentParser(); ap.add_argument('--out',type=Path,required=True); ap.add_argument('--cut',type=int,choices=[1,2,3],required=True)
     args=ap.parse_args()
     if args.out.exists(): raise SystemExit('Use a fresh output path; prior cuts are retained')
     args.out.parent.mkdir(parents=True,exist_ok=True)

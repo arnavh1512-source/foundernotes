@@ -62,3 +62,11 @@ The initial entries preserve documented observations from the 2026-11-11 study a
 - Cause / rationale: Root moved along a diagonal while legs used a generic horizontal walking stride.
 - Correction / recipe: Compute alternate planted and lifted feet from the actual stair coordinates. Check foot contact, weight transfer and sliding in playback.
 - Verification: Revised samples at 15.8 and 18.3 seconds show tread contacts; complete walking cycle and weight transfer remain pending.
+
+### philosopher-motion-study-cut-3 — Foreground arm replacement duplicated the base arm
+
+- Recorded (UTC): 2026-11-17T13:28:56+00:00
+- Evidence: docs/PHILOSOPHER_MOTION_REVIEW_2026-11-17.md; Cut 3 study stills and Cut 3a at 7.7 seconds; revised SHA-256 e6b174358ac802132ad7523d1bbfb77d6dadbc86d6d8cf487b49f0de48fccabf
+- Cause / rationale: The character drew its original right arm before the table; a separately composited foreground arm was added without suppressing the original.
+- Correction / recipe: Suppress the original arm when a foreground replacement is drawn. Inspect complete limb silhouettes and count hands in all replacement poses; preserve two-link length checks.
+- Verification: Cut 3a frame at 7.7 seconds inspected after rerender; duplicate absent there. Full playback, independent critique and reference comparison remain pending.
