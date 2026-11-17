@@ -25,6 +25,24 @@ SCRIPTS = Path(__file__).resolve().parent
 REPO = SCRIPTS.parents[3]
 
 
+def production_policy(mode):
+    policies = {"pilot": ("pre-script", 60), "short-film": ("full-production", 90),
+                "full": ("full-production", 480)}
+    if mode not in policies:
+        raise ValueError("mode must be pilot, short-film or full")
+    return policies[mode]
+
+
+def validate_duration(mode, duration):
+    production_policy(mode)
+    number(duration, "duration", .001)
+    valid = {"pilot": 60 <= duration <= 90.1,
+             "short-film": 90 < duration < 480,
+             "full": duration >= 480}
+    if not valid[mode]:
+        raise ValueError("Pilot must be 60-90s; short-film must be >90s and <480s; full must be >=480s")
+
+
 def read(path):
     return json.loads(Path(path).read_text(encoding="utf-8"))
 
@@ -163,10 +181,8 @@ class StudioLoop:
         synthetic artifacts here to exercise transitions, never as render proof.
         """
         self.require("production")
-        number(duration, "duration", .001)
+        validate_duration(mode, duration)
         text(producer, "producer identity")
-        if mode not in ("pilot", "full") or (mode == "pilot" and not 60 <= duration <= 90.1) or (mode == "full" and duration < 480):
-            raise ValueError("Pilot must be 60-90s; full video must be at least 480s")
         sha = digest(self.artifact(video))
         if any(r["sha256"] == sha or r["video"] == video for r in self.state["renders"]):
             raise ValueError("Revision must preserve old cut and render a changed video")
@@ -189,7 +205,7 @@ class StudioLoop:
         return render
 
     def critic(self, report):
-        self.require("critic", "review_required")
+        self.require("critic", "review_required", "owner_review")
         render = self.current()
         report = copy.deepcopy(report)
         if report.get("render_sha256") != render["sha256"]:
@@ -260,9 +276,43 @@ class StudioLoop:
         self.state["stage"] = "production"
         self.save("revision planned; old renders and reports retained")
 
+    def verify_evidence(self, records):
+        if not isinstance(records, list) or not records:
+            raise ValueError("Missing recorded review evidence; obtain a new review")
+        for record in records:
+            if digest(self.artifact(record["path"])) != record.get("sha256"):
+                raise ValueError("Review evidence changed; obtain a new review")
+
+    def verify_critique(self):
+        render = self.current()
+        if not self.state["critiques"]:
+            raise ValueError("Missing creative review")
+        critique = self.state["critiques"][-1]
+        report = critique["report"]
+        if (critique["revision"] != render["revision"]
+                or report["render_sha256"] != render["sha256"]
+                or report.get("findings")
+                or any(report["categories"][key]["status"] != "pass" for key in CATEGORIES)):
+            raise ValueError("Current render requires a passing creative review")
+        self.verify_evidence(critique["evidence"])
+        technical = read(self.artifact(render["qc"]))
+        if technical.get("status") != "PASS" or technical.get("errors"):
+            raise ValueError("Technical QC must pass")
+        return render
+
+    def verify_approval(self):
+        self.require("approved")
+        render = self.verify_critique()
+        approval = self.state.get("owner_approval", {})
+        text(approval.get("owner"), "owner")
+        if approval.get("render_sha256") != render["sha256"]:
+            raise ValueError("Owner approval belongs to a different render")
+        self.verify_evidence(approval.get("evidence"))
+        return render
+
     def approve(self, owner, evidence):
         self.require("owner_review")
-        self.current()
+        self.verify_critique()
         text(owner, "owner")
         proof = self.evidence([evidence])
         self.state["owner_approval"] = {"owner": owner, "evidence": proof, "render_sha256": self.current()["sha256"]}
@@ -308,10 +358,9 @@ def produce(run, recipe_path):
     run.require("production")
     recipe = read(run.artifact(recipe_path))
     mode = recipe.get("mode", "pilot")
-    if mode not in ("pilot", "full"):
-        raise ValueError("mode must be pilot or full")
+    gate_stage, qc_minimum = production_policy(mode)
     viewer = read(run.artifact(recipe["viewer_plan"]))
-    errors = module("viewer_first_gate").validate(viewer, stage="full-production" if mode == "full" else "pre-script")
+    errors = module("viewer_first_gate").validate(viewer, stage=gate_stage)
     plan = read(run.artifact(recipe["shot_plan"]))
     errors += module("creative_router").validate_plan(plan)
     if errors:
@@ -321,16 +370,15 @@ def produce(run, recipe_path):
     duration = probe_duration(narration)
     if abs(duration - plan["narration_duration_s"]) > .25:
         raise ValueError("Shot plan must use actual narration duration")
-    if (mode == "pilot" and not 60 <= duration <= 90) or (mode == "full" and duration < 480):
-        raise ValueError("Narration does not meet pilot/full duration requirements")
-    if mode == "full":
+    validate_duration(mode, duration)
+    if mode in ("short-film", "full"):
         # Structural booleans alone cannot establish that the pilot was watched.
-        approval = read(run.artifact(recipe["approved_pilot_workflow"]))
-        if approval.get("stage") != "approved" or not approval.get("owner_approval") or approval["renders"][-1]["mode"] != "pilot":
-            raise ValueError("Full production requires a completed owner-approved pilot workflow")
-        pilot_root = run.artifact(recipe["approved_pilot_workflow"]).parent
-        pilot = StudioLoop(pilot_root)
-        pilot.current()
+        pilot_path = run.artifact(recipe["approved_pilot_workflow"])
+        if pilot_path.name != "workflow.json":
+            raise ValueError("approved_pilot_workflow must point to the actual workflow.json")
+        pilot = StudioLoop(pilot_path.parent)
+        if pilot.verify_approval()["mode"] != "pilot":
+            raise ValueError("Production requires a completed owner-approved pilot workflow")
     entry = run.artifact(recipe["entry"]) if not recipe.get("picture") else None
     composition = text(recipe.get("composition", "ImportedPicture"), "composition ID")
     if not re.fullmatch(r"[A-Za-z0-9_-]+", composition):
@@ -377,7 +425,7 @@ def produce(run, recipe_path):
             raise ValueError("Assembly failed; see assemble.log")
         check = [sys.executable, str(SCRIPTS / "qc_video.py"), str(final), "--captions", str(captions),
                  "--json", str(qc), "--sheet", str(output / "contact-sheet.jpg"), "--format", orientation,
-                 "--min-duration", "60" if mode == "pilot" else "480"]
+                 "--min-duration", str(qc_minimum)]
         if recipe.get("timings"):
             check += ["--timings", str(run.artifact(recipe["timings"]))]
         commands.append(check)
@@ -453,3 +501,4 @@ def main(argv=None):
 
 if __name__ == "__main__":
     sys.exit(main())
+
