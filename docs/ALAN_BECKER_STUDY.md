@@ -87,3 +87,8 @@ After the performance is readable, build the actual 60-90-second narrated pilot 
 5. Preserve pending reference, sound and independent-review criteria. Do not fabricate a completed viewing or successful recipe.
 
 No fixed cut rate, retention number, revenue estimate or guarantee of views is inferred from this study. Full audiovisual benchmarking remains unfinished until the footage can actually be reviewed.
+
+
+## Later update: direct frame access
+
+The creator's original Newgrounds upload became accessible after this document's initial research. An internal MP4 overview was inspected; precise temporal and audio review remain incomplete. See `BENCHMARK_CORRECTION_2026-11-17.md` for actual access scope, frame-supported gaps and the unrendered performance rebuild. This updates the earlier blanket statement that no finished-film frames could be accessed; it does not turn the initial research into a full viewing.
