@@ -1,0 +1,78 @@
+{
+  "code_commit": "eac2e46ffa4526c481a41541a2387c10ffcbf7c8",
+  "workflow_run": 44151191616,
+  "previous_pr": {
+    "number": 12,
+    "observed_state": "merged",
+    "merged_at_utc": "2026-11-17T16:49:43Z"
+  },
+  "continuation_pr": 13,
+  "previous_picture": {
+    "sha256": "a4b4a927336d6595776133e3008037ae9abbb1e2bd4792360b23872e3895f7c5",
+    "artifact": 14356749290,
+    "duration": 64.5,
+    "review": "18 decoded samples from the exact encoded file"
+  },
+  "private_audio": {
+    "library_id": "libfile_c99d2bfdf94c819198bad6d6fd27be65",
+    "sha256": "c35a881928e3bd1d12af30dfa66b1553e475226d68c3e0b3c3b6c9c94864e0fd",
+    "duration_s": 64.512,
+    "policy": "Reuse existing take only; no voice generation or substitution. Source profile and listening remain unverified."
+  },
+  "pending": [
+    "Actual listening: approved narrator identity, complete words, dialogue intentions, comfortable level and absence of artifacts.",
+    "Caption wording, speaker attribution and boundaries: recovery was OCR plus owner source, not ASR or a listened transcription.",
+    "Normal-speed continuous visual review: attention, weight transfer, coherent screen direction, no distracting holds.",
+    "Confirm cup contact sound against the exact set-down; no new unreviewed effect has been added.",
+    "Independent outsider: understands the problem, wants the answer and has learned the intended limited distinction.",
+    "Owner pilot approval and full-production gate; no final/full-video approval.",
+    "Fresh exact-footage Alan performance and sound comparison; retain historical sampled evidence only.",
+    "Direct Day One Films, PsychToonsHQ, PsychDoodleTV and gly2wBcnZUQ footage comparison."
+  ],
+  "fresh_reference_access": {
+    "agent_reach": "NOT_INSTALLED; native fallback allowed",
+    "alan_youtube": "Text shell only, no playable footage",
+    "day_one_youtube": "Text shell only, no playable footage",
+    "psychtoons_youtube": "Online fetch throttled",
+    "psychdoodle_youtube": "DisabledError",
+    "gly2wBcnZUQ": "DisabledError",
+    "supplied_discipline": "Opening 0\u201348 s sampled every 2 s; actual frames inspected. Attribution unknown. No listening or precise cadence judgment."
+  },
+  "pre_script_gate": "PASS structural preparation only",
+  "full_production_approved": false,
+  "workflow_conclusion": "success",
+  "latest_picture": {
+    "artifact": 14358329040,
+    "sha256": "e141561465f36b4256502908e5debda5aa66521c810d1794d7493ac721e4a743",
+    "duration_s": 64.5,
+    "width": 1920,
+    "height": 1080,
+    "fps": 30,
+    "frames": 1935,
+    "review_scope": "18 decoded overview samples plus ten cup/rest/hold/lowering samples at 20,25,41.3,41.4,41.5,41.6,41.7,41.8,41.9,42 seconds. Elbow no longer invades the face in these samples. Not continuous playback or listening."
+  },
+  "latest_private_assembly": {
+    "name": "internal-pilot-v2.mp4",
+    "sha256": "1092aee903fdb34f5281b42540e7ec0c42193c289380465fd40cdac8620b80d0",
+    "duration_s": 64.5,
+    "video_frames": 1935,
+    "audio_stream_duration_s": 64.482,
+    "review_scope": "Full FFmpeg decode succeeded; eight decoded captioned samples inspected at 16.5,24,27,41.7,43.5,50,60,63 seconds. Previous assembly had 24 samples across all scenes. No auditory, full temporal or independent review.",
+    "decoded_audio_sha256": "d6ea2c401862c70b5b48597ad0883fbbf30102a83d28c1ac7c889e6d009334da",
+    "audio_verification": "Decoded AAC samples match V1 exactly; V1/source zero-lag correlation0.999989. This is not a listening or voice-identity verification."
+  },
+  "tests": {
+    "node_tests_passed": 12,
+    "artistic_approval": false
+  },
+  "full_production_gate": "FAIL; actual approval, reviewer/evidence/insight and outsider fields remain incomplete.",
+  "next_priority": "Continue richer cause/effect acting in the responsibility and listening beats; resolve actual listening, source-profile identity, caption word/speaker boundaries and cup sync before pilot approval. Do not restart the gate exercise or treat sampled frames/tests as approval.",
+  "private_continuation_bundle": {
+    "library_file_id": "libfile_2a2569310a8481919a251bf91621ecb0",
+    "file_id": "file_00000000d4008211810eafe599d5937e",
+    "name": "FounderNotes-Internal-Pilot-Checkpoint-eac2e46.zip",
+    "version": 0,
+    "contents": "Latest picture and assembled pilot, unchanged existing dialogue, provisional captions, private manifests and selected decoded review evidence. No third-party/reference footage or public source included.",
+    "delivery_status": "Internal, not approved."
+  }
+}

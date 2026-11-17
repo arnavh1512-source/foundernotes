@@ -1,4 +1,16 @@
 {
   "schema_version": 1,
-  "videos": []
+  "videos": [
+    {
+      "type": "video",
+      "video_id": "philosopher-stick-pilot-64s-eac2e46",
+      "summary": "Complete-duration internal stick pilot rebuilt with existing dialogue; needs audiovisual and independent review",
+      "evidence": "docs/PHILOSOPHER_STICK_PILOT_CHECKPOINT.json; code eac2e46ffa4526c481a41541a2387c10ffcbf7c8; CI44151191616/artifact14358329040; private assembled SHA1092aee903fdb34f5281b42540e7ec0c42193c289380465fd40cdac8620b80d0",
+      "verification": "Twelve Node tests and successful CI; full assembled decode; sampled encoded picture, cup silhouette and captioned frames inspected. No listening, continuous playback, outsider or owner approval. Full-production gate FAIL preserved.",
+      "status": "needs_work",
+      "style_fingerprint": "Original slender stick Youth and Philosopher; restrained sage/slate/bronze; gate illustration, room argument, responsibility cords, identical hill-event panels, qualified gate return.",
+      "owner_approved": false,
+      "recorded_at": "2026-11-17T18:52:03+00:00"
+    }
+  ]
 }

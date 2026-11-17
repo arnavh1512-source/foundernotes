@@ -48,3 +48,8 @@ Do not evade a platform verification page, replace the narrator, label the Pillo
 Preserve the episode's `workflow.json`, evidence files and media under its existing studio-output folder. Use `packet` to inspect the actual state. On a fresh machine initialize a new episode and register the accessible sources honestly; do not paste an old approval or invent missing renders. Read the standing mistakes file and reference study before each scene assignment.
 
 The owner request authorizes continuing this work, but the documents and coordinator are not a continuously running video-generation service. Report concrete blockers and unresolved review criteria without disguising them as successful automation.
+
+
+## Current pilot runtime update, 2026-11-18
+
+The full 64.5-second original stick pilot now has a working offline builder and full-rate GitHub Actions render. FFmpeg/FFprobe assembly and the existing review_frames.py were used locally. The earlier module-availability table is historical: local Playwright/Chromium exist, but launch failed on process socket permissions. No restriction-weakening workaround or paid engine was used. Existing dialogue was recovered privately and reused; no live synthesis or replacement voice was generated. See PHILOSOPHER_STICK_PILOT_CHECKPOINT.json and its review for exact source/media identities and honest pending listening/creative criteria. PR 13 is the draft continuation after PR 12 was already merged.

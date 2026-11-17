@@ -1,4 +1,30 @@
 # Animation continuation checkpoint
+
+Resume the full 64.5-second original stick pilot in **draft PR 13**: https://github.com/arnavh1512-source/foundernotes/pull/13. PR 12 was already merged before this continuation; do not reopen or merge it. Branch: `codex/benchmark-performance-rebuild`. Check its live head before edits and update with the expected SHA so another run’s work is preserved.
+
+Read `PHILOSOPHER_STICK_PILOT_CHECKPOINT.json`, `PHILOSOPHER_STICK_PILOT_REVIEW_2026-11-18.md`, CLAUDE.md, PRODUCTION_ROUTE.md and persistent mistakes first. The current project is the measured dialogue pilot, not another isolated 14.5-second exercise. Earlier records below are historical evidence, not the current task state.
+
+## Current production route
+
+Use `.claude/skills/motion/assets/pilot-performance.mjs`, `examples/philosopher-pilot.template.html` and `scripts/build-philosopher-pilot.mjs`. The offline builder reuses the original gate geometry/drawing and story-motion helpers. The public viewer-first plan is `examples/philosopher-pilot.plan.json` under that same motion skill; copy it to the episode’s existing research path before running the existing gate. Preserve pending review fields. Geometry/contact tests and CI render are technical evidence only.
+
+The private existing audio has a durable file identity and SHA in the checkpoint. Reuse it at original speed, never synthesize or substitute a voice. Do not commit audio, original script, prior owner media, provisional caption wording or benchmark footage to this public repository. Private caption recovery is OCR plus source script, not a heard transcription. Preserve it in the internal media checkpoint rather than recovering it from scratch every run.
+
+Local FFmpeg/FFprobe and standard frame-review tools work. Chromium is installed but launch failed on socket permissions; use the existing GitHub Actions renderer rather than weakening restrictions. Artifact transfer from GitHub works. Agent-Reach is absent and permits native fallback. Current direct-reference access limits are in the checkpoint; retain actual sampled footage evidence without claiming listening or channel attribution.
+
+## Next work
+
+1. Resume the latest exact render/assembly and its verified findings in the checkpoint. Do not present a previous artifact as evidence for newer source.
+2. Review whole-body acting and normal-speed continuity, especially the cup lowering, listener reactions and responsibility sequence. Improve one substantial cause/effect gap, then render and inspect changed media.
+3. Resolve actual listening and approved-profile identity, complete spoken words, caption/speaker timing, comfortable mix and cup contact sync before approval. The existing audio has not been changed to force a loudness pass.
+4. Continue actual accessible Alan Becker, Day One Films, PsychToonsHQ, PsychDoodleTV and gly2wBcnZUQ comparisons. A text shell or a frame sheet does not validate audiovisual timing or sound. Do not copy reference assets.
+5. Keep the full-production gate blocked until actual pilot and outsider/owner review. Do not invent an independent review or treat passing geometry/decode checks as creative approval.
+
+Keep intermediate outputs internal. Notify the owner only for substantial milestones or an actionable blocker. Continue within draft scope; never publish, merge, spend credits or replace voices. The existing continuation task is already configured; do not create a duplicate.
+
+## Historical checkpoint records
+
+# Animation continuation checkpoint
 Owner direction: continue independently without waiting for another "next"; keep intermediate drafts internal. Last updated 2026-11-17.
 
 ## Resume here

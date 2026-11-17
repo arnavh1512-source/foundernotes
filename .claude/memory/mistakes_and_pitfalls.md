@@ -119,3 +119,19 @@ The initial entries preserve documented observations from the 2026-11-11 study a
 - Cause / rationale: One fixed wide composition showed the open arch throughout the failed gate attempt and reassessment.
 - Correction / recipe: Stage the failed tactic more closely, then widen only after the head turns. Reuse the existing camera matrix helper, keep world/contact coordinates fixed, and protect figure bounds and reveal timing with tests.
 - Verification: Eight local Node tests passed. CI run 44120771407 passed and its exact MP4 was downloaded and decoded. Selected encoded frames and all 36 frames of the reveal transition were inspected. Arch visibility timing verified; comprehension, continuous playback, sound and artistic approval remain pending.
+
+### philosopher-pilot-64s-first-picture — The full argument used an unvarying distant wide shot
+
+- Recorded (UTC): 2026-11-17T18:37:22+00:00
+- Evidence: CI run 44147976041, artifact 14356749290, decoded contact sheet at 14.5/20/25/41/42/45.9 seconds. docs/PHILOSOPHER_STICK_PILOT_REVIEW_2026-11-18.md.
+- Cause / rationale: The study and cup shots shared the same untransformed room drawing despite different speaking intentions and a small consequential prop.
+- Correction / recipe: Keep an establishing view, cut to the challenging Youth, then the replying Philosopher, isolate the cup set-down, and return to a closer two-shot. Inspect the encoded changed views and subtitle-safe area; do not declare artistic improvement from geometry tests.
+- Verification: Initial wide-shot defect verified in encoded samples. Source correction at 55842bb3fbc09d0cf4fba042f09f843c751ea000; subsequently inspected its encoded overview and 24 selected close/cut samples. The final cup-arm correction is separately verified in docs/PHILOSOPHER_STICK_PILOT_REVIEW_2026-11-18.md. Continuous motion, listening and artistic approval remain pending.
+
+### philosopher-pilot-cup-silhouette — Cup set-down swept the elbow into the face area
+
+- Recorded (UTC): 2026-11-17T18:44:58+00:00
+- Evidence: Encoded picture b63d95d3b5ee6d9359afd58ac649a44ba186b23cf968b7a1555501a08b7ce562, decoded 41.4/41.7/42 seconds. At 41.7 seconds the source elbow is [1273.33,447.06], only 12.06 pixels below the head center.
+- Cause / rationale: The held-cup arm reused the Youth bend direction; the wrist passes close to its shoulder while lowering the prop, forcing the elbow around the high side.
+- Correction / recipe: Use one consistent opposite bend for the Philosopher cup arm for both lift and lowering. Keep wrist attached to the actual handle; require elbow clearance below the head over the set-down. Re-render and inspect held, intermediate and settled silhouettes.
+- Verification: Defect verified in encoded samples and matching geometry. Twelve tests pass after the correction, including the new elbow clearance check. Follow-up: CI44151191616/artifact14358329040, picture SHAe141561465f36b4256502908e5debda5aa66521c810d1794d7493ac721e4a743; ten decoded cup/rest/lowering samples inspected. Elbow clears the face in those samples. Full temporal and auditory review remain pending.
