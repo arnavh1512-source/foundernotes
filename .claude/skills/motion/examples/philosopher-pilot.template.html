@@ -23,8 +23,12 @@ function actor(g,color){
  s.beginPath();s.arc(...p.head,31,0,Math.PI*2);s.fillStyle='#f5efdf';s.fill();s.strokeStyle=color;s.lineWidth=6;s.stroke();
  const dir=p.facing||1;
  s.beginPath();s.arc(p.head[0]+dir*12,p.head[1]-4,3,0,Math.PI*2);s.fillStyle=color;s.fill();
+ if(p.intent==='withhold')stroke(s,[[p.head[0]+dir*5,p.head[1]-18],[p.head[0]+dir*20,p.head[1]-17]],3,color);
  if(p.intent==='argue'||p.intent==='strain')stroke(s,[[p.head[0]+dir*5,p.head[1]-16],[p.head[0]+dir*20,p.head[1]-9]],3,color);
- stroke(s,[[p.head[0]+dir*8,p.head[1]+13],[p.head[0]+dir*18,p.head[1]+11]],3,color);
+ if(p.intent==='invite'){
+  s.beginPath();s.moveTo(p.head[0]+dir*7,p.head[1]+11);s.quadraticCurveTo(p.head[0]+dir*14,p.head[1]+19,p.head[0]+dir*21,p.head[1]+10);s.strokeStyle=color;s.lineWidth=3;s.stroke();
+  const hand=g.arms[1].wrist;stroke(s,[[hand[0]+8,hand[1]+2],[hand[0]-14,hand[1]+2]],5,color);stroke(s,[[hand[0]-14,hand[1]+2],[hand[0]-20,hand[1]-5]],4,color);
+ }else stroke(s,[[p.head[0]+dir*8,p.head[1]+13],[p.head[0]+dir*18,p.head[1]+11]],3,color);
 }
 function room(){
  s.fillStyle='#e9e5d9';s.fillRect(0,0,1920,1080);

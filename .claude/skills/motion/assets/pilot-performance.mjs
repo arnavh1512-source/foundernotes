@@ -17,7 +17,8 @@ export function pilotShotAt(time){
  return PILOT_SHOTS.find(s=>t>=s.start&&t<s.end)||PILOT_SHOTS.at(-1);
 }
 export function pilotCupAt(time){
- const lift=time>=41&&time<46?1-progress(time,41.4,.6):progress(time,23,.6)*(1-progress(time,26,.7));
+ // Keep the cup down while replying; the raised cup at41 follows the intervening vignette.
+ const lift=time>=41&&time<46?1-progress(time,41.4,.6):0;
  const center=[1200+80*lift,597-122*lift];
  return {center,grip:[center[0]+30,center[1]+1]};
 }
@@ -40,6 +41,14 @@ export function pilotActorAt(time,role,mode='study'){
  let p;
  if(role==='philosopher'){
   p={hip:[1320,650],chest:[1320,520],head:[1310,435],feet:[[1240,830],[1400,830]],hands:[pilotCupAt(time).grip,[1370,678]],facing:-1,intent:'listen'};
+  if(time>=14.5&&time<29){
+   const attention=progress(time,15.4,.65)*(1-progress(time,21.7,.65));
+   const reply=progress(time,22.9,.55),invite=progress(time,26.1,.65);
+   p.chest[0]-=14*attention+14*reply;p.chest[1]+=5*attention+5*reply;
+   p.head[0]-=18*attention+20*reply;p.head[1]+=8*attention+5*reply;
+   p.hands[1]=pilotBlend(p.hands[1],[1190,565],invite);
+   p.intent=invite>.2?'invite':reply>.1?'reply':'listen';
+  }
  }else if(mode==='burden'){
   const task=pilotTaskAt(time),notice=progress(time,32.6,.35)*(1-progress(time,35.5,.5));
   const miss=progress(time,37.5,.5),settle=progress(time,39.2,1.0);
@@ -55,14 +64,22 @@ export function pilotActorAt(time,role,mode='study'){
   const lean=progress(time,14.5,1.2)*(1-progress(time,22,.8));
   const point=progress(time,15.2,.4)*(1-progress(time,17.5,.5))+.65*progress(time,20,.4)*(1-progress(time,21.4,.4));
   p={hip:pilotBlend([650,610],[690,640],lean),chest:pilotBlend([690,470],[745,510],lean),head:pilotBlend([710,385],[775,425],lean),feet:[[590,830],[710,830]],hands:[pilotBlend([665,630],[810,620],lean),pilotBlend([720,630],[820+50*point,570-80*point],lean)],facing:1,intent:lean>.3?'argue':'listen'};
-  p.head[1]+=6*Math.sin(Math.PI*progress(time,24.5,.8));
+  const listening=progress(time,22,.8);
+  if(time<29){
+   p.hip=pilotBlend(p.hip,[675,640],listening);p.chest=pilotBlend(p.chest,[715,500],listening);p.head=pilotBlend(p.head,[740,420],listening);
+   p.hands[0]=pilotBlend(p.hands[0],[810,620],listening);p.hands[1]=pilotBlend(p.hands[1],[755,640],listening);
+   const withhold=progress(time,25.2,.35)*(1-progress(time,26.1,.5)),ready=progress(time,27.8,.6);
+   p.chest[0]+=6*withhold+10*ready;p.head[0]+=12*withhold+14*ready;p.head[1]-=4*withhold;
+   p.hands[1]=pilotBlend(p.hands[1],[805,560],withhold);p.hands[1]=pilotBlend(p.hands[1],[800,610],ready);
+   if(listening>.9)p.intent=withhold>.2?'withhold':ready>.2?'ready':'listen';
+  }
   const recoil=progress(time,43.1,.45)*(1-progress(time,45.2,.6));
   p.hip[0]-=12*recoil;p.chest[0]-=18*recoil;p.head[0]-=28*recoil;
   p.hands[0]=pilotBlend(p.hands[0],[650,600],recoil);p.hands[1]=pilotBlend(p.hands[1],[770,550],recoil);
  }
  const normalSide=p.facing===1?-1:1;
  const shoulders=[-5,5].map(d=>[p.chest[0]+d,p.chest[1]]);
- const arms=shoulders.map((a,i)=>solveArm(a,p.hands[i],84,90,role==='philosopher'&&i===0?-1:1));
+ const arms=shoulders.map((a,i)=>solveArm(a,p.hands[i],84,90,role==='philosopher'&&(i===0||(time>=14.5&&time<29))?-1:1));
  const legs=p.feet.map(f=>solveArm(p.hip,f,115,120,normalSide));
  return {pose:p,shoulders,arms,legs,toeTargets:legs.map(a=>[a.wrist[0]+p.facing*19,a.wrist[1]]),spineControl:[(p.hip[0]+p.chest[0])/2-16*p.facing,(p.hip[1]+p.chest[1])/2+8]};
 }

@@ -58,3 +58,20 @@ test('the task interruption preserves phone grip, planted support and an unfinis
  assert.ok(pilotTaskAt(40.9).pages.every(p=>p.fallen));
  assert.deepEqual(pilotTaskAt(40.5).pages,pilotTaskAt(40.9).pages);
 });
+
+
+test('conversation beats distinguish listening, withheld interruption and invitation',()=>{
+ const young=t=>pilotActorAt(t,'youth'),mentor=t=>pilotActorAt(t,'philosopher');
+ for(let f=0;f<435;f++){
+  const t=14.5+f/30;
+  assert.deepEqual(mentor(t).pose.hip,[1320,650]);
+  assert.deepEqual(mentor(t).pose.feet,[[1240,830],[1400,830]]);
+  assert.deepEqual(pilotCupAt(t).center,[1200,597]);
+  if(t>=22.8)assert.deepEqual(young(t).pose.hands[0],[810,620]);
+ }
+ assert.equal(young(25.8).pose.intent,'withhold');assert.equal(young(27).pose.intent,'listen');
+ assert.equal(young(28.7).pose.intent,'ready');assert.equal(mentor(27).pose.intent,'invite');
+ assert.ok(mentor(17).pose.head[0]<mentor(14.5).pose.head[0]-15);
+ assert.ok(mentor(27).arms[1].wrist[0]<mentor(23).arms[1].wrist[0]-100);
+ assert.ok(young(25.8).arms[1].wrist[1]<young(27).arms[1].wrist[1]-60);
+});
