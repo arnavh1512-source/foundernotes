@@ -1,0 +1,48 @@
+name: Philosopher visual pilot
+on:
+  push:
+    paths:
+      - '.claude/skills/painted-character-motion/**'
+      - '.github/workflows/philosopher-preview.yml'
+  pull_request:
+    paths:
+      - '.claude/skills/painted-character-motion/**'
+      - '.github/workflows/philosopher-preview.yml'
+  workflow_dispatch:
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - run: python .claude/skills/podcast-scout-skill/scripts/viewer_first_gate.py .claude/skills/painted-character-motion/productions/philosopher/research/viewer-first-plan.json --stage pre-script
+      - run: node --test .claude/skills/painted-character-motion/tests/*.cjs
+      - run: npm ci --prefix .claude/skills/motion --no-audit --no-fund
+      - run: npx playwright install --with-deps chromium
+        working-directory: .claude/skills/motion
+      - name: Render silent 75-second pilot
+        run: node .claude/skills/motion/scripts/render.mjs .claude/skills/painted-character-motion/productions/philosopher/index.html --out studio-output/philosopher-visual/pilot.mp4 --draft
+      - name: Render shot review sheet
+        run: node .claude/skills/motion/scripts/render.mjs .claude/skills/painted-character-motion/productions/philosopher/index.html --out studio-output/philosopher-visual/stills --stills 1,9,16,25,34,43,48,51,58,65,72
+      - name: Verify actual video decode
+        run: |
+          ffmpeg -v error -i studio-output/philosopher-visual/pilot.mp4 -f null -
+          python - <<'PY'
+          import json, subprocess
+          d=json.loads(subprocess.check_output(['ffprobe','-v','error','-show_streams','-show_format','-of','json','studio-output/philosopher-visual/pilot.mp4']))
+          v=next(s for s in d['streams'] if s['codec_type']=='video')
+          assert (v['width'],v['height'])==(960,540), v
+          assert int(v['nb_frames'])==1125, v
+          assert abs(float(d['format']['duration'])-75)<.1, d
+          assert not any(s['codec_type']=='audio' for s in d['streams']), 'This draft must be explicitly silent'
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: philosopher-75s-silent-visual-draft
+          path: studio-output/philosopher-visual/

@@ -1,0 +1,135 @@
+{
+  "schema_version": 1,
+  "viewer_need": {
+    "who": "Viewers drawn to fictional philosophical conversations",
+    "struggling_with": "feeling overwhelmed and treating an interpretation as the only possible account",
+    "daily_life_situation": "An argument in which frustration makes another perspective hard to consider",
+    "why_care_now": "An evergreen fictional reflection; no promise of treatment or a universal solution"
+  },
+  "learning_promise": {
+    "understand": "the difference between a circumstance and a character’s interpretation of it",
+    "how_to": "ask what happened before deciding what it means",
+    "specific_outcome": "Notice the Youth’s certainty and the Philosopher’s contrasting interpretation without denying real constraints"
+  },
+  "viewer_promise_sentence": "This video is for someone struggling with feeling overwhelmed and treating an interpretation as the only possible account; they'll understand the difference between a circumstance and a character’s interpretation of it and leave knowing how to ask what happened before deciding what it means.",
+  "evidence_and_angle": {
+    "fresh_explanation": "A dramatic exchange and a physical cup interrupting the visual storm; this pilot tests acting and staging, not psychological efficacy",
+    "relevant_limit": "Character statements are fictional viewpoints; real obstacles and suffering are not imaginary. No medical or universal well-water-temperature claims in this excerpt.",
+    "evidence": [
+      {
+        "id": "E1",
+        "locator": "Owner-supplied The Eccentric Philosopher shooting script, scenes 2, 5 and 6, read 2026-11-17",
+        "what_it_supports": "The requested fictional confrontation, cup interruption and two-perspective visual; not empirical psychology",
+        "reviewed": true
+      },
+      {
+        "id": "E2",
+        "locator": "Owner-supplied shooting script, production notes, read 2026-11-17",
+        "what_it_supports": "Restless Youth versus restrained Philosopher; controlled amber study and contrast; silence at the cup",
+        "reviewed": true
+      }
+    ],
+    "what_people_find_interesting": [
+      {
+        "detail": "A calm reply after a tense desk impact",
+        "why_this_viewer_cares": "An editorial hypothesis that the contrast makes the disagreement readable; not an audience finding",
+        "evidence_ids": [
+          "E1",
+          "E2"
+        ]
+      },
+      {
+        "detail": "One cup interrupts the storm and redirects attention",
+        "why_this_viewer_cares": "An editorial hypothesis that a physical event can make an abstract shift visible",
+        "evidence_ids": [
+          "E1"
+        ]
+      }
+    ]
+  },
+  "opening": {
+    "recognizable_problem": "An overwhelmed visitor challenges an impossibly calm host",
+    "curiosity_question": "Will the host engage with the visitor’s frustration?",
+    "early_insight": "The pilot contrasts circumstance and interpretation in an editorial subtitle, presented as a question rather than a verified treatment claim",
+    "first_visual": "An opening question over a dusk hill; footsteps lead into the study",
+    "first_15_to_30_seconds": "Desk impact, reaction, then the distinction between what happened and what it means",
+    "first_insight_at_seconds": 25,
+    "evidence_ids": [
+      "E1",
+      "E2"
+    ]
+  },
+  "chapters": [
+    {
+      "title": "The challenge",
+      "new_question": "Why does the visitor reject the host’s calm?",
+      "new_insight": "Their disagreement begins with differing interpretations",
+      "distinct_payoff": "Visible contrast between restless and restrained body language",
+      "daily_life_application_or_knowledge_gain": "Recognize certainty during an argument",
+      "evidence_ids": [
+        "E1"
+      ]
+    },
+    {
+      "title": "The interruption",
+      "new_question": "What changes when the host puts down the cup?",
+      "new_insight": "A pause can reveal the interpretation driving the visitor’s account within this story",
+      "distinct_payoff": "Storm freezes and attention returns to the speaker’s hands",
+      "daily_life_application_or_knowledge_gain": "Ask what happened and what meaning was added; real constraints still remain",
+      "evidence_ids": [
+        "E1",
+        "E2"
+      ]
+    }
+  ],
+  "visual_storytelling": {
+    "coherent_style": "Original textured SVG world, restrained ink outlines and amber/grey study",
+    "continuity_rule": "Youth screen-left, Philosopher screen-right; cup remains in one hand until contact and then stays on the table",
+    "scenes": [
+      {
+        "chapter_index": 0,
+        "visible_action": "Visitor paces, stops and strikes the desk; host reacts with restrained eye/head movement",
+        "why_this_scene_earns_its_place": "Establish disagreement through acting",
+        "meaningful_change": "Pacing becomes confrontation rather than arbitrary motion"
+      },
+      {
+        "chapter_index": 1,
+        "visible_action": "A hand carries a cup down to a tabletop; scribbles freeze and retract",
+        "why_this_scene_earns_its_place": "Test prop contact and visual cause/effect",
+        "meaningful_change": "Attention shifts from spectacle to the visitor’s interpretation"
+      }
+    ]
+  },
+  "narration_and_sound": {
+    "natural_phrasing": "Silent visual animatic initially; dialogue cues are editorial subtitles, not a recorded performance",
+    "deliberate_emphasis": "Cup contact and Youth reaction determine the pause; no synthetic voice is substituted",
+    "comfortable_transitions": "Hard cuts follow actions, flashback uses a paper transition",
+    "explain_limits_with_claims": "Closing cue states that real obstacles do not disappear when perspective changes"
+  },
+  "runtime_substance": {
+    "no_padding": true,
+    "insufficient_substance_action": "stop_and_research_or_rescope",
+    "why_this_length_is_earned": "A 75-second visual test of ten distinct shots; timing is provisional until approved dialogue exists",
+    "substance_per_chapter": "Challenge tests walking, gesture, desk contact and eye-line; interruption tests cup attachment, release, reaction and perspective"
+  },
+  "pilot": {
+    "target_seconds": 75,
+    "review_questions": {
+      "outsider_understands_problem": true,
+      "outsider_wants_answer": true,
+      "outsider_already_learned_something": true
+    },
+    "actual_review": {
+      "status": "pending",
+      "actual_seconds": null,
+      "reviewer": "",
+      "evidence_path": "",
+      "one_insight_already_delivered": "",
+      "outsider_test": {
+        "outsider_understands_problem": false,
+        "outsider_wants_answer": false,
+        "outsider_already_learned_something": false
+      }
+    }
+  }
+}
