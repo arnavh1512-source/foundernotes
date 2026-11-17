@@ -66,6 +66,15 @@ jobs:
           assert abs(float(data['format']['duration'])-21)<.1, data
           assert int(video['nb_frames'])==315, video
           PYTHON
+      - name: Render internal whole-body stick performance rebuild
+        run: |
+          node .claude/skills/motion/scripts/build-stick-performance.mjs studio-output/stick-rebuild/index.html
+          node .claude/skills/motion/scripts/render.mjs studio-output/stick-rebuild/index.html --out studio-output/stick-rebuild/draft.mp4 --draft
+          python .claude/skills/podcast-scout-skill/scripts/review_frames.py studio-output/stick-rebuild/draft.mp4 --out studio-output/stick-rebuild/review --times 0 1.2 2.5 3.5 4.15 4.8 5.8 7 8.3 9.4 10.4
+      - uses: actions/upload-artifact@v4
+        with:
+          name: internal-stick-performance-rebuild
+          path: studio-output/stick-rebuild/
       - uses: actions/upload-artifact@v4
         with:
           name: painted-character-technical-proof
