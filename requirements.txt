@@ -1,0 +1,3 @@
+# Optional ElevenLabs character-dialogue adapter. Local-only studio tools do not need it.
+elevenlabs==2.79.0
+python-dotenv==1.2.2

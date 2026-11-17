@@ -190,3 +190,7 @@ Use [.claude/skills/podcast-scout-skill/references/creative-production-loop.md](
 ## VoiceStudio dialogue and original character animation
 
 The optional [VoiceStudio dialogue adapter](.claude/skills/podcast-scout-skill/references/voicestudio-dialogue.md) connects approved local profiles to the existing narration assembler. The [original character SVG kit](.claude/skills/painted-character-motion/SKILL.md) consumes measured timings and uses the existing HTML renderer. Both feed the normal assembly/QC/approval workflow. VoiceStudio must be installed separately; offline fixtures and render smoke tests are not voice or art approval.
+
+## Optional ElevenLabs character dialogue
+
+The [ElevenLabs adapter](.claude/skills/podcast-scout-skill/references/elevenlabs-dialogue.md) connects approved preset character voices to measured narration, captions and the painted timing bridge. It loads the API key privately; its default mode makes no network request. Speech generation requires explicit --generate and consumes account credits. No generation or performance approval is inferred from successful onboarding.

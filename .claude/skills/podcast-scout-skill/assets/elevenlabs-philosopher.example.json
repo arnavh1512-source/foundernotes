@@ -1,0 +1,44 @@
+{
+  "project": "The Eccentric Philosopher \u2014 two-voice audition",
+  "speakers": {
+    "youth": {
+      "voice_id": "TX3LPaxmHKxFdv7VOQHJ"
+    },
+    "philosopher": {
+      "voice_id": "JBFqnCBsd6RMkjVDRZzb"
+    }
+  },
+  "lead": 0.3,
+  "tail": 0.7,
+  "segments": [
+    {
+      "id": "s01",
+      "speaker": "youth",
+      "scene_id": "hook",
+      "text": "You honestly believe the world is simple? Life too?",
+      "pause_after": 0.65
+    },
+    {
+      "id": "s02",
+      "speaker": "philosopher",
+      "scene_id": "study",
+      "text": "Astonishingly simple. Yours, mine, every problem either of us has.",
+      "pause_after": 0.65
+    },
+    {
+      "id": "s03",
+      "speaker": "youth",
+      "scene_id": "question",
+      "text": "It's a chaotic heap of contradictions!",
+      "pause_after": 0.65
+    },
+    {
+      "id": "s04",
+      "speaker": "philosopher",
+      "scene_id": "close",
+      "text": "It isn't complicated. You are making it complicated.",
+      "pause_after": 0.8
+    }
+  ],
+  "_note": "Four-line audition only; voice identities and performances require listening and owner approval."
+}
