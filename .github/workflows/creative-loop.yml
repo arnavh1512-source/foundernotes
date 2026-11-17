@@ -70,7 +70,7 @@ jobs:
         run: |
           node .claude/skills/motion/scripts/build-stick-performance.mjs studio-output/stick-rebuild/index.html
           node .claude/skills/motion/scripts/render.mjs studio-output/stick-rebuild/index.html --out studio-output/stick-rebuild/draft.mp4 --draft
-          python .claude/skills/podcast-scout-skill/scripts/review_frames.py studio-output/stick-rebuild/draft.mp4 --out studio-output/stick-rebuild/review --times 0 1.2 2.5 3.5 4.15 4.8 5.8 7 8.3 9.4 10.4
+          python .claude/skills/podcast-scout-skill/scripts/review_frames.py studio-output/stick-rebuild/draft.mp4 --out studio-output/stick-rebuild/review --times 0 1.2 2.5 3.5 4.15 4.8 5.8 6.4 7 8.3 9.4 10.5 11.4 12.3 13.3 14.4
       - uses: actions/upload-artifact@v4
         with:
           name: internal-stick-performance-rebuild
