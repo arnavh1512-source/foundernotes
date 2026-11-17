@@ -46,7 +46,14 @@ function cup(t){
  for(let i=0;i<2;i++){s.beginPath();s.moveTo(x-7+i*14,y-28);s.quadraticCurveTo(x-14+i*14,y-42,x-6+i*14,y-54);s.strokeStyle='#b1af9b';s.lineWidth=2;s.stroke();}
 }
 function study(t){
- room();actor(pilotActorAt(t,'youth'),youthColor);actor(pilotActorAt(t,'philosopher'),mentorColor);cup(t);
+ // Cut around the speaking intention and consequential prop; retain the room axis.
+ let view={scale:1,x:960,y:450};
+ if(t>=16.4&&t<22.5)view={scale:1.7,x:850,y:520};
+ else if(t>=22.5&&t<29)view={scale:1.65,x:1190,y:530};
+ else if(t>=41&&t<42.7)view={scale:2.6,x:1240,y:550};
+ else if(t>=42.7&&t<46)view={scale:1.6,x:1030,y:530};
+ s.save();s.translate(960,450);s.scale(view.scale,view.scale);s.translate(-view.x,-view.y);
+ room();actor(pilotActorAt(t,'youth'),youthColor);actor(pilotActorAt(t,'philosopher'),mentorColor);cup(t);s.restore();
  words('A fictional argument',960,95,26,'#778174');
 }
 function burden(t){
