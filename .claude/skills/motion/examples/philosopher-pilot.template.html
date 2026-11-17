@@ -61,17 +61,18 @@ function burden(t){
  }
  actor(g,youthColor);words('Responsibilities remain real',960,110,28,'#778174');
 }
-function hill(x,palette){
+function hill(x,palette,t){
  s.save();s.translate(x,180);s.beginPath();s.rect(0,0,780,570);s.clip();s.fillStyle=palette[0];s.fillRect(0,0,780,570);
  s.fillStyle=palette[1];s.beginPath();s.moveTo(0,450);s.bezierCurveTo(190,420,250,200,460,230);s.bezierCurveTo(600,240,650,350,780,330);s.lineTo(780,570);s.lineTo(0,570);s.closePath();s.fill();
  for(const [tx,ty]of [[180,370],[545,270],[650,335]]){stroke(s,[[tx,ty],[tx,ty-100]],8,palette[2]);stroke(s,[[tx-28,ty-55],[tx,ty-85],[tx+26,ty-60]],6,palette[2]);}
- s.fillStyle=palette[2];s.fillRect(380,260,55,65);s.beginPath();s.moveTo(370,260);s.lineTo(407,225);s.lineTo(447,260);s.closePath();s.fill();s.restore();
+ s.fillStyle=palette[2];s.fillRect(380,260,55,65);s.beginPath();s.moveTo(370,260);s.lineTo(407,225);s.lineTo(447,260);s.closePath();s.fill();
+ const birdX=-30+(t-46)*84,wing=9+5*Math.sin(t*6);stroke(s,[[birdX-12,120-wing],[birdX,120],[birdX+12,120-wing]],4,palette[2]);s.restore();
 }
 function views(t){
  s.fillStyle='#e9e5d9';s.fillRect(0,0,1920,1080);
- hill(120,['#667981','#455c61','#c2c9b4']);hill(1020,['#dfd2a8','#9eaf85','#657c6c']);
+ hill(120,['#667981','#455c61','#c2c9b4'],t);hill(1020,['#dfd2a8','#9eaf85','#657c6c'],t);
  words('YOUTH',510,135,28,youthColor);words('PHILOSOPHER',1410,135,28,mentorColor);
- words('Same hill. Different readings.',960,830,32);
+ words('Same hill. Same event. Different readings.',960,830,32);
  const k=progress(t,49,.8);s.strokeStyle='#b78c4b';s.lineWidth=4;s.globalAlpha=k;s.strokeRect(495,430,70,90);s.strokeRect(1395,430,70,90);s.globalAlpha=1;
 }
 function gateOpening(t){

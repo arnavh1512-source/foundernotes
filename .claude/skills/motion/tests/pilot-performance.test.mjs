@@ -28,3 +28,8 @@ test('new performances preserve limbs, planted support and the actual cup handle
  }
 });
 
+test('the exit keeps stance feet planted after perspective projection',()=>{
+ const ground=(t,i)=>{const g=pilotExitAt(t),p=g.legs[i].wrist;return [g.depth.anchor[0]+(p[0]-190)*g.depth.scale,g.depth.anchor[1]+(p[1]-740)*g.depth.scale];};
+ for(const [a,b,i]of [[56.1,56.4,0],[56.65,56.9,1],[60.45,60.8,0]])assert.ok(distance(ground(a,i),ground(b,i))<1e-6);
+});
+
