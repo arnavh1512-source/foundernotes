@@ -33,3 +33,10 @@ test('the exit keeps stance feet planted after perspective projection',()=>{
  for(const [a,b,i]of [[56.1,56.4,0],[56.65,56.9,1],[60.45,60.8,0]])assert.ok(distance(ground(a,i),ground(b,i))<1e-6);
 });
 
+
+test('the cup arm stays below the face throughout the set-down',()=>{
+ for(let f=0;f<=30;f++){
+  const g=pilotActorAt(41+f/30,'philosopher');
+  assert.ok(g.arms[0].elbow[1]>=g.pose.head[1]+60,`elbow invades the face at ${41+f/30}`);
+ }
+});
