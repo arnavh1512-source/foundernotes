@@ -1,6 +1,6 @@
 // Original whole-body exercise. Reuses the existing FounderNotes motion geometry.
 // Draft: pure geometry checked; browser rendering and audiovisual review still required.
-import {progress, solveArm} from './story-motion.mjs';
+import {progress, solveArm, layerMatrix} from './story-motion.mjs';
 export const DURATION = 14.5;
 const keys = [
   {t:0, hip:[650,610], chest:[690,470], head:[710,385], feet:[[590,830],[710,830]], hands:[[665,630],[720,630]], label:'inspect'},
@@ -24,6 +24,14 @@ const keys = [
   {t:14.5, hip:[190,520], chest:[195,380], head:[180,295], feet:[[170,740],[210,740]], hands:[[155,540],[245,540]], label:'settle'}
 ];
 const blendPoint = (a,b,k) => a.map((v,i)=>v+(b[i]-v)*k);
+// Stay with the failed tactic, then reveal the route after the head turns toward it.
+export function cameraAt(time) {
+  if (!Number.isFinite(time)) throw new TypeError('time must be finite');
+  const reveal=progress(Math.max(0,Math.min(DURATION,time)),6.2,1);
+  const center=blendPoint([810,560],[570,470],reveal);
+  const zoom=1.9+(1.3-1.9)*reveal;
+  return {reveal,matrix:layerMatrix({x:center[0]-960,y:center[1]-540,zoom},1,1920,1080)};
+}
 export function poseAt(time) {
   if (!Number.isFinite(time)) throw new TypeError('time must be finite');
   const t=Math.max(0,Math.min(DURATION,time));
@@ -71,3 +79,4 @@ export function geometryAt(time) {
   const toeTargets=legs.map(a=>[a.wrist[0]+19*Math.cos(toeAngle),a.wrist[1]-19*Math.sin(toeAngle)]);
   return {pose:p,arms,legs,shoulders,handTargets:hands,spineControl,gateOffset,gripping,toeTargets};
 }
+

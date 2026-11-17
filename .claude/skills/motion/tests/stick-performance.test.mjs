@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {geometryAt,poseAt,DURATION} from '../assets/stick-performance.mjs';
+import {geometryAt,poseAt,cameraAt,DURATION} from '../assets/stick-performance.mjs';
 const distance=(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1]);
 test('whole-body pose track preserves limbs, grips and planted support',()=>{
  for(let f=0;f<=Math.round(DURATION*30);f++){
@@ -79,3 +79,22 @@ test('feet turn toward the chosen route without changing foot length',()=>{
  assert.ok(geometryAt(0).toeTargets[0][0]>geometryAt(0).legs[0].wrist[0]);
  assert.ok(geometryAt(8).toeTargets[0][0]<geometryAt(8).legs[0].wrist[0]);
 });
+
+test('the route is revealed after reassessment while the complete figure stays in frame',()=>{
+ const project=(m,p)=>[m[0]*p[0]+m[2]*p[1]+m[4],m[1]*p[0]+m[3]*p[1]+m[5]];
+ assert.ok(project(cameraAt(0).matrix,[295,500])[0]<0);
+ assert.deepEqual(cameraAt(0),cameraAt(6.2));
+ assert.ok(project(cameraAt(7.2).matrix,[95,500])[0]>0);
+ for(let f=0;f<=Math.round(DURATION*30);f++){
+  const t=f/30,g=geometryAt(t),m=cameraAt(t).matrix;
+  const points=[g.pose.hip,g.pose.chest,...g.pose.feet,...g.toeTargets,
+   [g.pose.head[0]-34,g.pose.head[1]-34],[g.pose.head[0]+34,g.pose.head[1]+34],
+   ...g.arms.flatMap(a=>[a.shoulder,a.elbow,a.wrist]),...g.legs.map(a=>a.elbow)];
+  for(const p of points){const [x,y]=project(m,p);assert.ok(x>=12&&x<=1908&&y>=12&&y<=1068,`clipped pose at ${t}`);}
+  assert.deepEqual(cameraAt(t),cameraAt(t));
+ }
+ assert.deepEqual(cameraAt(-1),cameraAt(0));
+ assert.deepEqual(cameraAt(999),cameraAt(DURATION));
+ assert.throws(()=>cameraAt(NaN),/finite/);
+});
+
