@@ -25,7 +25,7 @@ export function pilotRoomCameraAt(time){
  if(time>=32.6&&time<34.5)return {scale:2,x:825,y:525};
  if(time>=29&&time<41)return {scale:1.25,x:930,y:520};
  if(time>=22.5&&time<29)return {scale:1.65,x:1190,y:530};
- if(time>=17.7&&time<20.3)return {scale:2,x:790,y:510};
+ if(time>=17.7&&time<20.3)return {scale:2,x:760,y:510};
  if(time>=16.4&&time<22.5)return {scale:1.7,x:850,y:520};
  return {scale:1,x:960,y:450};
 }
@@ -123,7 +123,7 @@ export function pilotActorAt(time,role,mode='study'){
  }
  const normalSide=p.facing===1?-1:1;
  const shoulders=[-5,5].map(d=>[p.chest[0]+d,p.chest[1]]);
- const arms=shoulders.map((a,i)=>solveArm(a,p.hands[i],84,90,role==='philosopher'&&(i===0||(time>=14.5&&time<29))?-1:1));
+ const arms=shoulders.map((a,i)=>solveArm(a,p.hands[i],84,90,role==='philosopher'?-1:1));
  const legs=p.feet.map(f=>solveArm(p.hip,f,115,120,normalSide));
  return {pose:p,shoulders,arms,legs,toeTargets:legs.map(a=>[a.wrist[0]+p.facing*19,a.wrist[1]]),spineControl:[(p.hip[0]+p.chest[0])/2-16*p.facing,(p.hip[1]+p.chest[1])/2+8]};
 }

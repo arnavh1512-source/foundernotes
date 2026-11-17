@@ -139,3 +139,12 @@ test('room framing and ending separate claim, reaction, unchanged lock and chose
  assert.ok(lock[0]>800&&lock[0]<1120&&lock[1]>350&&lock[1]<650,'actual closed lock stays central');
  assert.throws(()=>pilotRoomCameraAt(NaN),/finite/);assert.throws(()=>pilotEndingViewAt(NaN),/finite/);
 });
+
+
+test('close claim excludes mentor face fragments and explanation arm clears his face',()=>{
+ const view=pilotRoomCameraAt(18.8),mentor=pilotActorAt(18.8,'philosopher');
+ assert.ok(mentor.pose.head[0]-31>view.x+960/view.scale+10,'exclude the entire offscreen face');
+ for(let f=0;f<90;f++){const t=43+f/30,g=pilotActorAt(t,'philosopher');
+  assert.ok(distance(g.arms[1].elbow,g.pose.head)>75,'free elbow invades head '+t);
+ }
+});
