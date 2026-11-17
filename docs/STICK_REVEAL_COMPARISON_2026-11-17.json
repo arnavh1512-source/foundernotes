@@ -1,0 +1,153 @@
+{
+  "template_only": false,
+  "episode": "stick-performance-craft-study",
+  "cut": "route-reveal-2026-11-17",
+  "render_path": "studio-output/stick-reveal/revision.mp4",
+  "render_sha256": "1b9db90aa9eee238fa013738e9f4ca13f872e311e7bb7121fbd486d0fbaf0bc3",
+  "reviewer": "Codex coordinator, not independent",
+  "method": "Encoded frame/contact-sheet review; no continuous viewing or listening",
+  "coverage": {
+    "our_intervals_s": [],
+    "our_sample_times_s": [
+      0,
+      1.2,
+      3.5,
+      5.8,
+      6.2,
+      6.5,
+      6.7,
+      7.2,
+      9.4,
+      14.4
+    ],
+    "decoded_frame_range": [
+      183,
+      218
+    ],
+    "listened": false,
+    "limitations": [
+      "36 transition frames inspected in a contact sheet",
+      "No continuous playback or audio review",
+      "Reference file original channel attribution unverified"
+    ]
+  },
+  "references": [
+    {
+      "url": "https://www.youtube.com/@alanbecker",
+      "video_url": null,
+      "status": "pending",
+      "reviewed_intervals_s": [],
+      "evidence": [
+        "Current creator-upload browser attempt: Site Unavailable",
+        "Prior Alan sampled-frame observations in repository reviews"
+      ]
+    },
+    {
+      "url": "https://www.youtube.com/@dayonefilmsofficial",
+      "video_url": null,
+      "status": "pending",
+      "reviewed_intervals_s": [],
+      "evidence": []
+    },
+    {
+      "url": "https://www.youtube.com/@psychtoonshq",
+      "video_url": null,
+      "status": "pending",
+      "reviewed_intervals_s": [],
+      "evidence": []
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=gly2wBcnZUQ",
+      "video_url": "https://www.youtube.com/watch?v=gly2wBcnZUQ",
+      "status": "pending",
+      "reviewed_intervals_s": [],
+      "evidence": []
+    },
+    {
+      "url": "https://www.youtube.com/@psychdoodletv",
+      "video_url": null,
+      "status": "pending",
+      "reviewed_intervals_s": [],
+      "evidence": []
+    },
+    {
+      "url": null,
+      "video_url": null,
+      "source_title": "Psychology-of-Discipline-SnapYT.App.mp4",
+      "source_sha256": "bdd6c9d1a08fbb9362d00a254732c06d84a31fdb2be7d65d71e53fdbadc20012",
+      "status": "sampled_frames_only",
+      "reviewed_intervals_s": [
+        [
+          0,
+          48
+        ]
+      ],
+      "sample_rate_fps": 0.5,
+      "evidence": [
+        "references/discipline-opening.jpg"
+      ],
+      "limitations": [
+        "Original channel attribution unverified",
+        "Sound and continuous motion not reviewed"
+      ]
+    }
+  ],
+  "criteria": {
+    "viewer_clarity": {
+      "status": "pending",
+      "comparisons": []
+    },
+    "character_acting": {
+      "status": "pending",
+      "comparisons": []
+    },
+    "meaningful_motion": {
+      "status": "pending",
+      "comparisons": []
+    },
+    "shot_variety_and_continuity": {
+      "status": "pending",
+      "comparisons": [
+        {
+          "our_start_s": 0,
+          "our_end_s": 7.2,
+          "reference_video_url": null,
+          "reference_start_s": 0,
+          "reference_end_s": 48,
+          "observed_difference": "Reference samples select clock/reaction/room framing. Our baseline shows the alternative route from the opening and adds no new visual information at discovery.",
+          "evidence": [
+            "baseline-focus/strip.jpg",
+            "references/discipline-opening.jpg"
+          ],
+          "finding_id": "route-visible-before-discovery",
+          "fix": "Focus on the failed tactic, then reveal the route after the head turn.",
+          "recheck_evidence": [
+            "review/decoded/strip.jpg",
+            "review/transition-all-frames.jpg"
+          ],
+          "resolution": "frame_visibility_verified; audience comprehension and continuous review pending"
+        }
+      ]
+    },
+    "visual_explanation": {
+      "status": "pending",
+      "comparisons": []
+    },
+    "pacing": {
+      "status": "pending",
+      "comparisons": []
+    },
+    "voice_and_sound": {
+      "status": "pending",
+      "comparisons": []
+    },
+    "finish_and_readability": {
+      "status": "pending",
+      "comparisons": []
+    }
+  },
+  "technical_qc": "Eight local tests and CI encoding/full-decode checks passed; full film QC not applicable to silent craft study",
+  "independent_critique": "pending",
+  "owner_review": "pending",
+  "overall": "needs_work"
+}
