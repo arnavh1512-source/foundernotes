@@ -10,12 +10,12 @@ const keys = [
   {t:3.5, hip:[620,690], chest:[650,560], head:[630,475], feet:[[590,830],[770,720]], hands:[[790,560],[790,530]], label:'strain'},
   {t:3.8, hip:[620,690], chest:[650,560], head:[630,475], feet:[[590,830],[770,720]], hands:[[790,560],[790,530]], label:'limit'},
   {t:4.15, hip:[560,725], chest:[575,620], head:[590,530], feet:[[470,830],[650,830]], hands:[[700,650],[670,675]], label:'slip'},
-  {t:4.8, hip:[550,720], chest:[540,610], head:[550,520], feet:[[470,830],[630,830]], hands:[[640,680],[590,700]], label:'catch'},
-  {t:5.8, hip:[560,680], chest:[550,560], head:[570,465], feet:[[470,830],[630,830]], hands:[[470,665],[620,670]], label:'recover'},
-  {t:7.0, hip:[550,675], chest:[530,545], head:[495,455], feet:[[470,830],[630,830]], hands:[[450,655],[600,660]], label:'notice'},
+  {t:4.8, hip:[550,720], chest:[540,610], head:[550,520], feet:[[470,830],[650,830]], hands:[[640,680],[590,700]], label:'catch'},
+  {t:5.8, hip:[560,680], chest:[550,560], head:[570,465], feet:[[470,830],[650,830]], hands:[[470,665],[620,670]], label:'recover'},
+  {t:7.0, hip:[550,675], chest:[530,545], head:[495,455], feet:[[470,830],[650,830]], hands:[[450,655],[600,660]], label:'notice'},
   {t:8.3, hip:[520,670], chest:[500,535], head:[470,445], feet:[[470,830],[580,830]], hands:[[370,600],[560,660]], label:'choose'},
   {t:9.4, hip:[450,660], chest:[445,520], head:[425,435], feet:[[420,800],[580,830]], hands:[[370,640],[510,650]], label:'step'},
-  {t:10.5, hip:[410,630], chest:[410,490], head:[390,405], feet:[[350,770],[490,830]], hands:[[340,610],[475,620]], label:'continue'}
+  {t:10.5, hip:[410,630], chest:[410,490], head:[390,405], feet:[[420,800],[350,770]], hands:[[340,610],[475,620]], label:'continue'}
 ];
 const blendPoint = (a,b,k) => a.map((v,i)=>v+(b[i]-v)*k);
 export function poseAt(time) {
@@ -27,7 +27,7 @@ export function poseAt(time) {
   const p={time:t,label:a.label};
   for(const field of ['hip','chest','head'])p[field]=blendPoint(a[field],b[field],k);
   for(const field of ['feet','hands'])p[field]=a[field].map((v,j)=>blendPoint(v,b[field][j],k));
-  const lifts={test:[0,28],limit:[20,0],choose:[48,0],step:[0,48]}[a.label]||[0,0];
+  const lifts={test:[0,28],limit:[20,0],notice:[0,48],choose:[48,0],step:[0,70]}[a.label]||[0,0];
   p.feet.forEach((v,j)=>{v[1]-=Math.sin(Math.PI*k)*lifts[j];});
   return p;
 }
