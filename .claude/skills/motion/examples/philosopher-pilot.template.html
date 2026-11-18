@@ -25,6 +25,7 @@ function actor(g,color){
  let eye=[dir*(12-8*(p.lookUp||0)),-4-11*(p.lookUp||0)];
  if(p.gaze){const dx=p.gaze[0]-p.head[0],dy=p.gaze[1]-p.head[1],length=Math.hypot(dx,dy)||1;eye=[13*dx/length,13*dy/length];}
  s.beginPath();s.arc(p.head[0]+eye[0],p.head[1]+eye[1],3,0,Math.PI*2);s.fillStyle=color;s.fill();
+ if(p.intent==='guarded')stroke(s,[[p.head[0]+5,p.head[1]-18],[p.head[0]+20,p.head[1]-22]],3,color);
  if(p.intent==='withhold')stroke(s,[[p.head[0]+dir*5,p.head[1]-18],[p.head[0]+dir*20,p.head[1]-17]],3,color);
  if(['argue','strain','challenge','defensive'].includes(p.intent))stroke(s,[[p.head[0]+dir*5,p.head[1]-16],[p.head[0]+dir*20,p.head[1]-9]],3,color);
  if(p.intent==='skeptical')stroke(s,[[p.head[0]+dir*4,p.head[1]-19],[p.head[0]+dir*20,p.head[1]-23]],3,color);

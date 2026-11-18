@@ -97,11 +97,12 @@ export function pilotActorAt(time,role,mode='study'){
   p={hip:pilotBlend([650,610],[690,640],lean),chest:pilotBlend([690,470],[745,510],lean),head:pilotBlend([710,385],[775,425],lean),feet:[[590,830],[710,830]],hands:[pilotBlend([665,630],[810,620],lean),pilotBlend([720,630],[820+50*point,570-80*point],lean)],facing:1,intent:lean>.3?'argue':'listen'};
   if(time>=14.5&&time<22.8){
    const claim=progress(time,17.7,.4)*(1-progress(time,19.7,.5));
-   const insist=progress(time,20.3,.45)*(1-progress(time,22.1,.65));
+   const release=1-progress(time,22.1,.65),prepare=progress(time,19.95,.18)*(1-progress(time,20.2,.18));
+   const insist=progress(time,20.3,.45)*release,headLead=progress(time,20.22,.38)*release,handFollow=progress(time,20.45,.3)*release;
    p.chest[0]-=8*claim;p.head[0]-=12*claim;
    p.hands[1]=pilotBlend(p.hands[1],[790,565],claim);
-   p.hip[0]+=18*insist;p.chest[0]+=26*insist;p.head[0]+=34*insist;
-   p.hands[1][0]+=30*insist;p.hands[1][1]-=25*insist;
+   p.hip[0]+=18*insist-6*prepare;p.chest[0]+=26*insist-10*prepare;p.head[0]+=34*headLead-10*prepare;
+   p.hands[1][0]+=30*handFollow-24*prepare;p.hands[1][1]+=-25*handFollow+15*prepare;
    if(claim>.3)p.intent='claim';if(insist>.3)p.intent='challenge';
   }
   const listening=progress(time,22,.8);
@@ -161,11 +162,24 @@ export function pilotSharedEventAt(time){
 export function pilotViewActorAt(time,role){
  if(!Number.isFinite(time))throw new TypeError('time must be finite');
  if(!['youth','philosopher'].includes(role))throw new TypeError('unknown actor');
- const startle=role==='youth'?progress(time,49,.28)*(1-progress(time,52.1,1.0)):0;
- const notice=progress(time,48.7,.5),follow=role==='philosopher'?progress(time,49.8,.7)*(1-progress(time,54.3,.7)):0;
- const p={hip:pilotBlend([690,610],[680,680],startle),chest:pilotBlend([700,470],[680,550],startle),head:pilotBlend([710,385],[690,465],startle),feet:[[620,830],[760,830]],hands:[pilotBlend([690,630],[650,410],startle),pilotBlend([745,625],[730,410],startle)],facing:1,intent:startle>.25?'startle':'observe',lookUp:notice};
- if(role==='philosopher'){
-  p.chest[0]-=8*notice;p.chest[1]-=6*notice;p.head[0]-=15*notice;p.head[1]-=15*notice;
+ const notice=progress(time,48.7,.5),follow=progress(time,49.8,.7)*(1-progress(time,54.3,.7));
+ const duck=progress(time,49,.28),peek=progress(time,51.6,.7),rise=progress(time,53.2,1.1);
+ const startle=role==='youth'?duck*(1-.6*rise):0;
+ const p={hip:pilotBlend([690,610],[680,680],startle),chest:pilotBlend([700,470],[680,550],startle),head:[710,385],feet:[[620,830],[760,830]],hands:[[690,630],[745,625]],facing:1,intent:'observe'};
+ // The eyes locate the same panel-space event before the body reacts.
+ const bird=pilotSharedEventAt(time).bird,target=[690+(bird[0]-240)/.66,830+(bird[1]-535)/.66];
+ p.gaze=pilotBlend([p.head[0]+80,p.head[1]-35],target,notice);
+ if(role==='youth'){
+  const flinch=progress(time,48.9,.22)*(1-.55*rise),shield=progress(time,49.05,.24);
+  p.head=pilotBlend(p.head,[690,465],flinch);p.head[0]+=12*peek;
+  p.hands[0]=pilotBlend(p.hands[0],[650,410],shield);
+  p.hands[0]=pilotBlend(p.hands[0],[665,455],rise);
+  p.hands[1]=pilotBlend(p.hands[1],[730,410],shield);
+  p.hands[1]=pilotBlend(p.hands[1],[765,535],peek);
+  p.intent=duck<.2?'observe':peek<.2?'startle':'guarded';
+ }else{
+  const turn=progress(time,48.7,2);
+  p.chest[0]-=8*notice;p.chest[1]-=6*notice;p.head[0]+=(-15+25*turn)*notice;p.head[1]-=15*notice;
   p.hands[1]=pilotBlend(p.hands[1],[810,395],follow);p.intent=follow>.2?'curious':'observe';
  }
  const shoulders=[-5,5].map(d=>[p.chest[0]+d,p.chest[1]]);

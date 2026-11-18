@@ -169,3 +169,27 @@ test('the ending shows a planted reconsideration before committed travel',()=>{
  assert.equal(c.depth.scale,1);assert.ok(walk.depth.scale<1);assert.equal(walk.pose.intent,'walk');
  assert.equal(walk.pose.facing,-1);assert.ok(Math.abs(pilotExitAt(64.5).depth.scale-.45)<1e-9);
 });
+
+
+test('shared-event attention tracks the actual panel bird and retains different consequences',()=>{
+ for(const role of ['youth','philosopher'])for(const t of [49.3,50,52,54,55.9]){
+  const g=pilotViewActorAt(t,role),bird=pilotSharedEventAt(t).bird;
+  assert.ok(distance(g.pose.gaze,[690+(bird[0]-240)/.66,830+(bird[1]-535)/.66])<1e-6);
+ }
+ const early=pilotViewActorAt(48.98,'youth'),duck=pilotViewActorAt(50,'youth'),peek=pilotViewActorAt(52.5,'youth'),end=pilotViewActorAt(55.9,'youth');
+ assert.ok(early.pose.head[1]>400,'head flinch leads the duck');
+ assert.ok(early.pose.hip[1]<615,'body has not yet completed the reaction');
+ assert.ok(peek.pose.hands[1][1]>duck.pose.hands[1][1]+100,'one hand lowers to expose a guarded check');
+ assert.equal(end.pose.intent,'guarded');assert.ok(end.pose.hip[1]>635,'do not reset to the opening pose');
+ assert.ok(end.pose.hands[0][1]<end.pose.head[1]+40,'one shielding hand remains up');
+ const mentor=pilotViewActorAt(55.9,'philosopher');assert.ok(mentor.pose.hip[1]<end.pose.hip[1]-20);
+});
+
+
+test('the demand prepares, commits the body and lets the hand follow without losing its brace',()=>{
+ const prepared=pilotActorAt(20.15,'youth'),leading=pilotActorAt(20.4,'youth'),arrived=pilotActorAt(20.9,'youth');
+ assert.ok(prepared.pose.chest[0]<leading.pose.chest[0]);
+ assert.ok(leading.pose.head[0]>prepared.pose.head[0]+15);
+ assert.ok(arrived.pose.hands[1][0]>leading.pose.hands[1][0]+20);
+ for(const t of [20.15,20.4,20.9])assert.deepEqual(pilotActorAt(t,'youth').pose.hands[0],[810,620]);
+});
