@@ -64,8 +64,8 @@ test('conversation beats distinguish listening, withheld interruption and invita
  const young=t=>pilotActorAt(t,'youth'),mentor=t=>pilotActorAt(t,'philosopher');
  for(let f=0;f<435;f++){
   const t=14.5+f/30;
-  assert.deepEqual(mentor(t).pose.hip,[1320,650]);
-  assert.deepEqual(mentor(t).pose.feet,[[1240,830],[1400,830]]);
+  assert.deepEqual(mentor(t).pose.hip,[1320,680]);
+  assert.deepEqual(mentor(t).pose.feet,[[1185,830],[1260,830]]);
   assert.deepEqual(pilotCupAt(t).center,[1200,597]);
   if(t>=22.8)assert.deepEqual(young(t).pose.hands[0],[810,620]);
  }
@@ -120,7 +120,7 @@ test('challenge, rebuttal and attention have distinct supported intentions',()=>
  assert.equal(young(43.8).pose.intent,'defensive');assert.equal(young(44.9).pose.intent,'skeptical');
  assert.equal(mentor(45).pose.intent,'explain');
  assert.ok(distance(mentor(45).arms[1].wrist,pilotCupAt(45).center)>100);
- assert.deepEqual(mentor(45).pose.hip,[1320,650]);
+ assert.deepEqual(mentor(45).pose.hip,[1320,680]);
  for(const t of [31,34.4,36.5,38.3]){
   const g=pilotActorAt(t,'youth','burden'),task=pilotTaskAt(t);
   assert.deepEqual(g.pose.gaze,t<32.6?g.pose.hands[1]:t<35.5?task.phoneCenter:task.pages[0].center);
@@ -192,4 +192,19 @@ test('the demand prepares, commits the body and lets the hand follow without los
  assert.ok(leading.pose.head[0]>prepared.pose.head[0]+15);
  assert.ok(arrived.pose.hands[1][0]>leading.pose.hands[1][0]+20);
  for(const t of [20.15,20.4,20.9])assert.deepEqual(pilotActorAt(t,'youth').pose.hands[0],[810,620]);
+});
+
+
+test('the seated mentor has forward knees, floor support and a reachable cup at mouth height',()=>{
+ for(let f=0;f<435;f++){
+  const g=pilotActorAt(14.5+f/30,'philosopher');
+  for(const leg of g.legs){
+   assert.ok(leg.elbow[0]<g.pose.hip[0]-100,'thighs must extend toward the desk');
+   assert.ok(Math.abs(leg.elbow[1]-g.pose.hip[1])<45,'seated knees stay near chair height');
+   assert.equal(leg.wrist[1],830,'feet must stay on the room floor');
+  }
+ }
+ const drinking=pilotActorAt(41.3,'philosopher'),cup=pilotCupAt(41.3);
+ assert.ok(Math.abs(cup.center[1]-20-(drinking.pose.head[1]+13))<10,'cup rim must meet the mouth, not the forehead');
+ assert.ok(distance(drinking.arms[0].wrist,cup.grip)<1e-6);
 });

@@ -38,7 +38,7 @@ export function pilotEndingViewAt(time){
 export function pilotCupAt(time){
  // Keep the cup down while replying; the raised cup at41 follows the intervening vignette.
  const lift=time>=41&&time<46?1-progress(time,41.4,.6):0;
- const center=[1200+80*lift,597-122*lift];
+ const center=[1200+80*lift,597-92*lift];
  return {center,grip:[center[0]+30,center[1]+1]};
 }
 // One attempted task, interrupted by a phone, followed by a missed paper catch.
@@ -60,19 +60,19 @@ export function pilotActorAt(time,role,mode='study'){
  if(!['youth','philosopher'].includes(role))throw new TypeError('unknown actor');
  let p;
  if(role==='philosopher'){
-  p={hip:[1320,650],chest:[1320,520],head:[1310,435],feet:[[1240,830],[1400,830]],hands:[pilotCupAt(time).grip,[1370,678]],facing:-1,intent:'listen'};
+  p={hip:[1320,680],chest:[1320,550],head:[1310,465],feet:[[1185,830],[1260,830]],hands:[pilotCupAt(time).grip,[1370,708]],facing:-1,intent:'listen'};
   if(time>=14.5&&time<29){
    const attention=progress(time,15.4,.65)*(1-progress(time,21.7,.65));
    const reply=progress(time,22.9,.55),invite=progress(time,26.1,.65);
    p.chest[0]-=14*attention+14*reply;p.chest[1]+=5*attention+5*reply;
    p.head[0]-=18*attention+20*reply;p.head[1]+=8*attention+5*reply;
-   p.hands[1]=pilotBlend(p.hands[1],[1150,490],invite);
+   p.hands[1]=pilotBlend(p.hands[1],[1145,510],invite);
    p.intent=invite>.2?'invite':reply>.1?'reply':'listen';
   }
   if(time>=41&&time<46){
    const respond=progress(time,43.9,.65);
    p.chest[0]-=12*respond;p.head[0]-=18*respond;p.head[1]+=5*respond;
-   p.hands[1]=pilotBlend(p.hands[1],[1175,490],respond);
+   p.hands[1]=pilotBlend(p.hands[1],[1145,510],respond);
    p.gaze=time<42.2?pilotCupAt(time).center:[710,385];
    if(respond>.2)p.intent='explain';
   }
@@ -121,7 +121,7 @@ export function pilotActorAt(time,role,mode='study'){
    const check=progress(time,44.2,.8);p.hands[1]=pilotBlend(p.hands[1],[745,590],check);
    p.intent=recoil>.2?(check>.5?'skeptical':'defensive'):'listen';
   }
-  p.gaze=[1290,435];
+  p.gaze=[1290,470];
  }
  const normalSide=p.facing===1?-1:1;
  const shoulders=[-5,5].map(d=>[p.chest[0]+d,p.chest[1]]);
