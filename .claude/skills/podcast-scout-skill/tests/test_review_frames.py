@@ -1,4 +1,5 @@
 import importlib.util
+import json
 from pathlib import Path
 import shutil
 import subprocess
@@ -29,6 +30,12 @@ class ReviewFramesTests(unittest.TestCase):
                             "-t", "2", "-c:v", "mpeg4", str(video)], check=True)
             result = review.extract(video, root / "review", [0, .5, 1.5], [80, 40, 100, 80], 200)
             self.assertEqual(len(result["frames"]), 3)
+            dimensions = subprocess.run(["ffprobe", "-v", "error", "-show_entries",
+                                         "stream=width,height", "-of", "json",
+                                         str(root / "review/frame-000.jpg")],
+                                        check=True, capture_output=True, text=True)
+            self.assertEqual(json.loads(dimensions.stdout)["streams"][0],
+                             {"width": 200, "height": 160})
             self.assertTrue((root / "review/strip.jpg").stat().st_size > 1000)
             self.assertTrue((root / "review/review.json").is_file())
             with self.assertRaises(ValueError):
@@ -37,3 +44,4 @@ class ReviewFramesTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+

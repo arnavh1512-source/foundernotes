@@ -77,6 +77,17 @@
       "owner_approved": false,
       "style_fingerprint": "Original stick core and64.5s dialogue; supported work release/accelerating fall, existing missed catch/consequence, planted look back at unchanged constraint then purposeful exit; existing audio retained.",
       "recorded_at": "2026-11-18T01:09:45+00:00"
+    },
+    {
+      "type": "video",
+      "video_id": "philosopher-stick-pilot-attention-91cf723",
+      "summary": "Tracked shared-event attention, staged guarded recovery and overlapping demand",
+      "evidence": "Source91cf7234fa241e911294ca9e98c045bd8cbe45e1, CI44218840887/artifact14390176125, exact hashes and18 picture/nine captioned intervals in checkpoint/review.",
+      "verification": "23 tests, bundled parse, full decode/probe, author selected encoded samples and unchanged decoded audio. No normal-speed audiovisual, independent or owner approval; full-production FAIL.",
+      "status": "needs_work",
+      "owner_approved": false,
+      "style_fingerprint": "Original64.5s stick dialogue; preparation/body/hand demand, shared-event gaze and head-leading duck/guarded peek/partial rise versus calm following; V10 work and existing audio preserved.",
+      "recorded_at": "2026-11-18T01:57:48+00:00"
     }
   ]
 }

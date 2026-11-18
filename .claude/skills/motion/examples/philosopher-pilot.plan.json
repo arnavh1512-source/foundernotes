@@ -13,7 +13,7 @@
   },
   "evidence_and_angle": {
     "fresh_explanation": "A fictional gate remains locked while a different route becomes available; the later argument tests the meaning of that example.",
-    "relevant_limit": "The example is authored fiction, not evidence that every problem has a solution. Universal claims in the dialogue are the characters’ disputed positions. Do not present them as established psychology.",
+    "relevant_limit": "The example is authored fiction, not evidence that every problem has a solution. Universal claims in the dialogue are the characters\u2019 disputed positions. Do not present them as established psychology.",
     "evidence": [
       {
         "id": "E1",
@@ -23,13 +23,13 @@
       },
       {
         "id": "E2",
-        "locator": "Encoded stick-route exercise SHA-256 1b9db90aa9eee238fa013738e9f4ca13f872e311e7bb7121fbd486d0fbaf0bc3; decoded frames 0–14.4 seconds",
+        "locator": "Encoded stick-route exercise SHA-256 1b9db90aa9eee238fa013738e9f4ca13f872e311e7bb7121fbd486d0fbaf0bc3; decoded frames 0\u201314.4 seconds",
         "what_it_supports": "Within this authored model, the gate stays locked and the character reaches a separate path. The physical obstacle is not removed by thought.",
         "reviewed": true
       },
       {
         "id": "E3",
-        "locator": "Existing 64.5-second Philosopher-Improved-Animation.mp4; recovered caption samples at 57–63 seconds and inspected frame at 60 seconds",
+        "locator": "Existing 64.5-second Philosopher-Improved-Animation.mp4; recovered caption samples at 57\u201363 seconds and inspected frame at 60 seconds",
         "what_it_supports": "The existing ending explicitly limits the point: changing perspective need not remove an obstacle. Caption recovery is not an auditory or ASR review.",
         "reviewed": true
       }
@@ -55,7 +55,7 @@
   "opening": {
     "recognizable_problem": "A character keeps pulling a gate that remains locked.",
     "curiosity_question": "What can change when the obstacle itself does not?",
-    "early_insight": "A different approach changes the character’s action, while the original constraint remains.",
+    "early_insight": "A different approach changes the character\u2019s action, while the original constraint remains.",
     "first_visual": "An original stick character tests and braces against a visibly locked gate; show the lock before any route reveal.",
     "first_15_to_30_seconds": "Show the failed tactic, reveal the route after reassessment, and then cut to the two-character study conversation. Keep the example explicitly illustrative and identify the dialogue as an argument.",
     "first_insight_at_seconds": 14.5,
@@ -111,7 +111,7 @@
       },
       {
         "chapter_index": 1,
-        "visible_action": "The Youth challenges the Philosopher, brings the argument toward himself, then commits forward with a final demand before listening, starts to interrupt and holds back. The seated Philosopher leans attentively and offers the floor with an open hand while keeping the cup down during the reply. The Youth prepares to answer. The task vignette shows writing interrupted by a phone, arriving work and a whole-body late reach toward the actual falling paper edge, followed by a supported forehead-in-hand reaction with papers left on the floor; the later cup response precedes identical hill events. During the task his gaze follows writing, phone and arriving work. After the cup set-down, the Youth recoils defensively and checks the reply while the Philosopher explains with an open palm; framing follows these intentions on the established axis. The arriving pages are supported from below until the delivery palm withdraws, then accelerate downward past the late catch; the offer is staged in front of the desk edge.",
+        "visible_action": "The Youth challenges the Philosopher, brings the argument toward himself, then commits forward with a final demand before listening, starts to interrupt and holds back. The seated Philosopher leans attentively and offers the floor with an open hand while keeping the cup down during the reply. The Youth prepares to answer. The task vignette shows writing interrupted by a phone, arriving work and a whole-body late reach toward the actual falling paper edge, followed by a supported forehead-in-hand reaction with papers left on the floor; the later cup response precedes identical hill events. During the task his gaze follows writing, phone and arriving work. After the cup set-down, the Youth recoils defensively and checks the reply while the Philosopher explains with an open palm; framing follows these intentions on the established axis. The arriving pages are supported from below until the delivery palm withdraws, then accelerate downward past the late catch; the offer is staged in front of the desk edge. The final demand draws back before the head/body commits and the hand arrives. In the paired event both gaze targets follow the actual shared bird; the Youth ducks, peeks from one lowered hand and rises only partly, while the Philosopher follows calmly. Their different responses remain visible at the end.",
         "why_this_scene_earns_its_place": "Performance, prop contact and paired geometry carry the dispute.",
         "meaningful_change": "The same authored bird event, hill geometry and palette are held fixed while the Youth protects his head and the Philosopher looks up curiously; the comparison shows different reactions without altering the external facts."
       },
@@ -127,7 +127,7 @@
     "natural_phrasing": "Reuse the recovered dialogue at its original speed for an internal assembly. Preserve original pauses; do not synthesize or replace voices. Confirm provenance and actual listening before approval.",
     "deliberate_emphasis": "Use the existing challenge, cup pause and qualified ending. Speaker identity remains stable in the picture and captions.",
     "comfortable_transitions": "Let the challenge connect the illustrative opening to the study; retain the cup pause before the paired-view explanation. Ending image order follows the existing provisional recovered qualification and next-question intervals; these are not listened word-accurate cues.",
-    "explain_limits_with_claims": "Label the scene as a fictional argument and the gate as an illustration. Keep the ending’s obstacle qualification; do not endorse sweeping dialogue as scientific fact."
+    "explain_limits_with_claims": "Label the scene as a fictional argument and the gate as an illustration. Keep the ending\u2019s obstacle qualification; do not endorse sweeping dialogue as scientific fact."
   },
   "runtime_substance": {
     "no_padding": true,

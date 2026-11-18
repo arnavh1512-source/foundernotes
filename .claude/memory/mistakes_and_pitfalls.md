@@ -247,3 +247,27 @@ The initial entries preserve documented observations from the 2026-11-11 study a
 - Cause / rationale: The ending camera distinguished lock/context/route, but the character performance remained a generic receding walk through all of them.
 - Correction / recipe: Hold both world-space feet while the Youth looks back at the unchanged lock, then turn and begin supported travel along the same path. Retain the measured ending and revise stance checks for the actual new gait intervals. Re-render the complete pilot and inspect turn, departure, foot contact and close-up bounds.
 - Verification: Baseline selected-frame/source finding verified. Sourcea5a661a0d21fd72ae0a0e9550e25e33cace9f91e passes21 tests/browser parse. Final sourcea5a661a0d21fd72ae0a0e9550e25e33cace9f91e, CI44212187807/artifact14387096605, picture SHA16b164aaa35a1dfd5a914fc8a84b5fb566e7488d89ad618fe8e140142682302e; ten release and twelve ending samples plus nine captioned V10 samples inspected. Supported release, accelerating fall and planted reconsideration/departure are visible in selected encoded frames. Full decode/probe and unchanged audio hash verified. Continuous timing, actual listening and independent/owner approval remain pending.
+
+### philosopher-pilot-paired-reaction-reset — The shared-event scene erased its acting distinction before the cut
+
+- Recorded (UTC): 2026-11-18T01:52:01+00:00
+- Evidence: Actual V10 picture16b164aaa35a1dfd5a914fc8a84b5fb566e7488d89ad618fe8e140142682302e; exact46/48.8/49.3/50/51/52/53/54/55/55.9 samples inspected in review/views-baseline/strip.jpg.
+- Cause / rationale: The Youth startle envelope returned completely to zero at53.1 and the mentor follow gesture returned to zero at55, restoring nearly identical opening silhouettes.
+- Correction / recipe: Stage a guarded peek, partial rise and retained shielding hand while the mentor follows calmly; preserve the same external event and supports. Inspect the exact final encoded reaction, recovery and ending boundaries; do not use limb checks as comprehension approval.
+- Verification: Baseline sampled-frame/source defect verified; source91cf7234fa241e911294ca9e98c045bd8cbe45e1 passes23 tests and bundled script parse. Exact source91cf7234fa241e911294ca9e98c045bd8cbe45e1, CI44218840887/artifact14390176125, picture SHAd3bad8769a5b3badb8daa73a6af452fb36a6504f188226fa4b19d67c5e51197e; six demand/twelve paired-event and nine captioned V11 samples inspected. Updated pose/attention states and retained guarded versus calm final silhouettes are visible in sampled encoded frames.23 source tests, bundled parse and full assembly decode/probe pass; decoded audio unchanged. Continuous timing, listening and independent/owner approval remain pending.
+
+### philosopher-pilot-bird-gaze-target — Paired-event attention used a fixed upward pupil offset instead of the actual moving bird
+
+- Recorded (UTC): 2026-11-18T01:52:02+00:00
+- Evidence: V10 views-baseline samples49.3/51/53/55 and original pilotViewActorAt lookUp=notice; template actor draws a fixed upward offset despite shared bird moving left to right.
+- Cause / rationale: Character lookUp was authored independently of the event coordinates and panel-to-rig transform.
+- Correction / recipe: Convert the shared panel bird position into rig coordinates and use it for gaze, with noticing before the head/body response. Test transformed targets and inspect new encoded face/event samples; keep actual continuous attention and sound pending.
+- Verification: Baseline source and selected-frame limitation verified; source91cf7234fa241e911294ca9e98c045bd8cbe45e1 passes23 tests and bundled parse. Exact source91cf7234fa241e911294ca9e98c045bd8cbe45e1, CI44218840887/artifact14390176125, picture SHAd3bad8769a5b3badb8daa73a6af452fb36a6504f188226fa4b19d67c5e51197e; six demand/twelve paired-event and nine captioned V11 samples inspected. Updated pose/attention states and retained guarded versus calm final silhouettes are visible in sampled encoded frames.23 source tests, bundled parse and full assembly decode/probe pass; decoded audio unchanged. Continuous timing, listening and independent/owner approval remain pending.
+
+### review-frames-crop-order — The frame-review crop used FFmpeg positional arguments in the wrong order
+
+- Recorded (UTC): 2026-11-18T01:57:48+00:00
+- Evidence: Current V11 Youth/mentor crop sheets showed blank ground or feet while requesting full panels. Expanded real-decode test observed200x100 instead of200x160 for x80/y40/w100/h80.
+- Cause / rationale: review_frames.py passed validated x/y/w/h directly to FFmpeg crop, whose positional order is w/h/x/y. Existing integration test checked only file existence and byte size.
+- Correction / recipe: Translate the CLI crop to width/height/x/y before scaling. Keep input validation, preserve failed evidence, assert actual decoded crop aspect in the existing test and rerun meaningful own-render crops. Revalidate any older claim based only on a pre-fix crop; full-frame review is unaffected.
+- Verification: Regression reproduced before fix; both existing review-frame tests pass after correction. Exact V11 corrected Youth48.98/49.3/52.5/55.9 and mentor48.8/50/52/55.9 crops inspected. This fixes evidence extraction, not artistic approval.
