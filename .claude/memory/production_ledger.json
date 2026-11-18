@@ -66,6 +66,17 @@
       "owner_approved": false,
       "style_fingerprint": "Original stick core; full64.5s existing dialogue; distinct challenge/reception/explanation, active-prop gaze, locked-constraint/context/route ending; original audio unchanged.",
       "recorded_at": "2026-11-18T00:02:05+00:00"
+    },
+    {
+      "type": "video",
+      "video_id": "philosopher-stick-pilot-agency-a5a661a",
+      "summary": "Supported paper release and deliberate planted reconsideration before departure",
+      "evidence": "Sourcea5a661a0d21fd72ae0a0e9550e25e33cace9f91e, CI44212187807/artifact14387096605, exact hashes and22 picture/nine captioned intervals in checkpoint/review.",
+      "verification": "21 tests, browser parse, full decode/probe, selected encoded author self-review and unchanged decoded audio. No continuous audiovisual, independent or owner approval; full-production FAIL.",
+      "status": "needs_work",
+      "owner_approved": false,
+      "style_fingerprint": "Original stick core and64.5s dialogue; supported work release/accelerating fall, existing missed catch/consequence, planted look back at unchanged constraint then purposeful exit; existing audio retained.",
+      "recorded_at": "2026-11-18T01:09:45+00:00"
     }
   ]
 }

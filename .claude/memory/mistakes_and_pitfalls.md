@@ -231,3 +231,19 @@ The initial entries preserve documented observations from the 2026-11-11 study a
 - Cause / rationale: The raised hand was checked for wrist reach and cup clearance, but the elbow branch was not checked against the face.
 - Correction / recipe: Use one consistent negative bend for both mentor arms across the dialogue; cup-arm bend remains unchanged and no bend flip occurs during the explanation. Require free elbow/head separation and inspect changed poses and cup-rest regressions.
 - Verification: Defect verified in encoded V8 samples and matching geometry. Source5785e235d3d6f850b3a586a8bcf65c6a407c9e5a passes19 tests; final encoded samples were rechecked: face fragment absent at18.4/19.6 and explanation elbow clear at44.6/45.4/45.9. This closes the sampled composition defect, not creative or full-motion approval.
+
+### philosopher-pilot-unsupported-work-release — The arriving work lost visible support before its fall began
+
+- Recorded (UTC): 2026-11-18T00:59:44+00:00
+- Evidence: V9 picturec2278f5209780daab6930bc6d4d9c5d82c6b4986017b1081620a0b670d0e3695; decoded36.5/36.9/37.3/37.7/38/38.4 plus source hand withdrawal36.9–37.3 versus first page fall37.4.
+- Cause / rationale: Delivery-hand and paper cues were authored independently, leaving a floating interval and an ambiguous relationship to the desk surface.
+- Correction / recipe: Tie the palm to the actual bottom of the first page, keep support until release, stage the offer at the desk front and accelerate the fall after support withdraws. Preserve the existing late catch and persistent floor consequence. Inspect exact new release samples, not reach tests alone.
+- Verification: Baseline selected-frame/source finding verified. Sourcea5a661a0d21fd72ae0a0e9550e25e33cace9f91e passes21 tests/browser parse. Final sourcea5a661a0d21fd72ae0a0e9550e25e33cace9f91e, CI44212187807/artifact14387096605, picture SHA16b164aaa35a1dfd5a914fc8a84b5fb566e7488d89ad618fe8e140142682302e; ten release and twelve ending samples plus nine captioned V10 samples inspected. Supported release, accelerating fall and planted reconsideration/departure are visible in selected encoded frames. Full decode/probe and unchanged audio hash verified. Continuous timing, actual listening and independent/owner approval remain pending.
+
+### philosopher-pilot-ending-without-reconsideration — The ending showed departure without a visible reconsideration of the unchanged constraint
+
+- Recorded (UTC): 2026-11-18T00:59:44+00:00
+- Evidence: V9 exact58.6/59.2/60/60.8/61.6 samples and pilotExitAt source: depth/gait advanced from56 with no pause, gaze target or head-turn state.
+- Cause / rationale: The ending camera distinguished lock/context/route, but the character performance remained a generic receding walk through all of them.
+- Correction / recipe: Hold both world-space feet while the Youth looks back at the unchanged lock, then turn and begin supported travel along the same path. Retain the measured ending and revise stance checks for the actual new gait intervals. Re-render the complete pilot and inspect turn, departure, foot contact and close-up bounds.
+- Verification: Baseline selected-frame/source finding verified. Sourcea5a661a0d21fd72ae0a0e9550e25e33cace9f91e passes21 tests/browser parse. Final sourcea5a661a0d21fd72ae0a0e9550e25e33cace9f91e, CI44212187807/artifact14387096605, picture SHA16b164aaa35a1dfd5a914fc8a84b5fb566e7488d89ad618fe8e140142682302e; ten release and twelve ending samples plus nine captioned V10 samples inspected. Supported release, accelerating fall and planted reconsideration/departure are visible in selected encoded frames. Full decode/probe and unchanged audio hash verified. Continuous timing, actual listening and independent/owner approval remain pending.
