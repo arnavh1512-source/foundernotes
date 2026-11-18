@@ -1,0 +1,147 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Internal Philosopher stick pilot picture</title>
+<style>html,body{margin:0;background:#e9e5d9;overflow:hidden}canvas{display:block;width:100vw;height:100vh;object-fit:contain}</style>
+<canvas id="stage" width="1920" height="1080" aria-label="Original stick animation dialogue pilot"></canvas>
+<script>
+const gateCanvas=document.createElement('canvas');gateCanvas.width=1920;gateCanvas.height=1080;
+// @INLINE_PILOT@
+const stage=document.getElementById('stage'),s=stage.getContext('2d');
+const youthColor='#354c51',mentorColor='#95684d';
+function stroke(ctx,points,width=8,color=youthColor){
+ ctx.beginPath();ctx.moveTo(...points[0]);for(const p of points.slice(1))ctx.lineTo(...p);
+ ctx.strokeStyle=color;ctx.lineWidth=width;ctx.lineCap='round';ctx.lineJoin='round';ctx.stroke();
+}
+function words(text,x,y,size=30,color=youthColor,align='center'){
+ s.fillStyle=color;s.font='500 '+size+'px sans-serif';s.textAlign=align;s.fillText(text,x,y);
+}
+function actor(g,color){
+ const p=g.pose;
+ for(const a of [g.legs[0],g.arms[0]])stroke(s,[a.shoulder,a.elbow,a.wrist],7,color+'99');
+ s.beginPath();s.moveTo(...p.hip);s.quadraticCurveTo(...g.spineControl,...p.chest);s.strokeStyle=color;s.lineWidth=10;s.stroke();
+ stroke(s,[p.chest,[p.head[0],p.head[1]+28]],7,color);
+ for(const a of [g.legs[1],g.arms[1]])stroke(s,[a.shoulder,a.elbow,a.wrist],8,color);
+ g.legs.forEach((a,i)=>stroke(s,[a.wrist,g.toeTargets[i]],6,color));
+ s.beginPath();s.arc(...p.head,31,0,Math.PI*2);s.fillStyle='#f5efdf';s.fill();s.strokeStyle=color;s.lineWidth=6;s.stroke();
+ const dir=p.facing||1;
+ let eye=[dir*(12-8*(p.lookUp||0)),-4-11*(p.lookUp||0)];
+ if(p.gaze){const dx=p.gaze[0]-p.head[0],dy=p.gaze[1]-p.head[1],length=Math.hypot(dx,dy)||1;eye=[13*dx/length,13*dy/length];}
+ s.beginPath();s.arc(p.head[0]+eye[0],p.head[1]+eye[1],3,0,Math.PI*2);s.fillStyle=color;s.fill();
+ if(p.intent==='guarded')stroke(s,[[p.head[0]+5,p.head[1]-18],[p.head[0]+20,p.head[1]-22]],3,color);
+ if(p.intent==='withhold')stroke(s,[[p.head[0]+dir*5,p.head[1]-18],[p.head[0]+dir*20,p.head[1]-17]],3,color);
+ if(['argue','strain','challenge','defensive'].includes(p.intent))stroke(s,[[p.head[0]+dir*5,p.head[1]-16],[p.head[0]+dir*20,p.head[1]-9]],3,color);
+ if(p.intent==='skeptical')stroke(s,[[p.head[0]+dir*4,p.head[1]-19],[p.head[0]+dir*20,p.head[1]-23]],3,color);
+ if(p.intent==='challenge'){const hand=g.arms[1].wrist;stroke(s,[hand,[hand[0]+dir*17,hand[1]-6]],4,color);}
+ if(p.intent==='startle'){s.beginPath();s.arc(p.head[0]+dir*12,p.head[1]+13,5,0,Math.PI*2);s.strokeStyle=color;s.lineWidth=3;s.stroke();}
+ else if(['invite','curious','explain'].includes(p.intent)){
+  if(p.intent==='explain')stroke(s,[[p.head[0]+dir*8,p.head[1]+13],[p.head[0]+dir*18,p.head[1]+11]],3,color);
+  else{s.beginPath();s.moveTo(p.head[0]+dir*7,p.head[1]+11);s.quadraticCurveTo(p.head[0]+dir*14,p.head[1]+19,p.head[0]+dir*21,p.head[1]+10);s.strokeStyle=color;s.lineWidth=3;s.stroke();}
+  const hand=g.arms[1].wrist;
+  if(p.intent==='curious'){
+   stroke(s,[hand,[hand[0]+5,hand[1]-16]],4,color);stroke(s,[hand,[hand[0]-7,hand[1]+2]],3,color);
+  }else{
+   stroke(s,[[hand[0]+8,hand[1]+2],[hand[0]-14,hand[1]+2]],5,color);stroke(s,[[hand[0]-14,hand[1]+2],[hand[0]-20,hand[1]-5]],4,color);
+  }
+ }else stroke(s,[[p.head[0]+dir*8,p.head[1]+13],[p.head[0]+dir*18,p.head[1]+11]],3,color);
+}
+function room(){
+ s.fillStyle='#e9e5d9';s.fillRect(0,0,1920,1080);
+ s.fillStyle='#d3d3bd';s.fillRect(0,650,1920,250);
+ stroke(s,[[0,650],[1920,650]],3,'#a6ac99');
+ s.fillStyle='#a4b7a6';s.fillRect(110,170,300,355);
+ for(let j=0;j<3;j++){stroke(s,[[110,280+j*105],[410,280+j*105]],5,'#6e8375');for(let i=0;i<9;i++){s.fillStyle=['#9d7a59','#bec4a4','#728f8c'][i%3];s.fillRect(125+i*30,195+j*105+(i%3)*6,21,78-(i%3)*6);}}
+ s.fillStyle='#b9cdd0';s.fillRect(1510,150,270,350);
+ stroke(s,[[1645,150],[1645,500]],5,'#7b8f8c');stroke(s,[[1510,325],[1780,325]],5,'#7b8f8c');
+ s.fillStyle='#b6a383';s.fillRect(790,620,470,25);
+ stroke(s,[[815,645],[815,840]],11,'#8d8169');stroke(s,[[1235,645],[1235,840]],11,'#8d8169');
+ stroke(s,[[1400,550],[1400,680],[1270,680]],7,'#899880');
+ stroke(s,[[1400,680],[1400,830]],5,'#899880');stroke(s,[[1270,680],[1270,830]],5,'#899880');
+}
+function cup(t){
+ const [x,y]=pilotCupAt(t).center;s.fillStyle='#f5efdf';s.strokeStyle=mentorColor;s.lineWidth=5;
+ s.beginPath();s.rect(x-19,y-20,38,43);s.fill();s.stroke();
+ s.beginPath();s.arc(x+23,y+1,9,-Math.PI/2,Math.PI/2);s.stroke();
+ for(let i=0;i<2;i++){s.beginPath();s.moveTo(x-7+i*14,y-28);s.quadraticCurveTo(x-14+i*14,y-42,x-6+i*14,y-54);s.strokeStyle='#b1af9b';s.lineWidth=2;s.stroke();}
+}
+function study(t){
+ // Cut around the speaking intention and consequential prop; retain the room axis.
+ const view=pilotRoomCameraAt(t);
+ s.save();s.translate(960,450);s.scale(view.scale,view.scale);s.translate(-view.x,-view.y);
+ room();actor(pilotActorAt(t,'youth'),youthColor);actor(pilotActorAt(t,'philosopher'),mentorColor);cup(t);s.restore();
+ words('A fictional argument',960,95,26,'#778174');
+}
+function taskPaper(x,y,angle=0){
+ s.save();s.translate(x,y);s.rotate(angle);s.fillStyle='#f5efdf';s.strokeStyle='#8d8169';s.lineWidth=2;s.fillRect(-52,-12,104,24);s.strokeRect(-52,-12,104,24);s.restore();
+}
+function burden(t){
+ const task=pilotTaskAt(t),g=pilotActorAt(t,'youth','burden');
+ const {scale,x:cx,y:cy}=pilotRoomCameraAt(t);
+ s.save();s.translate(960,450);s.scale(scale,scale);s.translate(-cx,-cy);room();
+ // A real work surface persists through the interruption and failed catch.
+ taskPaper(855,608);s.strokeStyle=youthColor;s.lineWidth=2;
+ const ink=progress(t,29,3.6);stroke(s,[[828,608],[828+40*ink,608]],2,youthColor);
+ taskPaper(1100,606);
+ if(task.deliveryVisible)for(const page of task.pages)taskPaper(...page.center,page.angle);
+ if(task.deliveryHand>0){const [x,y]=task.deliveryWrist;stroke(s,[[x+220,y-30],[x+100,y-20],[x,y]],9,'#899880');stroke(s,[[x,y],[x-34,y]],7,'#899880');}
+ // Keys stay on the desk; the clock supplies a competing time constraint.
+ s.beginPath();s.arc(1135,592,8,0,Math.PI*2);s.strokeStyle='#a38148';s.lineWidth=4;s.stroke();stroke(s,[[1143,592],[1170,592],[1170,600]],4,'#a38148');
+ s.beginPath();s.arc(1110,385,45,0,Math.PI*2);s.fillStyle='#f5efdf';s.fill();s.strokeStyle='#899880';s.lineWidth=5;s.stroke();
+ const minute=-Math.PI/2+progress(t,29,12)*.9;stroke(s,[[1110,385],[1110+32*Math.cos(minute),385+32*Math.sin(minute)]],4,youthColor);stroke(s,[[1110,385],[1088,397]],4,youthColor);
+ actor(g,youthColor);
+ const penHand=t<33.1?g.arms[1].wrist:[865,597];
+ stroke(s,[[840+(penHand[0]-846)*task.writing,608-27*task.writing],[penHand[0]+3,608]],3,'#95684d');
+ const [x,y]=task.phoneCenter;s.fillStyle='#354c51';s.strokeStyle='#354c51';s.lineWidth=3;s.fillRect(x-20,y-35,40,70);s.fillStyle='#b9cdd0';s.fillRect(x-15,y-27,30,49);
+ s.beginPath();s.arc(x,y-10,6,0,Math.PI*2);s.fillStyle='#667981';s.fill();stroke(s,[[x-8,y+10],[x,y+3],[x+8,y+10]],3,'#667981');
+ if(t>=32.6&&t<33.7){const pulse=5+4*Math.sin((t-32.6)*18);for(const side of [-1,1])stroke(s,[[x+side*(27+pulse),y-13],[x+side*(31+pulse),y],[x+side*(27+pulse),y+13]],3,'#a38148');}
+ s.restore();words('Responsibilities remain real',960,95,28,'#778174');
+}
+function hill(x,palette,t){
+ s.save();s.translate(x,180);s.beginPath();s.rect(0,0,780,570);s.clip();s.fillStyle=palette[0];s.fillRect(0,0,780,570);
+ s.fillStyle=palette[1];s.beginPath();s.moveTo(0,450);s.bezierCurveTo(190,420,250,200,460,230);s.bezierCurveTo(600,240,650,350,780,330);s.lineTo(780,570);s.lineTo(0,570);s.closePath();s.fill();
+ for(const [tx,ty]of [[180,370],[545,270],[650,335]]){stroke(s,[[tx,ty],[tx,ty-100]],8,palette[2]);stroke(s,[[tx-28,ty-55],[tx,ty-85],[tx+26,ty-60]],6,palette[2]);}
+ s.fillStyle=palette[2];s.fillRect(380,260,55,65);s.beginPath();s.moveTo(370,260);s.lineTo(407,225);s.lineTo(447,260);s.closePath();s.fill();
+ const event=pilotSharedEventAt(t),[birdX,birdY]=event.bird;stroke(s,[[birdX-12,birdY-event.wing],[birdX,birdY],[birdX+12,birdY-event.wing]],4,'#455c61');s.restore();
+}
+function views(t){
+ s.fillStyle='#e9e5d9';s.fillRect(0,0,1920,1080);
+ const palette=['#e6e1cb','#c2cbb0','#8b9d86'];
+ hill(120,palette,t);hill(1020,palette,t);
+ for(const [x,role,color]of [[120,'youth',youthColor],[1020,'philosopher',mentorColor]]){
+  s.save();s.beginPath();s.rect(x,180,780,570);s.clip();s.translate(x+240,180+535);s.scale(.66,.66);s.translate(-690,-830);actor(pilotViewActorAt(t,role),color);s.restore();
+ }
+ words('YOUTH',510,135,28,youthColor);words('PHILOSOPHER',1410,135,28,mentorColor);
+ words('Same event. Different readings. Different reactions.',960,830,32);
+}
+function gateOpening(t){
+ drawGate(t,true);s.drawImage(gateCanvas,160,0,1600,900);
+ if(t<5)words('An illustrative problem',960,75,28,'#778174');
+ if(t>=10)words('The gate is still locked. The approach changes.',960,875,28);
+}
+function exit(t){
+ drawGate(14.5,false);
+ const view=pilotEndingViewAt(t);
+ if(view.mode==='constraint'){
+  s.drawImage(gateCanvas,...view.crop,0,0,1920,900);
+ }else{
+  s.save();s.translate(960,450);s.scale(view.scale,view.scale);s.translate(-view.x,-view.y);
+  s.drawImage(gateCanvas,160,0,1600,900);
+  const g=pilotExitAt(t);s.save();s.translate(160,0);s.scale(1600/1920,900/1080);s.transform(...cameraAt(14.5).matrix);
+  s.translate(...g.depth.anchor);s.scale(g.depth.scale,g.depth.scale);s.translate(-190,-740);actor(g,youthColor);s.restore();s.restore();
+ }
+ if(view.mode==='route'){
+  s.fillStyle='#e9e5d9';s.fillRect(0,840,1920,60);words('What is fixed? What can I try differently?',960,879,34);
+ }
+}
+function pilotFrame(time){
+ if(!Number.isFinite(time))throw new TypeError('time must be finite');
+ const t=Math.max(0,Math.min(PILOT_DURATION,time)),shot=pilotShotAt(t);
+ s.setTransform(1,0,0,1,0,0);s.clearRect(0,0,1920,1080);s.fillStyle='#e9e5d9';s.fillRect(0,0,1920,1080);
+ if(shot.name==='gate')gateOpening(t);
+ else if(shot.name==='study'||shot.name==='cup')study(t);
+ else if(shot.name==='burden')burden(t);
+ else if(shot.name==='views')views(t);
+ else exit(t);
+ s.fillStyle='#e9e5d9';s.fillRect(0,900,1920,180);
+}
+window.MOTION={width:1920,height:1080,fps:30,duration:PILOT_DURATION};
+window.seek=async t=>pilotFrame(t);window.seek(0);
+</script></html>
+

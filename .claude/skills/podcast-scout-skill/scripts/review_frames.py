@@ -39,7 +39,7 @@ def extract(video, output, times, crop=None, size=480):
     if output.exists():
         raise ValueError("Review output already exists; use a fresh directory to preserve evidence")
     output.mkdir(parents=True)
-    filters = [] if crop is None else ["crop=" + ":".join(map(str, crop))]
+    filters = [] if crop is None else [f"crop={crop[2]}:{crop[3]}:{crop[0]}:{crop[1]}"]
     filters += [f"scale={size}:-2"]
     frames = []
     for index, time in enumerate(times):
@@ -81,3 +81,4 @@ def main(argv=None):
 
 if __name__ == "__main__":
     sys.exit(main())
+

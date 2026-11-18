@@ -1,0 +1,107 @@
+{
+  "code_commit": "91cf7234fa241e911294ca9e98c045bd8cbe45e1",
+  "workflow_run": 44218840887,
+  "previous_pr": {
+    "number": 12,
+    "observed_state": "merged",
+    "merged_at_utc": "2026-11-17T16:49:43Z"
+  },
+  "continuation_pr": 13,
+  "previous_picture": {
+    "artifact": 14387096605,
+    "sha256": "16b164aaa35a1dfd5a914fc8a84b5fb566e7488d89ad618fe8e140142682302e",
+    "duration_s": 64.5,
+    "width": 1920,
+    "height": 1080,
+    "fps": 30,
+    "frames": 1935,
+    "review_scope": "CI overview plus release36.5,36.8,37.2,37.3,37.4,37.55,37.7,37.9,38.2,38.6 and ending58.6,58.8,59.2,59.8,60.1,60.2,60.4,60.7,61.2,61.7,62.5,64.4 samples inspected. Page underside/palm support, withdrawal, accelerating drop and persistent consequence visible. Ending feet stay planted through the look toward the unchanged gate before departure; selected projected stance/swing poses remain within framing. Author selected-frame review only; continuous timing, actual sound and independent comprehension pending."
+  },
+  "private_audio": {
+    "library_id": "libfile_c99d2bfdf94c819198bad6d6fd27be65",
+    "sha256": "c35a881928e3bd1d12af30dfa66b1553e475226d68c3e0b3c3b6c9c94864e0fd",
+    "duration_s": 64.512,
+    "policy": "Reuse existing take only; no voice generation or substitution. Source profile and listening remain unverified."
+  },
+  "pending": [
+    "Actual listening: approved narrator identity, complete words, dialogue intentions, comfortable level and absence of artifacts.",
+    "Caption wording, speaker attribution and boundaries: recovery was OCR plus owner source, not ASR or a listened transcription.",
+    "Normal-speed continuous visual review: attention, weight transfer, coherent screen direction, no distracting holds.",
+    "Confirm cup contact sound against the exact set-down; no new unreviewed effect has been added.",
+    "Independent outsider: understands the problem, wants the answer and has learned the intended limited distinction.",
+    "Owner pilot approval and full-production gate; no final/full-video approval.",
+    "Fresh exact-footage Alan performance and sound comparison; retain historical sampled evidence only.",
+    "Direct Day One Films, PsychToonsHQ, PsychDoodleTV and gly2wBcnZUQ footage comparison.",
+    "ThatGuy: actual opening and explanatory/reaction intervals, continuous motion, listening and cut timing. Official SjMpWrZBpXQ watch page loaded but stayed at0:00/readyState0 after ordinary play/reload; no decoded footage obtained.",
+    "Historical crop-only evidence must be revalidated after review_frames.py crop-order correction; full-frame samples are unaffected."
+  ],
+  "fresh_reference_access": {
+    "agent_reach": "NOT_INSTALLED; native fallback allowed",
+    "alan_youtube": "Fresh Agent-Reach Qb1VvUf21L4 read returned NOT_INSTALLED/fallback allowed; native web reader returned Error fetching. No fresh audiovisual review.",
+    "day_one_youtube": "Fresh native open Online fetch throttled; no footage.",
+    "psychtoons_youtube": "Fresh native open Online fetch throttled; no footage.",
+    "psychdoodle_youtube": "Fresh native open DisabledError; no footage.",
+    "gly2wBcnZUQ": "Fresh native open returned title/footer and account iframe only; no decoded footage.",
+    "supplied_discipline": "Opening 0\u201348 s sampled every 2 s; actual frames inspected. Attribution unknown. No listening or precise cadence judgment. Additional exact decoded6,30,42-second reaction frames inspected in the listener pass; no dialogue/sound or attribution judgment. This pass additionally inspected exact28,30,32,40,42,44-second frames: head-supported/slumped poses provide a body-language comparison only; no listening/cadence or creator attribution. Final integrated pass inspected exact6/12/30/42-second frames: close face versus wider context and head-supported/slumped postures. This is sampled framing/body-language evidence only; no exact cuts, continuous motion, sound or channel attribution. Release/agency pass additionally inspected exact60,66,72,78,84,90 frames. Sample60 shows compressed braced effort;84 shows hands contacting the table during a whole-body lean;66/90 show different walking contexts. Only selected pose/contact/composition observations, not exact cuts, temporal motion, sound, channel attribution or performance parity. Attention pass: exact78/80/82/84/86/88 frames inspected; supported seated, forward-braced and back-leaning states differ. Pose/contact comparison only, no exact cuts, continuous motion, listening or channel attribution.",
+    "thatguy": "Fresh channel open returned footer only. Prior ordinary watch playback stalled at0:00/readyState0; actual audiovisual criteria remain pending.",
+    "alan_newgrounds": "Fresh normal cloud-browser visit to original portal316541 returned Site Unavailable / Unable to access this site. No fresh frames/audio; no bot-block cause inferred.",
+    "owner_local_chrome": "No local Chrome connection exposed in this session. Remote Chrome was initially mislabeled as owner Chrome; wording corrected and lesson recorded. Remote failure establishes nothing about owner local playback."
+  },
+  "pre_script_gate": "PASS structural preparation only",
+  "full_production_approved": false,
+  "workflow_conclusion": "success",
+  "latest_picture": {
+    "artifact": 14390176125,
+    "sha256": "d3bad8769a5b3badb8daa73a6af452fb36a6504f188226fa4b19d67c5e51197e",
+    "duration_s": 64.5,
+    "width": 1920,
+    "height": 1080,
+    "fps": 30,
+    "frames": 1935,
+    "review_scope": "Integrated overview, six demand samples19.95/20.15/20.3/20.4/20.55/20.9 and twelve paired-event samples46/48.8/48.98/49.3/50/51/52/52.5/53/54/55/55.9 inspected. Preparation/body/hand states, head-leading duck, guarded peek/partial rise and distinct final silhouettes are visible. Selected-frame author review only; continuous timing, actual sound and independent comprehension pending."
+  },
+  "latest_private_assembly": {
+    "name": "internal-pilot-v11.mp4",
+    "sha256": "0cb26aae5c5f7506643254b9f16fa37ddc6daab633be6429374fcd4d4a5ba92d",
+    "duration_s": 64.5,
+    "video_frames": 1935,
+    "audio_stream_duration_s": 64.482,
+    "review_scope": "Full decode/probe and nine captioned samples20.15/20.4/20.9/48.98/49.3/51/52.5/54/55.9 inspected. No subject/caption collision observed there; no complete temporal, auditory or independent approval.",
+    "decoded_audio_sha256": "d6ea2c401862c70b5b48597ad0883fbbf30102a83d28c1ac7c889e6d009334da",
+    "audio_verification": "V10 AAC copied unchanged without filtering or re-encoding; decoded audio hash identical. Original take and speed retained; no listening or narrator identity approval inferred."
+  },
+  "tests": {
+    "node_tests_passed": 23,
+    "artistic_approval": false
+  },
+  "full_production_gate": "FAIL; actual approval, reviewer/evidence/insight and outsider fields remain incomplete.",
+  "next_priority": "Preserve tracked shared-event gaze, staggered flinch/duck/peek/partial recovery, distinct final guarded/calm silhouettes and demand preparation/body/hand overlap alongside V10 and prior work. Next normal-speed audiovisual review must judge whether the short preparation, head-first flinch, peek and sustained guarded state read clearly without overacting. Resolve approved narrator identity, caption/speaker boundaries, mix/cup sync and independent/owner comprehension before approval.",
+  "private_continuation_bundle": {
+    "library_file_id": "libfile_2a2569310a8481919a251bf91621ecb0",
+    "file_id": "file_000000006f28822fb255913ca3f422c3",
+    "name": "FounderNotes-Internal-Pilot-Checkpoint-eac2e46.zip",
+    "version": 7,
+    "contents": "Current V11 picture/assembly, unchanged dialogue, provisional captions, manifests, baseline and final demand/paired-event samples and corrected own-render crops. Prior versions preserve V10 and earlier. No reference media/frames or public source included.",
+    "delivery_status": "Internal, not approved."
+  },
+  "previous_code_commit": "a5a661a0d21fd72ae0a0e9550e25e33cace9f91e",
+  "intermediate_picture": {
+    "code_commit": "a94242892d0afa528508bc69d03ed409ca47af51",
+    "artifact": 14367580227,
+    "workflow_run": 44167686802,
+    "sha256": "7ea61b8f6ac64ea3e8dcbd089dc9a82da4035b7bf976ead5bc65a1a2e238ed8e",
+    "verified_regressions": [
+      "18.4/19.6: a mentor face fragment intruded at the Youth close-up edge.",
+      "44.6/45.4/45.9: the positive free-arm bend crowded the mentor face; elbow/head gap37.29 pixels."
+    ],
+    "disposition": "Retained as intermediate evidence; corrected source and exact final samples reviewed separately."
+  },
+  "owner_working_preference": "2026-11-18: Complete coordinated bounded batches of connected substantial improvements before reporting; preserve the existing full pilot and review limits. Owner also requested PR13 handoff for Claude.",
+  "render_job_conclusion": "success",
+  "review_tool_correction": {
+    "tool": "review_frames.py",
+    "issue": "Public CLI validates x/y/width/height but forwarded that order to FFmpeg, whose positional order is width/height/x/y.",
+    "verification": "Existing real-decode test expanded: before fix200x100, expected200x160; after fix both tests pass. Corrected own Youth48.98/49.3/52.5/55.9 and mentor48.8/50/52/55.9 crops inspected. Full-frame evidence unaffected.",
+    "pending": "Recheck any historical finding supported solely by a pre-fix crop; preserve prior full-frame evidence separately."
+  }
+}

@@ -10,6 +10,7 @@ Owner request: 2026-11-17. Make videos, compare them with the supplied reference
 | DayOne Films | https://www.youtube.com/@dayonefilmsofficial | Owner-selected channel; representative video and timestamped study pending |
 | PsychToonsHQ | https://www.youtube.com/@psychtoonshq | Owner-selected channel; representative video and timestamped study pending |
 | Individual reference | https://www.youtube.com/watch?v=gly2wBcnZUQ | Playback blocked on 2026-11-17; not watched in this session |
+| ThatGuy / @thatguytalk | https://www.youtube.com/@thatguytalk | Owner-selected 2026-11-18; official candidate video metadata located; actual footage and sound study pending. See THATGUY_REFERENCE_2026-11-18.md. |
 | PsychDoodleTV | https://www.youtube.com/@psychdoodletv | Owner-selected channel; representative video and timestamped study pending |
 
 Do not infer a channel's style from its name, thumbnail or subscriber count. Select one relevant video per channel when access works; record its canonical video URL, title, sampled intervals, method and limitations. Keep the existing dated study in `.claude/skills/podcast-scout-skill/references/reference-video-learnings.md`; do not attribute those uploaded videos to these channels without evidence.
@@ -50,3 +51,4 @@ Example invocation: `python .claude/skills/podcast-scout-skill/scripts/record_le
 On 2026-11-17, the latest Philosopher MP4 could not be downloaded in this environment; no fresh animation verdict was obtained. The external video-watch service had insufficient credits and charged none. YouTube's browser watch page showed a verification challenge; no challenge was solved. Agent-Reach installation/use must be reported from the actual command result, never assumed from this document.
 
 Actual Agent-Reach result: `research_gateway.py status` returned `NOT_INSTALLED`. An owner-authorized installation was attempted with the official `uv tool install https://github.com/Panniantong/Agent-Reach/releases/latest/download/agent-reach.zip` source. It failed to download because the execution host could not resolve `github.com`. Agent-Reach was not installed or used to retrieve reference content. Retry only when normal network access is available; do not weaken network restrictions or substitute the unrelated PyPI package.
+

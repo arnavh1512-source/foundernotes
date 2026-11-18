@@ -1,4 +1,93 @@
 {
   "schema_version": 1,
-  "videos": []
+  "videos": [
+    {
+      "type": "video",
+      "video_id": "philosopher-stick-pilot-64s-eac2e46",
+      "summary": "Complete-duration internal stick pilot rebuilt with existing dialogue; needs audiovisual and independent review",
+      "evidence": "docs/PHILOSOPHER_STICK_PILOT_CHECKPOINT.json; code eac2e46ffa4526c481a41541a2387c10ffcbf7c8; CI44151191616/artifact14358329040; private assembled SHA1092aee903fdb34f5281b42540e7ec0c42193c289380465fd40cdac8620b80d0",
+      "verification": "Twelve Node tests and successful CI; full assembled decode; sampled encoded picture, cup silhouette and captioned frames inspected. No listening, continuous playback, outsider or owner approval. Full-production gate FAIL preserved.",
+      "status": "needs_work",
+      "style_fingerprint": "Original slender stick Youth and Philosopher; restrained sage/slate/bronze; gate illustration, room argument, responsibility cords, identical hill-event panels, qualified gate return.",
+      "owner_approved": false,
+      "recorded_at": "2026-11-17T18:52:03+00:00"
+    },
+    {
+      "type": "video",
+      "video_id": "philosopher-stick-pilot-task-33e7c24",
+      "summary": "Responsibility scene now uses interrupted work and a failed catch within the complete64.5-second pilot",
+      "evidence": "docs/PHILOSOPHER_STICK_PILOT_CHECKPOINT.json; CI44155539009/artifact14361645915; source33e7c24390bdb53fd77665ab77631fa8ad39a0c6; assembled SHA21a20157f8d8fc06f66b361c6f3474b7e2e80e7f36d36add5a2fc7f9b0da6d52",
+      "verification": "Thirteen tests and CI pass; full decode; overview, eighteen task/transition and six captioned samples inspected. Audio samples match previous cut. No auditory, continuous or independent/owner approval.",
+      "status": "needs_work",
+      "style_fingerprint": "Original stick cast; sage/slate/bronze room; visible written work, interruption, phone grip, missed catch and persistent physical consequence.",
+      "owner_approved": false,
+      "recorded_at": "2026-11-17T19:15:35+00:00"
+    },
+    {
+      "type": "video",
+      "video_id": "philosopher-stick-pilot-listeners-a23acad",
+      "summary": "Study now includes attentive reception, withheld interruption, invitation and prepared response",
+      "evidence": "docs/PHILOSOPHER_STICK_PILOT_CHECKPOINT.json; sourcea23acad9aa37cc51fcc96cedec954bd3c8a8a0d3; CI44158619348/artifact14362741826; assembled SHA5c69e182829c78659a73a066b26fc5172468bbc335b14579eac6e1a65224123c",
+      "verification": "Fourteen tests and successful CI; full decode; overview,12 study and6 captioned samples inspected. Dialogue audio exactly matches previous cut. Normal-speed, auditory, independent and owner review remain pending; full-production FAIL preserved.",
+      "status": "needs_work",
+      "style_fingerprint": "Original slender stick cast and shared study; distinct listener intentions, fixed seated support, cup down while replying and open palm clear of cup.",
+      "owner_approved": false,
+      "recorded_at": "2026-11-17T19:34:47+00:00"
+    },
+    {
+      "type": "video",
+      "video_id": "philosopher-stick-pilot-paired-0ca144a",
+      "summary": "Same external event with contrasting original stick reactions",
+      "status": "needs_work",
+      "owner_approved": false,
+      "style_fingerprint": "Original stick cast; whole64.5-second dialogue pilot; same hill and bird, protective versus curious response",
+      "evidence": "Code0ca144a; CI44162153584/artifact14364186513; exact picture/assembly hashes and sample intervals in PHILOSOPHER_STICK_PILOT_CHECKPOINT.json and review2026-11-18.",
+      "verification": "15 tests; exact encoded reaction/caption samples inspected; full decode and unchanged decoded audio hash. No continuous playback, listening or independent approval; full production FAIL.",
+      "recorded_at": "2026-11-17T19:57:25+00:00"
+    },
+    {
+      "type": "video",
+      "video_id": "philosopher-stick-pilot-catch-99c1284",
+      "summary": "Committed late paper catch and specific supported defeated reaction",
+      "evidence": "Source99c1284ffe58a69840e2c55b7b8789ef5a1df41f; CI44165022116/artifact14365956057; exact picture/assembly hashes and13 task/6 captioned sample intervals in checkpoint/review.",
+      "verification": "Sixteen tests, full decode/probe, exact encoded selected-frame self-review and unchanged decoded audio hash. No continuous, auditory, independent or owner approval; full production FAIL.",
+      "status": "needs_work",
+      "owner_approved": false,
+      "style_fingerprint": "Original slender stick cast; full64.5-second measured dialogue pilot; committed late catch, original forehead-in-hand reaction, persistent work consequence; existing audio unchanged.",
+      "recorded_at": "2026-11-17T20:10:15+00:00"
+    },
+    {
+      "type": "video",
+      "video_id": "philosopher-stick-pilot-integrated-5785e23",
+      "summary": "Integrated challenge, attention, rebuttal and ending with corrected face/camera regressions",
+      "evidence": "Source5785e235d3d6f850b3a586a8bcf65c6a407c9e5a, CI44203545216/artifact14381759074, exact picture/assembly hashes and28 picture/nine captioned intervals in checkpoint/review.",
+      "verification": "19 tests, browser parse, full decode/probe, exact selected-frame author self-review and unchanged decoded audio. No continuous audiovisual, independent or owner approval; full-production FAIL.",
+      "status": "needs_work",
+      "owner_approved": false,
+      "style_fingerprint": "Original stick core; full64.5s existing dialogue; distinct challenge/reception/explanation, active-prop gaze, locked-constraint/context/route ending; original audio unchanged.",
+      "recorded_at": "2026-11-18T00:02:05+00:00"
+    },
+    {
+      "type": "video",
+      "video_id": "philosopher-stick-pilot-agency-a5a661a",
+      "summary": "Supported paper release and deliberate planted reconsideration before departure",
+      "evidence": "Sourcea5a661a0d21fd72ae0a0e9550e25e33cace9f91e, CI44212187807/artifact14387096605, exact hashes and22 picture/nine captioned intervals in checkpoint/review.",
+      "verification": "21 tests, browser parse, full decode/probe, selected encoded author self-review and unchanged decoded audio. No continuous audiovisual, independent or owner approval; full-production FAIL.",
+      "status": "needs_work",
+      "owner_approved": false,
+      "style_fingerprint": "Original stick core and64.5s dialogue; supported work release/accelerating fall, existing missed catch/consequence, planted look back at unchanged constraint then purposeful exit; existing audio retained.",
+      "recorded_at": "2026-11-18T01:09:45+00:00"
+    },
+    {
+      "type": "video",
+      "video_id": "philosopher-stick-pilot-attention-91cf723",
+      "summary": "Tracked shared-event attention, staged guarded recovery and overlapping demand",
+      "evidence": "Source91cf7234fa241e911294ca9e98c045bd8cbe45e1, CI44218840887/artifact14390176125, exact hashes and18 picture/nine captioned intervals in checkpoint/review.",
+      "verification": "23 tests, bundled parse, full decode/probe, author selected encoded samples and unchanged decoded audio. No normal-speed audiovisual, independent or owner approval; full-production FAIL.",
+      "status": "needs_work",
+      "owner_approved": false,
+      "style_fingerprint": "Original64.5s stick dialogue; preparation/body/hand demand, shared-event gaze and head-leading duck/guarded peek/partial rise versus calm following; V10 work and existing audio preserved.",
+      "recorded_at": "2026-11-18T01:57:48+00:00"
+    }
+  ]
 }

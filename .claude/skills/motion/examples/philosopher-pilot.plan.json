@@ -1,0 +1,159 @@
+{
+  "schema_version": 1,
+  "viewer_need": {
+    "who": "A young adult facing a frustrating task or disagreement",
+    "struggling_with": "treating one blocked approach as proof that no useful move remains",
+    "daily_life_situation": "A plan fails, a conversation becomes an argument, and attention stays on forcing the same tactic.",
+    "why_care_now": "An evergreen reasoning problem; this fictional scene offers a limited question to try, not a promise that hardship is imaginary."
+  },
+  "learning_promise": {
+    "understand": "the distinction between an unchanged constraint and a changeable interpretation or approach",
+    "how_to": "name the constraint and ask which approach can be tested next",
+    "specific_outcome": "Leave with two separate questions: what is fixed here, and what can I try differently?"
+  },
+  "evidence_and_angle": {
+    "fresh_explanation": "A fictional gate remains locked while a different route becomes available; the later argument tests the meaning of that example.",
+    "relevant_limit": "The example is authored fiction, not evidence that every problem has a solution. Universal claims in the dialogue are the characters\u2019 disputed positions. Do not present them as established psychology.",
+    "evidence": [
+      {
+        "id": "E1",
+        "locator": "Owner-supplied Introduction: The Eccentric Philosopher shooting script; Challenge, Turn and Two Worlds scenes",
+        "what_it_supports": "The intended fictional dialogue and contrasting character intentions, not the empirical truth of their sweeping claims.",
+        "reviewed": true
+      },
+      {
+        "id": "E2",
+        "locator": "Encoded stick-route exercise SHA-256 1b9db90aa9eee238fa013738e9f4ca13f872e311e7bb7121fbd486d0fbaf0bc3; decoded frames 0\u201314.4 seconds",
+        "what_it_supports": "Within this authored model, the gate stays locked and the character reaches a separate path. The physical obstacle is not removed by thought.",
+        "reviewed": true
+      },
+      {
+        "id": "E3",
+        "locator": "Existing 64.5-second Philosopher-Improved-Animation.mp4; recovered caption samples at 57\u201363 seconds and inspected frame at 60 seconds",
+        "what_it_supports": "The existing ending explicitly limits the point: changing perspective need not remove an obstacle. Caption recovery is not an auditory or ASR review.",
+        "reviewed": true
+      }
+    ],
+    "what_people_find_interesting": [
+      {
+        "detail": "The obstacle survives the supposed solution.",
+        "why_this_viewer_cares": "It separates a change in action from pretending a problem disappeared.",
+        "evidence_ids": [
+          "E2"
+        ]
+      },
+      {
+        "detail": "The young person argues with the mentor rather than accepting his premise.",
+        "why_this_viewer_cares": "The disagreement lets the viewer question the claim instead of treating the mentor as scientific authority.",
+        "evidence_ids": [
+          "E1",
+          "E3"
+        ]
+      }
+    ]
+  },
+  "opening": {
+    "recognizable_problem": "A character keeps pulling a gate that remains locked.",
+    "curiosity_question": "What can change when the obstacle itself does not?",
+    "early_insight": "A different approach changes the character\u2019s action, while the original constraint remains.",
+    "first_visual": "An original stick character tests and braces against a visibly locked gate; show the lock before any route reveal.",
+    "first_15_to_30_seconds": "Show the failed tactic, reveal the route after reassessment, and then cut to the two-character study conversation. Keep the example explicitly illustrative and identify the dialogue as an argument.",
+    "first_insight_at_seconds": 14.5,
+    "evidence_ids": [
+      "E1",
+      "E2",
+      "E3"
+    ]
+  },
+  "chapters": [
+    {
+      "title": "One failed tactic",
+      "new_question": "Does a blocked tactic exhaust every possible action?",
+      "new_insight": "Changing an approach is distinct from changing the original constraint.",
+      "distinct_payoff": "The character takes the route while the gate stays locked.",
+      "daily_life_application_or_knowledge_gain": "Name a blocked action specifically rather than equating it with the entire situation.",
+      "evidence_ids": [
+        "E2"
+      ]
+    },
+    {
+      "title": "Facts and readings",
+      "new_question": "Which part of the disagreement concerns events, and which concerns their meaning?",
+      "new_insight": "Characters can read the same pictured situation differently; this does not establish that facts are optional.",
+      "distinct_payoff": "Two contrasting treatments retain the exact same hill, tree positions and buildings.",
+      "daily_life_application_or_knowledge_gain": "Separate an observable event from the interpretation placed on it.",
+      "evidence_ids": [
+        "E1",
+        "E3"
+      ]
+    },
+    {
+      "title": "The next question",
+      "new_question": "What practical question remains after the example?",
+      "new_insight": "A limited question can guide a next attempt without promising that every obstacle will disappear.",
+      "distinct_payoff": "Return to the unchanged lock and the used path with two concrete questions.",
+      "daily_life_application_or_knowledge_gain": "Ask what is fixed and what approach can be tested, while recognizing that some constraints need outside help or resources.",
+      "evidence_ids": [
+        "E2",
+        "E3"
+      ]
+    }
+  ],
+  "visual_storytelling": {
+    "coherent_style": "Original slender stick characters, restrained slate/sage/amber palette and one consistent line language; no copied benchmark artwork.",
+    "continuity_rule": "Maintain stable Youth/Philosopher colors and proportions. Keep the gate locked and routes fixed. Both comparison panels use the exact same hill geometry, palette and bird position/wing state; only the original character responses differ. Reserve the lower180 pixels for captions.",
+    "scenes": [
+      {
+        "chapter_index": 0,
+        "visible_action": "The Youth inspects, grips, braces, slips, recovers, discovers and uses an alternate route.",
+        "why_this_scene_earns_its_place": "It delivers a bounded visual example early instead of a long title opening.",
+        "meaningful_change": "The action changes, not the locked obstacle."
+      },
+      {
+        "chapter_index": 1,
+        "visible_action": "The Youth challenges the Philosopher, brings the argument toward himself, then commits forward with a final demand before listening, starts to interrupt and holds back. The seated Philosopher leans attentively and offers the floor with an open hand while keeping the cup down during the reply. The Youth prepares to answer. The task vignette shows writing interrupted by a phone, arriving work and a whole-body late reach toward the actual falling paper edge, followed by a supported forehead-in-hand reaction with papers left on the floor; the later cup response precedes identical hill events. During the task his gaze follows writing, phone and arriving work. After the cup set-down, the Youth recoils defensively and checks the reply while the Philosopher explains with an open palm; framing follows these intentions on the established axis. The arriving pages are supported from below until the delivery palm withdraws, then accelerate downward past the late catch; the offer is staged in front of the desk edge. The final demand draws back before the head/body commits and the hand arrives. In the paired event both gaze targets follow the actual shared bird; the Youth ducks, peeks from one lowered hand and rises only partly, while the Philosopher follows calmly. Their different responses remain visible at the end.",
+        "why_this_scene_earns_its_place": "Performance, prop contact and paired geometry carry the dispute.",
+        "meaningful_change": "The same authored bird event, hill geometry and palette are held fixed while the Youth protects his head and the Philosopher looks up curiously; the comparison shows different reactions without altering the external facts."
+      },
+      {
+        "chapter_index": 2,
+        "visible_action": "An insert isolates the still-closed lock. In the wider return the Youth stays planted, looks back at the unchanged gate and turns toward the route before walking away; a closer arch view accompanies the practical question.",
+        "why_this_scene_earns_its_place": "It makes the limitation in the existing ending visible.",
+        "meaningful_change": "The viewer receives a question for action rather than a universal cure."
+      }
+    ]
+  },
+  "narration_and_sound": {
+    "natural_phrasing": "Reuse the recovered dialogue at its original speed for an internal assembly. Preserve original pauses; do not synthesize or replace voices. Confirm provenance and actual listening before approval.",
+    "deliberate_emphasis": "Use the existing challenge, cup pause and qualified ending. Speaker identity remains stable in the picture and captions.",
+    "comfortable_transitions": "Let the challenge connect the illustrative opening to the study; retain the cup pause before the paired-view explanation. Ending image order follows the existing provisional recovered qualification and next-question intervals; these are not listened word-accurate cues.",
+    "explain_limits_with_claims": "Label the scene as a fictional argument and the gate as an illustration. Keep the ending\u2019s obstacle qualification; do not endorse sweeping dialogue as scientific fact."
+  },
+  "runtime_substance": {
+    "no_padding": true,
+    "insufficient_substance_action": "stop_and_research_or_rescope",
+    "why_this_length_is_earned": "The existing take measures 64.512 seconds; the pilot picture is 64.5 seconds. It contains an example, a disputed interpretation and a limited practical takeaway. No 8-minute or full-film claim is made.",
+    "substance_per_chapter": "A physical example, a distinction between readings and facts, and a concrete next-question payoff; do not extend the exercise or loop it to fill time."
+  },
+  "pilot": {
+    "target_seconds": 64.5,
+    "review_questions": {
+      "outsider_understands_problem": true,
+      "outsider_wants_answer": true,
+      "outsider_already_learned_something": true
+    },
+    "actual_review": {
+      "status": "pending",
+      "actual_seconds": 64.5,
+      "reviewer": "",
+      "evidence_path": "",
+      "one_insight_already_delivered": "",
+      "outsider_test": {
+        "outsider_understands_problem": false,
+        "outsider_wants_answer": false,
+        "outsider_already_learned_something": false
+      }
+    }
+  },
+  "viewer_promise_sentence": "This video is for someone struggling with treating one blocked approach as proof that no useful move remains; they'll understand the distinction between an unchanged constraint and a changeable interpretation or approach and leave knowing how to name the constraint and ask which approach can be tested next."
+}
