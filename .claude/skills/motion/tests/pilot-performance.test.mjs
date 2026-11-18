@@ -129,7 +129,7 @@ test('challenge, rebuttal and attention have distinct supported intentions',()=>
 
 test('room framing and ending separate claim, reaction, unchanged lock and chosen route',()=>{
  assert.equal(pilotRoomCameraAt(18.8).scale,2);assert.equal(pilotRoomCameraAt(21.3).scale,1.7);
- assert.deepEqual(pilotRoomCameraAt(43.8),{scale:2.05,x:760,y:500});
+ assert.deepEqual(pilotRoomCameraAt(43.8),{scale:2.05,x:760,y:465});
  assert.equal(pilotRoomCameraAt(45).scale,1.6);
  assert.equal(pilotEndingViewAt(56).mode,'constraint');assert.equal(pilotEndingViewAt(60).mode,'context');
  assert.equal(pilotEndingViewAt(64.4).mode,'route');
@@ -211,10 +211,12 @@ test('the seated mentor has forward knees, floor support and a reachable cup at 
 
 
 test('the Youth close-up excludes the reblocked mentor knees and toes',()=>{
- const view=pilotRoomCameraAt(18.8),right=view.x+960/view.scale,bottom=view.y+450/view.scale;
- const g=pilotActorAt(18.8,'philosopher');
+ for(const t of [18.8,43.8]){
+ const view=pilotRoomCameraAt(t),right=view.x+960/view.scale,bottom=view.y+450/view.scale;
+ const g=pilotActorAt(t,'philosopher');
  for(let i=0;i<2;i++)for(const [a,b] of [[g.legs[i].shoulder,g.legs[i].elbow],[g.legs[i].elbow,g.legs[i].wrist],[g.legs[i].wrist,g.toeTargets[i]]]){
   for(let j=0;j<=100;j++){const k=j/100,x=a[0]+(b[0]-a[0])*k,y=a[1]+(b[1]-a[1])*k;assert.ok(x>right+6||y>bottom+6,'mentor leg fragment enters the Youth close-up');}
+ }
  }
 });
 

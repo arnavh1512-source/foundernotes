@@ -20,7 +20,7 @@ export function pilotShotAt(time){
 export function pilotRoomCameraAt(time){
  if(!Number.isFinite(time))throw new TypeError('time must be finite');
  if(time>=41&&time<42.7)return {scale:2.6,x:1240,y:550};
- if(time>=42.7&&time<44.5)return {scale:2.05,x:760,y:500};
+ if(time>=42.7&&time<44.5)return {scale:2.05,x:760,y:465};
  if(time>=44.5&&time<46)return {scale:1.6,x:1030,y:530};
  if(time>=32.6&&time<34.5)return {scale:2,x:825,y:525};
  if(time>=29&&time<41)return {scale:1.25,x:930,y:520};
