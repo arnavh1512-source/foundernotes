@@ -119,7 +119,7 @@ test('challenge, rebuttal and attention have distinct supported intentions',()=>
  assert.ok(young(21.3).pose.chest[0]>young(18.8).pose.chest[0]+30);
  assert.equal(young(43.8).pose.intent,'defensive');assert.equal(young(44.9).pose.intent,'skeptical');
  assert.equal(mentor(45).pose.intent,'explain');
- assert.ok(distance(mentor(45).arms[1].wrist,pilotCupAt(45).center)>100);
+ assert.ok(distance(mentor(45.2).arms[1].wrist,pilotCupAt(45.2).center)>100);
  assert.deepEqual(mentor(45).pose.hip,[1320,680]);
  for(const t of [31,34.4,36.5,38.3]){
   const g=pilotActorAt(t,'youth','burden'),task=pilotTaskAt(t);
@@ -220,9 +220,20 @@ test('the Youth close-up excludes the reblocked mentor knees and toes',()=>{
 
 
 test('the free invitation and explanation hand travels above the held cup',()=>{
- for(const [start,end] of [[26.1,26.75],[43.9,44.55]])for(let i=0;i<=100;i++){
+ for(const [start,end] of [[26.1,26.75],[44.5,45.15]])for(let i=0;i<=100;i++){
   const t=start+(end-start)*i/100,g=pilotActorAt(t,'philosopher'),hand=g.arms[1].wrist,cup=pilotCupAt(t);
   assert.ok(distance(hand,cup.grip)>40,'free hand must not appear to take the cup handle '+t);
   assert.ok(distance(g.arms[1].elbow,g.pose.head)>75,'arc must not crowd the face '+t);
  }
+});
+
+
+test('mentor explanation begins on the return shot rather than intruding into the Youth close-up',()=>{
+ for(const t of [43.9,44.1,44.26,44.49]){
+  const g=pilotActorAt(t,'philosopher'),view=pilotRoomCameraAt(t);
+  assert.deepEqual(g.pose.hands[1],[1370,708]);
+  assert.ok(g.pose.hands[1][0]>view.x+960/view.scale+20);
+ }
+ assert.equal(pilotRoomCameraAt(44.5).scale,1.6);
+ assert.equal(pilotActorAt(45.2,'philosopher').pose.intent,'explain');
 });

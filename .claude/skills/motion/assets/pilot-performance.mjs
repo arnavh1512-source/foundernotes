@@ -70,7 +70,7 @@ export function pilotActorAt(time,role,mode='study'){
    p.intent=invite>.2?'invite':reply>.1?'reply':'listen';
   }
   if(time>=41&&time<46){
-   const respond=progress(time,43.9,.65);
+   const respond=progress(time,44.5,.65);
    p.chest[0]-=12*respond;p.head[0]-=18*respond;p.head[1]+=5*respond;
    p.hands[1]=pilotBlend(p.hands[1],[1145,510],respond);p.hands[1][1]-=55*Math.sin(Math.PI*respond);
    p.gaze=time<42.2?pilotCupAt(time).center:[710,385];
