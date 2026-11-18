@@ -208,3 +208,12 @@ test('the seated mentor has forward knees, floor support and a reachable cup at 
  assert.ok(Math.abs(cup.center[1]-20-(drinking.pose.head[1]+13))<10,'cup rim must meet the mouth, not the forehead');
  assert.ok(distance(drinking.arms[0].wrist,cup.grip)<1e-6);
 });
+
+
+test('the Youth close-up excludes the reblocked mentor knees and toes',()=>{
+ const view=pilotRoomCameraAt(18.8),right=view.x+960/view.scale,bottom=view.y+450/view.scale;
+ const g=pilotActorAt(18.8,'philosopher');
+ for(let i=0;i<2;i++)for(const [a,b] of [[g.legs[i].shoulder,g.legs[i].elbow],[g.legs[i].elbow,g.legs[i].wrist],[g.legs[i].wrist,g.toeTargets[i]]]){
+  for(let j=0;j<=100;j++){const k=j/100,x=a[0]+(b[0]-a[0])*k,y=a[1]+(b[1]-a[1])*k;assert.ok(x>right+6||y>bottom+6,'mentor leg fragment enters the Youth close-up');}
+ }
+});

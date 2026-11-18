@@ -25,7 +25,7 @@ export function pilotRoomCameraAt(time){
  if(time>=32.6&&time<34.5)return {scale:2,x:825,y:525};
  if(time>=29&&time<41)return {scale:1.25,x:930,y:520};
  if(time>=22.5&&time<29)return {scale:1.65,x:1190,y:530};
- if(time>=17.7&&time<20.3)return {scale:2,x:760,y:510};
+ if(time>=17.7&&time<20.3)return {scale:2,x:760,y:465};
  if(time>=16.4&&time<22.5)return {scale:1.7,x:850,y:520};
  return {scale:1,x:960,y:450};
 }
