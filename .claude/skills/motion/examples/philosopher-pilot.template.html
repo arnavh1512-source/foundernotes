@@ -79,7 +79,7 @@ function burden(t){
  const ink=progress(t,29,3.6);stroke(s,[[828,608],[828+40*ink,608]],2,youthColor);
  taskPaper(1100,606);
  if(task.deliveryVisible)for(const page of task.pages)taskPaper(...page.center,page.angle);
- if(task.deliveryHand>0){s.save();const x=task.deliveryX+62+(t>36.9?600*(1-task.deliveryHand):0);stroke(s,[[x+220,570],[x+100,590],[x,600]],9,'#899880');stroke(s,[[x,600],[x-14,598]],7,'#899880');s.restore();}
+ if(task.deliveryHand>0){const [x,y]=task.deliveryWrist;stroke(s,[[x+220,y-30],[x+100,y-20],[x,y]],9,'#899880');stroke(s,[[x,y],[x-34,y]],7,'#899880');}
  // Keys stay on the desk; the clock supplies a competing time constraint.
  s.beginPath();s.arc(1135,592,8,0,Math.PI*2);s.strokeStyle='#a38148';s.lineWidth=4;s.stroke();stroke(s,[[1143,592],[1170,592],[1170,600]],4,'#a38148');
  s.beginPath();s.arc(1110,385,45,0,Math.PI*2);s.fillStyle='#f5efdf';s.fill();s.strokeStyle='#899880';s.lineWidth=5;s.stroke();

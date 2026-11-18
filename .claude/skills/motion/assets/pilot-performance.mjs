@@ -51,8 +51,9 @@ export function pilotTaskAt(time){
  const writing=1-progress(time,32.6,.4);
  const spill=progress(time,37.4,1.2);
  const delivery=progress(time,35.6,1.2),deliveryX=1820-745*delivery;
- const pages=[0,1].map(i=>{const k=progress(time,37.4+i*.2,1.0);return {center:pilotBlend([deliveryX+i*30,603-i*6],[1040+i*80,805],k),angle:(i===0?-.45:.6)*Math.sin(Math.PI*k),fallen:k===1};});
- return {phoneCenter,phoneGrip,gripWeight,writing,spill,pages,deliveryX,deliveryVisible:time>=35.6,deliveryHand:progress(time,35.6,.3)*(1-progress(time,36.9,.4))};
+ const pages=[0,1].map(i=>{const fall=Math.max(0,Math.min(1,time-37.4-i*.2)),k=fall*fall;return {center:pilotBlend([deliveryX+i*30,634-i*6],[1040+i*80,805],k),angle:(i===0?-.45:.6)*Math.sin(Math.PI*k),fallen:k===1};});
+ const release=progress(time,37.3,.35),deliveryWrist=[deliveryX+34+600*release,646];
+ return {phoneCenter,phoneGrip,gripWeight,writing,spill,pages,deliveryX,deliveryVisible:time>=35.6,deliveryWrist,deliveryHand:progress(time,35.6,.3)*(1-release)};
 }
 export function pilotActorAt(time,role,mode='study'){
  if(!Number.isFinite(time))throw new TypeError('time must be finite');
@@ -128,18 +129,20 @@ export function pilotActorAt(time,role,mode='study'){
  return {pose:p,shoulders,arms,legs,toeTargets:legs.map(a=>[a.wrist[0]+p.facing*19,a.wrist[1]]),spineControl:[(p.hip[0]+p.chest[0])/2-16*p.facing,(p.hip[1]+p.chest[1])/2+8]};
 }
 export function pilotExitAt(time){
- const t=Math.max(56,Math.min(PILOT_DURATION,time)),phase=(t-56)*6;
+ const t=Math.max(56,Math.min(PILOT_DURATION,time)),travel=Math.max(0,t-60.2),phase=travel*Math.PI*2/.7;
+ const lookback=progress(t,58.6,.4)*(1-progress(t,59.8,.4));
  const source=geometryAt(14.5),p=JSON.parse(JSON.stringify(source.pose));
- p.facing=-1;p.intent='walk';
- p.hip[1]=550+3*Math.sin(phase)**2;p.chest[1]+=30;p.head[1]+=30;
- const depthAt=u=>{const d=progress(Math.max(0,Math.min(8.5,u)),0,8.5);return {scale:1-.55*d,anchor:[190+5*d,740-170*d]};};
- const depth=depthAt(t-56);
+ p.facing=lookback>.5?1:-1;p.intent=travel>0?'walk':lookback>.2?'consider':'pause';
+ p.hip[1]=550+3*Math.sin(phase)**2;p.chest[1]+=30;p.head[1]+=30;p.head[0]+=35*lookback;
+ if(lookback>.1)p.gaze=[895,537];
+ const depthAt=u=>{const d=progress(Math.max(0,Math.min(4.3,u)),0,4.3);return {scale:1-.55*d,anchor:[190+5*d,740-170*d]};};
+ const depth=depthAt(travel);
  p.feet=[0,1].map(i=>{
-  const offset=i*.55,local=t-56+offset,cycle=Math.floor(local/1.1),fraction=local/1.1-cycle;
-  const start=cycle*1.1-offset;
+  const offset=i*.35,local=travel+offset,cycle=Math.floor(local/.7),fraction=local/.7-cycle;
+  const start=cycle*.7-offset;
   const ground=u=>{const d=depthAt(u);return [d.anchor[0]+(i===0?-20:20)*d.scale,d.anchor[1]];};
   let world=ground(start);
-  if(fraction>=.5){const k=progress(fraction,.5,.5);world=pilotBlend(world,ground(start+1.1),k);world[1]-=18*depth.scale*Math.sin(Math.PI*k);}
+  if(fraction>=.5){const k=progress(fraction,.5,.5);world=pilotBlend(world,ground(start+.7),k);world[1]-=18*depth.scale*Math.sin(Math.PI*k);}
   return [190+(world[0]-depth.anchor[0])/depth.scale,740+(world[1]-depth.anchor[1])/depth.scale];
  });
  p.hands=[[155+15*Math.sin(phase),570],[245-15*Math.sin(phase),570]];

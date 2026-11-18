@@ -31,7 +31,7 @@ test('new performances preserve limbs, planted support and the actual cup handle
 
 test('the exit keeps stance feet planted after perspective projection',()=>{
  const ground=(t,i)=>{const g=pilotExitAt(t),p=g.legs[i].wrist;return [g.depth.anchor[0]+(p[0]-190)*g.depth.scale,g.depth.anchor[1]+(p[1]-740)*g.depth.scale];};
- for(const [a,b,i]of [[56.1,56.4,0],[56.65,56.9,1],[60.45,60.8,0]])assert.ok(distance(ground(a,i),ground(b,i))<1e-6);
+ for(const [a,b,i]of [[56.1,56.4,0],[58.7,59.9,1],[60.25,60.5,0],[60.6,60.8,1],[62.4,62.6,0]])assert.ok(distance(ground(a,i),ground(b,i))<1e-6);
 });
 
 
@@ -147,4 +147,25 @@ test('close claim excludes mentor face fragments and explanation arm clears his 
  for(let f=0;f<90;f++){const t=43+f/30,g=pilotActorAt(t,'philosopher');
   assert.ok(distance(g.arms[1].elbow,g.pose.head)>75,'free elbow invades head '+t);
  }
+});
+
+
+test('the work is visibly supported until release and accelerates into its consequence',()=>{
+ for(const t of [36.8,37,37.2]){const task=pilotTaskAt(t);
+  assert.equal(task.pages[0].center[1]+12,task.deliveryWrist[1]);
+  assert.ok(task.deliveryWrist[0]>=task.pages[0].center[0]&&task.deliveryWrist[0]<task.pages[0].center[0]+52);
+  assert.equal(task.deliveryHand,1);
+ }
+ const a=pilotTaskAt(37.4).pages[0].center[1],b=pilotTaskAt(37.6).pages[0].center[1],c=pilotTaskAt(37.8).pages[0].center[1];
+ assert.ok(c-b>2*(b-a),'the released page must gain downward speed');
+ assert.equal(pilotTaskAt(37.7).deliveryHand,0);
+ assert.deepEqual(pilotTaskAt(40.5).pages,pilotTaskAt(40.9).pages);
+});
+
+test('the ending shows a planted reconsideration before committed travel',()=>{
+ const a=pilotExitAt(58.7),b=pilotExitAt(59.3),c=pilotExitAt(60.1),walk=pilotExitAt(61);
+ assert.deepEqual(a.pose.feet,b.pose.feet);assert.deepEqual(b.pose.feet,c.pose.feet);
+ assert.equal(b.pose.intent,'consider');assert.deepEqual(b.pose.gaze,[895,537]);assert.equal(b.pose.facing,1);
+ assert.equal(c.depth.scale,1);assert.ok(walk.depth.scale<1);assert.equal(walk.pose.intent,'walk');
+ assert.equal(walk.pose.facing,-1);assert.ok(Math.abs(pilotExitAt(64.5).depth.scale-.45)<1e-9);
 });
