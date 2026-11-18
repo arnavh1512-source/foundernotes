@@ -191,3 +191,43 @@ The initial entries preserve documented observations from the 2026-11-11 study a
 - Cause / rationale: A browser named Chrome and an existing search tab were incorrectly taken to establish ownership/location.
 - Correction / recipe: Check the actual provider/environment and local-connection availability before claiming to use the owner computer. Label cloud attempts as remote; do not use a remote failure as evidence about the owner local browser.
 - Verification: Wording corrected to owner. Newgrounds limitation applies to the remote session only; local Chrome access remains unavailable and untested.
+
+### philosopher-pilot-repeated-challenge — The challenge lacked distinct escalation between its successive intentions
+
+- Recorded (UTC): 2026-11-17T20:18:02+00:00
+- Evidence: V7 picture8e831772525985e9036085c0446b59e09b9e8f5bdf47795907b3ec0aba48ff8b; decoded16.3/22.4/28.8 plus source point envelopes15.2 and20 seconds.
+- Cause / rationale: Two point envelopes reused the same leaning pose; the middle claim and final demand had no distinct whole-body state.
+- Correction / recipe: Use a hand drawn toward the self and a checked posture for the middle intention, then commit the hip/chest/head and pointed hand forward for the demand. Keep feet, desk brace and subsequent listener beats. Frame the changed intention on the same room axis.
+- Verification: Baseline source/selected-frame finding verified. Integrated sourcea94242892d0afa528508bc69d03ed409ca47af51 passes18 tests/browser-script parse. Final source5785e235d3d6f850b3a586a8bcf65c6a407c9e5a, CI44203545216/artifact14381759074, picture SHAc2278f5209780daab6930bc6d4d9c5d82c6b4986017b1081620a0b670d0e3695; exact final challenge, task/rebuttal and ending samples inspected. Integrated pose/gaze/framing changes and regression corrections are visible in sampled frames. V9 captioned review/full decode/probe complete; continuous motion, actual listening and independent/owner approval remain pending.
+
+### philosopher-pilot-understated-rebuttal — The rebuttal returned to the same resting mentor and a small Youth recoil
+
+- Recorded (UTC): 2026-11-17T20:18:02+00:00
+- Evidence: V7 picture8e831772525985e9036085c0446b59e09b9e8f5bdf47795907b3ec0aba48ff8b; actual42.7/43.5/44.6/45.8 samples and matching source. Task34.4 sample also keeps pupil level despite the phone below the face.
+- Cause / rationale: The camera supplied a two-shot but listener resistance, follow-up reception and prop-directed gaze had no corresponding explicit states.
+- Correction / recipe: Isolate the Youth defensive reception, then return to the two-shot for a skeptical check and the mentor open-palm explanation. Keep the seated supports and real cup grip; direct task pupils toward the active prop. Do not treat a receptive pose as agreement or word-accurate synchronization.
+- Verification: Baseline source/selected-frame finding verified. Integrated sourcea94242892d0afa528508bc69d03ed409ca47af51 passes18 tests/browser-script parse. Final source5785e235d3d6f850b3a586a8bcf65c6a407c9e5a, CI44203545216/artifact14381759074, picture SHAc2278f5209780daab6930bc6d4d9c5d82c6b4986017b1081620a0b670d0e3695; exact final challenge, task/rebuttal and ending samples inspected. Integrated pose/gaze/framing changes and regression corrections are visible in sampled frames. V9 captioned review/full decode/probe complete; continuous motion, actual listening and independent/owner approval remain pending.
+
+### philosopher-pilot-undifferentiated-ending — The qualified ending repeated a distant walk instead of distinguishing constraint from next approach
+
+- Recorded (UTC): 2026-11-17T20:18:02+00:00
+- Evidence: V7 picture8e831772525985e9036085c0446b59e09b9e8f5bdf47795907b3ec0aba48ff8b; actual56/58/60/62/64.4 decoded samples show the same view, shrinking walker and small persistent question.
+- Cause / rationale: One framing state ran across the entire eight-and-a-half-second ending, without emphasizing the still-closed lock separately from the used route.
+- Correction / recipe: Reuse the original unchanged world: first isolate the actual closed lock, then re-establish it beside the arch, then move closer to the chosen route and larger practical question. Share world/actor transforms; preserve projected foot contacts and voice speed.
+- Verification: Baseline source/selected-frame finding verified. Integrated sourcea94242892d0afa528508bc69d03ed409ca47af51 passes18 tests/browser-script parse. Final source5785e235d3d6f850b3a586a8bcf65c6a407c9e5a, CI44203545216/artifact14381759074, picture SHAc2278f5209780daab6930bc6d4d9c5d82c6b4986017b1081620a0b670d0e3695; exact final challenge, task/rebuttal and ending samples inspected. Integrated pose/gaze/framing changes and regression corrections are visible in sampled frames. V9 captioned review/full decode/probe complete; continuous motion, actual listening and independent/owner approval remain pending.
+
+### philosopher-pilot-close-face-fragment — Youth close-up left a distracting fragment of the mentor face at the frame edge
+
+- Recorded (UTC): 2026-11-17T23:56:39+00:00
+- Evidence: Actual V8 picture7ea61b8f6ac64ea3e8dcbd089dc9a82da4035b7bf976ead5bc65a1a2e238ed8e, sourcea94242892d0afa528508bc69d03ed409ca47af51, decoded18.4/19.6; the mentor face arc appears on the right edge.
+- Cause / rationale: The camera right bound1270 intersected a face beginning near1260 instead of excluding the entire offscreen character.
+- Correction / recipe: Move the close claim center from790 to760 on the unchanged room axis; test the whole mentor head radius plus a margin against the viewport, and inspect exact newly encoded18.4/19.6 samples.
+- Verification: Defect verified in encoded V8 samples and matching geometry. Source5785e235d3d6f850b3a586a8bcf65c6a407c9e5a passes19 tests; final encoded samples were rechecked: face fragment absent at18.4/19.6 and explanation elbow clear at44.6/45.4/45.9. This closes the sampled composition defect, not creative or full-motion approval.
+
+### philosopher-pilot-explain-elbow-face — The explaining arm elbow crowded the mentor face
+
+- Recorded (UTC): 2026-11-17T23:56:39+00:00
+- Evidence: Actual V8 decoded44.6/45.4/45.9; sourcea94242892d0afa528508bc69d03ed409ca47af51 uses positive free-arm bend after29 seconds, bringing the elbow near the head.
+- Cause / rationale: The raised hand was checked for wrist reach and cup clearance, but the elbow branch was not checked against the face.
+- Correction / recipe: Use one consistent negative bend for both mentor arms across the dialogue; cup-arm bend remains unchanged and no bend flip occurs during the explanation. Require free elbow/head separation and inspect changed poses and cup-rest regressions.
+- Verification: Defect verified in encoded V8 samples and matching geometry. Source5785e235d3d6f850b3a586a8bcf65c6a407c9e5a passes19 tests; final encoded samples were rechecked: face fragment absent at18.4/19.6 and explanation elbow clear at44.6/45.4/45.9. This closes the sampled composition defect, not creative or full-motion approval.

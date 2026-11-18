@@ -55,6 +55,17 @@
       "owner_approved": false,
       "style_fingerprint": "Original slender stick cast; full64.5-second measured dialogue pilot; committed late catch, original forehead-in-hand reaction, persistent work consequence; existing audio unchanged.",
       "recorded_at": "2026-11-17T20:10:15+00:00"
+    },
+    {
+      "type": "video",
+      "video_id": "philosopher-stick-pilot-integrated-5785e23",
+      "summary": "Integrated challenge, attention, rebuttal and ending with corrected face/camera regressions",
+      "evidence": "Source5785e235d3d6f850b3a586a8bcf65c6a407c9e5a, CI44203545216/artifact14381759074, exact picture/assembly hashes and28 picture/nine captioned intervals in checkpoint/review.",
+      "verification": "19 tests, browser parse, full decode/probe, exact selected-frame author self-review and unchanged decoded audio. No continuous audiovisual, independent or owner approval; full-production FAIL.",
+      "status": "needs_work",
+      "owner_approved": false,
+      "style_fingerprint": "Original stick core; full64.5s existing dialogue; distinct challenge/reception/explanation, active-prop gaze, locked-constraint/context/route ending; original audio unchanged.",
+      "recorded_at": "2026-11-18T00:02:05+00:00"
     }
   ]
 }

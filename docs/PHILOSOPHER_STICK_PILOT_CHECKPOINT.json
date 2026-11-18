@@ -1,6 +1,6 @@
 {
-  "code_commit": "99c1284ffe58a69840e2c55b7b8789ef5a1df41f",
-  "workflow_run": 44165022116,
+  "code_commit": "5785e235d3d6f850b3a586a8bcf65c6a407c9e5a",
+  "workflow_run": 44203545216,
   "previous_pr": {
     "number": 12,
     "observed_state": "merged",
@@ -8,14 +8,14 @@
   },
   "continuation_pr": 13,
   "previous_picture": {
-    "artifact": 14364186513,
-    "sha256": "ed04aeffe71bb733822c8d58518506b5fb78c96f47c12d2c97f824e738fe6a6d",
+    "artifact": 14365956057,
+    "sha256": "8e831772525985e9036085c0446b59e09b9e8f5bdf47795907b3ec0aba48ff8b",
     "duration_s": 64.5,
     "width": 1920,
     "height": 1080,
     "fps": 30,
     "frames": 1935,
-    "review_scope": "CI overview plus eleven decoded paired-view samples46.5,48.7,49,49.3,49.8,50.5,51.5,52.3,53.1,54.5,55.8 inspected. Same hill/palette/bird with protective crouch versus curious look/gesture. Selected frames only; no continuous, auditory or independent approval."
+    "review_scope": "CI overview plus13 exact task samples37.1,37.35,37.5,37.7,37.85,38,38.3,38.6,39.2,39.5,39.7,40,40.5 inspected. Committed torso/reach approaches falling page edge, followed by forehead-in-hand reaction and persistent papers. Selected frames only; continuous motion/listening/independent approval pending."
   },
   "private_audio": {
     "library_id": "libfile_c99d2bfdf94c819198bad6d6fd27be65",
@@ -36,12 +36,12 @@
   ],
   "fresh_reference_access": {
     "agent_reach": "NOT_INSTALLED; native fallback allowed",
-    "alan_youtube": "Fresh native GW_fdXHOWp4 read gave footer/text shell only, no footage.",
+    "alan_youtube": "Agent-Reach uDqjIdI4bF4 read freshly returned NOT_INSTALLED, fallback allowed; native web read returned a footer shell, not footage.",
     "day_one_youtube": "Text shell only, no playable footage",
     "psychtoons_youtube": "Online fetch throttled",
     "psychdoodle_youtube": "DisabledError",
     "gly2wBcnZUQ": "DisabledError",
-    "supplied_discipline": "Opening 0\u201348 s sampled every 2 s; actual frames inspected. Attribution unknown. No listening or precise cadence judgment. Additional exact decoded6,30,42-second reaction frames inspected in the listener pass; no dialogue/sound or attribution judgment. This pass additionally inspected exact28,30,32,40,42,44-second frames: head-supported/slumped poses provide a body-language comparison only; no listening/cadence or creator attribution.",
+    "supplied_discipline": "Opening 0\u201348 s sampled every 2 s; actual frames inspected. Attribution unknown. No listening or precise cadence judgment. Additional exact decoded6,30,42-second reaction frames inspected in the listener pass; no dialogue/sound or attribution judgment. This pass additionally inspected exact28,30,32,40,42,44-second frames: head-supported/slumped poses provide a body-language comparison only; no listening/cadence or creator attribution. Final integrated pass inspected exact6/12/30/42-second frames: close face versus wider context and head-supported/slumped postures. This is sampled framing/body-language evidence only; no exact cuts, continuous motion, sound or channel attribution.",
     "thatguy": "Official candidates OAWl6F_9HJ8 and SjMpWrZBpXQ identified from metadata. Actual SjMpWrZBpXQ browser playback stalled at0:00/readyState0; thumbnail is not footage review. See THATGUY_REFERENCE_2026-11-18.md.",
     "alan_newgrounds": "Fresh normal cloud-browser visit to original portal316541 returned Site Unavailable / Unable to access this site. No fresh frames/audio; no bot-block cause inferred.",
     "owner_local_chrome": "No local Chrome connection exposed in this session. Remote Chrome was initially mislabeled as owner Chrome; wording corrected and lesson recorded. Remote failure establishes nothing about owner local playback."
@@ -50,38 +50,50 @@
   "full_production_approved": false,
   "workflow_conclusion": "success",
   "latest_picture": {
-    "artifact": 14365956057,
-    "sha256": "8e831772525985e9036085c0446b59e09b9e8f5bdf47795907b3ec0aba48ff8b",
+    "artifact": 14381759074,
+    "sha256": "c2278f5209780daab6930bc6d4d9c5d82c6b4986017b1081620a0b670d0e3695",
     "duration_s": 64.5,
     "width": 1920,
     "height": 1080,
     "fps": 30,
     "frames": 1935,
-    "review_scope": "CI overview plus13 exact task samples37.1,37.35,37.5,37.7,37.85,38,38.3,38.6,39.2,39.5,39.7,40,40.5 inspected. Committed torso/reach approaches falling page edge, followed by forehead-in-hand reaction and persistent papers. Selected frames only; continuous motion/listening/independent approval pending."
+    "review_scope": "CI overview plus final challenge17.6,18.4,19.6,20.3,21.4,22.4; attention/rebuttal31,33.1,34.4,35.6,37.85,40.5,41,42,42.7,43.2,43.8,44.6,45.4,45.9; ending56,57.7,58.59,58.6,60.5,61.69,61.7,64.4 samples inspected. Final close-up excludes mentor face fragment; explanation elbow clears the head while supports and cup grip remain. Author selected-frame self-review only; continuous motion, listening and independent approval pending."
   },
   "latest_private_assembly": {
-    "name": "internal-pilot-v7.mp4",
-    "sha256": "dc54e17d24f8ea4bfbf31dd46faf665ab659cca2ac9540f2622f127a7479c65f",
+    "name": "internal-pilot-v9.mp4",
+    "sha256": "a401043a29d5e10862ba0b3c99f30a9a14641a50dbab83f93fd7898308c568f2",
     "duration_s": 64.5,
     "video_frames": 1935,
     "audio_stream_duration_s": 64.482,
-    "review_scope": "Full decode/probe succeeded; six captioned task samples37.5,37.85,38.3,39.5,40,40.5 inspected. Captions stay below the main action in those samples. No continuous playback, auditory or independent review.",
+    "review_scope": "Full decode/probe succeeded. Nine captioned samples18.4,21.4,34.4,43.8,45.4,57.7,58.6,61.7,64.4 inspected; captions remain below the main picture in these samples. Not a complete temporal, auditory or independent review.",
     "decoded_audio_sha256": "d6ea2c401862c70b5b48597ad0883fbbf30102a83d28c1ac7c889e6d009334da",
-    "audio_verification": "Prior V6 encoded AAC stream copied into V7 without filtering or re-encoding; decoded audio SHA identical. Existing take preserved, no profile identity or auditory approval inferred."
+    "audio_verification": "Prior V8 AAC stream copied without filtering/re-encoding; decoded audio SHA matches V7/V8 exactly. Existing take retained; no narrator identity or auditory approval inferred."
   },
   "tests": {
-    "node_tests_passed": 16,
+    "node_tests_passed": 19,
     "artistic_approval": false
   },
   "full_production_gate": "FAIL; actual approval, reviewer/evidence/insight and outsider fields remain incomplete.",
-  "next_priority": "Preserve gate/task/listener/paired-view progress and the committed late catch/defeated reaction. Review whole-pilot normal-speed continuity, including phone insert return, support transitions and paired-view comprehension without footer. Actual approved-profile identity/listening, caption wording/timing, cup sound sync and independent/owner pilot review remain unresolved; do not generate replacement voice or begin full production.",
+  "next_priority": "Read CLAUDE_ANIMATION_HANDOFF_2026-11-18.md. Preserve integrated challenge escalation, active-prop gaze, defensive/skeptical reception, supported mentor explanation and lock/context/route ending alongside earlier gate, task/catch and paired-view passes. Review full normal-speed motion and actual approved voice/caption/cup-sound timing before approval. No new artistic score follows from technical checks; full-production gate remains FAIL.",
   "private_continuation_bundle": {
     "library_file_id": "libfile_2a2569310a8481919a251bf91621ecb0",
-    "file_id": "file_00000000cd188208ad833cbb9010f6d9",
+    "file_id": "file_000000006fac8246a1cf2551c2872838",
     "name": "FounderNotes-Internal-Pilot-Checkpoint-eac2e46.zip",
-    "version": 4,
-    "contents": "Current V7 picture/assembly, unchanged dialogue, provisional captions, manifests, baseline and exact decoded catch/caption-review evidence. Prior versions preserve earlier checkpoints; filename retains its original identifier. No reference assets or public source included.",
+    "version": 5,
+    "contents": "Current V9 picture/assembly, unchanged source dialogue, provisional captions, manifests, final review and intermediate V8 regression frame evidence. Prior retained versions preserve V7 and earlier; filename retains original identifier. No reference media/frames or public source included.",
     "delivery_status": "Internal, not approved."
   },
-  "previous_code_commit": "0ca144a8786ecfd6060d7882de9c0383020bb156"
+  "previous_code_commit": "99c1284ffe58a69840e2c55b7b8789ef5a1df41f",
+  "intermediate_picture": {
+    "code_commit": "a94242892d0afa528508bc69d03ed409ca47af51",
+    "artifact": 14367580227,
+    "workflow_run": 44167686802,
+    "sha256": "7ea61b8f6ac64ea3e8dcbd089dc9a82da4035b7bf976ead5bc65a1a2e238ed8e",
+    "verified_regressions": [
+      "18.4/19.6: a mentor face fragment intruded at the Youth close-up edge.",
+      "44.6/45.4/45.9: the positive free-arm bend crowded the mentor face; elbow/head gap37.29 pixels."
+    ],
+    "disposition": "Retained as intermediate evidence; corrected source and exact final samples reviewed separately."
+  },
+  "owner_working_preference": "2026-11-18: Complete coordinated bounded batches of connected substantial improvements before reporting; preserve the existing full pilot and review limits. Owner also requested PR13 handoff for Claude."
 }
