@@ -217,3 +217,12 @@ test('the Youth close-up excludes the reblocked mentor knees and toes',()=>{
   for(let j=0;j<=100;j++){const k=j/100,x=a[0]+(b[0]-a[0])*k,y=a[1]+(b[1]-a[1])*k;assert.ok(x>right+6||y>bottom+6,'mentor leg fragment enters the Youth close-up');}
  }
 });
+
+
+test('the free invitation and explanation hand travels above the held cup',()=>{
+ for(const [start,end] of [[26.1,26.75],[43.9,44.55]])for(let i=0;i<=100;i++){
+  const t=start+(end-start)*i/100,g=pilotActorAt(t,'philosopher'),hand=g.arms[1].wrist,cup=pilotCupAt(t);
+  assert.ok(distance(hand,cup.grip)>40,'free hand must not appear to take the cup handle '+t);
+  assert.ok(distance(g.arms[1].elbow,g.pose.head)>75,'arc must not crowd the face '+t);
+ }
+});

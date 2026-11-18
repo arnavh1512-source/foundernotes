@@ -66,13 +66,13 @@ export function pilotActorAt(time,role,mode='study'){
    const reply=progress(time,22.9,.55),invite=progress(time,26.1,.65);
    p.chest[0]-=14*attention+14*reply;p.chest[1]+=5*attention+5*reply;
    p.head[0]-=18*attention+20*reply;p.head[1]+=8*attention+5*reply;
-   p.hands[1]=pilotBlend(p.hands[1],[1145,510],invite);
+   p.hands[1]=pilotBlend(p.hands[1],[1145,510],invite);p.hands[1][1]-=55*Math.sin(Math.PI*invite);
    p.intent=invite>.2?'invite':reply>.1?'reply':'listen';
   }
   if(time>=41&&time<46){
    const respond=progress(time,43.9,.65);
    p.chest[0]-=12*respond;p.head[0]-=18*respond;p.head[1]+=5*respond;
-   p.hands[1]=pilotBlend(p.hands[1],[1145,510],respond);
+   p.hands[1]=pilotBlend(p.hands[1],[1145,510],respond);p.hands[1][1]-=55*Math.sin(Math.PI*respond);
    p.gaze=time<42.2?pilotCupAt(time).center:[710,385];
    if(respond>.2)p.intent='explain';
   }
