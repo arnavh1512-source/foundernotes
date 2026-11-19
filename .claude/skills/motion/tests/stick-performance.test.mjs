@@ -194,8 +194,9 @@ test('motion energy: heaves, springy head, step weight and impact reactions',()=
  // weight lands on stair plants
  assert.ok(poseAt(8.31).hip[1]>poseAt(8.2).hip[1]+6||poseAt(8.31).hip[1]-poseAt(8.2).hip[1]>-30,'plant dips the hips');
  // impacts shake briefly, then stop
- for(const m of IMPACTS){assert.ok(Math.hypot(...shakeAt(m.t+.02))>1);assert.deepEqual(shakeAt(m.t+.3),[0,0]);}
- assert.deepEqual(shakeAt(2),[0,0]);
+ for(const m of IMPACTS){assert.ok(Math.hypot(...shakeAt(m.t+.02).slice(0,2))>1);assert.deepEqual(shakeAt(m.t+.35),[0,0,0]);}
+ assert.deepEqual(shakeAt(2),[0,0,0]);
+ assert.ok(Math.abs(shakeAt(4.38)[2])>.005,'big impact tilts the frame');
 });
 
 test('sound events sit on the animation contacts they belong to',()=>{
@@ -206,5 +207,16 @@ test('sound events sit on the animation contacts they belong to',()=>{
  for(const e of SOUND_EVENTS){assert.ok(e.t>=0&&e.t<DURATION&&e.gain>0&&e.gain<=1);}
  const action=SOUND_EVENTS.filter(e=>e.t<10.7).length/10.7;
  assert.ok(action>1.5&&action<3.5,`about 2 hits per second during action (benchmark AvA 2.4/s), got ${action.toFixed(2)}`);
+});
+
+test('anticipation and snap: wind-ups before key actions',()=>{
+ const reachX=t=>poseAt(t).hands[1][0];
+ assert.ok(Math.min(...[1.08,1.1,1.12,1.14].map(reachX))<reachX(1.0)-1,'hands pull back before shooting to the bars');
+ assert.ok(poseAt(7.53).hip[1]>poseAt(7.38).hip[1]+8,'crouch before the first stair step');
+ const turnX=t=>poseAt(t).head[0]-poseAt(t).chest[0];
+ assert.ok(Math.max(...[6.04,6.06,6.08].map(turnX))>turnX(5.95)+.5,'head counter-moves before turning');
+ // snap: the middle of a key action moves faster than an even pace would
+ const v=t=>distance(poseAt(t).hip,poseAt(t+1/60).hip)*60, even=distance(poseAt(2.5).hip,poseAt(1.8).hip)/.7;
+ assert.ok(v(2.15)>even*1.2,'brace snaps through its middle');
 });
 

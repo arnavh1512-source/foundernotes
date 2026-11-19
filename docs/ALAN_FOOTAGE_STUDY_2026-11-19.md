@@ -36,12 +36,14 @@ Pixel motion depends on figure size and background, so compare trends, not absol
 - **Cut 9 (`0fa885e2…`):** walk bob (body rises on the passing step, sinks on contact) applied to walk and stairs, hands carried with the body; dust rebuilt as an irregular billowing cloud.
 - **Cut 10/10b (`6ea8490e…`):** face features turn toward where the head points (the climb no longer reads as walking backwards); lower foot lift, so no prancing; walk-in arms swing nearly straight and opposite the legs (no "chicken wing" elbows). Fifteen tests pass.
 
-- **Cut 11 (sound):** measured Alan's audio: AvA ~2.4 hits/s, sound present 34%, -16.4 LUFS, LRA 13.9 (effects only, silence between); Geometry Dash 1.7 hits/s over music, -16.6 LUFS. Added `SOUND_EVENTS` tied to contacts and `scripts/stick-sfx.py`, which synthesises original effects (steps, clanks, rattle, twang, whoosh, thuds, slam, pluck, chime) with no samples. Result: 2.14 hits/s, sound present 43%, 23/23 effects within one frame of their contact, about -17 LUFS. Fixed masking (heave clanks under the rattle, the bounce under the impact tail, the last step under the chime). **Listening by a person is still required**; the assistant measures audio but cannot hear it.
+- **Cut 11 (sound):** measured Alan's audio: AvA ~2.4 hits/s, sound present 34%, -16.4 LUFS, LRA 13.9 (effects only, silence between); Geometry Dash 1.7 hits/s over music, -16.6 LUFS. Added `SOUND_EVENTS` tied to contacts and `scripts/stick-sfx.py`, which synthesises original effects (steps, clanks, rattle, twang, whoosh, thuds, slam, pluck, chime) with no samples. Result: 2.14 hits/s, sound present 43%, 23/23 effects within one frame of their contact. Correction: the first final mix measured -18.7 LUFS; `scripts/stick-mix.sh` now compresses gently and two-pass normalises to -16.8 LUFS (true peak -1.5 dBFS target), matching Alan's ~-16.5. Fixed masking (heave clanks under the rattle, the bounce under the impact tail, the last step under the chime). **Listening by a person is still required**; the assistant measures audio but cannot hear it.
+
+- **Cut 12 (`09b4916d…`, timing):** studied AvA 56–57 s: the blast reaches full size in about 5 frames, then lingers about 0.8 s while shifting from bright to dull, and the whole frame tilts on impact. Added anticipation (hands pull back before shooting to the bars, a head counter-move before the turn, a crouch before the first stair step), snap easing (slow start, fast middle, firm stop) on key actions, fast-build/slow-decay dust that dulls as it fades, and a frame tilt on the big impact. Motion 3.27 mean, 7% quiet seconds: energy moved into key moments rather than added. Seventeen tests pass.
 
 ## Open gaps (update every cycle)
 - Passing step still tight at the knees; legs about 51% of height.
-- Timing still smoother than Alan's: more snap-and-hold through the whole piece (not only the fall).
-- Dust still faint against the floor colour.
+- Timing: anticipation and snap now on key actions; held drawings (Alan animates largely on twos, 43% held frames) not yet tried.
+
 - No ensemble yet. Sound exists but is unheard by a person; 10.6–13.4 s is deliberately silent (judge once narration exists).
 
 ## Where claude-youtube comes in

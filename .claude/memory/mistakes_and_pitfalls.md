@@ -167,3 +167,11 @@ The initial entries preserve documented observations from the 2026-11-11 study a
 - Cause / rationale: Sound was deferred until narration; contact moments never had sound events
 - Correction / recipe: Keep a SOUND_EVENTS list beside the pose keys, tied to contacts (steps on plants, impacts on IMPACTS, grip and release on the gate), and synthesise original effects (stick-sfx.py). Check hit density, onset sync within one frame, and loudness against the benchmark; avoid stacking a soft event inside a louder tail.
 - Verification: Cut 11: 2.14 hits/s, sound present 43%, 23/23 effects within one frame of their contact, -17.3 LUFS two-pass (benchmark ~-16.5). Actual listening by a person still pending; the assistant cannot hear audio.
+
+### stick-rebuild-cut-11 — Key actions moved with one soft, even easing and effects faded linearly
+
+- Recorded (UTC): 2026-11-19T06:06:56+00:00
+- Evidence: Alan Becker AvA (Qb1VvUf21L4) 56-57 s frames: the blast reaches full size in ~5 frames, lingers ~0.8 s while dulling, and the frame tilts on impact; our cut 11 reach and dust ramped evenly
+- Cause / rationale: A single smoothstep easing was reused for most segments; effects used linear growth and fade
+- Correction / recipe: Give key actions anticipation (a small counter-move) and snap easing; build effects fast and fade them slowly with a colour shift; tilt as well as shake on big impacts. Keep tests for the wind-up, crouch, counter-move and snap speed.
+- Verification: Cut 12 frames show the hands pull back then reach the bars in two frames, and the dust bursts and lingers; 17 tests pass. Real-time viewing by a person pending.

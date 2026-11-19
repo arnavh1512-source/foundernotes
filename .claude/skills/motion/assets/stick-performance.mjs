@@ -45,6 +45,10 @@ const keys = [
   {t:14.5, hip:[190,520], chest:[193,380], head:[176,295], feet:[[170,740],[210,740]], hands:[[155,532],[232,532]], label:'through'}
 ];
 const blendPoint = (a,b,k) => a.map((v,i)=>v+(b[i]-v)*k);
+// Timing curves (benchmark: Alan's snap-and-hold and anticipation, AvA 56-57 s and 96-97 s).
+const backIn=u=>u*u*(2.7*u-1.7);                       // dips back ~10% before travelling
+const snap=u=>u<.5?4*u*u*u:1-Math.pow(-2*u+2,3)/2;     // slow start, fast middle, firm stop
+const SNAP=new Set(['grip','test','brace','load','recover','turn','notice','breathe','lookback','release','raise']);
 // Stay with the failed tactic, then reveal the route after the head turns toward it.
 // Edited coverage: hard cuts frame the object or reaction the viewer needs at each beat.
 // kind 'full' keeps the whole figure in frame; 'close' and 'insert' crop on purpose.
@@ -89,21 +93,22 @@ export function poseAt(time) {
   if(i<0)i=t>=DURATION?keys.length-2:0;
   const a=keys[i], b=keys[i+1], u=(t-a.t)/(b.t-a.t);
   // Losing support accelerates into impact; walking carries the body through foot plants.
-  const k=['limit','airborne','raise'].includes(a.label)?u*u:a.label==='release'?1-(1-u)*(1-u):progress(t,a.t,b.t-a.t);
+  const k=['limit','airborne'].includes(a.label)?u*u:a.label==='release'?1-(1-u)*(1-u):SNAP.has(a.label)?snap(u):progress(t,a.t,b.t-a.t);
   const moving=['walkin','stride','choose','step','continue','climb','approach'].includes(a.label);
   const bodyK=moving?u:k;
   const p={time:t,label:a.label};
   for(const field of ['hip','chest','head']){
-    const lead=field==='head'&&a.label==='recover'?progress(t,a.t+.2,.2):bodyK;
+    const lead=field==='head'&&a.label==='recover'?backIn(progress(t,a.t+.2,.2)):bodyK;
     p[field]=blendPoint(a[field],b[field],lead);
   }
   for(const field of ['feet','hands']){
-    const reach=field==='hands'&&a.label==='inspect'?progress(t,a.t+.06,b.t-a.t-.06):k;
+    const reach=field==='hands'&&a.label==='inspect'?backIn(Math.max(0,Math.min(1,(t-a.t-.06)/(b.t-a.t-.06)))):k;
     p[field]=a[field].map((v,j)=>blendPoint(v,b[field][j],reach));
   }
   // Effort comes in heaves (2.9-3.8 s); each stair plant loads the hips (benchmark: Alan's weight and rhythm).
   if(t>2.9&&t<3.8){const h=Math.sin((t-2.9)/.3*Math.PI);const d=Math.max(0,h)*16;
     p.hip=[p.hip[0]-d*.35,p.hip[1]+d*.3];p.chest=[p.chest[0]-d*1.2,p.chest[1]+d*.2];p.head=[p.head[0]-d*1.4,p.head[1]+d*.2];}
+  {const e=t-7.38;if(e>0&&e<.3){const c=Math.sin(e/.3*Math.PI)*16;p.hip=[p.hip[0],p.hip[1]+c];p.chest=[p.chest[0],p.chest[1]+c*.9];p.head=[p.head[0],p.head[1]+c*.8];}}
   for(const plant of [8.2,8.8,9.4,10,10.6]){const e=t-plant;if(e>0&&e<.22){const dip=Math.sin(e/.22*Math.PI)*12;
     p.hip=[p.hip[0],p.hip[1]+dip];p.chest=[p.chest[0],p.chest[1]+dip*.8];p.head=[p.head[0],p.head[1]+dip*.7];}}
   // Walk bob: the body rises as the swing leg passes and sinks onto each contact.
@@ -131,7 +136,7 @@ function headDirection(time){
 }
 // Impacts that make the world react: dust and a short camera shake.
 export const IMPACTS=[{t:4.35,at:[520,830],shake:9},{t:5.1,at:[560,830],shake:5}];
-export function shakeAt(time){let x=0,y=0;for(const m of IMPACTS){const e=time-m.t;if(e>=0&&e<.25){const a=m.shake*Math.exp(-e*14);x+=a*Math.sin(e*90);y+=a*Math.cos(e*70);}}return [x,y];}
+export function shakeAt(time){let x=0,y=0,r=0;for(const m of IMPACTS){const e=time-m.t;if(e>=0&&e<.3){const a=m.shake*Math.exp(-e*14);x+=a*Math.sin(e*90);y+=a*Math.cos(e*70);r+=a*.004*Math.sin(e*40);}}return [x,y,r];}
 export function geometryAt(time) {
   const p=poseAt(time);
   const gripping=p.time>=1.2&&p.time<=3.8;
