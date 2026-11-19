@@ -340,7 +340,7 @@ Read the code and docs; nothing from them runs in our pipeline except the two Py
 - **MoneyPrinterTurbo (MIT): stock-clip + TTS short generator.** Mostly paid-model plumbing; not our look. One piece
   taken: the **caption spring** (each line pops in at 86 % → 104 % → 100 % over 0.22 s), done as ASS transforms
   in `karaoke_ass.py`.
-- **yt-dlp / youtube-transcript-api:** the right tools for the scout's transcript step, now installed in the studio
-  venv. From this cloud machine YouTube blocks both ("sign in to confirm you're not a bot" / IpBlocked). The fix is
+- **yt-dlp / youtube-transcript-api:** the right tools for the scout's transcript step. `setup_studio.sh` installs
+  yt-dlp in the studio venv; usage and rules are in `references/yt-dlp.md`. From this cloud machine YouTube blocks both ("sign in to confirm you're not a bot" / IpBlocked). The fix is
   the owner's own exported cookies file (`yt-dlp --cookies`), never pasted into chat, or the owner uploading the
   audio/transcript. Without it the scout falls back to uploaded files or the episode's own show notes.
