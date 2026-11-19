@@ -4,8 +4,9 @@
 
 ## Where it fits
 
-1. `research_gateway.py transcript <url>` (Agent-Reach) is still the first attempt.
-2. If the gateway reports it unavailable, yt-dlp is the transcript and metadata fallback:
+**yt-dlp is the first provider for YouTube** (owner rule, 2026-11-19). `research_gateway.py transcript <url>` and `research_gateway.py youtube-search "<query>"` run yt-dlp first and use Agent-Reach only as backup when yt-dlp is missing, fails or finds no English subtitles. A rate limit (HTTP 429) or bot/login block stops the request; it is not retried through Agent-Reach. The gateway finds yt-dlp via `FOUNDERNOTES_YTDLP_BIN`, then `PATH`, then `~/.cache/studio-venv/bin/yt-dlp`.
+
+Direct commands, when you need the raw files:
 
 ```bash
 # English subtitles only, no media download
@@ -20,7 +21,7 @@ Or: `python3 .claude/skills/claude-youtube/execution/fetch_transcript.py <url> -
 
 Record in the research log which tool actually produced each transcript.
 
-Tested 2026-11-19 (yt-dlp 2026.10.26, cloud session): English auto-subtitles downloaded without cookies. A wildcard like `en.*` also requests auto-translated tracks and drew HTTP 429, so keep the language list explicit. Results vary by machine and IP; a block is reported, not worked around.
+Tested 2026-11-19 (yt-dlp 2026.10.26, cloud session): English auto-subtitles downloaded without cookies. A wildcard like `en.*` also requests auto-translated tracks and drew HTTP 429, so keep the language list explicit. Results vary by machine and IP; a block is reported, not worked around. A later run from the same session got the bot check on subtitles while `youtube-search` through the gateway still worked.
 
 ## Rules
 

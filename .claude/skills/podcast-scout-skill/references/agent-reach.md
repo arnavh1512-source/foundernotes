@@ -16,6 +16,8 @@ python3 .claude/skills/podcast-scout-skill/scripts/research_gateway.py youtube-s
 python3 .claude/skills/podcast-scout-skill/scripts/research_gateway.py transcript "https://www.youtube.com/watch?v=jNQXAC9IVRw"
 ```
 
+**YouTube order (owner rule, 2026-11-19):** `youtube-search` and `transcript` try yt-dlp first (subtitles/metadata only, see [yt-dlp.md](yt-dlp.md)). Agent-Reach runs only if yt-dlp is missing, fails, or finds no English subtitles; the envelope's `attempts` lists both tries. A yt-dlp rate limit or bot/login block returns `fallback.allowed: false` and is not retried through Agent-Reach. `search` and `read` go to Agent-Reach only.
+
 The wrapper maps commands to `agent-reach channels`, `agent-reach web search`, `agent-reach web read`, `agent-reach youtube search`, and `agent-reach youtube subtitle`. This **does not** call the upstream paid `youtube transcribe` command; if subtitles are unavailable, use an authorized transcript/transcription route and record that limitation. For special platforms outside the two default public channels, inspect `agent-reach channels`, obtain any required permission, and use the upstream installed Agent-Reach skill rather than inventing action names. The wrapper restricts itself to public operations and refuses private-network URLs.
 
 ## One-time local installation (explicit user approval)

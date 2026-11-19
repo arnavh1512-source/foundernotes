@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
 """FounderNotes default read-only research gateway.
 
-Agent-Reach 1.6+ is the FIRST attempted provider for public web research
-and YouTube discovery/subtitles. This wrapper NEVER installs dependencies,
+Agent-Reach 1.6+ is the FIRST attempted provider for public web search and
+reading. For YouTube (search and subtitles) yt-dlp is tried first (owner rule,
+2026-11-19) and Agent-Reach is the backup when yt-dlp is missing, fails or
+finds no subtitles. A rate limit or bot/login block STOPS the request; it is
+never retried through another backend. This wrapper NEVER installs dependencies,
 logs in, copies browser state, invokes paid transcription, or bypasses
 platform limits. If unavailable, it returns a structured directive for the
 Claude Code researcher to use *authorized native tools* (it cannot invoke
@@ -25,6 +28,7 @@ import os
 import shutil
 import subprocess
 import sys
+import tempfile
 import urllib.parse
 from pathlib import Path
 
@@ -101,6 +105,108 @@ def _binary():
     return override or shutil.which("agent-reach")
 
 
+def _ytdlp_binary():
+    override = os.environ.get("FOUNDERNOTES_YTDLP_BIN")
+    if override:
+        return override
+    found = shutil.which("yt-dlp")
+    if found:
+        return found
+    venv = Path(os.environ.get("STUDIO_VENV", Path.home() / ".cache" / "studio-venv")) / "bin" / "yt-dlp"
+    return str(venv) if venv.is_file() and os.access(venv, os.X_OK) else None
+
+
+def _watch_url(value):
+    if value.startswith(("http://", "https://")):
+        return value
+    return "https://www.youtube.com/watch?v=" + value
+
+
+def _ytdlp_error(stderr):
+    text = (stderr or "").lower()
+    if "429" in text or "too many requests" in text:
+        return "RATE_LIMITED", "YouTube rate-limited yt-dlp (HTTP 429)"
+    if "not a bot" in text or "confirm you" in text:
+        return "PLATFORM_BLOCKED", "YouTube asked yt-dlp to sign in to confirm it is not a bot"
+    if "private video" in text or "members-only" in text or "sign in" in text:
+        return "NEED_LOGIN", "This video needs a signed-in account"
+    if "video unavailable" in text or "does not exist" in text:
+        return "NOT_FOUND", "Video unavailable"
+    return "UPSTREAM_BROKEN", "yt-dlp failed: " + (stderr or "").strip().splitlines()[-1][:200] if (stderr or "").strip() else "yt-dlp failed"
+
+
+def _vtt_text(content):
+    lines, previous = [], None
+    for raw in content.splitlines():
+        line = raw.strip()
+        if (not line or line.startswith(("WEBVTT", "Kind:", "Language:", "NOTE")) or "-->" in line
+                or line.isdigit()):
+            continue
+        line = " ".join("".join(part.split(">")[-1] for part in line.split("<")).split())
+        if line and line != previous:
+            lines.append(line)
+            previous = line
+    return " ".join(lines)
+
+
+def _run_ytdlp(arguments, executable, timeout):
+    try:
+        return subprocess.run([executable, *arguments], check=False, capture_output=True,
+                              text=True, encoding="utf-8", errors="replace", timeout=timeout), None
+    except subprocess.TimeoutExpired:
+        return None, ("TIMEOUT", "yt-dlp timed out (no automatic retry)")
+    except OSError:
+        return None, ("NEED_SETUP", "Could not launch yt-dlp")
+
+
+def _ytdlp(operation, value, *, limit, timeout, executable=None):
+    """Return (result, None) on success or (None, (code, message)) on failure."""
+    executable = executable or _ytdlp_binary()
+    if not executable:
+        return None, ("NOT_INSTALLED", "yt-dlp is not installed (run setup_studio.sh)")
+    if operation == "youtube-search":
+        completed, err = _run_ytdlp(["--flat-playlist", "--dump-single-json", "--no-warnings",
+                                     "--", f"ytsearch{limit}:{value}"], executable, timeout)
+        if err:
+            return None, err
+        if completed.returncode != 0:
+            return None, _ytdlp_error(completed.stderr)
+        try:
+            entries = json.loads(completed.stdout).get("entries") or []
+        except (ValueError, AttributeError):
+            return None, ("INVALID_RESPONSE", "yt-dlp did not return JSON")
+        items = [{"title": e.get("title"), "url": e.get("url") or _watch_url(e.get("id", "")),
+                  "channel": e.get("channel") or e.get("uploader"), "duration": e.get("duration"),
+                  "view_count": e.get("view_count")}
+                 for e in entries if isinstance(e, dict) and e.get("id")]
+        if not items:
+            return None, ("NO_CONTENT", "yt-dlp search returned no videos")
+        return _result(operation, ok=True, provider="yt-dlp", channel="youtube",
+                       backend="yt-dlp", items=items), None
+    url = _watch_url(value)
+    with tempfile.TemporaryDirectory() as tmp:
+        completed, err = _run_ytdlp(["--skip-download", "--write-subs", "--write-auto-subs",
+                                     "--sub-langs", "en,en-orig", "--sub-format", "vtt",
+                                     "--no-playlist", "--no-warnings",
+                                     "-o", str(Path(tmp) / "sub.%(ext)s"), "--", url],
+                                    executable, timeout)
+        if err:
+            return None, err
+        files = sorted(Path(tmp).glob("*.vtt"), key=lambda f: (not f.name.endswith(".en.vtt"), f.name))
+        for subtitle in files:
+            text = _vtt_text(subtitle.read_text(encoding="utf-8", errors="replace"))
+            if text:
+                language = subtitle.name.split(".")[-2]
+                return _result(operation, ok=True, provider="yt-dlp", channel="youtube",
+                               backend="yt-dlp", items=[{"url": url, "language": language,
+                                                         "text": text}]), None
+    if completed.returncode != 0:
+        code, message = _ytdlp_error(completed.stderr)
+        if code != "UPSTREAM_BROKEN":
+            return None, (code, message)
+    return None, ("NO_TRANSCRIPT", "yt-dlp found no English subtitles")
+
+
 def _execute(arguments, *, executable=None, timeout=45):
     executable = executable or _binary()
     if not executable:
@@ -128,7 +234,7 @@ def _execute(arguments, *, executable=None, timeout=45):
     return payload, None, None
 
 
-def run(operation, value=None, *, limit=5, timeout=45, executable=None):
+def run(operation, value=None, *, limit=5, timeout=45, executable=None, ytdlp_executable=None):
     if operation not in COMMANDS:
         return _fallback(operation, code="BAD_INPUT", message="Unsupported research operation")
     if operation in {"search", "youtube-search"} and (not isinstance(value, str) or not value.strip()):
@@ -139,6 +245,18 @@ def run(operation, value=None, *, limit=5, timeout=45, executable=None):
         return _fallback(operation, code="BAD_INPUT", message="A public YouTube URL or video ID is required")
     if not 1 <= limit <= 10:
         return _fallback(operation, code="BAD_INPUT", message="Search limit must be between 1 and 10")
+    first_attempt = None
+    if operation in {"youtube-search", "transcript"}:
+        result, failure = _ytdlp(operation, value, limit=limit, timeout=timeout,
+                                 executable=ytdlp_executable)
+        if result:
+            return result
+        code, message = failure
+        first_attempt = {"provider": "yt-dlp", "code": code, "message": message}
+        if code in STOP_ERRORS:
+            stopped = _fallback(operation, code=code, message=message)
+            stopped["attempts"] = [first_attempt]
+            return stopped
     routing = {
         "status": ["channels"],
         "search": ["web", "search", value or "", "--limit", str(limit)],
@@ -146,7 +264,15 @@ def run(operation, value=None, *, limit=5, timeout=45, executable=None):
         "youtube-search": ["youtube", "search", value or "", "--limit", str(limit)],
         "transcript": ["youtube", "subtitle", value or "", "--lang", "en,en-orig"],
     }
-    payload, code, message = _execute(routing[operation], executable=executable, timeout=timeout)
+    result = _agent_reach(operation, routing[operation], executable=executable, timeout=timeout)
+    if first_attempt:
+        result["attempts"] = [first_attempt, {"provider": "agent-reach",
+                                              "code": (result.get("error") or {}).get("code")}]
+    return result
+
+
+def _agent_reach(operation, arguments, *, executable, timeout):
+    payload, code, message = _execute(arguments, executable=executable, timeout=timeout)
     if code:
         return _fallback(operation, code=code, message=message)
     if operation == "status":
