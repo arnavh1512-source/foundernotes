@@ -159,3 +159,11 @@ The initial entries preserve documented observations from the 2026-11-11 study a
 - Cause / rationale: Slip keyed as a short lowering of the hips with feet planted; no airborne phase, impact or world reaction
 - Correction / recipe: Stage failures as release, airborne, impact with squash and bounce, an emotional reaction and recovery; make the obstacle react (spring back, settle). Use different easing per phase: ease out of a release, accelerate into an impact.
 - Verification: Cut 5b: 3.8-5.8 s mean frame difference 2.87; tests check the airborne tilt, feet off the floor, squash/bounce, accelerating fall and gate swing. Full-speed viewing against Alan pending.
+
+### stick-rebuild-cut-10 — Stick exercise had no sound while the benchmark puts an effect on every contact
+
+- Recorded (UTC): 2026-11-19T06:01:27+00:00
+- Evidence: Alan Becker AvA (Qb1VvUf21L4): ~2.4 sound hits/s, sound present 34% of the time, -16.4 LUFS, LRA 13.9; Geometry Dash 1.7 hits/s over music, -16.6 LUFS. Our cut 10 had no audio stream.
+- Cause / rationale: Sound was deferred until narration; contact moments never had sound events
+- Correction / recipe: Keep a SOUND_EVENTS list beside the pose keys, tied to contacts (steps on plants, impacts on IMPACTS, grip and release on the gate), and synthesise original effects (stick-sfx.py). Check hit density, onset sync within one frame, and loudness against the benchmark; avoid stacking a soft event inside a louder tail.
+- Verification: Cut 11: 2.14 hits/s, sound present 43%, 23/23 effects within one frame of their contact, -17.3 LUFS two-pass (benchmark ~-16.5). Actual listening by a person still pending; the assistant cannot hear audio.

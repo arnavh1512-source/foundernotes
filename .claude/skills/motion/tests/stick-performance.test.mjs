@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {geometryAt,poseAt,cameraAt,depthAt,shotAt,faceAt,shakeAt,IMPACTS,SHOTS,DURATION,HEAD_R} from '../assets/stick-performance.mjs';
+import {geometryAt,poseAt,cameraAt,depthAt,shotAt,faceAt,shakeAt,IMPACTS,SOUND_EVENTS,SHOTS,DURATION,HEAD_R} from '../assets/stick-performance.mjs';
 const distance=(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1]);
 test('whole-body pose track preserves limbs, grips and planted support',()=>{
  for(let f=0;f<=Math.round(DURATION*30);f++){
@@ -196,5 +196,15 @@ test('motion energy: heaves, springy head, step weight and impact reactions',()=
  // impacts shake briefly, then stop
  for(const m of IMPACTS){assert.ok(Math.hypot(...shakeAt(m.t+.02))>1);assert.deepEqual(shakeAt(m.t+.3),[0,0]);}
  assert.deepEqual(shakeAt(2),[0,0]);
+});
+
+test('sound events sit on the animation contacts they belong to',()=>{
+ const at=(type,t)=>SOUND_EVENTS.some(e=>e.type===type&&Math.abs(e.t-t)<1/30);
+ for(const m of IMPACTS)assert.ok(at(m.shake>6?'thud':'slam',m.t),`impact sound at ${m.t}`);
+ for(const plant of [8.2,8.8,9.4,10,10.6])assert.ok(at('step',plant),`stair step at ${plant}`);
+ assert.ok(at('clank',1.2),'grip contact');assert.ok(at('twang',3.95),'grip snaps');
+ for(const e of SOUND_EVENTS){assert.ok(e.t>=0&&e.t<DURATION&&e.gain>0&&e.gain<=1);}
+ const action=SOUND_EVENTS.filter(e=>e.t<10.7).length/10.7;
+ assert.ok(action>1.5&&action<3.5,`about 2 hits per second during action (benchmark AvA 2.4/s), got ${action.toFixed(2)}`);
 });
 

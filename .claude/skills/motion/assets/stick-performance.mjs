@@ -193,3 +193,17 @@ export function faceAt(time) {
   for(const at of BLINKS){const d=Math.abs(t-at);if(d<.08)f.eye*=d/.08;}
   return f;
 }
+
+// Sound events on contacts (benchmark: AvA ~2.4 hits/s during action, silence between; no music).
+// type: step | clank | rattle | twang | whoosh | thud | slam | pluck | chime. gain 0..1.
+export const SOUND_EVENTS = [
+  {t:.3,type:'step',gain:.55},{t:.6,type:'step',gain:.55},{t:.82,type:'step',gain:.35},
+  {t:1.2,type:'clank',gain:.8},{t:1.8,type:'rattle',gain:.5,dur:1.15},
+  {t:3.05,type:'clank',gain:.85},{t:3.65,type:'clank',gain:.9},
+  {t:3.95,type:'twang',gain:.9},{t:3.97,type:'whoosh',gain:.6,dur:.38},
+  {t:4.35,type:'thud',gain:1},{t:4.55,type:'thud',gain:.5},{t:5.1,type:'slam',gain:.9},
+  {t:5.45,type:'step',gain:.4},{t:6.3,type:'pluck',gain:.5},
+  {t:7.0,type:'step',gain:.45},{t:7.6,type:'step',gain:.5},
+  ...[8.2,8.8,9.4,10.0,10.6].map(t=>({t,type:'step',gain:.6})),
+  {t:13.4,type:'chime',gain:.3},{t:14.05,type:'step',gain:.4},{t:14.35,type:'step',gain:.3}
+];
