@@ -66,9 +66,11 @@ Owner request 2026-11-19: learn by copying. A ~1.6 s passage of AvA (25.3–26.9
 
 - **Cut 19 (`2c4edf5a…`, framing):** reframed for the shorter figure: medium 1.9 → 2.15 zoom and lower, wide 1.3 → 1.55, arch 1.55 → 2.0, close-ups re-centred. The figure now fills most of each shot; reveal timing and in-frame tests unchanged. Measured against Alan: mean motion 3.78 (cut 4: 2.39; AvA 1.97; Geometry Dash 12.3), **low-motion seconds 0%** (AvA 19%, Geometry Dash 3%, cut 4 21%).
 
+- **Cut 20 (`2586643e…`, owner QC "the moment he stands is not good"):** cut 19 frames 5.0–6.0 s showed the legs knotting as the feet slid in, a wide frog squat with dangling arms, and an elevator-straight rise. Re-keyed as kneel-to-stand on the weight-over-base principle: tuck (back foot folded under, front foot planted ahead, torso curled over the knees, one hand still on the floor), rock forward (head and chest out over the feet, hand pushing off the knee), rise while still leaning, then a short steadying shuffle into the stand. Two solver fixes surfaced: seated poses now keep their hip on the seat (height-scaling had sunk it to the floor line and dragged it over the feet), and the knee branch switch threshold is 10 px. Knee flips 0, knees never below the floor, 19 tests pass (new get-up test checks the lean over the feet, the leaning rise, the step lift and per-frame knee jumps).
+
 ## Open gaps (update every cycle)
 - Proportions match Alan (cut 18) and shots are reframed (cut 19).
-- **Next craft gaps vs Alan:** smear/motion lines on the fastest actions (release flail, slam); more exaggerated squash and stretch through the body; the 5.30 s knee swing in the scramble up; the dust-off reads weakly in profile; still no ensemble.
+- **Next craft gaps vs Alan:** smear/motion lines on the fastest actions (release flail, slam); more exaggerated squash and stretch through the body; the dust-off reads weakly in profile; still no ensemble.
 - Timing: anticipation and snap now on key actions; held drawings (Alan animates largely on twos, 43% held frames) not yet tried.
 
 - No ensemble yet. Owner removed footsteps; remaining effects not yet confirmed by listening.

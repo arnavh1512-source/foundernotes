@@ -26,8 +26,9 @@ test('time boundaries clamp and invalid time is rejected',()=>{
 test('recovery holds contacts and stair steps alternate support feet',()=>{
  for(let f=0;f<=Math.round(DURATION*30);f++){
   const t=f/30,p=poseAt(t);
-  if(t>=5.45&&t<=7.6)assert.deepEqual(p.feet[0],[470,830]);
-  if(t>=5.45&&t<=7)assert.deepEqual(p.feet[1],[650,830]);
+  if(t>=5.8&&t<=7.6)assert.deepEqual(p.feet[0],[470,830]);
+  if(t>=5.8&&t<=7)assert.deepEqual(p.feet[1],[650,830]);
+  if(t>=5.3&&t<=5.64)assert.deepEqual(p.feet,[[505,830],[690,830]]);
   if(t>=4.35&&t<=5.1)assert.deepEqual(p.feet,[[680,825],[720,800]]);
   if(t>=7.6&&t<=8.2)assert.deepEqual(p.feet[1],[580,830]);
   if(t>=8.2&&t<=8.8)assert.deepEqual(p.feet[0],[420,800]);
@@ -230,5 +231,14 @@ test('retention lens: no static picture longer than 3 s',()=>{
  let still=0,worst=0;
  for(let f=0;f<Math.round(DURATION*30);f++){const t=f/30;if(moving(t))still=0;else{still+=1/30;worst=Math.max(worst,still);}}
  assert.ok(worst<=3.05,`camera static for ${worst.toFixed(2)} s`);
+});
+
+test('getting up puts the weight over the feet before rising, then steadies with a step',()=>{
+ const g=t=>poseAt(t);
+ assert.ok(g(5.47).head[0]>g(5.47).feet[0][0]+40,'head leans out over the feet before the rise');
+ assert.ok(g(5.64).chest[0]>g(5.64).hip[0]+15,'rises while still leaning forward');
+ assert.ok(g(5.72).feet[0][1]<820,'back foot lifts for the steadying step');
+ // knees never jump: no knee moves more than 2x its foot plus 20 px in a frame during the get-up
+ let prev=geometryAt(5.1);for(let t=5.1+1/30;t<5.9;t+=1/30){const g=geometryAt(t);g.legs.forEach((l,i)=>{const dk=distance(l.elbow,prev.legs[i].elbow),df=distance(l.wrist,prev.legs[i].wrist);assert.ok(!(dk>20&&dk>df*2),`knee jump at ${t.toFixed(2)}`);});prev=g;}
 });
 

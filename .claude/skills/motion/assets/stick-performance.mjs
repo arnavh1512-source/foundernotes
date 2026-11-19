@@ -29,7 +29,10 @@ const keys = [
   {t:4.8, hip:[520,800], chest:[470,680], head:[452,596], feet:[[680,825],[720,800]], hands:[[430,820],[470,830]], label:'sit'},
   {t:4.95, hip:[520,800], chest:[478,676], head:[470,592], feet:[[680,825],[720,800]], hands:[[430,820],[525,580]], label:'raise'},
   {t:5.1, hip:[520,800], chest:[488,692], head:[502,612], feet:[[680,825],[720,800]], hands:[[430,820],[560,826]], label:'slam'},
-  {t:5.45, hip:[545,700], chest:[548,565], head:[560,480], feet:[[470,830],[650,830]], hands:[[505,720],[600,720]], label:'push'},
+  // Owner QC "the moment he stands is not good": weight goes over the feet before rising (tuck, rock forward, rise leaning, steady step).
+  {t:5.3, hip:[520,800], chest:[548,668], head:[575,590], feet:[[505,830],[690,830]], hands:[[470,828],[640,735]], label:'tuck'},
+  {t:5.47, hip:[560,780], chest:[630,660], head:[672,590], feet:[[505,830],[690,830]], hands:[[540,770],[662,742]], label:'rock'},
+  {t:5.64, hip:[590,700], chest:[640,575], head:[672,492], feet:[[505,830],[690,830]], hands:[[570,690],[672,700]], label:'rise'},
   {t:5.8, hip:[560,613], chest:[550,475], head:[570,390], feet:[[470,830],[650,830]], hands:[[480,620],[610,625]], label:'recover'},
   {t:6.4, hip:[560,612.9171747926382], chest:[550,475], head:[535,390], feet:[[470,830],[650,830]], hands:[[480,620],[610,625]], label:'turn'},
   {t:7.0, hip:[550,620], chest:[530,480], head:[495,395], feet:[[470,830],[650,830]], hands:[[470,635],[590,635]], label:'notice'},
@@ -57,9 +60,13 @@ function reproportion(k){
   const L0=115+120, L1=LEG[0]+LEG[1], d=(p,q)=>Math.hypot(p[0]-q[0],p[1]-q[1]);
   const reach=k.feet.map(f=>Math.min(.985,d(k.hip,f)/L0)*L1);
   // Slide the hip along its original direction from the feet until the most-extended leg matches its old extension.
-  let lo=0,hi=1;for(let it=0;it<40;it++){const m=(lo+hi)/2,h=blendPoint(F,k.hip,m);
+  // Lower the hip vertically only, keeping its sideways offset from the feet (a seated figure stays seated behind its feet;
+  // scaling sideways too dragged seated hips on top of the feet and folded the legs flat).
+  const seated=['impact','squash','squashhold','bounce','sit','raise','slam','tuck','rock'].includes(k.label);
+  const hipAt=m=>seated?k.hip.slice():blendPoint(F,k.hip,m); // seated hips stay on the seat
+  let lo=0,hi=1;for(let it=0;it<40;it++){const m=(lo+hi)/2,h=hipAt(m);
     if(Math.max(...k.feet.map((f,j)=>d(h,f)/reach[j]))>1)hi=m;else lo=m;}
-  let hip=blendPoint(F,k.hip,lo);
+  let hip=hipAt(lo);
   for(let it=0;it<60;it++)k.feet.forEach((f,j)=>{const r=d(hip,f);if(r>reach[j]){const u=reach[j]/r;hip=[f[0]+(hip[0]-f[0])*u,f[1]+(hip[1]-f[1])*u];}});
   const chest=[hip[0]+(k.chest[0]-k.hip[0])*BODY,hip[1]+(k.chest[1]-k.hip[1])*BODY];
   const head=[chest[0]+(k.head[0]-k.chest[0])*BODY,chest[1]+(k.head[1]-k.chest[1])*BODY];
@@ -161,7 +168,7 @@ export function poseAt(time) {
   if(t>5.78&&t<6.18){const w=Math.sin(Math.PI*(t-5.78)/.4),rub=Math.sin((t-5.78)*44)*12;
     const tgt=[[p.chest[0]+40+rub*.8,p.chest[1]+150],[p.chest[0]+60-rub*.8,p.chest[1]+144]];
     p.hands=p.hands.map((h,j)=>[h[0]+(tgt[j][0]-h[0])*w,h[1]+(tgt[j][1]-h[1])*w]);}
-  const lifts={slam:[46,30],walkin:[44,0],stride:[0,44],test:[0,28],limit:[20,0],notice:[0,48],choose:[48,0],step:[0,70],continue:[70,0],climb:[0,70],approach:[60,0],enter:[0,26]}[a.label]||[0,0];
+  const lifts={slam:[40,34],rise:[48,22],walkin:[44,0],stride:[0,44],test:[0,28],limit:[20,0],notice:[0,48],choose:[48,0],step:[0,70],continue:[70,0],climb:[0,70],approach:[60,0],enter:[0,26]}[a.label]||[0,0];
   p.feet.forEach((v,j)=>{v[1]-=Math.sin(Math.PI*k)*lifts[j]*BODY;});
   return p;
 }
@@ -213,7 +220,7 @@ function kneeBranch(time,j){
     const dt=1/120,n=Math.ceil(DURATION/dt)+1;kneeTrack=[];let cur=[-1,-1];
     for(let i=0;i<n;i++){const t=Math.min(DURATION,i*dt),both=geometryAt(t,'legs'),want=t<6.4?-1:1;
       cur=cur.map((c,k)=>{const [a,b]=both[k],mine=c===1?a:b,other=c===1?b:a;
-        const near=Math.hypot(mine.elbow[0]-other.elbow[0],mine.elbow[1]-other.elbow[1])<16;
+        const near=Math.hypot(mine.elbow[0]-other.elbow[0],mine.elbow[1]-other.elbow[1])<10;
         const belowFloor=mine.elbow[1]>828&&other.elbow[1]<=828;
         return (near&&want!==c)||belowFloor?-c:c;});
       kneeTrack.push(cur.slice());}

@@ -207,3 +207,11 @@ The initial entries preserve documented observations from the 2026-11-11 study a
 - Cause / rationale: Holds were keyed as identical poses and only the face or arms changed; a labelled 'breathe' beat carried no breath
 - Correction / recipe: Give every hold a whole-body acting choice (weight shift, lean toward what the character thinks about, a sigh or breath through the shoulders, knees giving). Measure frozen body frames and list the frozen stretches, then look at the frames. Keep only short, deliberate dramatic holds.
 - Verification: Cut 17: frozen body frames 13%, the breath and look-back lean visible in frames, 18 tests pass. Owner re-check pending.
+
+### stick-rebuild-cut-19 — Getting up from the floor looked wrong: knotted legs, frog squat, elevator rise
+
+- Recorded (UTC): 2026-11-19T06:56:58+00:00
+- Evidence: Owner QC 2026-11-19 'the moment he stands is not good'; cut 19 frames 5.0-6.0 s; feet slid under the hip and the hip rose vertically with a straight torso
+- Cause / rationale: The push key tucked the feet straight under the hip and raised the body vertically; re-proportioning also sank seated hips to the floor and dragged them over the feet, folding the legs flat so the knees flipped
+- Correction / recipe: Animate get-ups on the weight-over-base principle: tuck with the front foot ahead and the back leg folded under, rock the head and chest out over the feet, push off a knee, rise while leaning, then steady with a short step. Keep seated hips on the seat when re-proportioning. Check per-frame knee jumps and frames.
+- Verification: Cut 20 stand-up frames read as kneel-to-stand; knee flips 0; 19 tests pass. Owner re-check pending.
