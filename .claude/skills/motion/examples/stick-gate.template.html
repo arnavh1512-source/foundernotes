@@ -14,8 +14,9 @@ function path(points,width=8,color=INK){
 // Minimal original face: two eyes, two brow strokes, one mouth. Features slide toward the facing side.
 function drawFace(p,head,f){
  const s=HEAD_R/31;c.save();c.translate(...head);c.scale(s,s);c.translate(-head[0],-head[1]);
- const facing=Math.max(-1,Math.min(1,(p.head[0]-p.chest[0])/30));
- const [hx,hy]=[head[0]+facing*9,head[1]];
+ // Features turn decisively toward where the head points, so travel and attention direction read.
+ const facing=Math.max(-1,Math.min(1,(p.head[0]-p.chest[0])/18));
+ const [hx,hy]=[head[0]+facing*13,head[1]];
  c.strokeStyle=INK;c.fillStyle=INK;c.lineWidth=3.5;c.lineCap='round';
  for(const side of [-1,1]){
   const ex=hx+side*9, ey=hy-4;
@@ -57,9 +58,11 @@ function draw(t){
  c.fillStyle='#b78c4b';c.fillRect(874+g.gateOffset,514,43,46);
  // Open shackle is never drawn: the obstacle remains physically closed.
  c.strokeStyle='#b78c4b';c.lineWidth=10;c.beginPath();c.arc(895+g.gateOffset,514,12,Math.PI,0);c.stroke();
- // Dust puffs where the body and the fist hit the floor.
- for(const m of IMPACTS){const e=t-m.t;if(e>=0&&e<.45){const k=e/.45;c.fillStyle=`rgba(140,132,108,${(1-k)*.85})`;
-  for(const s of [-1,-.55,-.15,.2,.6,1]){c.beginPath();c.arc(m.at[0]+s*(30+110*k),m.at[1]-10-40*k*(1-Math.abs(s)*.5),14+22*k,0,Math.PI*2);c.fill();}}}
+ // Dust: an irregular cloud of overlapping puffs that billows out and up, then thins.
+ for(const m of IMPACTS){const e=t-m.t;if(e>=0&&e<.55){const k=e/.55,ease=1-(1-k)*(1-k);
+  for(let i=0;i<9;i++){const side=i%2?1:-1,spread=(.25+((i*37)%10)/12)*side,size=(10+((i*53)%9)*2)*(1+1.4*ease);
+   c.fillStyle=`rgba(${150+((i*29)%20)},${143+((i*17)%18)},${120+((i*11)%15)},${(1-k)*.7})`;
+   c.beginPath();c.arc(m.at[0]+spread*120*ease,m.at[1]-6-((i*41)%5+2)*9*ease,size,0,Math.PI*2);c.fill();}}}
  // Character (with its contact shadows) recedes into the arch at the end.
  const d=depthAt(t);c.save();c.translate(...DEPTH_ANCHOR);c.scale(d,d);c.translate(-DEPTH_ANCHOR[0],-DEPTH_ANCHOR[1]);
  for(const foot of p.feet){const floor=foot[0]>=115&&foot[0]<320?740:foot[0]>=320&&foot[0]<390?770:foot[0]>=390&&foot[0]<460?800:830;if(Math.abs(foot[1]-floor)<3){c.fillStyle='#b9b9a9';c.beginPath();c.ellipse(foot[0]+7,floor+3,35,6,0,0,Math.PI*2);c.fill();}}

@@ -5,9 +5,9 @@ export const DURATION = 14.5;
 export const HEAD_R = 47, LINE = 15;
 const keys = [
   // Benchmark: start in motion. Two strides into frame, overshoot into a lean at the lock, then inspect.
-  {t:0, hip:[410,632], chest:[445,492], head:[462,408], feet:[[350,830],[470,830]], hands:[[395,605],[505,590]], label:'walkin'},
-  {t:.3, hip:[530,628], chest:[566,488], head:[582,404], feet:[[590,830],[470,830]], hands:[[505,590],[470,605]], label:'stride'},
-  {t:.6, hip:[650,630], chest:[690,490], head:[708,406], feet:[[590,830],[710,830]], hands:[[600,605],[700,592]], label:'stride2'},
+  {t:0, hip:[410,632], chest:[445,492], head:[462,408], feet:[[350,830],[470,830]], hands:[[515,640],[385,642]], label:'walkin'},
+  {t:.3, hip:[530,628], chest:[566,488], head:[582,404], feet:[[590,830],[470,830]], hands:[[500,640],[636,636]], label:'stride'},
+  {t:.6, hip:[650,630], chest:[690,490], head:[708,406], feet:[[590,830],[710,830]], hands:[[760,632],[625,640]], label:'stride2'},
   {t:.82, hip:[668,620], chest:[718,478], head:[746,392], feet:[[590,830],[710,830]], hands:[[660,600],[740,598]], label:'settle'},
   {t:1.0, hip:[650,610], chest:[690,470], head:[710,385], feet:[[590,830],[710,830]], hands:[[665,630],[720,630]], label:'inspect'},
   {t:1.2, hip:[650,625], chest:[705,490], head:[735,405], feet:[[590,830],[710,830]], hands:[[790,560],[790,530]], label:'grip'},
@@ -106,7 +106,11 @@ export function poseAt(time) {
     p.hip=[p.hip[0]-d*.35,p.hip[1]+d*.3];p.chest=[p.chest[0]-d*1.2,p.chest[1]+d*.2];p.head=[p.head[0]-d*1.4,p.head[1]+d*.2];}
   for(const plant of [8.2,8.8,9.4,10,10.6]){const e=t-plant;if(e>0&&e<.22){const dip=Math.sin(e/.22*Math.PI)*12;
     p.hip=[p.hip[0],p.hip[1]+dip];p.chest=[p.chest[0],p.chest[1]+dip*.8];p.head=[p.head[0],p.head[1]+dip*.7];}}
-  const lifts={walkin:[70,0],stride:[0,70],test:[0,28],limit:[20,0],notice:[0,48],choose:[48,0],step:[0,70],continue:[70,0],climb:[0,70],approach:[60,0],enter:[0,26]}[a.label]||[0,0];
+  // Walk bob: the body rises as the swing leg passes and sinks onto each contact.
+  if(['walkin','stride','choose','step','continue','climb','approach'].includes(a.label)){
+    const bob=Math.sin(Math.PI*u)*10;p.hip=[p.hip[0],p.hip[1]-bob];p.chest=[p.chest[0],p.chest[1]-bob];p.head=[p.head[0],p.head[1]-bob];
+    p.hands=p.hands.map(h=>[h[0],h[1]-bob]);}
+  const lifts={walkin:[44,0],stride:[0,44],test:[0,28],limit:[20,0],notice:[0,48],choose:[48,0],step:[0,70],continue:[70,0],climb:[0,70],approach:[60,0],enter:[0,26]}[a.label]||[0,0];
   p.feet.forEach((v,j)=>{v[1]-=Math.sin(Math.PI*k)*lifts[j];});
   return p;
 }

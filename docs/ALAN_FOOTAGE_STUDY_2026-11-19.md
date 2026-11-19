@@ -32,11 +32,15 @@ Pixel motion depends on figure size and background, so compare trends, not absol
 10. **Faces (our addition, from DayOne):** two eyes, two brows, one mouth; an expression per beat; effort (wide gritted mouth, brows down) must differ from shock (wide eyes, round mouth).
 11. **Staging:** Alan holds one continuous screen and moves within it. Our explainer channel may cut (DayOne and psychology references do), but the characters must still carry the motion energy.
 
+## Cycle log
+- **Cut 9 (`0fa885e2…`):** walk bob (body rises on the passing step, sinks on contact) applied to walk and stairs, hands carried with the body; dust rebuilt as an irregular billowing cloud.
+- **Cut 10/10b (`6ea8490e…`):** face features turn toward where the head points (the climb no longer reads as walking backwards); lower foot lift, so no prancing; walk-in arms swing nearly straight and opposite the legs (no "chicken wing" elbows). Fifteen tests pass.
+
 ## Open gaps (update every cycle)
-- Walk cycle quality (knees and arm swing still stiff); legs about 51% of height.
-- Dust reads as a row of balls, not a puff.
-- Timing still smoother than Alan's: more snap-and-hold through the whole piece.
-- No ensemble yet; no sound yet.
+- Passing step still tight at the knees; legs about 51% of height.
+- Timing still smoother than Alan's: more snap-and-hold through the whole piece (not only the fall).
+- Dust still faint against the floor colour.
+- No ensemble yet; **no sound yet** (Alan's films use effects on every contact; next major gap).
 
 ## Where claude-youtube comes in
 When we move from craft exercises to real videos, `.claude/skills/claude-youtube/` is used after the animation and narration are locked: `hook` variants to test in the pilot, `seo`/`metadata` for titles, descriptions, tags and chapters, `thumbnail` briefs, `shorts` for the summary Short, and `analyze` once the owner shares real analytics. Its adapter rules apply (benchmarks are heuristics; no keys, OAuth or paid tools without approval).
