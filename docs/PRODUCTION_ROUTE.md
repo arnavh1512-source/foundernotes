@@ -17,6 +17,7 @@ Owner direction, 2026-11-17: use FounderNotes to its full extent, use stick anim
 | Technical inspection | `review_frames.py`, `lint_scenes.py`, `qc_video.py` | Decoded frames and measured reports; no inferred artistic pass |
 | Creative revision | `studio_loop.py` reference / learn / produce / critic / revise | Findings tied to the exact render and a new review after changes |
 | Persistent learning | `record_lesson.py`, creative-knowledge export, skill evaluation, production ledger | Verified defects; untested reference patterns labeled hypotheses |
+| Packaging and growth | `.claude/skills/claude-youtube/` (hook, seo, metadata, thumbnail, shorts, analyze) after picture and narration lock | Hook variants, titles, description, tags, chapters, thumbnail brief, Short plan |
 | Delivery | `package_lint.py`, delivery-package guidance | Approved video and the required accompanying package |
 
 Use the approved narrator policy in CLAUDE.md if an older supporting document suggests a different voice. Use the stick-core rule if an older visual recipe suggests a different main character style. Optional tool licenses and runtime checks still matter.

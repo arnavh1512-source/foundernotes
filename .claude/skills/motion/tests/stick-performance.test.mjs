@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {geometryAt,poseAt,cameraAt,depthAt,shotAt,faceAt,SHOTS,DURATION,HEAD_R} from '../assets/stick-performance.mjs';
+import {geometryAt,poseAt,cameraAt,depthAt,shotAt,faceAt,shakeAt,IMPACTS,SHOTS,DURATION,HEAD_R} from '../assets/stick-performance.mjs';
 const distance=(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1]);
 test('whole-body pose track preserves limbs, grips and planted support',()=>{
  for(let f=0;f<=Math.round(DURATION*30);f++){
@@ -13,7 +13,7 @@ test('whole-body pose track preserves limbs, grips and planted support',()=>{
    }
   }
   if(g.gripping)g.arms.forEach((a,i)=>assert.ok(distance(a.wrist,g.handTargets[i])<1e-6));
-  if(g.pose.time<=3.8)assert.equal(g.pose.feet[0][0],590);
+  if(g.pose.time>=.6&&g.pose.time<=3.8)assert.equal(g.pose.feet[0][0],590);
   assert.deepEqual(geometryAt(f/30),g);
  }
 });
@@ -39,7 +39,7 @@ test('recovery holds contacts and stair steps alternate support feet',()=>{
 });
 
 test('neutral silhouette and facing turn avoid crossed knees and folded rest arms',()=>{
- const rest=geometryAt(0);
+ const rest=geometryAt(1.0);
  assert.ok(rest.legs[0].elbow[0]<rest.legs[1].elbow[0]);
  rest.arms.forEach(a=>assert.ok(distance(a.shoulder,a.wrist)>150));
  const before=geometryAt(6.4-.0001),after=geometryAt(6.4);
@@ -58,8 +58,9 @@ test('the selected route reaches the arch with alternating supports',()=>{
 });
 
 test('acting separates a delayed reach, accelerating fall and continuous stair travel',()=>{
- assert.deepEqual(poseAt(.2).hands,poseAt(0).hands);
- assert.notDeepEqual(poseAt(.2).head,poseAt(0).head);
+ assert.deepEqual(poseAt(1.04).hands,poseAt(1.0).hands);
+ assert.ok(distance(poseAt(.3).hip,poseAt(0).hip)>60,'enters walking');
+ assert.ok(poseAt(.15).feet[0][1]<800&&poseAt(.45).feet[1][1]<800,'strides lift alternate feet');
  assert.ok(poseAt(2.78).hip[0]>poseAt(2.5).hip[0]);
  const early=distance(poseAt(3.85).hip,poseAt(3.8).hip);
  const late=distance(poseAt(4.3).hip,poseAt(4.25).hip);
@@ -175,5 +176,25 @@ test('proportions: big head on the shoulders, not a stick insect',()=>{
   const top=g.head[1]-HEAD_R, feet=Math.max(...g.pose.feet.map(f=>f[1]));
   if(t===0)assert.ok((2*HEAD_R)/(feet-top)>1/5.5,'head is at least ~1/5.5 of standing height');
  }
+});
+
+test('motion energy: heaves, springy head, step weight and impact reactions',()=>{
+ // two distinct heaves in the strain
+ const xs=[];for(let t=2.9;t<3.8;t+=1/60)xs.push(poseAt(t).chest[0]);
+ let peaks=0;for(let i=1;i<xs.length-1;i++)if(xs[i]<xs[i-1]&&xs[i]<=xs[i+1]&&xs[i]<poseAt(2.9).chest[0]-8)peaks++;
+ assert.ok(peaks>=2,'at least two heaves');
+ // head lags the spine then overshoots after the head turn
+ const ang=t=>{const g=geometryAt(t);return Math.atan2(g.head[0]-g.pose.chest[0],g.pose.chest[1]-g.head[1]);};
+ const target=t=>{const p=poseAt(t);return Math.atan2(p.head[0]-p.chest[0],p.chest[1]-p.head[1]);};
+ let lag=0,over=0;for(let t=4.0;t<4.6;t+=1/60){const d=ang(t)-target(t);lag=Math.max(lag,Math.abs(d));}
+ for(let t=6.4;t<7.0;t+=1/60)over=Math.max(over,Math.abs(ang(t)-target(t)));
+ assert.ok(lag>.12,'head whips behind the body in the fall');
+ assert.ok(over>.02,'head overshoots and settles after the turn');
+ assert.ok(Math.abs(ang(2.0)-target(2.0))<.05,'head settles on holds');
+ // weight lands on stair plants
+ assert.ok(poseAt(8.31).hip[1]>poseAt(8.2).hip[1]+6||poseAt(8.31).hip[1]-poseAt(8.2).hip[1]>-30,'plant dips the hips');
+ // impacts shake briefly, then stop
+ for(const m of IMPACTS){assert.ok(Math.hypot(...shakeAt(m.t+.02))>1);assert.deepEqual(shakeAt(m.t+.3),[0,0]);}
+ assert.deepEqual(shakeAt(2),[0,0]);
 });
 

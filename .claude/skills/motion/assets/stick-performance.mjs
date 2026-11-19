@@ -4,7 +4,12 @@ import {progress, solveArm, layerMatrix} from './story-motion.mjs';
 export const DURATION = 14.5;
 export const HEAD_R = 47, LINE = 15;
 const keys = [
-  {t:0, hip:[650,610], chest:[690,470], head:[710,385], feet:[[590,830],[710,830]], hands:[[665,630],[720,630]], label:'inspect'},
+  // Benchmark: start in motion. Two strides into frame, overshoot into a lean at the lock, then inspect.
+  {t:0, hip:[410,632], chest:[445,492], head:[462,408], feet:[[350,830],[470,830]], hands:[[395,605],[505,590]], label:'walkin'},
+  {t:.3, hip:[530,628], chest:[566,488], head:[582,404], feet:[[590,830],[470,830]], hands:[[505,590],[470,605]], label:'stride'},
+  {t:.6, hip:[650,630], chest:[690,490], head:[708,406], feet:[[590,830],[710,830]], hands:[[600,605],[700,592]], label:'stride2'},
+  {t:.82, hip:[668,620], chest:[718,478], head:[746,392], feet:[[590,830],[710,830]], hands:[[660,600],[740,598]], label:'settle'},
+  {t:1.0, hip:[650,610], chest:[690,470], head:[710,385], feet:[[590,830],[710,830]], hands:[[665,630],[720,630]], label:'inspect'},
   {t:1.2, hip:[650,625], chest:[705,490], head:[735,405], feet:[[590,830],[710,830]], hands:[[790,560],[790,530]], label:'grip'},
   {t:1.8, hip:[645,650], chest:[690,515], head:[695,425], feet:[[590,830],[710,830]], hands:[[790,560],[790,530]], label:'test'},
   {t:2.5, hip:[600,650], chest:[690,530], head:[690,440], feet:[[590,830],[770,770]], hands:[[790,560],[790,530]], label:'brace'},
@@ -85,7 +90,7 @@ export function poseAt(time) {
   const a=keys[i], b=keys[i+1], u=(t-a.t)/(b.t-a.t);
   // Losing support accelerates into impact; walking carries the body through foot plants.
   const k=['limit','airborne','raise'].includes(a.label)?u*u:a.label==='release'?1-(1-u)*(1-u):progress(t,a.t,b.t-a.t);
-  const moving=['choose','step','continue','climb','approach'].includes(a.label);
+  const moving=['walkin','stride','choose','step','continue','climb','approach'].includes(a.label);
   const bodyK=moving?u:k;
   const p={time:t,label:a.label};
   for(const field of ['hip','chest','head']){
@@ -93,13 +98,36 @@ export function poseAt(time) {
     p[field]=blendPoint(a[field],b[field],lead);
   }
   for(const field of ['feet','hands']){
-    const reach=field==='hands'&&a.label==='inspect'?progress(t,.35,.85):k;
+    const reach=field==='hands'&&a.label==='inspect'?progress(t,a.t+.06,b.t-a.t-.06):k;
     p[field]=a[field].map((v,j)=>blendPoint(v,b[field][j],reach));
   }
-  const lifts={test:[0,28],limit:[20,0],notice:[0,48],choose:[48,0],step:[0,70],continue:[70,0],climb:[0,70],approach:[60,0],enter:[0,26]}[a.label]||[0,0];
+  // Effort comes in heaves (2.9-3.8 s); each stair plant loads the hips (benchmark: Alan's weight and rhythm).
+  if(t>2.9&&t<3.8){const h=Math.sin((t-2.9)/.3*Math.PI);const d=Math.max(0,h)*16;
+    p.hip=[p.hip[0]-d*.35,p.hip[1]+d*.3];p.chest=[p.chest[0]-d*1.2,p.chest[1]+d*.2];p.head=[p.head[0]-d*1.4,p.head[1]+d*.2];}
+  for(const plant of [8.2,8.8,9.4,10,10.6]){const e=t-plant;if(e>0&&e<.22){const dip=Math.sin(e/.22*Math.PI)*12;
+    p.hip=[p.hip[0],p.hip[1]+dip];p.chest=[p.chest[0],p.chest[1]+dip*.8];p.head=[p.head[0],p.head[1]+dip*.7];}}
+  const lifts={walkin:[70,0],stride:[0,70],test:[0,28],limit:[20,0],notice:[0,48],choose:[48,0],step:[0,70],continue:[70,0],climb:[0,70],approach:[60,0],enter:[0,26]}[a.label]||[0,0];
   p.feet.forEach((v,j)=>{v[1]-=Math.sin(Math.PI*k)*lifts[j];});
   return p;
 }
+// Head follows the spine direction through a damped spring: it lags, overshoots and settles.
+let headTrack=null;
+function headDirection(time){
+  if(!headTrack){
+    const dt=1/240,n=Math.ceil(DURATION/dt)+1,w=2*Math.PI*3.2,z=.42;
+    const dir=t=>{const p=poseAt(t);const v=[p.head[0]-p.chest[0],p.head[1]-p.chest[1]];const l=Math.hypot(...v);return [v[0]/l,v[1]/l];};
+    let x=dir(0),v=[0,0];headTrack=[x.slice()];
+    for(let i=1;i<n;i++){const g=dir(Math.min(DURATION,i*dt));
+      for(const k of [0,1]){const a=w*w*(g[k]-x[k])-2*z*w*v[k];v[k]+=a*dt;x[k]+=v[k]*dt;}
+      headTrack.push(x.slice());}
+  }
+  const f=Math.max(0,Math.min(DURATION,time))*240,i=Math.min(headTrack.length-2,Math.floor(f)),u=f-i;
+  const d=[headTrack[i][0]+(headTrack[i+1][0]-headTrack[i][0])*u,headTrack[i][1]+(headTrack[i+1][1]-headTrack[i][1])*u];
+  const l=Math.hypot(...d);return [d[0]/l,d[1]/l];
+}
+// Impacts that make the world react: dust and a short camera shake.
+export const IMPACTS=[{t:4.35,at:[520,830],shake:9},{t:5.1,at:[560,830],shake:5}];
+export function shakeAt(time){let x=0,y=0;for(const m of IMPACTS){const e=time-m.t;if(e>=0&&e<.25){const a=m.shake*Math.exp(-e*14);x+=a*Math.sin(e*90);y+=a*Math.cos(e*70);}}return [x,y];}
 export function geometryAt(time) {
   const p=poseAt(time);
   const gripping=p.time>=1.2&&p.time<=3.8;
@@ -126,7 +154,8 @@ export function geometryAt(time) {
   const toeAngle=Math.PI*progress(p.time,6.1,.6);
   const toeTargets=legs.map(a=>[a.wrist[0]+19*Math.cos(toeAngle),a.wrist[1]-19*Math.sin(toeAngle)]);
   // Proportions (owner note 2026-11-19 "stick insect"; Alan benchmark): big head sitting on the shoulders, no neck.
-  const head=[p.chest[0]+dx/length*(HEAD_R+4),p.chest[1]+dy/length*(HEAD_R+4)];
+  const hd=headDirection(p.time);
+  const head=[p.chest[0]+hd[0]*(HEAD_R+4),p.chest[1]+hd[1]*(HEAD_R+4)];
   return {pose:p,arms,legs,shoulders,handTargets:hands,spineControl,gateOffset,gripping,toeTargets,head};
 }
 
