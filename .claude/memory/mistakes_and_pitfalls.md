@@ -175,3 +175,11 @@ The initial entries preserve documented observations from the 2026-11-11 study a
 - Cause / rationale: A single smoothstep easing was reused for most segments; effects used linear growth and fade
 - Correction / recipe: Give key actions anticipation (a small counter-move) and snap easing; build effects fast and fade them slowly with a colour shift; tilt as well as shake on big impacts. Keep tests for the wind-up, crouch, counter-move and snap speed.
 - Verification: Cut 12 frames show the hands pull back then reach the bars in two frames, and the dust bursts and lingers; 17 tests pass. Real-time viewing by a person pending.
+
+### master-study-ava-jump — Limbs longer than the joint spacing forced permanent bends (bow legs, boxy elbows, folded legs)
+
+- Recorded (UTC): 2026-11-19T06:18:42+00:00
+- Evidence: Private master study of Alan Becker AvA (Qb1VvUf21L4) 25.3-26.9 s, key drawings measured on a grid: his standing legs form a straight upside-down V and arms hang straight; our first copy with arms 36+36 and legs 40+40 showed bent knees and elbows in every pose; arms 27+27 and legs 32+32 fixed standing and landing. His figure: 170 px tall, head 60 px (about 1/3), lines 10-11 px.
+- Cause / rationale: IK limb lengths were chosen for reach, not for the neutral joint spacing, so the solver always bent the joints
+- Correction / recipe: Set limb lengths close to the neutral joint spacing so rest poses read as straight strokes; bend only for action. Heads about 1/3 of height for Alan-style figures. Time jumps with a ~2-drawing wind-up, ~0.3 s air time and a landing squash held about 3 drawings.
+- Verification: Study render compared drawing by drawing with the reference at 8 fps: standing, crouch and landing now match; the jump peak still tucks. Not yet transferred to the main stick rig.

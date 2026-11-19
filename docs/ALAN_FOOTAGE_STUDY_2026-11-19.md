@@ -42,6 +42,18 @@ Pixel motion depends on figure size and background, so compare trends, not absol
 
 - **Cut 13 (`87fc2dc2…`):** A/B of held drawings on twos for the character (`ON_TWOS` switch in the template): 40% held frames vs 8% on ones (Alan AvA 43%), but Alan's newer Geometry Dash is almost all new drawings (~23/s), so smooth motion stays the default and twos remains a style option. Added the claude-youtube retention lens (Shorts guide, unverified heuristics used as a checklist): hook in 1–3 s and an interrupt in the first 5 s pass; the camera held static and wide for 3.4 s (7.2–10.6 s), so it now pushes in from 8.8 s and follows the climb (figure larger sooner). New test: no static camera longer than 3 s. Eighteen tests pass. Owner asked for a copy of Alan's film for comparison; declined (copyright and the originality rule) in favour of a timing-matched study, ink-on-white comparison renders and a private side-by-side.
 
+
+## Master study: timing-matched copy of one jump (private)
+Owner request 2026-11-19: learn by copying. A ~1.6 s passage of AvA (25.3–26.9 s: a toss and look-up, crouch, jump onto the black block, landing squash) was studied by measuring his key drawings on a grid and animating them on his timing with his proportions. The study files and side-by-side reviews live only in git-ignored `studio-output/master-study/`; they are never committed, published or reused in a film. Only these measurements and rules are recorded here.
+
+**Measured from his drawings (990×720 HD frame):**
+- Animated at **16 drawings per second** (the Flash timeline in the footage reads 16.0 fps; the HD video repeats drawings).
+- Jump timing: crouch at 0.78 s, launch 0.84 s (wind-up of about **2 drawings**), peak 0.96 s, over the block 1.09 s, landing **squash held about 3 drawings** (1.21–1.28 s), up at 1.34 s. Launch to landing takes about **5 drawings (0.31 s)**: the wind-up is short and sharp, the air time fast, and the landing squash held longer than the wind-up.
+- Proportions: figure **170 px tall with a 60 px head (head about 1/3 of height)**, lines about 10–11 px (about 6% of height), no neck, legs about 44% of height.
+- **Limbs are near-straight strokes.** Standing legs make a clean upside-down V and arms hang straight; knees and elbows bend only during action (crouch, landing). Our copy first used limbs longer than the joint spacing, which forced permanent bends (bow legs, boxy elbows, a folded "Z" at the peak). Making limb length about equal to the joint spacing (arms 27+27, legs 32+32 for his 170 px figure) fixed the standing and landing poses. The peak still tucks where his legs dangle (key pose not yet exact).
+
+**Transfer to our rig (next rounds):** head toward about 1/3 of height; limb lengths close to typical joint spacing so neutral limbs read straight; jumps and failures with a ~2-drawing wind-up, a fast air phase and a landing squash held longer than the wind-up.
+
 ## Open gaps (update every cycle)
 - Passing step still tight at the knees; legs about 51% of height.
 - Timing: anticipation and snap now on key actions; held drawings (Alan animates largely on twos, 43% held frames) not yet tried.
