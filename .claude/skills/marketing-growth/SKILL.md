@@ -21,6 +21,7 @@ Read only the relevant upstream guide and its linked reference file(s):
 | Channel-specific video concepts and visual promo grammar | [Video](references/video/SKILL.md) |
 | Measurement, retention and reporting discipline | [Analytics](references/analytics/SKILL.md) |
 | Audience positioning and distinctive voice | [Product marketing / brand voice](references/product-marketing/SKILL.md) |
+| YouTube-specific SEO, hooks, thumbnail briefs, metadata, calendar, analytics and audits | [claude-youtube](../claude-youtube/SKILL.md) (separate vendored skill; read its adapter first) |
 
 ## Division of work
 

@@ -38,6 +38,10 @@ Use the vendored `.claude/skills/humanizer/SKILL.md` and the studio's `reference
 
 Consult `.claude/skills/marketing-growth/SKILL.md` for the **five focused video, social, content strategy, analytics and brand-positioning references** before packaging. Choose only the guides relevant to this episode. Apply its titles/thumbnail and repurposing ideas after reading `channel-profile.md`. Prefer tested, accurate promises over speculative viral-growth claims; do not invent impressions, CTR, retention, view counts or subscriber changes. Do not enable accounts, paid ads or upload without authorization. The `humanizer` editorial pass still happens **after** facts/source links and chapter timings are locked, before final `package_lint.py`.
 
+## YouTube creator toolkit
+
+For titles, descriptions, tags, chapters, thumbnail briefs and the Short plan you may use the `seo`, `metadata`, `thumbnail`, `hook` and `shorts` sub-skills of `.claude/skills/claude-youtube/` after reading its `SKILL.md` adapter. Its CTR/retention benchmarks are unverified upstream heuristics: never cite them as fact or promise outcomes. The rendered thumbnail still uses the video's own art style, and `package_lint.py` remains the final check.
+
 ## Your job
 Read `.claude/skills/podcast-scout-skill/references/youtube-packaging.md`.
 1. 5–10 honest titles → shortlist 3 → recommend 1. Thumbnail text ≤3 words that add to the title.
