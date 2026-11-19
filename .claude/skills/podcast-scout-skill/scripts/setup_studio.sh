@@ -36,6 +36,12 @@ if [ -x "$VENV/bin/python" ]; then
   elif $check_only; then bad "python TTS packages"
   else "$VENV/bin/pip" install -q --disable-pip-version-check kokoro-onnx soundfile piper-tts edge-tts jsonschema \
          && ok "installed kokoro-onnx, piper-tts, edge-tts" || bad "pip install failed (network?)"; fi
+  # yt-dlp: subtitles/metadata for the scout's transcript step (see references/yt-dlp.md).
+  # Left unpinned and upgraded on each run because YouTube changes break old releases.
+  if "$VENV/bin/python" -c "import yt_dlp" 2>/dev/null; then ok "yt-dlp $("$VENV/bin/yt-dlp" --version 2>/dev/null)"
+  elif $check_only; then bad "yt-dlp (transcript fallback)"
+  else "$VENV/bin/pip" install -q -U --disable-pip-version-check yt-dlp \
+         && ok "installed yt-dlp $("$VENV/bin/yt-dlp" --version 2>/dev/null)" || bad "yt-dlp install failed (network?)"; fi
 fi
 
 if ! $check_only; then
