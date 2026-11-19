@@ -81,14 +81,15 @@ const SNAP=new Set(['grip','test','brace','load','recover','turn','notice','brea
 // Stay with the failed tactic, then reveal the route after the head turns toward it.
 // Edited coverage: hard cuts frame the object or reaction the viewer needs at each beat.
 // kind 'full' keeps the whole figure in frame; 'close' and 'insert' crop on purpose.
-const MEDIUM={center:[810,560],zoom:1.9}, WIDE={center:[570,470],zoom:1.3}, ARCH={center:[450,500],zoom:1.55};
+// Reframed for Alan proportions (cut 18 figure is shorter): tighter, lower framing so the figure fills the frame.
+const MEDIUM={center:[790,612],zoom:2.15}, WIDE={center:[540,585],zoom:1.55}, ARCH={center:[420,600],zoom:2.0};
 export const SHOTS=[
   {start:0, name:'medium', kind:'full'},
-  {start:2.9, name:'grip-close', kind:'close', center:[815,545], zoom:3.0},
+  {start:2.9, name:'grip-close', kind:'close', center:[790,590], zoom:3.0},
   {start:3.8, name:'medium', kind:'full'},                     // cut on the slip
   {start:6.2, name:'reveal', kind:'full'},                     // continuous widen after the head turn
   {start:8.8, name:'arch-push', kind:'full'},
-  {start:11.5, name:'face-close', kind:'close', center:[215,410], zoom:2.6},
+  {start:11.5, name:'face-close', kind:'close', center:[228,480], zoom:2.8},
   {start:12.4, name:'lock-insert', kind:'insert', center:[895,520], zoom:2.4}, // what he is looking at
   {start:13.0, name:'arch', kind:'full'}
 ];
