@@ -60,12 +60,14 @@ Owner request 2026-11-19: learn by copying. A ~1.6 s passage of AvA (25.3–26.9
 
 - **Cut 16/16d (`68b30ff1…`, owner QC "the hands are so odd"):** cut 15b frames showed (1) back-arm elbows jutting sideways like a hand on the hip, because both arms always used the same IK bend direction; (2) knob dots at the hand ends; (3) forearms folded across the chest in the brush beat. Picking the lower-elbow branch alone caused visible flips, so each elbow now keeps its bend side and switches only near full extension (a hysteresis track); the remaining 42 large elbow jumps are all genuine fast moves. That exposed the root cause: free hands sat too close to the shoulders, forcing 60°+ bends, so any bend direction looked odd. Applying the master-study rule, relaxed free hands now extend to ~98.5% of arm length (near-straight strokes), the arch-jamb contact moved lower so that arm hangs straight, the brush moved to belly height, and the hand dots were removed. Strongly bent free arms: 15% → 10%. Eighteen tests pass.
 
+- **Cut 17 (`86fb56a6…`, remaining stiffness):** measured frozen hip/torso/knee frames (all moving under 0.6 px): **23%**, in three dead stretches: 5.83–6.43 s (brushing off, only the arms moved), 10.93–11.23 s (the "breath" had no breath) and 11.63–13.07 s (a 1.4 s statue on the look back). Added whole-body acting: during the brush the upper body leans back huffily and bobs with each rub; on arrival a real breath (shoulders rise, knees give on the exhale); on the look back the weight drifts toward the gate, the head tilts and a sigh lifts and drops the shoulders. Frozen frames **13%**; one 0.47 s stillness remains at the start of the look-back close-up (kept as an intentional dramatic hold). Head-hold timing tests now check the head relative to the body. Eighteen tests pass.
+
 ## Open gaps (update every cycle)
 - **Legs too long:** about 1.9× head height against Alan's ~1.25× (torso also long). Needs a re-keyed skeleton (dedicated round). Passing step still tight at the knees.
 - Timing: anticipation and snap now on key actions; held drawings (Alan animates largely on twos, 43% held frames) not yet tried.
 
 - No ensemble yet. Owner removed footsteps; remaining effects not yet confirmed by listening.
-- **Stiffness:** better arms; legs and torso still rigid on holds. More deliberate acting beats needed per moment (Alan changes the pose every drawing).
+- **Stiffness:** arms (9% frozen) and body holds (13% frozen) improved; owner re-check pending.
 
 ## Where claude-youtube comes in
 When we move from craft exercises to real videos, `.claude/skills/claude-youtube/` is used after the animation and narration are locked: `hook` variants to test in the pilot, `seo`/`metadata` for titles, descriptions, tags and chapters, `thumbnail` briefs, `shorts` for the summary Short, and `analyze` once the owner shares real analytics. Its adapter rules apply (benchmarks are heuristics; no keys, OAuth or paid tools without approval).

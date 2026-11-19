@@ -118,6 +118,17 @@ export function poseAt(time) {
   if(['walkin','stride','choose','step','continue','climb','approach'].includes(a.label)){
     const bob=Math.sin(Math.PI*u)*10;p.hip=[p.hip[0],p.hip[1]-bob];p.chest=[p.chest[0],p.chest[1]-bob];p.head=[p.head[0],p.head[1]-bob];
     p.hands=p.hands.map(h=>[h[0],h[1]-bob]);}
+  // Whole-body acting on holds (frozen hip/torso/knee frames were 23%; Alan's pose changes nearly every drawing).
+  {const add=(dx,dy,hipK=1,chestK=1,headK=1)=>{p.hip=[p.hip[0]+dx*hipK,p.hip[1]+dy*hipK];p.chest=[p.chest[0]+dx*chestK,p.chest[1]+dy*chestK];p.head=[p.head[0]+dx*headK,p.head[1]+dy*headK];};
+   const bump=(t0,d)=>t>t0&&t<t0+d?Math.sin(Math.PI*(t-t0)/d):0;
+   // brushing off: huffy weight shift back, body bobs with each rub
+   if(t>5.78&&t<6.28){const w=bump(5.78,.5);add(-9*w,0,0,1.1,1.1);add(0,Math.abs(Math.sin((t-5.78)*22))*5*w,0,1,1);}
+   // arrival: a real breath (shoulders rise, knees give on the exhale)
+   {const b=bump(10.85,.55);add(0,-11*b,0,1,1);const g=bump(11.2,.4);add(0,6*g,1,.8,.6);}
+   // look back: weight drifts toward the gate, head tilts, then a sigh (shoulders up, then down) before turning away
+   if(t>11.6&&t<13.1){const lean=Math.sin(Math.PI*Math.min(1,(t-11.6)/1.5)/2);add(9*lean,2*lean,1,1.2,1.4);}
+   {const up=bump(12.15,.45),down=bump(12.6,.45);add(0,-10*up+8*down,.2,1,1);add(5*down,0,0,0,1);}
+  }
   // Acting beat (owner QC "still stiff"): after getting up he angrily brushes the dust off his hands.
   if(t>5.78&&t<6.18){const w=Math.sin(Math.PI*(t-5.78)/.4),rub=Math.sin((t-5.78)*44)*12;
     const tgt=[[p.chest[0]+40+rub*.8,p.chest[1]+150],[p.chest[0]+60-rub*.8,p.chest[1]+144]];

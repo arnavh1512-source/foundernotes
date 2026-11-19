@@ -65,8 +65,9 @@ test('acting separates a delayed reach, accelerating fall and continuous stair t
  const early=distance(poseAt(3.85).hip,poseAt(3.8).hip);
  const late=distance(poseAt(4.3).hip,poseAt(4.25).hip);
  assert.ok(late>early*5);
- assert.deepEqual(poseAt(6).head,poseAt(5.8).head);
- assert.deepEqual(poseAt(6.2).head,poseAt(6.3).head);
+ const rel=t=>{const p=poseAt(t);return [p.head[0]-p.chest[0],p.head[1]-p.chest[1]];};
+ assert.ok(distance(rel(6),rel(5.8))<1.5,'head holds relative to the body before the turn');
+ assert.ok(distance(rel(6.2),rel(6.3))<1.5,'turn completes, then holds relative to the body');
  for(const t of [8.2,8.8,9.4,10]){
   assert.ok(distance(poseAt(t-.001).hip,poseAt(t).hip)/.001>20);
   assert.ok(distance(poseAt(t).hip,poseAt(t+.001).hip)/.001>20);

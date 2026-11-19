@@ -199,3 +199,11 @@ The initial entries preserve documented observations from the 2026-11-11 study a
 - Cause / rationale: A fixed IK bend sign for both arms plus hand targets too close to the shoulders, which forced large elbow bends; knob dots at the hand ends
 - Correction / recipe: Keep relaxed free hands near full arm reach (near-straight strokes, as in the Alan master study), track each elbow's bend side with hysteresis (switch only near full extension), place contacts and deliberate gestures where the arm can stay long, and draw hands as rounded stroke ends. Check elbow jumps per frame and strongly bent free arms, and look at frames.
 - Verification: Cut 16d frames at 0.4, 1.0, 6.6, 9.2, 12.0 and 13.6 s show relaxed straight arms; strongly bent free arms 10%; no elbow flips among large jumps; 18 tests pass. Owner re-check pending.
+
+### stick-rebuild-cut-16d — Body froze on holds: hips, torso and knees did not move for up to 1.4 s
+
+- Recorded (UTC): 2026-11-19T06:45:06+00:00
+- Evidence: Frozen hip/torso/knee frames 23% in cut 16d, with stretches at 5.83-6.43 s, 10.93-11.23 s and 11.63-13.07 s; Alan's AvA pose changes nearly every drawing; owner QC 'still stiff'
+- Cause / rationale: Holds were keyed as identical poses and only the face or arms changed; a labelled 'breathe' beat carried no breath
+- Correction / recipe: Give every hold a whole-body acting choice (weight shift, lean toward what the character thinks about, a sigh or breath through the shoulders, knees giving). Measure frozen body frames and list the frozen stretches, then look at the frames. Keep only short, deliberate dramatic holds.
+- Verification: Cut 17: frozen body frames 13%, the breath and look-back lean visible in frames, 18 tests pass. Owner re-check pending.
