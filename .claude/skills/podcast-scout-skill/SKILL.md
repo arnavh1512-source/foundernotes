@@ -63,7 +63,7 @@ The memory files and `scripts/record_lesson.py` now exist. Use the recorder with
 
 ## Stages 1-6: Scout pipeline
 1. **Ingest & Extract:** Ingest input (URL, file, transcript, or topic). Identify core subject and raw key points.
-2. **Fact Check & Deepen:** Attempt Agent-Reach `search`/`read` (or `transcript` for YouTube) first via the project gateway, falling back to available native tools when permitted. Search web/academic literature for ground-truth evidence on every key point. Drop unverified claims; attach primary citations.
+2. **Fact Check & Deepen:** Attempt Agent-Reach `search`/`read` first via the project gateway (for YouTube `transcript`/`youtube-search` the gateway uses yt-dlp first, Agent-Reach as backup), falling back to available native tools when permitted. Search web/academic literature for ground-truth evidence on every key point. Drop unverified claims; attach primary citations.
 3. **Score Opportunities:** Score *Surprise*, *Evidence Density*, *Visual Explanability*, *Utility*, and *Search Interest* (1-5 each; require >= 16/25).
 4. **Draft Briefs:** Write detailed briefs for top 1-3 ideas designed to sustain an **8–12 minute (`1,450–2,100+ word`)** multi-chapter breakdown.
 5. **Review Gate:** Present ranked briefs to the user unless end-to-end production was requested.

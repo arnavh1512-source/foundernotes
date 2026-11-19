@@ -43,7 +43,7 @@ The `references/*.md` files contain many unsourced figures (CTR bands, AVD avera
 
 ## Data sources, keys and money
 
-- **Transcripts and public research:** use `.claude/skills/podcast-scout-skill/scripts/research_gateway.py` (Agent-Reach) first. `execution/fetch_transcript.py` (yt-dlp subtitles only, no media download) is a fallback; it needs the studio venv active so `yt-dlp` is on `PATH`. See `.claude/skills/podcast-scout-skill/references/yt-dlp.md`.
+- **Transcripts and public research:** use `.claude/skills/podcast-scout-skill/scripts/research_gateway.py` first (yt-dlp first for YouTube, Agent-Reach as backup). `execution/fetch_transcript.py` (yt-dlp subtitles only, no media download) also works; it needs the studio venv active so `yt-dlp` is on `PATH`. See `.claude/skills/podcast-scout-skill/references/yt-dlp.md`.
 - **YouTube Data API scripts** (`fetch_channel_data.py`, `search_competitor_videos.py`) need `YOUTUBE_API_KEY`. Never ask for a key in chat and never commit one; the owner configures it. `search.list` costs 100 quota units, so prefer `fetch_channel_data.py` (~16 units).
 - **Analytics API** (`fetch_video_analytics.py`) runs a browser OAuth flow for the owner's own channel. Run it only when the owner asks and is present to sign in. Tokens are stored outside the repo in `~/.claude/.tmp/`.
 - **DataForSEO** (paid per call) and **NanoBanana** MCP servers are optional and not configured here. Don't install, configure or call them without the owner's approval; upstream's WebSearch fallback is the default.
