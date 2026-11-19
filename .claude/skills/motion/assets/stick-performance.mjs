@@ -118,6 +118,10 @@ export function poseAt(time) {
   if(['walkin','stride','choose','step','continue','climb','approach'].includes(a.label)){
     const bob=Math.sin(Math.PI*u)*10;p.hip=[p.hip[0],p.hip[1]-bob];p.chest=[p.chest[0],p.chest[1]-bob];p.head=[p.head[0],p.head[1]-bob];
     p.hands=p.hands.map(h=>[h[0],h[1]-bob]);}
+  // Acting beat (owner QC "still stiff"): after getting up he angrily brushes the dust off his hands.
+  if(t>5.78&&t<6.18){const w=Math.sin(Math.PI*(t-5.78)/.4),rub=Math.sin((t-5.78)*44)*12;
+    const tgt=[[p.chest[0]+28+rub,p.chest[1]+92],[p.chest[0]+52-rub,p.chest[1]+86]];
+    p.hands=p.hands.map((h,j)=>[h[0]+(tgt[j][0]-h[0])*w,h[1]+(tgt[j][1]-h[1])*w]);}
   const lifts={walkin:[44,0],stride:[0,44],test:[0,28],limit:[20,0],notice:[0,48],choose:[48,0],step:[0,70],continue:[70,0],climb:[0,70],approach:[60,0],enter:[0,26]}[a.label]||[0,0];
   p.feet.forEach((v,j)=>{v[1]-=Math.sin(Math.PI*k)*lifts[j];});
   return p;
@@ -140,6 +144,26 @@ function headDirection(time){
 // Impacts that make the world react: dust and a short camera shake.
 export const IMPACTS=[{t:4.35,at:[520,830],shake:9},{t:5.1,at:[560,830],shake:5}];
 export function shakeAt(time){let x=0,y=0,r=0;for(const m of IMPACTS){const e=time-m.t;if(e>=0&&e<.3){const a=m.shake*Math.exp(-e*14);x+=a*Math.sin(e*90);y+=a*Math.cos(e*70);r+=a*.004*Math.sin(e*40);}}return [x,y,r];}
+// Owner QC 2026-11-19: "still stiff". Systemic looseness, from Alan's footage (every drawing moves the arms):
+// free hands follow through on a damped spring (relative to the chest), travel in arcs, and holds keep breathing.
+// Hands in contact (gate grip, floor, slam, arch jamb) stay exact, with 0.12 s blends in and out.
+const CONTACTS=[[[1.2,3.8],[4.35,5.45]],[[1.2,3.8],[5.04,5.16],[11.8,13.0]]];
+function freeWeight(t,j){let w=1;for(const [a,b] of CONTACTS[j]){if(t>=a&&t<=b)return 0;const e=t<a?a-t:t-b;w=Math.min(w,Math.min(1,e/.12));}return w*w*(3-2*w);}
+let handTrack=null;
+function handSpring(time){
+  if(!handTrack){
+    const dt=1/240,n=Math.ceil(DURATION/dt)+1,w=2*Math.PI*2.0,z=.22;
+    const local=t=>{const p=poseAt(t);return p.hands.map(h=>[h[0]-p.chest[0],h[1]-p.chest[1]]);};
+    let x=local(0),v=[[0,0],[0,0]];handTrack=[x.map(q=>q.slice())];
+    for(let i=1;i<n;i++){const g=local(Math.min(DURATION,i*dt));
+      for(const j of [0,1])for(const k of [0,1]){const acc=w*w*(g[j][k]-x[j][k])-2*z*w*v[j][k];v[j][k]+=acc*dt;x[j][k]+=v[j][k]*dt;}
+      handTrack.push(x.map(q=>q.slice()));}
+  }
+  const f=Math.max(0,Math.min(DURATION,time))*240,i=Math.min(handTrack.length-2,Math.floor(f)),u=f-i;
+  return [0,1].map(j=>[0,1].map(k=>handTrack[i][j][k]+(handTrack[i+1][j][k]-handTrack[i][j][k])*u));
+}
+// Moving hold: slow breathing and a small weight shift, so no pose is ever frozen.
+export function breathAt(t){return [Math.sin(t*1.9)*2.2,Math.sin(t*2.3+1)*3.2];}
 export function geometryAt(time) {
   const p=poseAt(time);
   const gripping=p.time>=1.2&&p.time<=3.8;
@@ -151,7 +175,20 @@ export function geometryAt(time) {
   const dx=p.head[0]-p.chest[0],dy=p.head[1]-p.chest[1],length=Math.hypot(dx,dy);
   const normal=[-dy/length,dx/length];
   const shoulders=[-1,1].map(side=>[p.chest[0]+normal[0]*side*5,p.chest[1]+normal[1]*side*5]);
-  const hands=p.hands.map(v=>[v[0]+(gripping?rattle:0),v[1]]);
+  const [sway,breath]=breathAt(p.time), still=1-Math.min(1,Math.hypot(...['hip'].map(()=>0)));
+  p.chest=[p.chest[0]+sway*.5,p.chest[1]+breath];p.head=[p.head[0]+sway*.6,p.head[1]+breath];
+  const sp=handSpring(p.time);
+  const hands=p.hands.map((v,j)=>{
+    const w=freeWeight(p.time,j);if(w===0)return [v[0]+(gripping?rattle:0),v[1]];
+    // spring follow-through plus a small arc bulge and idle drift, faded in away from contacts
+    const target=[p.chest[0]+sp[j][0],p.chest[1]+sp[j][1]];
+    const idle=[Math.sin(p.time*2.1+j*2)*8,Math.sin(p.time*1.7+j)*9+breath];
+    return [v[0]+(target[0]-v[0]+idle[0])*w,v[1]+(target[1]-v[1]+idle[1])*w];});
+  // hands never pass through the floor (spring overshoot on impacts)
+  hands.forEach((h,j)=>{if(h[1]>826)hands[j]=[h[0],826];});
+  // never ask the arm for more than it can reach (spring overshoot)
+  shoulders.forEach((s,j)=>{const dx=hands[j][0]-s[0],dy=hands[j][1]-s[1],r=Math.hypot(dx,dy),m=(84+90)*.97;
+    if(r>m)hands[j]=[s[0]+dx*m/r,s[1]+dy*m/r];});
   const arms=shoulders.map((s,i)=>solveArm(s,hands[i],84,90,1));
   // Change facing only at the extended-leg passing pose; mirrored knees must not cross.
   const kneeBend=p.time<6.4?-1:1;
@@ -162,7 +199,9 @@ export function geometryAt(time) {
     p.feet[1]=[p.feet[1][0]+rattle*braceWeight,p.feet[1][1]];
     legs[1]=solveArm(p.hip,p.feet[1],115,120,kneeBend);
   }
-  const spineControl=[(p.hip[0]+p.chest[0])*.5-22,(p.hip[1]+p.chest[1])*.5+8];
+  const prev=poseAt(Math.max(0,p.time-1/30)),vel=[(p.chest[0]-prev.chest[0])*30,(p.chest[1]-prev.chest[1])*30];
+  const dragX=Math.max(-40,Math.min(40,-vel[0]*.12)),dragY=Math.max(-24,Math.min(24,-vel[1]*.07));
+  const spineControl=[(p.hip[0]+p.chest[0])*.5-22+dragX,(p.hip[1]+p.chest[1])*.5+8+dragY];
   const toeAngle=Math.PI*progress(p.time,6.1,.6);
   const toeTargets=legs.map(a=>[a.wrist[0]+19*Math.cos(toeAngle),a.wrist[1]-19*Math.sin(toeAngle)]);
   // Proportions (owner note 2026-11-19 "stick insect"; Alan benchmark): big head sitting on the shoulders, no neck.
@@ -204,14 +243,11 @@ export function faceAt(time) {
 
 // Sound events on contacts (benchmark: AvA ~2.4 hits/s during action, silence between; no music).
 // type: step | clank | rattle | twang | whoosh | thud | slam | pluck | chime. gain 0..1.
+// Owner 2026-11-19: no footstep sounds; effects only on the gate, the fall, the slam and the two story beats.
 export const SOUND_EVENTS = [
-  {t:.3,type:'step',gain:.55},{t:.6,type:'step',gain:.55},{t:.82,type:'step',gain:.35},
   {t:1.2,type:'clank',gain:.8},{t:1.8,type:'rattle',gain:.5,dur:1.15},
   {t:3.05,type:'clank',gain:.85},{t:3.65,type:'clank',gain:.9},
   {t:3.95,type:'twang',gain:.9},{t:3.97,type:'whoosh',gain:.6,dur:.38},
   {t:4.35,type:'thud',gain:1},{t:4.64,type:'thud',gain:.5},{t:5.1,type:'slam',gain:.9},
-  {t:5.45,type:'step',gain:.4},{t:6.3,type:'pluck',gain:.5},
-  {t:7.0,type:'step',gain:.45},{t:7.6,type:'step',gain:.5},
-  ...[8.2,8.8,9.4,10.0,10.6].map(t=>({t,type:'step',gain:.6})),
-  {t:13.4,type:'chime',gain:.3},{t:14.05,type:'step',gain:.4},{t:14.35,type:'step',gain:.3}
+  {t:6.3,type:'pluck',gain:.5},{t:13.4,type:'chime',gain:.35}
 ];

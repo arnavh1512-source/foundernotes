@@ -183,3 +183,11 @@ The initial entries preserve documented observations from the 2026-11-11 study a
 - Cause / rationale: IK limb lengths were chosen for reach, not for the neutral joint spacing, so the solver always bent the joints
 - Correction / recipe: Set limb lengths close to the neutral joint spacing so rest poses read as straight strokes; bend only for action. Heads about 1/3 of height for Alan-style figures. Time jumps with a ~2-drawing wind-up, ~0.3 s air time and a landing squash held about 3 drawings.
 - Verification: Study render compared drawing by drawing with the reference at 8 fps: standing, crouch and landing now match; the jump peak still tucks. Not yet transferred to the main stick rig.
+
+### stick-rebuild-cut-14b — Character read as stiff: arms froze in one shape and holds were dead still
+
+- Recorded (UTC): 2026-11-19T06:33:59+00:00
+- Evidence: Owner QC 2026-11-19 'still stiff'; cut 14b 5.4-6.6 s frames show identical arm shapes for 18 frames; 30% of non-grip frames had elbows moving under 0.5 px. Alan's AvA frames change the arms in nearly every drawing.
+- Cause / rationale: Hands were interpolated in straight lines with the body and stopped dead on keys; holds had no motion; no acting was planned for the arms between big beats
+- Correction / recipe: Plan an arm acting choice for every beat (e.g. brushing off the hands after the fall), add follow-through springs on free hands with contact blending, arcs, breathing holds and spine drag. Measure frozen-arm frames and also look at frames: the procedural pass alone moved the number but not the picture.
+- Verification: Cut 15b: frozen-arm frames 9%, brushing beat visible at 5.8-6.2 s, 18 tests pass. Owner re-check pending; legs and torso still rigid on holds.

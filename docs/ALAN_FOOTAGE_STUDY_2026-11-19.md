@@ -56,11 +56,14 @@ Owner request 2026-11-19: learn by copying. A ~1.6 s passage of AvA (25.3–26.9
 
 - **Cut 14/14b (`a9b01d5a…`, master-study transfer):** checked our rest poses: shoulder–hand 155–167 px against a 174 px arm, hip–foot 219–233 px against a 235 px leg (89–97% of length, close to Alan's ~93%), so the main rig does not have the study copy's bent-limb problem. Head radius 47 → 62 (about 1/4 of height, toward Alan's 1/3), lines 15 → 20 px (Alan about 1/6 of head width), landing squash held 0.12 s before the bounce (Alan about 3 drawings), bounce sound moved to match. Eighteen tests pass; mix -16.8 LUFS. Sent to the owner for a quality check.
 
+- **Cut 15/15b (`4a05a553…`, owner QC "still stiff"; owner: remove footsteps):** cut 14b frames 5.4–6.6 s showed the figure rising like a rigid board: both arms held one shape for 18 frames and the standing pose froze apart from the face. Measured frozen-arm frames (elbows moving under 0.5 px, grip excluded): **30%**. Systemic fixes: free hands follow through on a damped spring relative to the chest (contacts blend in and out over 0.12 s), arc bulge and idle drift, breathing and weight-shift on holds, spine drag against chest velocity, hands clamped above the floor. A procedural pass alone only reached 14% and still looked almost the same, so an **acting beat** was added: he brushes the dust off his hands after getting up. Result: **9%** frozen-arm frames and visibly changing arm shapes. Footstep sounds removed at the owner's request (effects remain on the gate, fall, slam, notice and relief). Eighteen tests pass. A body-proportion change (shorter legs and torso) is parked as a work-in-progress patch; its hip solver works, but the facing-turn knees and some tests still need work.
+
 ## Open gaps (update every cycle)
 - **Legs too long:** about 1.9× head height against Alan's ~1.25× (torso also long). Needs a re-keyed skeleton (dedicated round). Passing step still tight at the knees.
 - Timing: anticipation and snap now on key actions; held drawings (Alan animates largely on twos, 43% held frames) not yet tried.
 
-- No ensemble yet. Sound exists but is unheard by a person; 10.6–13.4 s is deliberately silent (judge once narration exists).
+- No ensemble yet. Owner removed footsteps; remaining effects not yet confirmed by listening.
+- **Stiffness:** better arms; legs and torso still rigid on holds. More deliberate acting beats needed per moment (Alan changes the pose every drawing).
 
 ## Where claude-youtube comes in
 When we move from craft exercises to real videos, `.claude/skills/claude-youtube/` is used after the animation and narration are locked: `hook` variants to test in the pilot, `seo`/`metadata` for titles, descriptions, tags and chapters, `thumbnail` briefs, `shorts` for the summary Short, and `analyze` once the owner shares real analytics. Its adapter rules apply (benchmarks are heuristics; no keys, OAuth or paid tools without approval).

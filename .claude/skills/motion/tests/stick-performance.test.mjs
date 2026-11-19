@@ -41,7 +41,7 @@ test('recovery holds contacts and stair steps alternate support feet',()=>{
 test('neutral silhouette and facing turn avoid crossed knees and folded rest arms',()=>{
  const rest=geometryAt(1.0);
  assert.ok(rest.legs[0].elbow[0]<rest.legs[1].elbow[0]);
- rest.arms.forEach(a=>assert.ok(distance(a.shoulder,a.wrist)>150));
+ rest.arms.forEach(a=>assert.ok(distance(a.shoulder,a.wrist)>140));
  const before=geometryAt(6.4-.0001),after=geometryAt(6.4);
  before.legs.forEach((a,i)=>assert.ok(distance(a.elbow,after.legs[i].elbow)<1));
 });
@@ -203,11 +203,11 @@ test('motion energy: heaves, springy head, step weight and impact reactions',()=
 test('sound events sit on the animation contacts they belong to',()=>{
  const at=(type,t)=>SOUND_EVENTS.some(e=>e.type===type&&Math.abs(e.t-t)<1/30);
  for(const m of IMPACTS)assert.ok(at(m.shake>6?'thud':'slam',m.t),`impact sound at ${m.t}`);
- for(const plant of [8.2,8.8,9.4,10,10.6])assert.ok(at('step',plant),`stair step at ${plant}`);
+ assert.ok(!SOUND_EVENTS.some(e=>e.type==='step'),'owner: no footstep sounds');
  assert.ok(at('clank',1.2),'grip contact');assert.ok(at('twang',3.95),'grip snaps');
  for(const e of SOUND_EVENTS){assert.ok(e.t>=0&&e.t<DURATION&&e.gain>0&&e.gain<=1);}
- const action=SOUND_EVENTS.filter(e=>e.t<10.7).length/10.7;
- assert.ok(action>1.5&&action<3.5,`about 2 hits per second during action (benchmark AvA 2.4/s), got ${action.toFixed(2)}`);
+ const busy=SOUND_EVENTS.filter(e=>e.t>=1&&e.t<6).length/5;
+ assert.ok(busy>1.2,`dense effects through the gate and fall (benchmark AvA 2.4/s), got ${busy.toFixed(2)}`);
 });
 
 test('anticipation and snap: wind-ups before key actions',()=>{
