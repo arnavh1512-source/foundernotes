@@ -2,7 +2,7 @@
 // Draft: pure geometry checked; browser rendering and audiovisual review still required.
 import {progress, solveArm, layerMatrix} from './story-motion.mjs';
 export const DURATION = 14.5;
-export const HEAD_R = 47, LINE = 15;
+export const HEAD_R = 62, LINE = 20; // master study: Alan's head is ~1/3 of height; step toward it
 const keys = [
   // Benchmark: start in motion. Two strides into frame, overshoot into a lean at the lock, then inspect.
   {t:0, hip:[410,632], chest:[445,492], head:[462,408], feet:[[350,830],[470,830]], hands:[[515,640],[385,642]], label:'walkin'},
@@ -21,7 +21,9 @@ const keys = [
   {t:4.2, hip:[540,700], chest:[445,612], head:[388,552], feet:[[640,690],[670,640]], hands:[[392,520],[520,520]], label:'airborne'},
   {t:4.35, hip:[520,800], chest:[470,680], head:[450,595], feet:[[680,825],[720,800]], hands:[[430,820],[470,830]], label:'impact'},
   {t:4.42, hip:[520,802], chest:[480,700], head:[465,618], feet:[[680,825],[720,800]], hands:[[430,820],[470,830]], label:'squash'},
-  {t:4.55, hip:[520,798], chest:[468,672], head:[448,588], feet:[[680,825],[720,800]], hands:[[430,820],[470,830]], label:'bounce'},
+  // Master study: hold the landing squash ~0.19 s (Alan holds about 3 drawings) before the bounce.
+  {t:4.54, hip:[520,802], chest:[480,700], head:[465,618], feet:[[680,825],[720,800]], hands:[[430,820],[470,830]], label:'squashhold'},
+  {t:4.64, hip:[520,798], chest:[468,672], head:[448,588], feet:[[680,825],[720,800]], hands:[[430,820],[470,830]], label:'bounce'},
   {t:4.8, hip:[520,800], chest:[470,680], head:[452,596], feet:[[680,825],[720,800]], hands:[[430,820],[470,830]], label:'sit'},
   {t:4.95, hip:[520,800], chest:[478,676], head:[470,592], feet:[[680,825],[720,800]], hands:[[430,820],[525,580]], label:'raise'},
   {t:5.1, hip:[520,800], chest:[488,692], head:[502,612], feet:[[680,825],[720,800]], hands:[[430,820],[560,826]], label:'slam'},
@@ -207,7 +209,7 @@ export const SOUND_EVENTS = [
   {t:1.2,type:'clank',gain:.8},{t:1.8,type:'rattle',gain:.5,dur:1.15},
   {t:3.05,type:'clank',gain:.85},{t:3.65,type:'clank',gain:.9},
   {t:3.95,type:'twang',gain:.9},{t:3.97,type:'whoosh',gain:.6,dur:.38},
-  {t:4.35,type:'thud',gain:1},{t:4.55,type:'thud',gain:.5},{t:5.1,type:'slam',gain:.9},
+  {t:4.35,type:'thud',gain:1},{t:4.64,type:'thud',gain:.5},{t:5.1,type:'slam',gain:.9},
   {t:5.45,type:'step',gain:.4},{t:6.3,type:'pluck',gain:.5},
   {t:7.0,type:'step',gain:.45},{t:7.6,type:'step',gain:.5},
   ...[8.2,8.8,9.4,10.0,10.6].map(t=>({t,type:'step',gain:.6})),

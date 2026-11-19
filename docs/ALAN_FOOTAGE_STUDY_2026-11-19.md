@@ -54,8 +54,10 @@ Owner request 2026-11-19: learn by copying. A ~1.6 s passage of AvA (25.3–26.9
 
 **Transfer to our rig (next rounds):** head toward about 1/3 of height; limb lengths close to typical joint spacing so neutral limbs read straight; jumps and failures with a ~2-drawing wind-up, a fast air phase and a landing squash held longer than the wind-up.
 
+- **Cut 14/14b (`a9b01d5a…`, master-study transfer):** checked our rest poses: shoulder–hand 155–167 px against a 174 px arm, hip–foot 219–233 px against a 235 px leg (89–97% of length, close to Alan's ~93%), so the main rig does not have the study copy's bent-limb problem. Head radius 47 → 62 (about 1/4 of height, toward Alan's 1/3), lines 15 → 20 px (Alan about 1/6 of head width), landing squash held 0.12 s before the bounce (Alan about 3 drawings), bounce sound moved to match. Eighteen tests pass; mix -16.8 LUFS. Sent to the owner for a quality check.
+
 ## Open gaps (update every cycle)
-- Passing step still tight at the knees; legs about 51% of height.
+- **Legs too long:** about 1.9× head height against Alan's ~1.25× (torso also long). Needs a re-keyed skeleton (dedicated round). Passing step still tight at the knees.
 - Timing: anticipation and snap now on key actions; held drawings (Alan animates largely on twos, 43% held frames) not yet tried.
 
 - No ensemble yet. Sound exists but is unheard by a person; 10.6–13.4 s is deliberately silent (judge once narration exists).

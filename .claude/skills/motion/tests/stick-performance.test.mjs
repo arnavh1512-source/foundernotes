@@ -160,7 +160,8 @@ test('the failure is a full-body event: airborne, rotated, impact, and the gate 
  assert.ok(tilt(4.2)<-40,'spine tips well back while airborne');
  const air=poseAt(4.2);assert.ok(air.feet.every(f=>f[1]<760),'both feet leave the floor');
  assert.ok(poseAt(4.42).chest[1]>poseAt(4.35).chest[1],'impact squashes the torso');
- assert.ok(poseAt(4.55).chest[1]<poseAt(4.42).chest[1],'then bounces');
+ assert.deepEqual(poseAt(4.5).chest,poseAt(4.42).chest,'squash is held (master study: ~3 drawings)');
+ assert.ok(poseAt(4.64).chest[1]<poseAt(4.42).chest[1],'then bounces');
  assert.ok(geometryAt(5.1).arms[1].wrist[1]>800,'fist reaches the floor on the slam');
  const v=t=>distance(poseAt(t).hip,poseAt(t+1/30).hip)*30;
  assert.ok(v(4.3)>v(4.0)*1.5,'the fall accelerates into impact');
