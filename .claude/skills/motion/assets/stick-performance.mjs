@@ -15,22 +15,58 @@ const keys = [
   {t:5.8, hip:[560,613], chest:[550,475], head:[570,390], feet:[[470,830],[650,830]], hands:[[480,620],[610,625]], label:'recover'},
   {t:6.4, hip:[560,612.9171747926382], chest:[550,475], head:[535,390], feet:[[470,830],[650,830]], hands:[[480,620],[610,625]], label:'turn'},
   {t:7.0, hip:[550,620], chest:[530,480], head:[495,395], feet:[[470,830],[650,830]], hands:[[470,635],[590,635]], label:'notice'},
-  {t:8.3, hip:[520,620], chest:[500,480], head:[470,390], feet:[[470,830],[580,830]], hands:[[385,600],[550,640]], label:'choose'},
-  {t:9.4, hip:[450,640], chest:[445,500], head:[425,415], feet:[[420,800],[580,830]], hands:[[370,640],[510,650]], label:'step'},
-  {t:10.5, hip:[410,590], chest:[410,450], head:[390,365], feet:[[420,800],[350,770]], hands:[[340,590],[475,600]], label:'continue'},
-  {t:11.4, hip:[340,560], chest:[335,420], head:[315,335], feet:[[280,740],[350,770]], hands:[[275,565],[390,570]], label:'climb'},
-  {t:12.3, hip:[280,530], chest:[280,390], head:[260,305], feet:[[280,740],[210,740]], hands:[[215,540],[345,540]], label:'approach'},
-  {t:13.3, hip:[190,520], chest:[195,380], head:[180,295], feet:[[170,740],[210,740]], hands:[[155,540],[245,540]], label:'arrive'},
-  {t:14.5, hip:[190,520], chest:[195,380], head:[180,295], feet:[[170,740],[210,740]], hands:[[155,540],[245,540]], label:'settle'}
+  // Decided: each stair step is brisk (~0.6 s) instead of a slow ~1 s shuffle.
+  {t:7.6, hip:[520,620], chest:[500,480], head:[470,390], feet:[[470,830],[580,830]], hands:[[385,600],[550,640]], label:'choose'},
+  {t:8.2, hip:[450,640], chest:[445,500], head:[425,415], feet:[[420,800],[580,830]], hands:[[370,640],[510,650]], label:'step'},
+  {t:8.8, hip:[410,590], chest:[410,450], head:[390,365], feet:[[420,800],[350,770]], hands:[[340,590],[475,600]], label:'continue'},
+  {t:9.4, hip:[340,560], chest:[335,420], head:[315,335], feet:[[280,740],[350,770]], hands:[[275,565],[390,570]], label:'climb'},
+  {t:10.0, hip:[280,530], chest:[280,390], head:[260,305], feet:[[280,740],[210,740]], hands:[[215,540],[345,540]], label:'approach'},
+  {t:10.6, hip:[190,520], chest:[195,380], head:[180,295], feet:[[170,740],[210,740]], hands:[[155,540],[245,540]], label:'arrive'},
+  // Payoff: breathe, look back at the still-locked gate (eyeline insert), release, walk into the light.
+  {t:11.0, hip:[190,516], chest:[195,370], head:[183,284], feet:[[170,740],[210,740]], hands:[[160,522],[235,522]], label:'breathe'},
+  {t:11.8, hip:[194,518], chest:[214,382], head:[244,302], feet:[[170,740],[210,740]], hands:[[165,532],[272,500]], label:'lookback'},
+  {t:13.0, hip:[194,518], chest:[214,382], head:[244,302], feet:[[170,740],[210,740]], hands:[[165,532],[272,500]], label:'hold'},
+  {t:13.4, hip:[190,526], chest:[198,398], head:[206,320], feet:[[170,740],[210,740]], hands:[[165,548],[250,548]], label:'release'},
+  {t:13.8, hip:[190,520], chest:[193,380], head:[176,295], feet:[[170,740],[210,740]], hands:[[155,532],[232,532]], label:'enter'},
+  {t:14.5, hip:[190,520], chest:[193,380], head:[176,295], feet:[[170,740],[210,740]], hands:[[155,532],[232,532]], label:'through'}
 ];
 const blendPoint = (a,b,k) => a.map((v,i)=>v+(b[i]-v)*k);
 // Stay with the failed tactic, then reveal the route after the head turns toward it.
-export function cameraAt(time) {
+// Edited coverage: hard cuts frame the object or reaction the viewer needs at each beat.
+// kind 'full' keeps the whole figure in frame; 'close' and 'insert' crop on purpose.
+const MEDIUM={center:[810,560],zoom:1.9}, WIDE={center:[570,470],zoom:1.3}, ARCH={center:[450,500],zoom:1.55};
+export const SHOTS=[
+  {start:0, name:'medium', kind:'full'},
+  {start:2.9, name:'grip-close', kind:'close', center:[815,545], zoom:3.0},
+  {start:3.8, name:'medium', kind:'full'},                     // cut on the slip
+  {start:6.2, name:'reveal', kind:'full'},                     // continuous widen after the head turn
+  {start:10.6, name:'arch-push', kind:'full'},
+  {start:11.5, name:'face-close', kind:'close', center:[215,410], zoom:2.6},
+  {start:12.4, name:'lock-insert', kind:'insert', center:[895,520], zoom:2.4}, // what he is looking at
+  {start:13.0, name:'arch', kind:'full'}
+];
+export function shotAt(time) {
   if (!Number.isFinite(time)) throw new TypeError('time must be finite');
-  const reveal=progress(Math.max(0,Math.min(DURATION,time)),6.2,1);
-  const center=blendPoint([810,560],[570,470],reveal);
-  const zoom=1.9+(1.3-1.9)*reveal;
-  return {reveal,matrix:layerMatrix({x:center[0]-960,y:center[1]-540,zoom},1,1920,1080)};
+  const t=Math.max(0,Math.min(DURATION,time));
+  return SHOTS.filter(s=>s.start<=t).pop();
+}
+export function cameraAt(time) {
+  const shot=shotAt(time), t=Math.max(0,Math.min(DURATION,time));
+  const reveal=progress(t,6.2,1), push=progress(t,10.6,.9);
+  let view;
+  if(shot.center)view=shot;
+  else if(shot.name==='reveal'||shot.name==='arch-push'||shot.name==='arch'){
+    const c=blendPoint(blendPoint(MEDIUM.center,WIDE.center,reveal),ARCH.center,push);
+    view={center:c,zoom:MEDIUM.zoom+(WIDE.zoom-MEDIUM.zoom)*reveal+(ARCH.zoom-WIDE.zoom)*push};
+  } else view=MEDIUM;
+  return {shot:shot.name,kind:shot.kind,reveal,push,
+    matrix:layerMatrix({x:view.center[0]-960,y:view.center[1]-540,zoom:view.zoom},1,1920,1080)};
+}
+// Walking into the arch reads as depth: the figure scales about its arch-floor contact.
+export const DEPTH_ANCHOR=[190,740];
+export function depthAt(time) {
+  if (!Number.isFinite(time)) throw new TypeError('time must be finite');
+  return 1-.45*progress(Math.max(0,Math.min(DURATION,time)),13.8,.7);
 }
 export function poseAt(time) {
   if (!Number.isFinite(time)) throw new TypeError('time must be finite');
@@ -51,7 +87,7 @@ export function poseAt(time) {
     const reach=field==='hands'&&a.label==='inspect'?progress(t,.35,.85):k;
     p[field]=a[field].map((v,j)=>blendPoint(v,b[field][j],reach));
   }
-  const lifts={test:[0,28],limit:[20,0],notice:[0,48],choose:[48,0],step:[0,70],continue:[70,0],climb:[0,70],approach:[60,0]}[a.label]||[0,0];
+  const lifts={test:[0,28],limit:[20,0],notice:[0,48],choose:[48,0],step:[0,70],continue:[70,0],climb:[0,70],approach:[60,0],enter:[0,26]}[a.label]||[0,0];
   p.feet.forEach((v,j)=>{v[1]-=Math.sin(Math.PI*k)*lifts[j];});
   return p;
 }

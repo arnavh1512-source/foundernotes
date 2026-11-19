@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {geometryAt,poseAt,cameraAt,DURATION} from '../assets/stick-performance.mjs';
+import {geometryAt,poseAt,cameraAt,depthAt,shotAt,SHOTS,DURATION} from '../assets/stick-performance.mjs';
 const distance=(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1]);
 test('whole-body pose track preserves limbs, grips and planted support',()=>{
  for(let f=0;f<=Math.round(DURATION*30);f++){
@@ -26,15 +26,15 @@ test('time boundaries clamp and invalid time is rejected',()=>{
 test('recovery holds contacts and stair steps alternate support feet',()=>{
  for(let f=0;f<=Math.round(DURATION*30);f++){
   const t=f/30,p=poseAt(t);
-  if(t>=4.15&&t<=8.3)assert.deepEqual(p.feet[0],[470,830]);
+  if(t>=4.15&&t<=7.6)assert.deepEqual(p.feet[0],[470,830]);
   if(t>=4.15&&t<=7)assert.deepEqual(p.feet[1],[650,830]);
-  if(t>=8.3&&t<=9.4)assert.deepEqual(p.feet[1],[580,830]);
-  if(t>=9.4&&t<=10.5)assert.deepEqual(p.feet[0],[420,800]);
+  if(t>=7.6&&t<=8.2)assert.deepEqual(p.feet[1],[580,830]);
+  if(t>=8.2&&t<=8.8)assert.deepEqual(p.feet[0],[420,800]);
  }
- assert.ok(poseAt(7.65).feet[1][1]<800);
- assert.ok(poseAt(8.85).feet[0][1]<800);
- assert.ok(poseAt(9.95).feet[1][1]<770);
- assert.deepEqual(poseAt(10.5).feet,[[420,800],[350,770]]);
+ assert.ok(poseAt(7.3).feet[1][1]<800);
+ assert.ok(poseAt(7.9).feet[0][1]<800);
+ assert.ok(poseAt(8.5).feet[1][1]<770);
+ assert.deepEqual(poseAt(8.8).feet,[[420,800],[350,770]]);
 });
 
 test('neutral silhouette and facing turn avoid crossed knees and folded rest arms',()=>{
@@ -48,10 +48,10 @@ test('the selected route reaches the arch with alternating supports',()=>{
  for(let f=0;f<=Math.round(DURATION*30);f++){
   const t=f/30,g=geometryAt(t),p=g.pose;
   g.legs.forEach(a=>assert.ok(a.elbow[1]<=830));
-  if(t>=10.5&&t<=11.4)assert.deepEqual(p.feet[1],[350,770]);
-  if(t>=11.4&&t<=12.3)assert.deepEqual(p.feet[0],[280,740]);
-  if(t>=12.3)assert.deepEqual(p.feet[1],[210,740]);
-  if(t>=13.3)assert.deepEqual(p.feet[0],[170,740]);
+  if(t>=8.8&&t<=9.4)assert.deepEqual(p.feet[1],[350,770]);
+  if(t>=9.4&&t<=10)assert.deepEqual(p.feet[0],[280,740]);
+  if(t>=10&&t<=13.8)assert.deepEqual(p.feet[1],[210,740]);
+  if(t>=10.6)assert.deepEqual(p.feet[0],[170,740]);
  }
  assert.deepEqual(poseAt(DURATION).feet,[[170,740],[210,740]]);
 });
@@ -65,7 +65,7 @@ test('acting separates a delayed reach, accelerating fall and continuous stair t
  assert.ok(late>early*5);
  assert.deepEqual(poseAt(6).head,poseAt(5.8).head);
  assert.deepEqual(poseAt(6.2).head,poseAt(6.3).head);
- for(const t of [9.4,10.5,11.4,12.3]){
+ for(const t of [8.2,8.8,9.4,10]){
   assert.ok(distance(poseAt(t-.001).hip,poseAt(t).hip)/.001>20);
   assert.ok(distance(poseAt(t).hip,poseAt(t+.001).hip)/.001>20);
  }
@@ -83,18 +83,56 @@ test('feet turn toward the chosen route without changing foot length',()=>{
 test('the route is revealed after reassessment while the complete figure stays in frame',()=>{
  const project=(m,p)=>[m[0]*p[0]+m[2]*p[1]+m[4],m[1]*p[0]+m[3]*p[1]+m[5]];
  assert.ok(project(cameraAt(0).matrix,[295,500])[0]<0);
- assert.deepEqual(cameraAt(0),cameraAt(6.2));
+ assert.deepEqual(cameraAt(0).matrix,cameraAt(6.2).matrix);
  assert.ok(project(cameraAt(7.2).matrix,[95,500])[0]>0);
  for(let f=0;f<=Math.round(DURATION*30);f++){
   const t=f/30,g=geometryAt(t),m=cameraAt(t).matrix;
   const points=[g.pose.hip,g.pose.chest,...g.pose.feet,...g.toeTargets,
    [g.pose.head[0]-34,g.pose.head[1]-34],[g.pose.head[0]+34,g.pose.head[1]+34],
    ...g.arms.flatMap(a=>[a.shoulder,a.elbow,a.wrist]),...g.legs.map(a=>a.elbow)];
-  for(const p of points){const [x,y]=project(m,p);assert.ok(x>=12&&x<=1908&&y>=12&&y<=1068,`clipped pose at ${t}`);}
+  if(cameraAt(t).kind==='full')for(const p of points){const [x,y]=project(m,p);assert.ok(x>=12&&x<=1908&&y>=12&&y<=1068,`clipped pose at ${t}`);}
   assert.deepEqual(cameraAt(t),cameraAt(t));
  }
  assert.deepEqual(cameraAt(-1),cameraAt(0));
  assert.deepEqual(cameraAt(999),cameraAt(DURATION));
  assert.throws(()=>cameraAt(NaN),/finite/);
+});
+
+test('arrival pays off: look back at the locked gate, release, then recede into the arch',()=>{
+ const facing=t=>poseAt(t).head[0]-poseAt(t).chest[0];
+ assert.ok(facing(10.6)<0);
+ assert.ok(facing(12)>25);
+ assert.ok(facing(13.8)<0);
+ const jamb=geometryAt(12).arms[1].wrist;
+ assert.ok(jamb[0]>=262&&jamb[0]<=282&&jamb[1]>=330&&jamb[1]<=740,'hand rests on the arch frame');
+ assert.ok(poseAt(13.4).chest[1]>poseAt(12).chest[1]+12);
+ assert.ok(poseAt(13.4).head[1]>poseAt(12).head[1]+12);
+ assert.equal(depthAt(13.8),1);
+ assert.ok(depthAt(DURATION)<.6);
+ assert.ok(cameraAt(11.5).push===1&&cameraAt(10.6).push===0);
+});
+
+test('no stretch after the reveal stays visually still for 2 s',()=>{
+ const points=t=>{const g=geometryAt(t),d=depthAt(t);
+  return [g.pose.head,...g.arms.map(a=>a.wrist),...g.pose.feet].map(([x,y])=>[x*d,y*d]);};
+ for(let t=7;t+2<=DURATION;t+=.25){
+  let moved=0;
+  for(let u=t;u<t+2;u+=1/30){const a=points(u),b=points(u+1/30);moved=Math.max(moved,...a.map((p,i)=>distance(p,b[i])*60));}
+  const travel=Math.max(...points(t).map((p,i)=>distance(p,points(t+2)[i])));
+  assert.ok(travel>12||moved>40,`still from ${t.toFixed(2)} s`);
+ }
+});
+
+test('coverage cuts on action and frames what each beat needs',()=>{
+ const project=(m,p)=>[m[0]*p[0]+m[2]*p[1]+m[4],m[1]*p[0]+m[3]*p[1]+m[5]];
+ const inside=(t,p)=>{const [x,y]=project(cameraAt(t).matrix,p);return x>=0&&x<=1920&&y>=0&&y<=1080;};
+ assert.ok(SHOTS.length>=7);
+ for(let i=1;i<SHOTS.length;i++)assert.ok(SHOTS[i].start-SHOTS[i-1].start>=.5,'no flash cuts');
+ assert.ok(Math.max(...SHOTS.map((s,i)=>(SHOTS[i+1]?.start??DURATION)-s.start))<=4.4);
+ for(let t=2.9;t<3.8;t+=1/30){const g=geometryAt(t);g.handTargets.forEach(h=>assert.ok(inside(t,h)));assert.ok(inside(t,[895,514]));}
+ for(let t=11.5;t<12.4;t+=1/30){const p=poseAt(t);assert.ok(inside(t,[p.head[0]-34,p.head[1]-34])&&inside(t,[p.head[0]+34,p.head[1]+34]));}
+ for(let t=12.4;t<13;t+=1/30){assert.ok(inside(t,[874,514])&&inside(t,[917,560]));assert.ok(Math.abs(geometryAt(t).gateOffset)<1e-9);}
+ assert.equal(shotAt(3.8).name,'medium');
+ for(let t=0;t<6.2;t+=1/30){assert.ok(!inside(t,[195,330]),`arch visible before reveal at ${t}`);}
 });
 

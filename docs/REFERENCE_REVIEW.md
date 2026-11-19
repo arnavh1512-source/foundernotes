@@ -47,6 +47,9 @@ Example invocation: `python .claude/skills/podcast-scout-skill/scripts/record_le
 
 ## Current session limitations
 
+**2026-11-19:** yt-dlp listed every reference channel's uploads (titles, durations), but every individual YouTube video page returned the sign-in bot check, and Newgrounds returned HTTP 403. Not bypassed. Footage review needs the owner's exported cookies file or uploaded clips. See `STICK_COVERAGE_REVIEW_2026-11-19.md`.
+
+
 On 2026-11-17, the latest Philosopher MP4 could not be downloaded in this environment; no fresh animation verdict was obtained. The external video-watch service had insufficient credits and charged none. YouTube's browser watch page showed a verification challenge; no challenge was solved. Agent-Reach installation/use must be reported from the actual command result, never assumed from this document.
 
 Actual Agent-Reach result: `research_gateway.py status` returned `NOT_INSTALLED`. An owner-authorized installation was attempted with the official `uv tool install https://github.com/Panniantong/Agent-Reach/releases/latest/download/agent-reach.zip` source. It failed to download because the execution host could not resolve `github.com`. Agent-Reach was not installed or used to retrieve reference content. Retry only when normal network access is available; do not weaken network restrictions or substitute the unrelated PyPI package.

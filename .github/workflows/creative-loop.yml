@@ -70,7 +70,7 @@ jobs:
         run: |
           node .claude/skills/motion/scripts/build-stick-performance.mjs studio-output/stick-rebuild/index.html
           node .claude/skills/motion/scripts/render.mjs studio-output/stick-rebuild/index.html --out studio-output/stick-rebuild/draft.mp4
-          python .claude/skills/podcast-scout-skill/scripts/review_frames.py studio-output/stick-rebuild/draft.mp4 --out studio-output/stick-rebuild/review --times 0 0.2 1.2 2.5 2.78 3.5 3.8 3.9 4.0 4.1 4.15 4.8 5.8 6.0 6.2 6.4 7 8.3 9.4 10.5 11.4 12.3 13.3 14.4
+          python .claude/skills/podcast-scout-skill/scripts/review_frames.py studio-output/stick-rebuild/draft.mp4 --out studio-output/stick-rebuild/review --times 0 0.2 1.2 2.5 2.78 2.9 3.5 3.8 3.9 4.0 4.1 4.15 4.8 5.8 6.0 6.2 6.4 7 7.6 8.2 8.8 9.4 10 10.6 11 11.5 11.8 12.4 12.7 13 13.4 13.8 14.2 14.4
       - name: Verify full-rate stick timing render
         run: |
           ffmpeg -v error -i studio-output/stick-rebuild/draft.mp4 -f null -

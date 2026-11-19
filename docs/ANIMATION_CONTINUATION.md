@@ -2,6 +2,8 @@
 Owner direction: continue independently without waiting for another "next"; keep intermediate drafts internal. Last updated 2026-11-17.
 
 ## Resume here
+**Latest (2026-11-19):** read `STICK_COVERAGE_REVIEW_2026-11-19.md` first. Cut 3 added eight-shot coverage and an arrival payoff; open items are acting range (frustration, relief), sound and reference parity. Local Playwright rendering now works in the cloud container. Reference footage is blocked until the owner supplies cookies or clips.
+
 Repository: https://github.com/arnavh1512-source/foundernotes. Existing draft PR: https://github.com/arnavh1512-source/foundernotes/pull/12. Branch: codex/benchmark-performance-rebuild. Inspect the current head before any edit; do not assume this document identifies the latest commit. Keep the PR draft and preserve existing user changes.
 
 Read STICK_REVEAL_REVIEW_2026-11-17.md first, then CLAUDE.md, PRODUCTION_ROUTE.md, STICK_VISUAL_REVIEW_2026-11-17.md, STICK_TIMING_REVIEW_2026-11-17.md, PHILOSOPHER_PILOT_READINESS_2026-11-17.md and the persistent mistakes first. The latest source is the original 14.5-second gate-to-arch craft exercise in the motion assets/template. Reuse the existing builder, renderer, tests, frame-review scripts and lesson recorder. The local workspace is a partial export, not a complete git checkout.

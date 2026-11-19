@@ -119,3 +119,19 @@ The initial entries preserve documented observations from the 2026-11-11 study a
 - Cause / rationale: One fixed wide composition showed the open arch throughout the failed gate attempt and reassessment.
 - Correction / recipe: Stage the failed tactic more closely, then widen only after the head turns. Reuse the existing camera matrix helper, keep world/contact coordinates fixed, and protect figure bounds and reveal timing with tests.
 - Verification: Eight local Node tests passed. CI run 44120771407 passed and its exact MP4 was downloaded and decoded. Selected encoded frames and all 36 frames of the reveal transition were inspected. Arch visibility timing verified; comprehension, continuous playback, sound and artistic approval remain pending.
+
+### stick-rebuild-cut-1 — Silent stick exercise used one continuous camera for 14.5 s with zero cuts
+
+- Recorded (UTC): 2026-11-19T03:11:32+00:00
+- Evidence: cut-1 sha 6a8c6c88... sheet; benchmark notes reference-video-learnings.md (median shot ~3 s, framing changes around object/action)
+- Cause / rationale: Exercise was built as a single camera move; coverage (close-ups, inserts, cut on action) was never planned
+- Correction / recipe: Plan coverage per beat before animating: close on the contact/obstacle during effort, cut on action, eyeline insert for what the character looks at. Test that each close/insert frames its subject and that no shot is under 0.5 s.
+- Verification: Internally fixed in cut-3 (sha 26c438db...); 11 tests pass. Reference parity pending: footage blocked.
+
+### stick-rebuild-cut-1 — After the reveal the figure shuffled up three steps for ~5 s and ended in a neutral stand
+
+- Recorded (UTC): 2026-11-19T03:11:32+00:00
+- Evidence: cut-1 per-second mean frame diff 0.32-0.53 at 8-13 s vs 2.2-8.7 during strain/reveal
+- Cause / rationale: Stair keys spaced ~1 s apart with linear body travel; no story beat planned after arrival
+- Correction / recipe: Once a character has decided, move decisively (~0.6 s per step) and give arrival a payoff (look back at the obstacle, release, exit). Test: no 2 s window after the reveal without visible motion.
+- Verification: Internally fixed in cut-2/3; frame-diff and tests rechecked. Real-time viewing and reference parity pending.
