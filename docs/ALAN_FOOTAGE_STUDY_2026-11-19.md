@@ -40,6 +40,8 @@ Pixel motion depends on figure size and background, so compare trends, not absol
 
 - **Cut 12 (`09b4916d…`, timing):** studied AvA 56–57 s: the blast reaches full size in about 5 frames, then lingers about 0.8 s while shifting from bright to dull, and the whole frame tilts on impact. Added anticipation (hands pull back before shooting to the bars, a head counter-move before the turn, a crouch before the first stair step), snap easing (slow start, fast middle, firm stop) on key actions, fast-build/slow-decay dust that dulls as it fades, and a frame tilt on the big impact. Motion 3.27 mean, 7% quiet seconds: energy moved into key moments rather than added. Seventeen tests pass.
 
+- **Cut 13 (`87fc2dc2…`):** A/B of held drawings on twos for the character (`ON_TWOS` switch in the template): 40% held frames vs 8% on ones (Alan AvA 43%), but Alan's newer Geometry Dash is almost all new drawings (~23/s), so smooth motion stays the default and twos remains a style option. Added the claude-youtube retention lens (Shorts guide, unverified heuristics used as a checklist): hook in 1–3 s and an interrupt in the first 5 s pass; the camera held static and wide for 3.4 s (7.2–10.6 s), so it now pushes in from 8.8 s and follows the climb (figure larger sooner). New test: no static camera longer than 3 s. Eighteen tests pass. Owner asked for a copy of Alan's film for comparison; declined (copyright and the originality rule) in favour of a timing-matched study, ink-on-white comparison renders and a private side-by-side.
+
 ## Open gaps (update every cycle)
 - Passing step still tight at the knees; legs about 51% of height.
 - Timing: anticipation and snap now on key actions; held drawings (Alan animates largely on twos, 43% held frames) not yet tried.

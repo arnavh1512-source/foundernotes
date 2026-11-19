@@ -58,7 +58,7 @@ export const SHOTS=[
   {start:2.9, name:'grip-close', kind:'close', center:[815,545], zoom:3.0},
   {start:3.8, name:'medium', kind:'full'},                     // cut on the slip
   {start:6.2, name:'reveal', kind:'full'},                     // continuous widen after the head turn
-  {start:10.6, name:'arch-push', kind:'full'},
+  {start:8.8, name:'arch-push', kind:'full'},
   {start:11.5, name:'face-close', kind:'close', center:[215,410], zoom:2.6},
   {start:12.4, name:'lock-insert', kind:'insert', center:[895,520], zoom:2.4}, // what he is looking at
   {start:13.0, name:'arch', kind:'full'}
@@ -70,7 +70,8 @@ export function shotAt(time) {
 }
 export function cameraAt(time) {
   const shot=shotAt(time), t=Math.max(0,Math.min(DURATION,time));
-  const reveal=progress(t,6.2,1), push=progress(t,10.6,.9);
+  // Retention lens (claude-youtube Shorts guide: a visual change every 2-3 s): follow the climb with a slow push.
+  const reveal=progress(t,6.2,1), push=progress(t,8.8,1.9);
   let view;
   if(shot.center)view=shot;
   else if(shot.name==='reveal'||shot.name==='arch-push'||shot.name==='arch'){

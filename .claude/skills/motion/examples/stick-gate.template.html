@@ -35,8 +35,11 @@ function drawFace(p,head,f){
  else{c.beginPath();c.moveTo(hx-7,my);c.quadraticCurveTo(hx,my+f.smile*8,hx+7,my);c.stroke();}
  c.restore();
 }
+// Character drawings can be held on twos (15 per second, as in hand-drawn Flash animation); camera, shake and dust stay smooth.
+const ON_TWOS=false;
 function draw(t){
- const g=geometryAt(t),p=g.pose;
+ const tc=ON_TWOS?Math.floor(t*15+1e-6)/15:t;
+ const g=geometryAt(tc),p=g.pose;
  c.setTransform(1,0,0,1,0,0);c.fillStyle='#e9e5d9';c.fillRect(0,0,1920,1080);
  const cm=cameraAt(t).matrix,sh=shakeAt(t);c.setTransform(1,0,0,1,960+sh[0],540+sh[1]);c.rotate(sh[2]);c.transform(cm[0],cm[1],cm[2],cm[3],cm[4]-960,cm[5]-540);
  c.fillStyle='#d7d3c5';c.fillRect(-2000,830,6000,250);
@@ -65,7 +68,7 @@ function draw(t){
    c.fillStyle=`rgba(${shade+((i*29)%14)},${shade-8+((i*17)%12)},${shade-30+((i*11)%10)},${.8*fade})`;
    c.beginPath();c.arc(m.at[0]+spread*(80*grow+50*drift),m.at[1]-8-((i*41)%5+2)*(6*grow+10*drift),size,0,Math.PI*2);c.fill();}}}
  // Character (with its contact shadows) recedes into the arch at the end.
- const d=depthAt(t);c.save();c.translate(...DEPTH_ANCHOR);c.scale(d,d);c.translate(-DEPTH_ANCHOR[0],-DEPTH_ANCHOR[1]);
+ const d=depthAt(tc);c.save();c.translate(...DEPTH_ANCHOR);c.scale(d,d);c.translate(-DEPTH_ANCHOR[0],-DEPTH_ANCHOR[1]);
  for(const foot of p.feet){const floor=foot[0]>=115&&foot[0]<320?740:foot[0]>=320&&foot[0]<390?770:foot[0]>=390&&foot[0]<460?800:830;if(Math.abs(foot[1]-floor)<3){c.fillStyle='#b9b9a9';c.beginPath();c.ellipse(foot[0]+7,floor+3,35,6,0,0,Math.PI*2);c.fill();}}
  // Far limbs are drawn before the spine and near limbs.
  path([g.legs[0].shoulder,g.legs[0].elbow,g.legs[0].wrist],LINE-2,'#607270');
@@ -76,7 +79,7 @@ function draw(t){
  path([g.arms[1].shoulder,g.arms[1].elbow,g.arms[1].wrist],LINE);
  g.legs.forEach((limb,i)=>path([limb.wrist,g.toeTargets[i]],LINE-3));
  c.fillStyle='#f5efdf';c.strokeStyle=INK;c.lineWidth=LINE-3;c.beginPath();c.arc(...g.head,HEAD_R,0,Math.PI*2);c.fill();c.stroke();
- drawFace(p,g.head,faceAt(t));
+ drawFace(p,g.head,faceAt(tc));
  for(const a of g.arms){c.fillStyle=INK;c.beginPath();c.arc(...a.wrist,LINE*.55,0,Math.PI*2);c.fill();}
  c.restore();
  // No captions or dialogue are fabricated for this internal movement exercise.

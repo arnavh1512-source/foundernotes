@@ -111,7 +111,7 @@ test('arrival pays off: look back at the locked gate, release, then recede into 
  assert.ok(poseAt(13.4).head[1]>poseAt(12).head[1]+12);
  assert.equal(depthAt(13.8),1);
  assert.ok(depthAt(DURATION)<.6);
- assert.ok(cameraAt(11.5).push===1&&cameraAt(10.6).push===0);
+ assert.ok(cameraAt(10.75).push>.9999&&cameraAt(8.8).push===0);
 });
 
 test('no stretch after the reveal stays visually still for 2 s',()=>{
@@ -218,5 +218,13 @@ test('anticipation and snap: wind-ups before key actions',()=>{
  // snap: the middle of a key action moves faster than an even pace would
  const v=t=>distance(poseAt(t).hip,poseAt(t+1/60).hip)*60, even=distance(poseAt(2.5).hip,poseAt(1.8).hip)/.7;
  assert.ok(v(2.15)>even*1.2,'brace snaps through its middle');
+});
+
+test('retention lens: no static picture longer than 3 s',()=>{
+ // a shot change or camera move must happen at least every 3 s (claude-youtube Shorts guide; an unverified heuristic used as a checklist)
+ const moving=t=>{const a=cameraAt(t).matrix,b=cameraAt(t+1/30).matrix;return a.some((v,i)=>Math.abs(v-b[i])>1e-6);};
+ let still=0,worst=0;
+ for(let f=0;f<Math.round(DURATION*30);f++){const t=f/30;if(moving(t))still=0;else{still+=1/30;worst=Math.max(worst,still);}}
+ assert.ok(worst<=3.05,`camera static for ${worst.toFixed(2)} s`);
 });
 
