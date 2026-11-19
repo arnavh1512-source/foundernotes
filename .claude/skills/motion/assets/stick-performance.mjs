@@ -2,7 +2,9 @@
 // Draft: pure geometry checked; browser rendering and audiovisual review still required.
 import {progress, solveArm, layerMatrix} from './story-motion.mjs';
 export const DURATION = 14.5;
-export const HEAD_R = 62, LINE = 20; // master study: Alan's head is ~1/3 of height; step toward it
+export const HEAD_R = 62, LINE = 20;
+// Alan proportions (master study): legs ~1.25x head height, head ~1/3 of standing height. Body scaled from the feet.
+export const BODY = .7, ARM = [84*BODY, 90*BODY], LEG = [115*BODY, 120*BODY]; // master study: Alan's head is ~1/3 of height; step toward it
 const keys = [
   // Benchmark: start in motion. Two strides into frame, overshoot into a lean at the lock, then inspect.
   {t:0, hip:[410,632], chest:[445,492], head:[462,408], feet:[[350,830],[470,830]], hands:[[515,640],[385,642]], label:'walkin'},
@@ -42,11 +44,36 @@ const keys = [
   {t:11.0, hip:[190,516], chest:[195,370], head:[183,284], feet:[[170,740],[210,740]], hands:[[160,522],[235,522]], label:'breathe'},
   {t:11.8, hip:[194,518], chest:[214,382], head:[244,302], feet:[[170,740],[210,740]], hands:[[165,532],[272,540]], label:'lookback'},
   {t:13.0, hip:[194,518], chest:[214,382], head:[244,302], feet:[[170,740],[210,740]], hands:[[165,532],[272,540]], label:'hold'},
-  {t:13.4, hip:[190,526], chest:[198,398], head:[206,320], feet:[[170,740],[210,740]], hands:[[165,548],[250,548]], label:'release'},
+  {t:13.4, hip:[190,534], chest:[198,412], head:[206,334], feet:[[170,740],[210,740]], hands:[[165,548],[250,548]], label:'release'},
   {t:13.8, hip:[190,520], chest:[193,380], head:[176,295], feet:[[170,740],[210,740]], hands:[[155,532],[232,532]], label:'enter'},
   {t:14.5, hip:[190,520], chest:[193,380], head:[176,295], feet:[[170,740],[210,740]], hands:[[155,532],[232,532]], label:'through'}
-];
-const blendPoint = (a,b,k) => a.map((v,i)=>v+(b[i]-v)*k);
+].map(reproportion);
+function blendPoint(a,b,k){return a.map((v,i)=>v+(b[i]-v)*k);}
+// Shorten the body toward its feet in every key. Feet never move (floor, stair and gate contacts hold);
+// hands keep their contact surface: gate bars (x 790), arch jamb (x 272) or the floor (y >= 815).
+function reproportion(k){
+  const F=[(k.feet[0][0]+k.feet[1][0])/2,(k.feet[0][1]+k.feet[1][1])/2];
+  // Feet stay exactly put; the hips move until the shorter legs reach each foot with the same extension as before.
+  const L0=115+120, L1=LEG[0]+LEG[1], d=(p,q)=>Math.hypot(p[0]-q[0],p[1]-q[1]);
+  const reach=k.feet.map(f=>Math.min(.985,d(k.hip,f)/L0)*L1);
+  // Slide the hip along its original direction from the feet until the most-extended leg matches its old extension.
+  let lo=0,hi=1;for(let it=0;it<40;it++){const m=(lo+hi)/2,h=blendPoint(F,k.hip,m);
+    if(Math.max(...k.feet.map((f,j)=>d(h,f)/reach[j]))>1)hi=m;else lo=m;}
+  let hip=blendPoint(F,k.hip,lo);
+  for(let it=0;it<60;it++)k.feet.forEach((f,j)=>{const r=d(hip,f);if(r>reach[j]){const u=reach[j]/r;hip=[f[0]+(hip[0]-f[0])*u,f[1]+(hip[1]-f[1])*u];}});
+  const chest=[hip[0]+(k.chest[0]-k.hip[0])*BODY,hip[1]+(k.chest[1]-k.hip[1])*BODY];
+  const head=[chest[0]+(k.head[0]-k.chest[0])*BODY,chest[1]+(k.head[1]-k.chest[1])*BODY];
+  const hands=k.hands.map(h=>{const n=[chest[0]+(h[0]-k.chest[0])*BODY,chest[1]+(h[1]-k.chest[1])*BODY];
+    if(Math.abs(h[0]-790)<1)n[0]=790; else if(Math.abs(h[0]-272)<1)n[0]=272; if(h[1]>=815)n[1]=h[1]; return n;});
+  // Contact hands keep their surface; if the shorter arms cannot reach, the chest (and head) lean toward the contact.
+  const armReach=(ARM[0]+ARM[1])*.88, contact=k.hands.map(h=>Math.abs(h[0]-790)<1||Math.abs(h[0]-272)<1||h[1]>=815);
+  let shift=[0,0];
+  for(let it=0;it<30;it++)hands.forEach((h,j)=>{if(!contact[j])return;const c=[chest[0]+shift[0],chest[1]+shift[1]],r=d(c,h);
+    if(r>armReach){const u=(r-armReach)/r;shift=[shift[0]+(h[0]-c[0])*u,shift[1]+(h[1]-c[1])*u];}});
+  const chest2=[chest[0]+shift[0],chest[1]+shift[1]], head2=[head[0]+shift[0],head[1]+shift[1]];
+  hands.forEach((h,j)=>{if(!contact[j]){h[0]+=shift[0];h[1]+=shift[1];}});
+  return {...k,hip,chest:chest2,head:head2,hands,feet:k.feet.map(f=>f.slice())};
+}
 // Timing curves (benchmark: Alan's snap-and-hold and anticipation, AvA 56-57 s and 96-97 s).
 const backIn=u=>u*u*(2.7*u-1.7);                       // dips back ~10% before travelling
 const snap=u=>u<.5?4*u*u*u:1-Math.pow(-2*u+2,3)/2;     // slow start, fast middle, firm stop
@@ -109,14 +136,14 @@ export function poseAt(time) {
     p[field]=a[field].map((v,j)=>blendPoint(v,b[field][j],reach));
   }
   // Effort comes in heaves (2.9-3.8 s); each stair plant loads the hips (benchmark: Alan's weight and rhythm).
-  if(t>2.9&&t<3.8){const h=Math.sin((t-2.9)/.3*Math.PI);const d=Math.max(0,h)*16;
-    p.hip=[p.hip[0]-d*.35,p.hip[1]+d*.3];p.chest=[p.chest[0]-d*1.2,p.chest[1]+d*.2];p.head=[p.head[0]-d*1.4,p.head[1]+d*.2];}
-  {const e=t-7.38;if(e>0&&e<.3){const c=Math.sin(e/.3*Math.PI)*16;p.hip=[p.hip[0],p.hip[1]+c];p.chest=[p.chest[0],p.chest[1]+c*.9];p.head=[p.head[0],p.head[1]+c*.8];}}
-  for(const plant of [8.2,8.8,9.4,10,10.6]){const e=t-plant;if(e>0&&e<.22){const dip=Math.sin(e/.22*Math.PI)*12;
+  if(t>2.9&&t<3.8){const h=Math.sin((t-2.9)/.3*Math.PI);const d=Math.max(0,h)*16*BODY;
+    p.hip=[p.hip[0],p.hip[1]+d*.2];p.chest=[p.chest[0]-d*.6,p.chest[1]+d*.2];p.head=[p.head[0]-d*1.0,p.head[1]+d*.2];}
+  {const e=t-7.38;if(e>0&&e<.3){const c=Math.sin(e/.3*Math.PI)*16*BODY;p.hip=[p.hip[0],p.hip[1]+c];p.chest=[p.chest[0],p.chest[1]+c*.9];p.head=[p.head[0],p.head[1]+c*.8];}}
+  for(const plant of [8.2,8.8,9.4,10,10.6]){const e=t-plant;if(e>0&&e<.22){const dip=Math.sin(e/.22*Math.PI)*12*BODY;
     p.hip=[p.hip[0],p.hip[1]+dip];p.chest=[p.chest[0],p.chest[1]+dip*.8];p.head=[p.head[0],p.head[1]+dip*.7];}}
   // Walk bob: the body rises as the swing leg passes and sinks onto each contact.
   if(['walkin','stride','choose','step','continue','climb','approach'].includes(a.label)){
-    const bob=Math.sin(Math.PI*u)*10;p.hip=[p.hip[0],p.hip[1]-bob];p.chest=[p.chest[0],p.chest[1]-bob];p.head=[p.head[0],p.head[1]-bob];
+    const bob=Math.sin(Math.PI*u)*10*BODY;p.hip=[p.hip[0],p.hip[1]-bob];p.chest=[p.chest[0],p.chest[1]-bob];p.head=[p.head[0],p.head[1]-bob];
     p.hands=p.hands.map(h=>[h[0],h[1]-bob]);}
   // Whole-body acting on holds (frozen hip/torso/knee frames were 23%; Alan's pose changes nearly every drawing).
   {const add=(dx,dy,hipK=1,chestK=1,headK=1)=>{p.hip=[p.hip[0]+dx*hipK,p.hip[1]+dy*hipK];p.chest=[p.chest[0]+dx*chestK,p.chest[1]+dy*chestK];p.head=[p.head[0]+dx*headK,p.head[1]+dy*headK];};
@@ -133,8 +160,8 @@ export function poseAt(time) {
   if(t>5.78&&t<6.18){const w=Math.sin(Math.PI*(t-5.78)/.4),rub=Math.sin((t-5.78)*44)*12;
     const tgt=[[p.chest[0]+40+rub*.8,p.chest[1]+150],[p.chest[0]+60-rub*.8,p.chest[1]+144]];
     p.hands=p.hands.map((h,j)=>[h[0]+(tgt[j][0]-h[0])*w,h[1]+(tgt[j][1]-h[1])*w]);}
-  const lifts={walkin:[44,0],stride:[0,44],test:[0,28],limit:[20,0],notice:[0,48],choose:[48,0],step:[0,70],continue:[70,0],climb:[0,70],approach:[60,0],enter:[0,26]}[a.label]||[0,0];
-  p.feet.forEach((v,j)=>{v[1]-=Math.sin(Math.PI*k)*lifts[j];});
+  const lifts={slam:[46,30],walkin:[44,0],stride:[0,44],test:[0,28],limit:[20,0],notice:[0,48],choose:[48,0],step:[0,70],continue:[70,0],climb:[0,70],approach:[60,0],enter:[0,26]}[a.label]||[0,0];
+  p.feet.forEach((v,j)=>{v[1]-=Math.sin(Math.PI*k)*lifts[j]*BODY;});
   return p;
 }
 // Head follows the spine direction through a damped spring: it lags, overshoots and settles.
@@ -177,6 +204,21 @@ function handSpring(time){
 export function breathAt(t){return [Math.sin(t*1.9)*2.2,Math.sin(t*2.3+1)*3.2];}
 // Elbow branch track: each elbow keeps its bend side and switches only near full extension (invisible), toward hanging down.
 let branchTrack=null;
+// Knee branch track: knees face the travel direction (before the 6.4 s turn: -1, after: +1), keep their bend side
+// and switch only when the leg is near straight (invisible); a knee that would dip below the floor switches the same way.
+let kneeTrack=null;
+function kneeBranch(time,j){
+  if(!kneeTrack){
+    const dt=1/120,n=Math.ceil(DURATION/dt)+1;kneeTrack=[];let cur=[-1,-1];
+    for(let i=0;i<n;i++){const t=Math.min(DURATION,i*dt),both=geometryAt(t,'legs'),want=t<6.4?-1:1;
+      cur=cur.map((c,k)=>{const [a,b]=both[k],mine=c===1?a:b,other=c===1?b:a;
+        const near=Math.hypot(mine.elbow[0]-other.elbow[0],mine.elbow[1]-other.elbow[1])<16;
+        const belowFloor=mine.elbow[1]>828&&other.elbow[1]<=828;
+        return (near&&want!==c)||belowFloor?-c:c;});
+      kneeTrack.push(cur.slice());}
+  }
+  return kneeTrack[Math.min(kneeTrack.length-1,Math.round(Math.max(0,Math.min(DURATION,time))*120))][j];
+}
 function elbowBranch(time,j){
   if(!branchTrack){
     const dt=1/120,n=Math.ceil(DURATION/dt)+1;branchTrack=[];
@@ -214,24 +256,25 @@ export function geometryAt(time, mode) {
   // except during a deliberate hand action (the dust-brush), so elbows never fold into odd shapes at rest.
   const brushing=p.time>5.72&&p.time<6.24;
   shoulders.forEach((s,j)=>{const w=freeWeight(p.time,j)*(brushing?0:1);if(!w)return;
-    const dx=hands[j][0]-s[0],dy=hands[j][1]-s[1],r=Math.hypot(dx,dy)||1,want=(84+90)*.985,L=r+(want-r)*w*.9;
+    const dx=hands[j][0]-s[0],dy=hands[j][1]-s[1],r=Math.hypot(dx,dy)||1,want=(ARM[0]+ARM[1])*.985,L=r+(want-r)*w*.9;
     hands[j]=[s[0]+dx*L/r,s[1]+dy*L/r];});
   // hands never pass through the floor (spring overshoot on impacts)
   hands.forEach((h,j)=>{if(h[1]>826)hands[j]=[h[0],826];});
   // never ask the arm for more than it can reach (spring overshoot)
-  shoulders.forEach((s,j)=>{const dx=hands[j][0]-s[0],dy=hands[j][1]-s[1],r=Math.hypot(dx,dy),m=(84+90)*.988;
+  shoulders.forEach((s,j)=>{const dx=hands[j][0]-s[0],dy=hands[j][1]-s[1],r=Math.hypot(dx,dy),m=(ARM[0]+ARM[1])*.988;
     if(r>m)hands[j]=[s[0]+dx*m/r,s[1]+dy*m/r];});
   // Owner QC "hands are odd": elbows must hang down and back, never jut out sideways. Pick the IK branch whose elbow is lower.
-  if(mode==='both')return shoulders.map((s,i)=>[solveArm(s,hands[i],84,90,1),solveArm(s,hands[i],84,90,-1)]);
-  const arms=shoulders.map((s,i)=>solveArm(s,hands[i],84,90,elbowBranch(time,i)));
+  if(mode==='both')return shoulders.map((s,i)=>[solveArm(s,hands[i],...ARM,1),solveArm(s,hands[i],...ARM,-1)]);
+  if(mode==='legs')return p.feet.map(f=>[solveArm(p.hip,f,...LEG,1),solveArm(p.hip,f,...LEG,-1)]);
+  const arms=shoulders.map((s,i)=>solveArm(s,hands[i],...ARM,elbowBranch(time,i)));
   // Change facing only at the extended-leg passing pose; mirrored knees must not cross.
-  const kneeBend=p.time<6.4?-1:1;
-  const legs=p.feet.map(f=>solveArm(p.hip,f,115,120,kneeBend));
+  const legs=p.feet.map((f,j)=>solveArm(p.hip,f,...LEG,kneeBranch(time,j)));
+  const kneeBend=kneeBranch(time,1);
   // During bracing, foot contact follows the same gate displacement as the hands.
   const braceWeight=progress(p.time,1.8,.7)*(1-progress(p.time,3.8,.35));
   if(braceWeight>0){
     p.feet[1]=[p.feet[1][0]+rattle*braceWeight,p.feet[1][1]];
-    legs[1]=solveArm(p.hip,p.feet[1],115,120,kneeBend);
+    legs[1]=solveArm(p.hip,p.feet[1],...LEG,kneeBend);
   }
   const prev=poseAt(Math.max(0,p.time-1/30)),vel=[(p.chest[0]-prev.chest[0])*30,(p.chest[1]-prev.chest[1])*30];
   const dragX=Math.max(-40,Math.min(40,-vel[0]*.12)),dragY=Math.max(-24,Math.min(24,-vel[1]*.07));

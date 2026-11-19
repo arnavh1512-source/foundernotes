@@ -1,11 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {geometryAt,poseAt,cameraAt,depthAt,shotAt,faceAt,shakeAt,IMPACTS,SOUND_EVENTS,SHOTS,DURATION,HEAD_R} from '../assets/stick-performance.mjs';
+import {ARM,LEG,BODY,geometryAt,poseAt,cameraAt,depthAt,shotAt,faceAt,shakeAt,IMPACTS,SOUND_EVENTS,SHOTS,DURATION,HEAD_R} from '../assets/stick-performance.mjs';
 const distance=(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1]);
 test('whole-body pose track preserves limbs, grips and planted support',()=>{
  for(let f=0;f<=Math.round(DURATION*30);f++){
   const g=geometryAt(f/30);
-  for(const [limbs,lengths] of [[g.arms,[84,90]],[g.legs,[115,120]]]){
+  for(const [limbs,lengths] of [[g.arms,ARM],[g.legs,LEG]]){
    for(const a of limbs){
     assert.equal(a.clamped,false);
     assert.ok(Math.abs(distance(a.shoulder,a.elbow)-lengths[0])<1e-6);
@@ -41,7 +41,7 @@ test('recovery holds contacts and stair steps alternate support feet',()=>{
 test('neutral silhouette and facing turn avoid crossed knees and folded rest arms',()=>{
  const rest=geometryAt(1.0);
  assert.ok(rest.legs[0].elbow[0]<rest.legs[1].elbow[0]);
- rest.arms.forEach(a=>assert.ok(distance(a.shoulder,a.wrist)>140));
+ rest.arms.forEach(a=>assert.ok(distance(a.shoulder,a.wrist)>(ARM[0]+ARM[1])*.8));
  const before=geometryAt(6.4-.0001),after=geometryAt(6.4);
  before.legs.forEach((a,i)=>assert.ok(distance(a.elbow,after.legs[i].elbow)<1));
 });
@@ -104,12 +104,14 @@ test('the route is revealed after reassessment while the complete figure stays i
 test('arrival pays off: look back at the locked gate, release, then recede into the arch',()=>{
  const facing=t=>poseAt(t).head[0]-poseAt(t).chest[0];
  assert.ok(facing(10.6)<0);
- assert.ok(facing(12)>25);
+ assert.ok(facing(12)>25*BODY);
  assert.ok(facing(13.8)<0);
  const jamb=geometryAt(12).arms[1].wrist;
  assert.ok(jamb[0]>=262&&jamb[0]<=282&&jamb[1]>=330&&jamb[1]<=740,'hand rests on the arch frame');
- assert.ok(poseAt(13.4).chest[1]>poseAt(12).chest[1]+12);
- assert.ok(poseAt(13.4).head[1]>poseAt(12).head[1]+12);
+ // exhale: after the sigh's peak the chest and head drop clearly before he turns into the arch
+ const low=f=>Math.max(...[12.6,12.7,12.8,12.9,13.0,13.2,13.4].map(t=>poseAt(t)[f][1]));
+ assert.ok(low('chest')>poseAt(12.37).chest[1]+12*BODY,'shoulders drop on the exhale');
+ assert.ok(low('head')>poseAt(12.37).head[1]+12*BODY,'head drops on the exhale');
  assert.equal(depthAt(13.8),1);
  assert.ok(depthAt(DURATION)<.6);
  assert.ok(cameraAt(10.75).push>.9999&&cameraAt(8.8).push===0);
