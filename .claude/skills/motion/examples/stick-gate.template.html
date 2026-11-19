@@ -80,7 +80,7 @@ function draw(t){
  g.legs.forEach((limb,i)=>path([limb.wrist,g.toeTargets[i]],LINE-3));
  c.fillStyle='#f5efdf';c.strokeStyle=INK;c.lineWidth=LINE-3;c.beginPath();c.arc(...g.head,HEAD_R,0,Math.PI*2);c.fill();c.stroke();
  drawFace(p,g.head,faceAt(tc));
- for(const a of g.arms){c.fillStyle=INK;c.beginPath();c.arc(...a.wrist,LINE*.55,0,Math.PI*2);c.fill();}
+ // Hands are the rounded ends of the arm strokes (no knob dots), as in the benchmark.
  c.restore();
  // No captions or dialogue are fabricated for this internal movement exercise.
 }

@@ -191,3 +191,11 @@ The initial entries preserve documented observations from the 2026-11-11 study a
 - Cause / rationale: Hands were interpolated in straight lines with the body and stopped dead on keys; holds had no motion; no acting was planned for the arms between big beats
 - Correction / recipe: Plan an arm acting choice for every beat (e.g. brushing off the hands after the fall), add follow-through springs on free hands with contact blending, arcs, breathing holds and spine drag. Measure frozen-arm frames and also look at frames: the procedural pass alone moved the number but not the picture.
 - Verification: Cut 15b: frozen-arm frames 9%, brushing beat visible at 5.8-6.2 s, 18 tests pass. Owner re-check pending; legs and torso still rigid on holds.
+
+### stick-rebuild-cut-15b — Hands looked odd: elbows jutted sideways or forward and arms folded at rest
+
+- Recorded (UTC): 2026-11-19T06:42:29+00:00
+- Evidence: Owner QC 2026-11-19 'the hands are so odd'; cut 15b frames at 5.9, 6.0, 6.6, 9.2 and 12.0 s show hand-on-hip and robot-like elbows; free hands sat ~120-160 px from the shoulder against a 174 px arm
+- Cause / rationale: A fixed IK bend sign for both arms plus hand targets too close to the shoulders, which forced large elbow bends; knob dots at the hand ends
+- Correction / recipe: Keep relaxed free hands near full arm reach (near-straight strokes, as in the Alan master study), track each elbow's bend side with hysteresis (switch only near full extension), place contacts and deliberate gestures where the arm can stay long, and draw hands as rounded stroke ends. Check elbow jumps per frame and strongly bent free arms, and look at frames.
+- Verification: Cut 16d frames at 0.4, 1.0, 6.6, 9.2, 12.0 and 13.6 s show relaxed straight arms; strongly bent free arms 10%; no elbow flips among large jumps; 18 tests pass. Owner re-check pending.

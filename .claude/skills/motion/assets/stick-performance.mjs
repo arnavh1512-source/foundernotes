@@ -40,8 +40,8 @@ const keys = [
   {t:10.6, hip:[190,520], chest:[195,380], head:[180,295], feet:[[170,740],[210,740]], hands:[[155,540],[245,540]], label:'arrive'},
   // Payoff: breathe, look back at the still-locked gate (eyeline insert), release, walk into the light.
   {t:11.0, hip:[190,516], chest:[195,370], head:[183,284], feet:[[170,740],[210,740]], hands:[[160,522],[235,522]], label:'breathe'},
-  {t:11.8, hip:[194,518], chest:[214,382], head:[244,302], feet:[[170,740],[210,740]], hands:[[165,532],[272,500]], label:'lookback'},
-  {t:13.0, hip:[194,518], chest:[214,382], head:[244,302], feet:[[170,740],[210,740]], hands:[[165,532],[272,500]], label:'hold'},
+  {t:11.8, hip:[194,518], chest:[214,382], head:[244,302], feet:[[170,740],[210,740]], hands:[[165,532],[272,540]], label:'lookback'},
+  {t:13.0, hip:[194,518], chest:[214,382], head:[244,302], feet:[[170,740],[210,740]], hands:[[165,532],[272,540]], label:'hold'},
   {t:13.4, hip:[190,526], chest:[198,398], head:[206,320], feet:[[170,740],[210,740]], hands:[[165,548],[250,548]], label:'release'},
   {t:13.8, hip:[190,520], chest:[193,380], head:[176,295], feet:[[170,740],[210,740]], hands:[[155,532],[232,532]], label:'enter'},
   {t:14.5, hip:[190,520], chest:[193,380], head:[176,295], feet:[[170,740],[210,740]], hands:[[155,532],[232,532]], label:'through'}
@@ -120,7 +120,7 @@ export function poseAt(time) {
     p.hands=p.hands.map(h=>[h[0],h[1]-bob]);}
   // Acting beat (owner QC "still stiff"): after getting up he angrily brushes the dust off his hands.
   if(t>5.78&&t<6.18){const w=Math.sin(Math.PI*(t-5.78)/.4),rub=Math.sin((t-5.78)*44)*12;
-    const tgt=[[p.chest[0]+28+rub,p.chest[1]+92],[p.chest[0]+52-rub,p.chest[1]+86]];
+    const tgt=[[p.chest[0]+40+rub*.8,p.chest[1]+150],[p.chest[0]+60-rub*.8,p.chest[1]+144]];
     p.hands=p.hands.map((h,j)=>[h[0]+(tgt[j][0]-h[0])*w,h[1]+(tgt[j][1]-h[1])*w]);}
   const lifts={walkin:[44,0],stride:[0,44],test:[0,28],limit:[20,0],notice:[0,48],choose:[48,0],step:[0,70],continue:[70,0],climb:[0,70],approach:[60,0],enter:[0,26]}[a.label]||[0,0];
   p.feet.forEach((v,j)=>{v[1]-=Math.sin(Math.PI*k)*lifts[j];});
@@ -164,7 +164,22 @@ function handSpring(time){
 }
 // Moving hold: slow breathing and a small weight shift, so no pose is ever frozen.
 export function breathAt(t){return [Math.sin(t*1.9)*2.2,Math.sin(t*2.3+1)*3.2];}
-export function geometryAt(time) {
+// Elbow branch track: each elbow keeps its bend side and switches only near full extension (invisible), toward hanging down.
+let branchTrack=null;
+function elbowBranch(time,j){
+  if(!branchTrack){
+    const dt=1/120,n=Math.ceil(DURATION/dt)+1;branchTrack=[];
+    let cur=null;
+    for(let i=0;i<n;i++){const both=geometryAt(Math.min(DURATION,i*dt),'both');
+      if(!cur)cur=both.map(([a,b])=>b.elbow[1]>a.elbow[1]?-1:1);
+      cur=cur.map((c,k)=>{const [a,b]=both[k],mine=c===1?a:b,other=c===1?b:a;
+        const near=Math.hypot(mine.elbow[0]-other.elbow[0],mine.elbow[1]-other.elbow[1])<14;
+        return near&&other.elbow[1]>mine.elbow[1]+1?-c:c;});
+      branchTrack.push(cur.slice());}
+  }
+  return branchTrack[Math.min(branchTrack.length-1,Math.round(Math.max(0,Math.min(DURATION,time))*120))][j];
+}
+export function geometryAt(time, mode) {
   const p=poseAt(time);
   const gripping=p.time>=1.2&&p.time<=3.8;
   const envelope=progress(p.time,1.8,.3)*(1-progress(p.time,3.5,.3));
@@ -184,12 +199,20 @@ export function geometryAt(time) {
     const target=[p.chest[0]+sp[j][0],p.chest[1]+sp[j][1]];
     const idle=[Math.sin(p.time*2.1+j*2)*8,Math.sin(p.time*1.7+j)*9+breath];
     return [v[0]+(target[0]-v[0]+idle[0])*w,v[1]+(target[1]-v[1]+idle[1])*w];});
+  // Master study: relaxed arms are near-straight strokes. Free hands extend toward ~95% of arm length,
+  // except during a deliberate hand action (the dust-brush), so elbows never fold into odd shapes at rest.
+  const brushing=p.time>5.72&&p.time<6.24;
+  shoulders.forEach((s,j)=>{const w=freeWeight(p.time,j)*(brushing?0:1);if(!w)return;
+    const dx=hands[j][0]-s[0],dy=hands[j][1]-s[1],r=Math.hypot(dx,dy)||1,want=(84+90)*.985,L=r+(want-r)*w*.9;
+    hands[j]=[s[0]+dx*L/r,s[1]+dy*L/r];});
   // hands never pass through the floor (spring overshoot on impacts)
   hands.forEach((h,j)=>{if(h[1]>826)hands[j]=[h[0],826];});
   // never ask the arm for more than it can reach (spring overshoot)
-  shoulders.forEach((s,j)=>{const dx=hands[j][0]-s[0],dy=hands[j][1]-s[1],r=Math.hypot(dx,dy),m=(84+90)*.97;
+  shoulders.forEach((s,j)=>{const dx=hands[j][0]-s[0],dy=hands[j][1]-s[1],r=Math.hypot(dx,dy),m=(84+90)*.988;
     if(r>m)hands[j]=[s[0]+dx*m/r,s[1]+dy*m/r];});
-  const arms=shoulders.map((s,i)=>solveArm(s,hands[i],84,90,1));
+  // Owner QC "hands are odd": elbows must hang down and back, never jut out sideways. Pick the IK branch whose elbow is lower.
+  if(mode==='both')return shoulders.map((s,i)=>[solveArm(s,hands[i],84,90,1),solveArm(s,hands[i],84,90,-1)]);
+  const arms=shoulders.map((s,i)=>solveArm(s,hands[i],84,90,elbowBranch(time,i)));
   // Change facing only at the extended-leg passing pose; mirrored knees must not cross.
   const kneeBend=p.time<6.4?-1:1;
   const legs=p.feet.map(f=>solveArm(p.hip,f,115,120,kneeBend));
