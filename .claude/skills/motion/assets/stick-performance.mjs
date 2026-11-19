@@ -116,3 +116,32 @@ export function geometryAt(time) {
   return {pose:p,arms,legs,shoulders,handTargets:hands,spineControl,gateOffset,gripping,toeTargets};
 }
 
+
+// Minimal face (benchmark 2026-11-19: DayOne storyboards carry emotion with dot eyes, brow strokes and a mouth line).
+// eye: 0 closed .. 1 open .. 1.3 wide; brow: -1 worried (inner up) .. 1 angry (inner down); lift: brow height;
+// smile: -1 frown .. 1 smile; open: mouth opening 0..1.
+const faceKeys = [
+  {t:0, eye:1, brow:-.2, lift:.4, smile:0, open:0, label:'curious'},
+  {t:1.2, eye:.85, brow:.15, lift:.1, smile:0, open:0, label:'focused'},
+  {t:1.8, eye:.15, brow:1, lift:-.3, smile:-.4, open:.35, label:'strain'},
+  {t:3.85, eye:1.3, brow:-.6, lift:1, smile:0, open:.8, label:'shock'},
+  {t:4.8, eye:.7, brow:1, lift:-.2, smile:-.7, open:0, label:'frustrated'},
+  {t:6.1, eye:1.15, brow:-.3, lift:1, smile:0, open:.3, label:'noticing'},
+  {t:7.4, eye:.9, brow:.5, lift:0, smile:.25, open:0, label:'determined'},
+  {t:11.0, eye:0, brow:0, lift:.2, smile:.1, open:.15, label:'breathing'},
+  {t:11.8, eye:.85, brow:-.6, lift:.5, smile:-.1, open:0, label:'wistful'},
+  {t:13.2, eye:0, brow:-.2, lift:.3, smile:.75, open:0, label:'relieved'},
+  {t:13.8, eye:1, brow:-.1, lift:.3, smile:.5, open:0, label:'content'}
+];
+const BLINKS=[.9,9.1];
+// Expressions change faster than the body: blend into each key over 0.18 s, then hold.
+export function faceAt(time) {
+  if (!Number.isFinite(time)) throw new TypeError('time must be finite');
+  const t=Math.max(0,Math.min(DURATION,time));
+  let i=faceKeys.findIndex(k=>k.t>t)-1; if(i<0)i=faceKeys.length-1;
+  const b=faceKeys[i], a=faceKeys[Math.max(0,i-1)], k=i===0?1:progress(t,b.t,.18);
+  const f={label:b.label};
+  for(const field of ['eye','brow','lift','smile','open'])f[field]=a[field]+(b[field]-a[field])*k;
+  for(const at of BLINKS){const d=Math.abs(t-at);if(d<.08)f.eye*=d/.08;}
+  return f;
+}

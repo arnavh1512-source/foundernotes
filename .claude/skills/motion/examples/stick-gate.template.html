@@ -11,6 +11,27 @@ function path(points,width=8,color=INK){
  c.beginPath();c.moveTo(...points[0]);for(const p of points.slice(1))c.lineTo(...p);
  c.strokeStyle=color;c.lineWidth=width;c.lineCap='round';c.lineJoin='round';c.stroke();
 }
+// Minimal original face: two eyes, two brow strokes, one mouth. Features slide toward the facing side.
+function drawFace(p,f){
+ const facing=Math.max(-1,Math.min(1,(p.head[0]-p.chest[0])/30));
+ const [hx,hy]=[p.head[0]+facing*9,p.head[1]];
+ c.strokeStyle=INK;c.fillStyle=INK;c.lineWidth=3.5;c.lineCap='round';
+ for(const side of [-1,1]){
+  const ex=hx+side*9, ey=hy-4;
+  if(f.eye<.12){c.beginPath();c.arc(ex,ey-2,4,.15*Math.PI,.85*Math.PI);c.stroke();}
+  else{c.beginPath();c.ellipse(ex,ey,3.2,4.6*Math.min(f.eye,1.3),0,0,Math.PI*2);c.fill();}
+  // Inner brow end (toward the nose) drops when angry, rises when worried.
+  const by=ey-11-f.lift*5, inner=ex-side*5, outer=ex+side*5;
+  c.beginPath();c.moveTo(outer,by-f.brow*1.5);c.lineTo(inner,by+f.brow*3.5);c.stroke();
+ }
+ const my=hy+12;
+ // Effort (angry brows) opens wide and flat with a teeth line; shock opens round.
+ const grit=Math.max(0,Math.min(1,(f.brow-.5)*2));
+ if(f.open>.05){const w=5.5+grit*5,hgt=(1.5+f.open*5)*(1-.45*grit);
+  c.beginPath();c.ellipse(hx,my+1,w,hgt,0,0,Math.PI*2);c.fill();
+  if(grit>.3){c.strokeStyle='#f5efdf';c.lineWidth=1.5;c.beginPath();c.moveTo(hx-w+2,my+1);c.lineTo(hx+w-2,my+1);c.stroke();}}
+ else{c.beginPath();c.moveTo(hx-7,my);c.quadraticCurveTo(hx,my+f.smile*8,hx+7,my);c.stroke();}
+}
 function draw(t){
  const g=geometryAt(t),p=g.pose;
  c.setTransform(1,0,0,1,0,0);c.fillStyle='#e9e5d9';c.fillRect(0,0,1920,1080);
@@ -47,6 +68,7 @@ function draw(t){
  path([g.arms[1].shoulder,g.arms[1].elbow,g.arms[1].wrist]);
  g.legs.forEach((limb,i)=>path([limb.wrist,g.toeTargets[i]],6));
  c.fillStyle='#f5efdf';c.strokeStyle=INK;c.lineWidth=6;c.beginPath();c.arc(...p.head,31,0,Math.PI*2);c.fill();c.stroke();
+ drawFace(p,faceAt(t));
  for(const a of g.arms){c.fillStyle=INK;c.beginPath();c.arc(...a.wrist,4,0,Math.PI*2);c.fill();}
  c.restore();
  // No captions or dialogue are fabricated for this internal movement exercise.

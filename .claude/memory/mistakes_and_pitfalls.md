@@ -135,3 +135,11 @@ The initial entries preserve documented observations from the 2026-11-11 study a
 - Cause / rationale: Stair keys spaced ~1 s apart with linear body travel; no story beat planned after arrival
 - Correction / recipe: Once a character has decided, move decisively (~0.6 s per step) and give arrival a payoff (look back at the obstacle, release, exit). Test: no 2 s window after the reveal without visible motion.
 - Verification: Internally fixed in cut-2/3; frame-diff and tests rechecked. Real-time viewing and reference parity pending.
+
+### stick-rebuild-cut-3 — Blank stick heads left frustration and relief unreadable
+
+- Recorded (UTC): 2026-11-19T03:19:06+00:00
+- Evidence: cut-3 frames 4.8-6.2 s and 13.0-13.4 s; DayOne Films D8T891uWpiE storyboard thumbnails (2026-11-19) show 2-3-stroke faces carrying each emotional beat
+- Cause / rationale: Emotion was left to body poses alone, and the frustration and relief poses were near neutral
+- Correction / recipe: Plan an expression per beat (eyes, brows, mouth) alongside the pose; distinguish effort (wide gritted mouth, brows down) from shock (wide eyes, round mouth). If the target is Alan Becker's faceless style, push the body pose instead and test readability without the face.
+- Verification: Cut 4b stills at 3.2, 4.1, 5.3, 6.6, 12.0 and 13.6 s read as distinct expressions in medium and close shots; tiny in wide shots. Real-time viewing, owner style decision and reference parity pending.

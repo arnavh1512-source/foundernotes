@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {geometryAt,poseAt,cameraAt,depthAt,shotAt,SHOTS,DURATION} from '../assets/stick-performance.mjs';
+import {geometryAt,poseAt,cameraAt,depthAt,shotAt,faceAt,SHOTS,DURATION} from '../assets/stick-performance.mjs';
 const distance=(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1]);
 test('whole-body pose track preserves limbs, grips and planted support',()=>{
  for(let f=0;f<=Math.round(DURATION*30);f++){
@@ -134,5 +134,21 @@ test('coverage cuts on action and frames what each beat needs',()=>{
  for(let t=12.4;t<13;t+=1/30){assert.ok(inside(t,[874,514])&&inside(t,[917,560]));assert.ok(Math.abs(geometryAt(t).gateOffset)<1e-9);}
  assert.equal(shotAt(3.8).name,'medium');
  for(let t=0;t<6.2;t+=1/30){assert.ok(!inside(t,[195,330]),`arch visible before reveal at ${t}`);}
+});
+
+test('face expression follows each acting beat and stays in drawable ranges',()=>{
+ for(let f=0;f<=Math.round(DURATION*30);f++){
+  const e=faceAt(f/30);
+  assert.ok(e.eye>=0&&e.eye<=1.3&&Math.abs(e.brow)<=1&&Math.abs(e.smile)<=1&&e.open>=0&&e.open<=1);
+  assert.deepEqual(faceAt(f/30),e);
+ }
+ const at=t=>faceAt(t);
+ assert.ok(at(3).eye<.3&&at(3).brow>.8,'strain squeezes eyes and lowers brows');
+ assert.ok(at(4.2).eye>1.1&&at(4.2).open>.5,'slip reads as shock');
+ assert.ok(at(5.3).smile<-.5,'frustration after the catch');
+ assert.ok(at(6.6).lift>.8,'brows rise on noticing');
+ assert.ok(at(13.6).smile>.6,'relief at the end');
+ assert.ok(at(.9).eye<.1&&at(1.05).eye>.8,'a quick blink, not a long close');
+ assert.throws(()=>faceAt(NaN),/finite/);
 });
 

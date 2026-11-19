@@ -29,3 +29,14 @@ Local rendering now works in the cloud container (the earlier Chromium socket fa
 - **Reference parity:** pending for every criterion until footage is reviewed.
 
 Full per-criterion record: `studio-output/stick-rebuild/review/cut-3-comparison.json` (local, not committed). Lessons recorded with `record_lesson.py`.
+
+## Cut 4: first real reference footage, then facial expression
+**Access.** With the owner's own YouTube cookies, YouTube accepted requests from this server but offered only storyboard thumbnails (320×180, about one every 2 s), not video streams. These were fetched for Alan Becker's "Animation vs. Game Design" (`dz04yXwSkQY`, 3:12) and DayOne Films' "SELF RESPECT" (`D8T891uWpiE`, 2:34). Minutes later YouTube returned 401 for further requests (the session was most likely revoked after use from a new location), and both local copies of the cookies were deleted. The thumbnails stay private in git-ignored `studio-output/references/`. They support shot-structure and pose observations only; timing, motion quality and sound remain unreviewed.
+
+**DayOne storyboard observations.** Plain round heads carry emotion with two eye dots, two brow strokes and a mouth line (crying, determined, smug, content). One recurring prop stands for the abstract idea: a price tag re-marked in insert shots ($100 → $80 → $20 → $50 → $80). Bookended settings show change (2 a.m. bed and phone: sad early, calm later). A shadow figure personifies the inner voice. A new picture in nearly every thumbnail.
+
+**Alan storyboard observations.** Much of the sampled film is a sponsored tablet-app segment. Character frames show an ensemble reacting in clearly different whole-body poses in the same shot (sprawled on the floor, arms thrown up, leaning in), framing that changes in nearly every thumbnail, and characters handling the world's objects. His figures have no faces.
+
+**Cut 4 change.** A per-beat face track (`faceAt`): curious, focused, strain (squeezed eyes, wide gritted mouth), shock (wide eyes, round mouth), frustrated, noticing, determined, breathing, wistful look-back, relieved (eyes closed, smile), content, plus two short blinks. Twelve tests pass. Render (cut 4b, committed source) SHA-256 in the comparison record; decodes fully at 1920×1080, 30 fps, 435 frames.
+
+**Owner benchmark (2026-11-19): reach Alan Becker's level.** Alan's figures are faceless; his acting lives in whole-body poses, timing, physics and choreography. The face follows DayOne's approach and is an open owner decision for the stick core. Gaps to Alan's level, in order: (1) motion quality and timing (snappy anticipation, overshoot, smears, follow-through; our keyed IK motion is smooth and even); (2) pose range and exaggeration (airborne, compressed and stretched poses; ours stay mostly upright); (3) physical interaction where the world reacts (our gate only rattles); (4) ensemble acting; (5) sound. These need real video at full frame rate, not thumbnails, to judge.
