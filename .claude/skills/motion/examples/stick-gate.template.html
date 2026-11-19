@@ -12,9 +12,10 @@ function path(points,width=8,color=INK){
  c.strokeStyle=color;c.lineWidth=width;c.lineCap='round';c.lineJoin='round';c.stroke();
 }
 // Minimal original face: two eyes, two brow strokes, one mouth. Features slide toward the facing side.
-function drawFace(p,f){
+function drawFace(p,head,f){
+ const s=HEAD_R/31;c.save();c.translate(...head);c.scale(s,s);c.translate(-head[0],-head[1]);
  const facing=Math.max(-1,Math.min(1,(p.head[0]-p.chest[0])/30));
- const [hx,hy]=[p.head[0]+facing*9,p.head[1]];
+ const [hx,hy]=[head[0]+facing*9,head[1]];
  c.strokeStyle=INK;c.fillStyle=INK;c.lineWidth=3.5;c.lineCap='round';
  for(const side of [-1,1]){
   const ex=hx+side*9, ey=hy-4;
@@ -31,6 +32,7 @@ function drawFace(p,f){
   c.beginPath();c.ellipse(hx,my+1,w,hgt,0,0,Math.PI*2);c.fill();
   if(grit>.3){c.strokeStyle='#f5efdf';c.lineWidth=1.5;c.beginPath();c.moveTo(hx-w+2,my+1);c.lineTo(hx+w-2,my+1);c.stroke();}}
  else{c.beginPath();c.moveTo(hx-7,my);c.quadraticCurveTo(hx,my+f.smile*8,hx+7,my);c.stroke();}
+ c.restore();
 }
 function draw(t){
  const g=geometryAt(t),p=g.pose;
@@ -59,17 +61,16 @@ function draw(t){
  const d=depthAt(t);c.save();c.translate(...DEPTH_ANCHOR);c.scale(d,d);c.translate(-DEPTH_ANCHOR[0],-DEPTH_ANCHOR[1]);
  for(const foot of p.feet){const floor=foot[0]>=115&&foot[0]<320?740:foot[0]>=320&&foot[0]<390?770:foot[0]>=390&&foot[0]<460?800:830;if(Math.abs(foot[1]-floor)<3){c.fillStyle='#b9b9a9';c.beginPath();c.ellipse(foot[0]+7,floor+3,35,6,0,0,Math.PI*2);c.fill();}}
  // Far limbs are drawn before the spine and near limbs.
- path([g.legs[0].shoulder,g.legs[0].elbow,g.legs[0].wrist],7,'#607270');
- path([g.arms[0].shoulder,g.arms[0].elbow,g.arms[0].wrist],7,'#607270');
- c.beginPath();c.moveTo(...p.hip);c.quadraticCurveTo(...g.spineControl,...p.chest);c.strokeStyle=INK;c.lineWidth=10;c.lineCap='round';c.stroke();
+ path([g.legs[0].shoulder,g.legs[0].elbow,g.legs[0].wrist],LINE-2,'#607270');
+ path([g.arms[0].shoulder,g.arms[0].elbow,g.arms[0].wrist],LINE-2,'#607270');
+ c.beginPath();c.moveTo(...p.hip);c.quadraticCurveTo(...g.spineControl,...p.chest);c.strokeStyle=INK;c.lineWidth=LINE+2;c.lineCap='round';c.stroke();
  // The arm roots remain close to the chest; no extra shoulder crossbar.
- path([p.chest,[p.head[0],p.head[1]+28]],7);
- path([g.legs[1].shoulder,g.legs[1].elbow,g.legs[1].wrist]);
- path([g.arms[1].shoulder,g.arms[1].elbow,g.arms[1].wrist]);
- g.legs.forEach((limb,i)=>path([limb.wrist,g.toeTargets[i]],6));
- c.fillStyle='#f5efdf';c.strokeStyle=INK;c.lineWidth=6;c.beginPath();c.arc(...p.head,31,0,Math.PI*2);c.fill();c.stroke();
- drawFace(p,faceAt(t));
- for(const a of g.arms){c.fillStyle=INK;c.beginPath();c.arc(...a.wrist,4,0,Math.PI*2);c.fill();}
+ path([g.legs[1].shoulder,g.legs[1].elbow,g.legs[1].wrist],LINE);
+ path([g.arms[1].shoulder,g.arms[1].elbow,g.arms[1].wrist],LINE);
+ g.legs.forEach((limb,i)=>path([limb.wrist,g.toeTargets[i]],LINE-3));
+ c.fillStyle='#f5efdf';c.strokeStyle=INK;c.lineWidth=LINE-3;c.beginPath();c.arc(...g.head,HEAD_R,0,Math.PI*2);c.fill();c.stroke();
+ drawFace(p,g.head,faceAt(t));
+ for(const a of g.arms){c.fillStyle=INK;c.beginPath();c.arc(...a.wrist,LINE*.55,0,Math.PI*2);c.fill();}
  c.restore();
  // No captions or dialogue are fabricated for this internal movement exercise.
 }

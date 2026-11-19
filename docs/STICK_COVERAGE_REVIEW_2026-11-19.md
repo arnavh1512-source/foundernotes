@@ -40,3 +40,23 @@ Full per-criterion record: `studio-output/stick-rebuild/review/cut-3-comparison.
 **Cut 4 change.** A per-beat face track (`faceAt`): curious, focused, strain (squeezed eyes, wide gritted mouth), shock (wide eyes, round mouth), frustrated, noticing, determined, breathing, wistful look-back, relieved (eyes closed, smile), content, plus two short blinks. Twelve tests pass. Render (cut 4b, committed source) SHA-256 in the comparison record; decodes fully at 1920×1080, 30 fps, 435 frames.
 
 **Owner benchmark (2026-11-19): reach Alan Becker's level.** Alan's figures are faceless; his acting lives in whole-body poses, timing, physics and choreography. The face follows DayOne's approach and is an open owner decision for the stick core. Gaps to Alan's level, in order: (1) motion quality and timing (snappy anticipation, overshoot, smears, follow-through; our keyed IK motion is smooth and even); (2) pose range and exaggeration (airborne, compressed and stretched poses; ours stay mostly upright); (3) physical interaction where the world reacts (our gate only rattles); (4) ensemble acting; (5) sound. These need real video at full frame rate, not thumbnails, to judge.
+
+## Cuts 5–6: real Alan Becker footage
+**Access.** The owner downloaded and uploaded "Animator vs. Animation (HD)" (`Qb1VvUf21L4`, 132.8 s, 990×720, 29.97 fps) and "Animation vs. Geometry Dash" (`C637UcpHfNY`, 143.1 s, 1280×720, 23.98 fps). They stay private in git-ignored `studio-output/references/alan/` for study only; nothing is reused.
+
+**Measured (frame differences on 320 px greyscale; scene detection at 0.3):**
+| | AvA original | Geometry Dash | Our cut 4 |
+| --- | --- | --- | --- |
+| Hard cuts | 0 | 0 | 7 |
+| New drawings per second | ~17 (43% held frames) | ~23 | ~26 |
+| Mean motion per frame | 2.0 | 12.3 | 2.4 |
+| Low-motion seconds | 19% | 3% | 21% |
+Alan stages both films as one continuous screen (pushes and pans, almost no hard cuts); the energy comes from character motion. Our coverage cuts come from the DayOne and psychology references, not from Alan.
+
+**Observed in frames.** AvA sampled every 5 s shows a new silhouette in nearly every sample (crouching, flying horizontally, crawling, hanging, kicking, lying flat); the cursor and tools act on the character; objects get drawn and used; the timeline breaks with flying debris. One second at full frame rate (96–97 s) shows a body tumbling upside down, a chain of figures whipping in an arc with each body trailing the last (overlapping action), several actions at once, and drawings changing about every second frame.
+
+**Cut 5 (SHA-256 `e371613a…`, as 5b).** The slip became a full-body event: grip release (ease-out), airborne with the spine tipped back past 40° and both feet off the floor, an accelerating fall into a sitting impact, squash and bounce, a frustrated fist slam, and a push back to standing. The gate springs back and settles while staying locked. Motion in 3.8–5.8 s rose from 1.13 to 2.87 mean frame difference.
+
+**Cut 6 (SHA-256 `612da2b7…`).** Owner note: "the character looks like a stick insect man". Ours had a head about 1/7 of body height, a visible neck about 55 px long and 7–10 px lines (under 2% of height). Alan's figures (visual estimate from AvA frames) have a head about 1/4–1/5 of height sitting on the body and heavy even strokes. Fix: head radius 31 → 47, positioned on the chest with no neck, lines 7–10 → 13–17 px, face scaled with the head. Poses and motion are unchanged. Fourteen tests pass, including a proportion check.
+
+**Remaining gaps to Alan's level.** Legs about 51% of height (somewhat long); timing still smoother and more even than his (more holds and snaps needed through the whole piece, not only the fall); the world reacts only at the gate; no ensemble; no sound; the face remains an open owner decision (Alan's figures are faceless).

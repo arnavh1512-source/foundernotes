@@ -143,3 +143,19 @@ The initial entries preserve documented observations from the 2026-11-11 study a
 - Cause / rationale: Emotion was left to body poses alone, and the frustration and relief poses were near neutral
 - Correction / recipe: Plan an expression per beat (eyes, brows, mouth) alongside the pose; distinguish effort (wide gritted mouth, brows down) from shock (wide eyes, round mouth). If the target is Alan Becker's faceless style, push the body pose instead and test readability without the face.
 - Verification: Cut 4b stills at 3.2, 4.1, 5.3, 6.6, 12.0 and 13.6 s read as distinct expressions in medium and close shots; tiny in wide shots. Real-time viewing, owner style decision and reference parity pending.
+
+### stick-rebuild-cut-5 — Stick character read as a 'stick insect': tiny head, long neck, thin lines
+
+- Recorded (UTC): 2026-11-19T05:48:35+00:00
+- Evidence: Owner note 2026-11-19; cut-5b head about 1/7 of height, neck about 55 px, lines 7-10 px (<2% of height); Alan Becker AvA frames (Qb1VvUf21L4) show a head about 1/4-1/5 of height on the body and heavy even strokes (visual estimate)
+- Cause / rationale: Rig followed 'slender figure' guidance with realistic limb lengths and a separate neck; proportions were never compared to the benchmark
+- Correction / recipe: Check proportions against the benchmark before animating: big head sitting on the shoulders, no neck, line weight about 3% of height. Keep a test for head/height ratio and head-to-chest distance.
+- Verification: Cut 6 stills read as a sturdy stick figure; 14 tests pass. Owner confirmation and full-speed viewing pending; legs still about 51% of height.
+
+### stick-rebuild-cut-4 — The failure beat sagged instead of being a full-body event
+
+- Recorded (UTC): 2026-11-19T05:48:35+00:00
+- Evidence: cut-4b 3.8-5.8 s mean frame difference 1.13; Alan Becker AvA 96-97 s frames show an airborne, upside-down tumble and overlapping action; Geometry Dash mean motion 12.3 vs our 2.4
+- Cause / rationale: Slip keyed as a short lowering of the hips with feet planted; no airborne phase, impact or world reaction
+- Correction / recipe: Stage failures as release, airborne, impact with squash and bounce, an emotional reaction and recovery; make the obstacle react (spring back, settle). Use different easing per phase: ease out of a release, accelerate into an impact.
+- Verification: Cut 5b: 3.8-5.8 s mean frame difference 2.87; tests check the airborne tilt, feet off the floor, squash/bounce, accelerating fall and gate swing. Full-speed viewing against Alan pending.

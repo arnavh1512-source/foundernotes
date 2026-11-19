@@ -2,6 +2,7 @@
 // Draft: pure geometry checked; browser rendering and audiovisual review still required.
 import {progress, solveArm, layerMatrix} from './story-motion.mjs';
 export const DURATION = 14.5;
+export const HEAD_R = 47, LINE = 15;
 const keys = [
   {t:0, hip:[650,610], chest:[690,470], head:[710,385], feet:[[590,830],[710,830]], hands:[[665,630],[720,630]], label:'inspect'},
   {t:1.2, hip:[650,625], chest:[705,490], head:[735,405], feet:[[590,830],[710,830]], hands:[[790,560],[790,530]], label:'grip'},
@@ -10,8 +11,16 @@ const keys = [
   {t:2.78, hip:[610,655], chest:[705,535], head:[710,450], feet:[[590,830],[770,770]], hands:[[790,560],[790,530]], label:'load'},
   {t:3.5, hip:[580,640], chest:[650,520], head:[630,435], feet:[[590,830],[770,770]], hands:[[790,560],[790,530]], label:'strain'},
   {t:3.8, hip:[580,640], chest:[650,520], head:[630,435], feet:[[590,830],[770,770]], hands:[[790,560],[790,530]], label:'limit'},
-  {t:4.15, hip:[560,700], chest:[575,590], head:[590,500], feet:[[470,830],[650,830]], hands:[[700,650],[670,675]], label:'slip'},
-  {t:4.8, hip:[550,680], chest:[540,550], head:[550,460], feet:[[470,830],[650,830]], hands:[[640,680],[590,700]], label:'catch'},
+  // Benchmark (Alan Becker, AvA 2026-11-19): the failure is a full-body event: grip snaps, airborne, impact, bounce.
+  {t:3.95, hip:[560,650], chest:[600,530], head:[585,445], feet:[[590,830],[740,790]], hands:[[700,470],[680,450]], label:'release'},
+  {t:4.2, hip:[540,700], chest:[445,612], head:[388,552], feet:[[640,690],[670,640]], hands:[[392,520],[520,520]], label:'airborne'},
+  {t:4.35, hip:[520,800], chest:[470,680], head:[450,595], feet:[[680,825],[720,800]], hands:[[430,820],[470,830]], label:'impact'},
+  {t:4.42, hip:[520,802], chest:[480,700], head:[465,618], feet:[[680,825],[720,800]], hands:[[430,820],[470,830]], label:'squash'},
+  {t:4.55, hip:[520,798], chest:[468,672], head:[448,588], feet:[[680,825],[720,800]], hands:[[430,820],[470,830]], label:'bounce'},
+  {t:4.8, hip:[520,800], chest:[470,680], head:[452,596], feet:[[680,825],[720,800]], hands:[[430,820],[470,830]], label:'sit'},
+  {t:4.95, hip:[520,800], chest:[478,676], head:[470,592], feet:[[680,825],[720,800]], hands:[[430,820],[525,580]], label:'raise'},
+  {t:5.1, hip:[520,800], chest:[488,692], head:[502,612], feet:[[680,825],[720,800]], hands:[[430,820],[560,826]], label:'slam'},
+  {t:5.45, hip:[545,700], chest:[548,565], head:[560,480], feet:[[470,830],[650,830]], hands:[[505,720],[600,720]], label:'push'},
   {t:5.8, hip:[560,613], chest:[550,475], head:[570,390], feet:[[470,830],[650,830]], hands:[[480,620],[610,625]], label:'recover'},
   {t:6.4, hip:[560,612.9171747926382], chest:[550,475], head:[535,390], feet:[[470,830],[650,830]], hands:[[480,620],[610,625]], label:'turn'},
   {t:7.0, hip:[550,620], chest:[530,480], head:[495,395], feet:[[470,830],[650,830]], hands:[[470,635],[590,635]], label:'notice'},
@@ -75,7 +84,7 @@ export function poseAt(time) {
   if(i<0)i=t>=DURATION?keys.length-2:0;
   const a=keys[i], b=keys[i+1], u=(t-a.t)/(b.t-a.t);
   // Losing support accelerates into impact; walking carries the body through foot plants.
-  const k=a.label==='limit'?u*u:progress(t,a.t,b.t-a.t);
+  const k=['limit','airborne','raise'].includes(a.label)?u*u:a.label==='release'?1-(1-u)*(1-u):progress(t,a.t,b.t-a.t);
   const moving=['choose','step','continue','climb','approach'].includes(a.label);
   const bodyK=moving?u:k;
   const p={time:t,label:a.label};
@@ -95,11 +104,14 @@ export function geometryAt(time) {
   const p=poseAt(time);
   const gripping=p.time>=1.2&&p.time<=3.8;
   const envelope=progress(p.time,1.8,.3)*(1-progress(p.time,3.5,.3));
-  const gateOffset=Math.sin(p.time*42)*2.5*envelope;
+  const rattle=Math.sin(p.time*42)*2.5*envelope;
+  // The gate springs back when the grip snaps, then settles (still locked).
+  const since=p.time-3.95, swing=since>0?16*Math.exp(-since*5)*Math.sin(since*28):0;
+  const gateOffset=rattle+swing;
   const dx=p.head[0]-p.chest[0],dy=p.head[1]-p.chest[1],length=Math.hypot(dx,dy);
   const normal=[-dy/length,dx/length];
   const shoulders=[-1,1].map(side=>[p.chest[0]+normal[0]*side*5,p.chest[1]+normal[1]*side*5]);
-  const hands=p.hands.map(v=>[v[0]+(gripping?gateOffset:0),v[1]]);
+  const hands=p.hands.map(v=>[v[0]+(gripping?rattle:0),v[1]]);
   const arms=shoulders.map((s,i)=>solveArm(s,hands[i],84,90,1));
   // Change facing only at the extended-leg passing pose; mirrored knees must not cross.
   const kneeBend=p.time<6.4?-1:1;
@@ -107,13 +119,15 @@ export function geometryAt(time) {
   // During bracing, foot contact follows the same gate displacement as the hands.
   const braceWeight=progress(p.time,1.8,.7)*(1-progress(p.time,3.8,.35));
   if(braceWeight>0){
-    p.feet[1]=[p.feet[1][0]+gateOffset*braceWeight,p.feet[1][1]];
+    p.feet[1]=[p.feet[1][0]+rattle*braceWeight,p.feet[1][1]];
     legs[1]=solveArm(p.hip,p.feet[1],115,120,kneeBend);
   }
   const spineControl=[(p.hip[0]+p.chest[0])*.5-22,(p.hip[1]+p.chest[1])*.5+8];
   const toeAngle=Math.PI*progress(p.time,6.1,.6);
   const toeTargets=legs.map(a=>[a.wrist[0]+19*Math.cos(toeAngle),a.wrist[1]-19*Math.sin(toeAngle)]);
-  return {pose:p,arms,legs,shoulders,handTargets:hands,spineControl,gateOffset,gripping,toeTargets};
+  // Proportions (owner note 2026-11-19 "stick insect"; Alan benchmark): big head sitting on the shoulders, no neck.
+  const head=[p.chest[0]+dx/length*(HEAD_R+4),p.chest[1]+dy/length*(HEAD_R+4)];
+  return {pose:p,arms,legs,shoulders,handTargets:hands,spineControl,gateOffset,gripping,toeTargets,head};
 }
 
 
@@ -125,6 +139,7 @@ const faceKeys = [
   {t:1.2, eye:.85, brow:.15, lift:.1, smile:0, open:0, label:'focused'},
   {t:1.8, eye:.15, brow:1, lift:-.3, smile:-.4, open:.35, label:'strain'},
   {t:3.85, eye:1.3, brow:-.6, lift:1, smile:0, open:.8, label:'shock'},
+  {t:4.3, eye:.1, brow:.6, lift:-.2, smile:-.5, open:.5, label:'ouch'},
   {t:4.8, eye:.7, brow:1, lift:-.2, smile:-.7, open:0, label:'frustrated'},
   {t:6.1, eye:1.15, brow:-.3, lift:1, smile:0, open:.3, label:'noticing'},
   {t:7.4, eye:.9, brow:.5, lift:0, smile:.25, open:0, label:'determined'},

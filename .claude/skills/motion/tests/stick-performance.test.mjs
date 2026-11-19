@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {geometryAt,poseAt,cameraAt,depthAt,shotAt,faceAt,SHOTS,DURATION} from '../assets/stick-performance.mjs';
+import {geometryAt,poseAt,cameraAt,depthAt,shotAt,faceAt,SHOTS,DURATION,HEAD_R} from '../assets/stick-performance.mjs';
 const distance=(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1]);
 test('whole-body pose track preserves limbs, grips and planted support',()=>{
  for(let f=0;f<=Math.round(DURATION*30);f++){
@@ -26,8 +26,9 @@ test('time boundaries clamp and invalid time is rejected',()=>{
 test('recovery holds contacts and stair steps alternate support feet',()=>{
  for(let f=0;f<=Math.round(DURATION*30);f++){
   const t=f/30,p=poseAt(t);
-  if(t>=4.15&&t<=7.6)assert.deepEqual(p.feet[0],[470,830]);
-  if(t>=4.15&&t<=7)assert.deepEqual(p.feet[1],[650,830]);
+  if(t>=5.45&&t<=7.6)assert.deepEqual(p.feet[0],[470,830]);
+  if(t>=5.45&&t<=7)assert.deepEqual(p.feet[1],[650,830]);
+  if(t>=4.35&&t<=5.1)assert.deepEqual(p.feet,[[680,825],[720,800]]);
   if(t>=7.6&&t<=8.2)assert.deepEqual(p.feet[1],[580,830]);
   if(t>=8.2&&t<=8.8)assert.deepEqual(p.feet[0],[420,800]);
  }
@@ -61,7 +62,7 @@ test('acting separates a delayed reach, accelerating fall and continuous stair t
  assert.notDeepEqual(poseAt(.2).head,poseAt(0).head);
  assert.ok(poseAt(2.78).hip[0]>poseAt(2.5).hip[0]);
  const early=distance(poseAt(3.85).hip,poseAt(3.8).hip);
- const late=distance(poseAt(4.15).hip,poseAt(4.1).hip);
+ const late=distance(poseAt(4.3).hip,poseAt(4.25).hip);
  assert.ok(late>early*5);
  assert.deepEqual(poseAt(6).head,poseAt(5.8).head);
  assert.deepEqual(poseAt(6.2).head,poseAt(6.3).head);
@@ -88,7 +89,7 @@ test('the route is revealed after reassessment while the complete figure stays i
  for(let f=0;f<=Math.round(DURATION*30);f++){
   const t=f/30,g=geometryAt(t),m=cameraAt(t).matrix;
   const points=[g.pose.hip,g.pose.chest,...g.pose.feet,...g.toeTargets,
-   [g.pose.head[0]-34,g.pose.head[1]-34],[g.pose.head[0]+34,g.pose.head[1]+34],
+   [g.head[0]-HEAD_R-8,g.head[1]-HEAD_R-8],[g.head[0]+HEAD_R+8,g.head[1]+HEAD_R+8],
    ...g.arms.flatMap(a=>[a.shoulder,a.elbow,a.wrist]),...g.legs.map(a=>a.elbow)];
   if(cameraAt(t).kind==='full')for(const p of points){const [x,y]=project(m,p);assert.ok(x>=12&&x<=1908&&y>=12&&y<=1068,`clipped pose at ${t}`);}
   assert.deepEqual(cameraAt(t),cameraAt(t));
@@ -130,7 +131,7 @@ test('coverage cuts on action and frames what each beat needs',()=>{
  for(let i=1;i<SHOTS.length;i++)assert.ok(SHOTS[i].start-SHOTS[i-1].start>=.5,'no flash cuts');
  assert.ok(Math.max(...SHOTS.map((s,i)=>(SHOTS[i+1]?.start??DURATION)-s.start))<=4.4);
  for(let t=2.9;t<3.8;t+=1/30){const g=geometryAt(t);g.handTargets.forEach(h=>assert.ok(inside(t,h)));assert.ok(inside(t,[895,514]));}
- for(let t=11.5;t<12.4;t+=1/30){const p=poseAt(t);assert.ok(inside(t,[p.head[0]-34,p.head[1]-34])&&inside(t,[p.head[0]+34,p.head[1]+34]));}
+ for(let t=11.5;t<12.4;t+=1/30){const h=geometryAt(t).head;assert.ok(inside(t,[h[0]-HEAD_R,h[1]-HEAD_R])&&inside(t,[h[0]+HEAD_R,h[1]+HEAD_R]));}
  for(let t=12.4;t<13;t+=1/30){assert.ok(inside(t,[874,514])&&inside(t,[917,560]));assert.ok(Math.abs(geometryAt(t).gateOffset)<1e-9);}
  assert.equal(shotAt(3.8).name,'medium');
  for(let t=0;t<6.2;t+=1/30){assert.ok(!inside(t,[195,330]),`arch visible before reveal at ${t}`);}
@@ -145,10 +146,34 @@ test('face expression follows each acting beat and stays in drawable ranges',()=
  const at=t=>faceAt(t);
  assert.ok(at(3).eye<.3&&at(3).brow>.8,'strain squeezes eyes and lowers brows');
  assert.ok(at(4.2).eye>1.1&&at(4.2).open>.5,'slip reads as shock');
- assert.ok(at(5.3).smile<-.5,'frustration after the catch');
+ assert.ok(at(5.3).smile<-.5,'frustration after the fall');
+ assert.ok(at(4.55).eye<.2&&at(4.55).open>.3,'impact reads as pain');
  assert.ok(at(6.6).lift>.8,'brows rise on noticing');
  assert.ok(at(13.6).smile>.6,'relief at the end');
  assert.ok(at(.9).eye<.1&&at(1.05).eye>.8,'a quick blink, not a long close');
  assert.throws(()=>faceAt(NaN),/finite/);
+});
+
+test('the failure is a full-body event: airborne, rotated, impact, and the gate springs back',()=>{
+ const tilt=t=>{const p=poseAt(t);return Math.atan2(p.chest[0]-p.hip[0],p.hip[1]-p.chest[1])*180/Math.PI;};
+ assert.ok(tilt(4.2)<-40,'spine tips well back while airborne');
+ const air=poseAt(4.2);assert.ok(air.feet.every(f=>f[1]<760),'both feet leave the floor');
+ assert.ok(poseAt(4.42).chest[1]>poseAt(4.35).chest[1],'impact squashes the torso');
+ assert.ok(poseAt(4.55).chest[1]<poseAt(4.42).chest[1],'then bounces');
+ assert.ok(geometryAt(5.1).arms[1].wrist[1]>800,'fist reaches the floor on the slam');
+ const v=t=>distance(poseAt(t).hip,poseAt(t+1/30).hip)*30;
+ assert.ok(v(4.3)>v(4.0)*1.5,'the fall accelerates into impact');
+ let peak=0;for(let u=3.95;u<4.3;u+=1/30)peak=Math.max(peak,Math.abs(geometryAt(u).gateOffset));
+ assert.ok(peak>8,'gate visibly springs back');
+ assert.ok(Math.abs(geometryAt(5.5).gateOffset)<1,'and settles');
+});
+
+test('proportions: big head on the shoulders, not a stick insect',()=>{
+ for(const t of [0,3,6.4,10.6,14]){
+  const g=geometryAt(t);
+  assert.ok(Math.abs(distance(g.head,g.pose.chest)-(HEAD_R+4))<1e-6,'head sits on the chest with no neck');
+  const top=g.head[1]-HEAD_R, feet=Math.max(...g.pose.feet.map(f=>f[1]));
+  if(t===0)assert.ok((2*HEAD_R)/(feet-top)>1/5.5,'head is at least ~1/5.5 of standing height');
+ }
 });
 
