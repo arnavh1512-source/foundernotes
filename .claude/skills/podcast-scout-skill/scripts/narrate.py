@@ -867,7 +867,7 @@ def main(argv=None):
             gen_file = out / "_generated_this_run.json"
             prev = json.loads(gen_file.read_text()) if (gen_file.exists() and os.environ.get("NARRATE_RETAKE_CHAIN")) else []
             gen_file.write_text(json.dumps(sorted(set(prev) | set(vb_made))))
-        if engine in ("parler", "voicebox") and a.retake > 0:
+        if engine in ("parler", "voicebox") and a.retake > 0 and (out / "asr.json").exists():
             rep = json.loads((out / "asr.json").read_text())
             rep = rep if isinstance(rep, list) else rep.get("segments", rep.get("report", []))
             NUMW = re.compile(r"^(\d+|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety|hundred|thousand|percent)$")
@@ -946,6 +946,7 @@ def asr_check(out: Path, timings, model_name: str) -> int:
         from faster_whisper import WhisperModel
     except Exception:
         print("narrate: --asr needs faster-whisper (pip install faster-whisper 'av<19'); check NOT run", file=sys.stderr)
+        (out / "asr.json").unlink(missing_ok=True)  # no stale report may drive re-takes
         return 0
     model = WhisperModel(model_name, device="cpu", compute_type="int8")
     norm = lambda s: re.sub(r"[^a-z0-9 ]", " ", re.sub(r"[’']", "", s.lower())).split()
