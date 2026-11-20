@@ -8,7 +8,7 @@ FounderNotes is the Claude Code workspace behind [Founder Notes](https://www.you
 
 [![Python QC Checks](https://github.com/arnavh1512-source/foundernotes/actions/workflows/python-qc.yml/badge.svg)](https://github.com/arnavh1512-source/foundernotes/actions/workflows/python-qc.yml)
 
-> **Project maturity:** The repository has executable production tools, Claude Code skills and agents, and automated tests. A full episode produced and approved end-to-end has **not yet been verified**. External rendering engines, Voicebox and Agent-Reach require separate installation and live testing.
+> **Project maturity:** The repository has executable production tools, Claude Code skills and agents, and automated tests. Three full-length episodes (8:34–9:04) and their delivery packages have been produced with these tools in cloud sessions; two passed `qc_video.py`, one finished with a motion-gate warning. Those outputs live in git-ignored `studio-output/` and are not in the repository. No independent reality-check pass or end-to-end human listening review has been recorded for them yet. External rendering engines, Voicebox and Agent-Reach require separate installation and live testing.
 
 ## Quick start
 
@@ -48,11 +48,12 @@ Attempt Agent-Reach first for public research; use authorized native tools
 when its documented fallback applies. Log sources and fact-check claims.
 Write an original script and use Humanizer for a natural spoken-English pass;
 verify the revised script against the evidence before recording.
-Use the established male Voicebox narrator. Add distinct original synthetic
-male/female character voices only when dialogue serves the story.
+Use the owner-supplied channel narrator on Voicebox. Add distinct character
+voices (Voicebox or ElevenLabs presets) only when dialogue serves the story.
 Produce a coherent storyboard, source/rights manifest, narration-timed
 scenes, captions and a mixed MP4. Run real technical and creative QC.
-Record actual lessons and skill evaluations. Prepare the upload package.
+Record actual lessons and skill evaluations. Deliver the full package: long
+video, summary Short, thumbnail, title with alternatives, description.
 
 Before installing extra tools, spending money, or using accounts, ask.
 Do not publish, invent citations, fabricate tests, or call a prompt a render.
@@ -90,7 +91,7 @@ The [eight core studio agents](.claude/agents/) handle these responsibilities un
 
 **Research and editorial quality.** [Agent-Reach](.claude/skills/podcast-scout-skill/references/agent-reach.md) is the default *first attempt* for public web search and page reading. For YouTube search and subtitles the gateway tries [yt-dlp](.claude/skills/podcast-scout-skill/references/yt-dlp.md) first, with Agent-Reach as backup. When unavailable, Claude can use an authorized native research fallback. [Humanizer](.claude/skills/humanizer/SKILL.md) is included locally for script and packaging polish; it must preserve factual meaning, numbers, citations and qualifications. The [marketing-growth skill](.claude/skills/marketing-growth/SKILL.md) provides focused references for topics, honest packaging, distribution and analytics. The [claude-youtube skill](.claude/skills/claude-youtube/SKILL.md) (vendored from AgriciDaniel/claude-youtube, MIT) adds YouTube SEO, hook, thumbnail-brief, metadata, Shorts, calendar and analytics sub-skills plus read-only YouTube API scripts; its benchmarks are treated as unverified heuristics. The [i-have-adhd skill](.claude/skills/i-have-adhd/SKILL.md) is an **opt-in** formatting aid, never an assumed user characteristic.
 
-**Voicebox casting.** The principal voice is the authorized, consistent male **Founder Notes Narrator**. An episode can also use distinct **male and female synthetic character voices**, selected per scripted segment for interviews, dramatized interactions or storytelling. Character profiles must exist and be approved in a **local Voicebox** installation. The system produces a sequential master with speaker-aware timings and captions; **simultaneous overlapping dialogue and automatic lip sync are not implemented**. See the [casting guide](.claude/skills/podcast-scout-skill/references/voice-casting.md) and [example cast](.claude/skills/podcast-scout-skill/assets/voice-cast.example.json).
+**Narration and casting.** Every video is narrated by the **owner-supplied channel narrator**: a Voicebox (Chatterbox) profile cloned, with the speaker's consent and approval for ongoing use, from a reference clip the owner provides. The clip is **never committed** (the repository is public); it lives in the git-ignored `.claude/skills/podcast-scout-skill/assets/voice/local/` folder, so a new machine needs the owner to supply it again. Without it, `narrate.py` falls back to the synthetic "Founder Notes Narrator" and prints a warning; no real video ships in that voice without the owner's say-so. Narration is always recorded at natural speed (1.0x). An episode can also use distinct **male and female synthetic character voices**, selected per scripted segment for interviews, dramatized interactions or storytelling. Character profiles must exist and be approved in a **local Voicebox** installation. The system produces a sequential master with speaker-aware timings and captions; **simultaneous overlapping dialogue and automatic lip sync are not implemented**. See the [casting guide](.claude/skills/podcast-scout-skill/references/voice-casting.md) and [example cast](.claude/skills/podcast-scout-skill/assets/voice-cast.example.json).
 
 **Explanation-first animation direction.** FounderNotes chooses visual techniques **after** the viewer's learning problem and each scene's explanatory action are clear. For upcoming psychology explainers, the preferred candidate is **original simple illustrated characters with expressive poses, familiar but varied situations, restrained color, tactile backgrounds and occasional clear diagrams**. Shots show cause and reaction, not decorative motion. The director compares **2–3 actual motion treatments against an identical recorded 20–40s narration excerpt**, documents the most understandable choice in the [visual direction guide](.claude/skills/podcast-scout-skill/references/explanation-first-visual-direction.md) and [comparison template](.claude/skills/podcast-scout-skill/assets/visual-treatment-comparison.template.md), then makes a separate reviewed 60–90s pilot. Unrelated subjects can use different visual approaches.
 
@@ -172,9 +173,10 @@ To use the optional character cast, first copy the [sample JSON](.claude/skills/
 - **Consistent storytelling:** Keep characters, dialogue voices and visual worlds recognizable. Measure scene timing from the actual narration WAV rather than an estimated word count.
 - **Rights and approval:** Respect source, audio, asset and engine licenses. No unapproved voice imitation, paid-generation calls, account connections or automatic publishing.
 - **Real QC:** Review rendered frames, complete audio, captions, synchronization and output reports. Record deficiencies and rerun failed checks.
+- **Every video ships as a package:** the long video, a vertical summary Short under 60 seconds that covers the whole video, a thumbnail, a title with alternatives, and a description with chapters and sources. See the [delivery package rule](.claude/skills/podcast-scout-skill/references/video-delivery-package.md).
 - **Honest status:** CI runs regression tests and a synthetic FFmpeg production smoke test. It does **not** prove that a local Voicebox cast, live Agent-Reach retrieval, optional Raea GPU engine, Anatomy figure preview or a complete real-world episode has been validated.
 
-**Next milestone:** a reviewed 60–90-second pilot with real research, natural narration, coherent action, edited sound, accurate captions and evidence-backed QC. Only then scale up to an 8+ minute production.
+**Next milestone:** close the review gaps on the produced episodes (independent reality check, scene lint, recorded lessons and skill evaluations, real listening), and keep raising animation quality against the owner's reference channels (Alan Becker, DayOne Films, PsychToons, PsychDoodle). Every new video still starts with a reviewed 60–90-second pilot.
 
 ---
 
@@ -194,3 +196,5 @@ The optional [VoiceStudio dialogue adapter](.claude/skills/podcast-scout-skill/r
 ## Optional ElevenLabs character dialogue
 
 The [ElevenLabs adapter](.claude/skills/podcast-scout-skill/references/elevenlabs-dialogue.md) connects approved preset character voices to measured narration, captions and the painted timing bridge. It loads the API key privately; its default mode makes no network request. Speech generation requires explicit --generate and consumes account credits. No generation or performance approval is inferred from successful onboarding.
+
+In cloud sessions the key can be saved as an environment network secret for `api.elevenlabs.io` (header `xi-api-key`); the proxy then injects it, and the adapter runs with `ELEVENLABS_API_KEY=proxy-injected` as a placeholder. Use the secret key that starts with `sk_`, not the key ID. The key needs text-to-speech and voice-read permissions; account and model-list permissions are not required. ElevenLabs voices are for characters: the channel narrator stays on Voicebox, and the two sources are merged with `narrate.py --engine files` into one timed master.
