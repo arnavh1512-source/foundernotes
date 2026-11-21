@@ -2,6 +2,8 @@
 
 Owner rule, 2026-11-13: "every time you make a video I need a thumbnail, description, a short, with the title."
 
+Owner rule, 2026-11-21: use claude-youtube every time. Build the package with `.claude/skills/claude-youtube/` (`metadata`, `seo`, `thumbnail`, `shorts`): three distinct titles with the target keyword in the first 40 characters, thumbnail text that does not repeat the title plus an A/B variant (`thumbnail-B.png`), keyword in the first 25 words of the description, 10-15 tags under 500 characters, cards at about 20% and 70%, an end screen for the last 20 s, and Short title/description. Its benchmark figures are unverified heuristics, never stated as fact.
+
 A video is not finished when the long film passes QC. Deliver all five items below, without being asked, in `studio-output/<slug>/full/`.
 
 | Item | File | Requirements |
