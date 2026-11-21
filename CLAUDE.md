@@ -1,6 +1,6 @@
 # FounderNotes — YouTube video studio (v4.0)
 
-This repo holds the skills, self-improving memory, and subagents used to research and produce god-tier animated educational YouTube videos for the channel **Think!** (renamed from Founder Notes on 2026-11-20; the old handle was `@FounderNotesin`, and the owner has not yet confirmed the new handle). The repo, studio and tool names keep "FounderNotes".
+This repo holds the skills, self-improving memory, and subagents used to research and produce god-tier animated educational YouTube videos for the channel **Think!** (renamed from Founder Notes on 2026-11-20; handle `@Thhiinkk`, https://www.youtube.com/@Thhiinkk; the old handle was `@FounderNotesin`). The repo, studio and tool names keep "FounderNotes".
 
 ## HARD STOP: viewer-first rule for EVERY new video
 
