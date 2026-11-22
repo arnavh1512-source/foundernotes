@@ -217,3 +217,7 @@ Actions 45057852596 passed, source `ca0ba9073823d58006c7aa86fb920d3000168ca7`, p
 ## Opening attention candidate
 
 Exact V21 gate frames show a blank head during effort and through the discovery. The revised opening marks the Youth’s attention at the lock, redirects it toward the first step before the arch reveal and lifts it to the arch during the approach. An effort mouth reinforces the gate pull and settles on release. The original body timing and measured audio are preserved. Exact source render review pending.
+
+### Exact V22 verification
+
+Actions 45062600425 passed, source `9f58f4a652c4d912063b48b9393c51e1103380bb`, picture artifact 14770182081. Nine exact V22 frames show the Youth looking toward the locked gate, the steps and the arch during successive beats. The empty lock insert shows no stray face marks. Four captioned frames show visual separation from the action. The 27 motion tests pass, including limb reach and grip checks. Full-speed acting, actual listening and independent interpretation remain pending. Full assembly decode and unchanged decoded audio were verified. The supplied discipline footage at requested 614–620 seconds uses a clear change of object and expression at a doorway payoff. This is frame evidence only. Fresh Alan Newgrounds, Day One, PsychToonsHQ, PsychDoodleTV, ThatGuy and individual reference lookups yielded text or no decoded footage. Named reference timing, motion and sound remain pending. No new named-reference audiovisual, owner or independent approval.

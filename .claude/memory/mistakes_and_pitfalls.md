@@ -366,4 +366,4 @@ The initial entries preserve documented observations from the 2026-11-11 study a
 - Evidence: V21 encoded opening frames 114 and 193–284; the face remains blank through the turn and approach
 - Cause / rationale: The original gate drawing rendered head shape only
 - Correction / recipe: Use the same sparse facial vocabulary as the study. Let the eyes lead the turn and settle on the stair and arch targets
-- Verification: Baseline inspected. Corrected encoded render pending.
+- Verification: Nine exact V22 frames show the Youth looking toward the locked gate, the steps and the arch during successive beats. The empty lock insert shows no stray face marks. Four captioned frames show visual separation from the action. The 27 motion tests pass, including limb reach and grip checks. Full-speed acting, actual listening and independent interpretation remain pending.
