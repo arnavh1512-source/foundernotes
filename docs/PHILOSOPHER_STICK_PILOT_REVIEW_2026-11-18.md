@@ -209,3 +209,7 @@ Actions 45051552898 passed, source `25c6f77cdd7fdcdf0405769b2e9223a2a94619e9`, p
 ## Study entrance and demand reaction candidate
 
 Exact V20 samples show the first room reframing jumping in the middle of a single hand gesture. The candidate grows from the establishing view to the existing two-shot during the Youth’s opening lean, leaving the later close-up and return boundaries intact. It also gives the mentor a restrained head and chest recoil when the Youth commits to his demand. The chair, grip, original dialogue timing and core composition are preserved. Exact revised media and creative review are pending.
+
+### Exact V21 verification
+
+Actions 45057852596 passed, source `ca0ba9073823d58006c7aa86fb920d3000168ca7`, picture artifact 14768456899. Nine exact V21 selected frames show progressive framing into the study two-shot and the mentor settling back at the Youth demand. Four captioned frames show visual separation from the action. The 27 motion tests pass, including limb reach and grip checks. Full-speed acting, actual listening and independent interpretation remain pending. Full assembly decode and unchanged decoded audio were verified. Supplied discipline frames at requested 224–230 seconds contrast a cut that changes the object of attention with the earlier V20 mid-gesture framing jump. No timing or sound inference. Fresh Alan Newgrounds, Day One and ThatGuy reads provided no decoded footage. Prior named-channel scopes remain pending. No new named-reference audiovisual, owner or independent approval.

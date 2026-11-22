@@ -1,6 +1,6 @@
 {
-  "code_commit": "25c6f77cdd7fdcdf0405769b2e9223a2a94619e9",
-  "workflow_run": 45051552898,
+  "code_commit": "ca0ba9073823d58006c7aa86fb920d3000168ca7",
+  "workflow_run": 45057852596,
   "previous_pr": {
     "number": 12,
     "observed_state": "merged",
@@ -8,14 +8,14 @@
   },
   "continuation_pr": 13,
   "previous_picture": {
-    "artifact": 14763691675,
-    "sha256": "b13f399aaa681f6f77a2ffd7028a6685f16ca18f0e5d46149b2247e9177269f0",
+    "artifact": 14765542332,
+    "sha256": "b0e95123fc29b3f1b73db90aaeabf60299909ad61d8db9ed11605de981447bda",
     "duration_s": 64.5,
     "width": 1920,
     "height": 1080,
     "fps": 30,
     "frames": 1935,
-    "review_scope": "Nine exact V19 frames show the cup grounded before the wrist withdraws and the mentor gesturing with the free hand while the cup remains at rest. Four captioned frames show visual separation from the action. Gaze timing is supported by source and selected expressions. Full-speed acting, actual listening and independent interpretation remain pending."
+    "review_scope": "Nine exact V20 frames show a clearer shared bird silhouette and the torso following the final lookback before departure. The same bird position and timing are used in both panels. Four captioned frames show visual separation from the action. The far-arm reach issue in the first candidate passed the corrected source sweep. Full-speed acting, actual listening and independent interpretation remain pending."
   },
   "private_audio": {
     "library_id": "libfile_c99d2bfdf94c819198bad6d6fd27be65",
@@ -53,24 +53,24 @@
   "full_production_approved": false,
   "workflow_conclusion": "success",
   "latest_picture": {
-    "artifact": 14765542332,
-    "sha256": "b0e95123fc29b3f1b73db90aaeabf60299909ad61d8db9ed11605de981447bda",
+    "artifact": 14768456899,
+    "sha256": "fe9ebc6926f5c2bd1b7e83480a88947fc45edde390eae2869bfbcd1aec889913",
     "duration_s": 64.5,
     "width": 1920,
     "height": 1080,
     "fps": 30,
     "frames": 1935,
-    "review_scope": "Nine exact V20 frames show a clearer shared bird silhouette and the torso following the final lookback before departure. The same bird position and timing are used in both panels. Four captioned frames show visual separation from the action. The far-arm reach issue in the first candidate passed the corrected source sweep. Full-speed acting, actual listening and independent interpretation remain pending."
+    "review_scope": "Nine exact V21 selected frames show progressive framing into the study two-shot and the mentor settling back at the Youth demand. Four captioned frames show visual separation from the action. The 27 motion tests pass, including limb reach and grip checks. Full-speed acting, actual listening and independent interpretation remain pending."
   },
   "latest_private_assembly": {
-    "name": "internal-pilot-v20.mp4",
-    "sha256": "765aae05c27fd12bf0a6c61c498040408d75bc03c91fd3257585dda39f5b40fa",
+    "name": "internal-pilot-v21.mp4",
+    "sha256": "3c9cffc15a5ca25da897ed9e251dc6f94a86397e52f1fd9c438598a23f21d342",
     "duration_s": 64.5,
     "video_frames": 1935,
     "audio_stream_duration_s": 64.482,
     "review_scope": "Full decode and four selected captioned frames. Timing, actual sound and independent review pending.",
     "decoded_audio_sha256": "d6ea2c401862c70b5b48597ad0883fbbf30102a83d28c1ac7c889e6d009334da",
-    "audio_verification": "V19 AAC copied unchanged with identical decoded hash."
+    "audio_verification": "V20 AAC copied unchanged with identical decoded hash."
   },
   "tests": {
     "node_tests_passed": 27,
@@ -80,13 +80,13 @@
   "next_priority": "Preserve coherent seated chair/pelvis/thigh/floor support, mouth-height raised cup with unchanged desk rest/contact, palm separation and revised conversation eye line alongside all prior pilot work. Judge the complete normal-speed dialogue, cup contact sound, caption/speaker boundaries and independent viewer comprehension before further stylistic changes or approval. Historical crop-only claims remain pending revalidation; do not alter the narrator or use technical passes as creative approval.",
   "private_continuation_bundle": {
     "library_file_id": "libfile_2a2569310a8481919a251bf91621ecb0",
-    "file_id": "file_000000001de081f9863d3a95bb45ab32",
+    "file_id": "file_00000000a4ec8230b9de999cbdb2916f",
     "name": "FounderNotes-Internal-Pilot-Checkpoint-eac2e46.zip",
-    "version": 13,
-    "contents": "V20 picture and private assembly, unchanged dialogue, provisional captions, paired-exit frames and probe. Earlier versions retain V19 and V18 evidence.",
+    "version": 14,
+    "contents": "V21 picture and private assembly, unchanged dialogue, provisional captions, study-entrance frames and probe. Earlier versions retain V20 and V19 evidence.",
     "delivery_status": "Internal, not approved."
   },
-  "previous_code_commit": "819177e201e64247bfce55ce451efb86c37cc7bc",
+  "previous_code_commit": "25c6f77cdd7fdcdf0405769b2e9223a2a94619e9",
   "intermediate_picture": {
     "code_commit": "a94242892d0afa528508bc69d03ed409ca47af51",
     "artifact": 14367580227,
@@ -166,8 +166,8 @@
     "next": "Check whether the shared event reads before the reactions and whether the exit decision reads at normal speed with dialogue. Exact listening, caption boundaries, cup sync and independent comprehension remain pending."
   },
   "study_entrance_candidate": {
-    "status": "Source candidate; V20 remains verified baseline.",
+    "status": "V21 selected-frame verification complete",
     "evidence": "V20 frames 480 and 492 show the opening study gesture interrupted by an abrupt framing jump while the body intent stays the same.",
-    "next": "Review exact CI cut across 14.5\u201322.5 seconds. Check gradual camera crossing at 15.25\u201316.4 and visible mentor reaction to the demand after 20.35 without breaking grip, caption bands or screen direction."
+    "next": "Review the camera approach and mentor reaction at full speed against the dialogue. Exact listening, caption boundaries, cup sync and independent comprehension remain pending."
   }
 }

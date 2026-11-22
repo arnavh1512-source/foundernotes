@@ -358,4 +358,4 @@ The initial entries preserve documented observations from the 2026-11-11 study a
 - Evidence: V20 encoded frames 480 and 492 with source cut at 16.4 seconds
 - Cause / rationale: The camera changed scale at a fixed timestamp without a change of gesture
 - Correction / recipe: Move into the existing two-shot during the first lean; retain cuts at later intent changes
-- Verification: Baseline verified in encoded samples; new render pending.
+- Verification: Nine exact V21 selected frames show progressive framing into the study two-shot and the mentor settling back at the Youth demand. Four captioned frames show visual separation from the action. The 27 motion tests pass, including limb reach and grip checks. Full-speed acting, actual listening and independent interpretation remain pending.
