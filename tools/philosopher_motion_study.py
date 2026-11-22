@@ -19,8 +19,21 @@ W, H, FPS, DURATION = 960, 540, 24, 24
 INK = '#263537'
 PAPER = '#ead9b7'
 GOLD = '#d6a55e'
-FONT = ImageFont.truetype('C:/Windows/Fonts/georgia.ttf', 22)
-SMALL = ImageFont.truetype('C:/Windows/Fonts/arial.ttf', 12)
+KIT_FONTS = Path(__file__).resolve().parents[1] / '.claude/skills/podcast-scout-skill/assets/ink-gold-kit/fonts'
+
+
+def load_font(size, *candidates):
+    # Windows system fonts first (the study was drawn with them), then the repo's bundled fonts, so it runs anywhere.
+    for name in candidates:
+        try:
+            return ImageFont.truetype(name, size)
+        except OSError:
+            continue
+    return ImageFont.load_default()
+
+
+FONT = load_font(22, 'C:/Windows/Fonts/georgia.ttf', str(KIT_FONTS / 'Lora-Bold.ttf'))
+SMALL = load_font(12, 'C:/Windows/Fonts/arial.ttf', str(KIT_FONTS / 'InstrumentSans-Regular.ttf'))
 
 def ease(t, a, b):
     k = max(0, min(1, (t-a)/(b-a)))
