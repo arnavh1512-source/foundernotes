@@ -150,6 +150,15 @@ class StudioLoopTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "technical QC"):
             run.critic(self.review(run))
 
+    def test_exporting_again_at_a_later_stage_does_not_duplicate_lessons(self):
+        run = self.rendered()
+        run.critic(self.review(run, True))
+        out = self.root / "lessons"
+        first = run.export(out)
+        run.revise({"changes": [{"finding_id": "F1", "action": "Attach prop"}]})
+        run.export(out)
+        self.assertEqual(len(list(out.glob("*.json"))), first)
+
     def test_qc_warning_does_not_dead_end_the_workflow(self):
         run = self.registered_with_qc({"status": "WARN", "errors": [], "warnings": ["silence 1.5s"]})
         run.critic(self.review(run))

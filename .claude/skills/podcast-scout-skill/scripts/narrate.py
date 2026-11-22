@@ -66,7 +66,8 @@ PARLER_VOICE_V = "anchor-c1"   # one channel voice: anchor take + best-of-N spea
 
 
 def parler_python():
-    return os.environ.get("PARLER_PYTHON") or str(Path.home() / ".cache" / "venv-parler" / "bin" / "python")
+    venv = Path.home() / ".cache" / "venv-parler"
+    return os.environ.get("PARLER_PYTHON") or str(venv / "Scripts" / "python.exe" if os.name == "nt" else venv / "bin" / "python")
 
 
 def have_parler() -> bool:
@@ -289,6 +290,9 @@ OWNER_NARRATOR_NAME = "Owner-Supplied Narrator (consented)"
 OWNER_NARRATOR_REF = VOICE_DIR_REPO / "local" / "owner-narrator-ref.wav"
 
 
+NARRATOR_KIND = None   # "owner" or "synthetic" once voicebox_channel_profile() has resolved the alias
+
+
 def pick_channel_profile(profiles, owner_ref_exists):
     """Choose the channel narrator. Returns (profile_id or None, kind): the owner voice if its profile or local
     reference exists, otherwise the synthetic fallback. None means the profile has to be created from the reference."""
@@ -306,6 +310,8 @@ def voicebox_channel_profile():
     base = voicebox_url()
     with urllib.request.urlopen(f"{base}/profiles", timeout=30) as r:
         pid, kind = pick_channel_profile(json.loads(r.read()), OWNER_NARRATOR_REF.exists())
+    global NARRATOR_KIND
+    NARRATOR_KIND = kind
     if kind == "synthetic":
         print(f"narrate: WARNING owner narrator reference not found at {OWNER_NARRATOR_REF}; using the synthetic "
               "fallback voice. Ask the owner for the clip before narrating a real video.", file=sys.stderr)
@@ -314,15 +320,16 @@ def voicebox_channel_profile():
     name, desc, ref = ((OWNER_NARRATOR_NAME, "Cloned from an owner-supplied recording; speaker consent stated by owner", OWNER_NARRATOR_REF)
                        if kind == "owner" else
                        (CHANNEL_NARRATOR_NAME, "Synthetic channel narrator (owner-approved). Not a real person.", VOICE_DIR_REPO / "founder-notes-narrator-ref.wav"))
+    txt = ref.with_suffix(".txt").read_text(encoding="utf-8").strip()   # read first: a missing file must not leave
+    wav_bytes = ref.read_bytes()                                         # an empty profile on the server
     req = urllib.request.Request(f"{base}/profiles", headers={"Content-Type": "application/json"}, data=json.dumps(
         {"name": name, "language": "en", "voice_type": "cloned", "description": desc}).encode())
     with urllib.request.urlopen(req, timeout=30) as r:
         pid = json.loads(r.read())["id"]
-    txt = ref.with_suffix(".txt").read_text().strip()
     bnd = "----narrate" + hashlib.sha1(txt.encode()).hexdigest()[:12]
     body = (f"--{bnd}\r\nContent-Disposition: form-data; name=\"reference_text\"\r\n\r\n{txt}\r\n"
             f"--{bnd}\r\nContent-Disposition: form-data; name=\"file\"; filename=\"ref.wav\"\r\nContent-Type: audio/wav\r\n\r\n").encode() \
-        + ref.read_bytes() + f"\r\n--{bnd}--\r\n".encode()
+        + wav_bytes + f"\r\n--{bnd}--\r\n".encode()
     req = urllib.request.Request(f"{base}/profiles/{pid}/samples", data=body,
                                  headers={"Content-Type": f"multipart/form-data; boundary={bnd}"})
     urllib.request.urlopen(req, timeout=60).read()
@@ -846,7 +853,8 @@ def main(argv=None):
             parts.append(gw)
             clock += wav_seconds(gw)
         listing = td / "list.txt"
-        listing.write_text("".join(f"file '{Path(p).resolve().as_posix()}'\n" for p in parts))
+        listing.write_text("".join("file '" + Path(p).resolve().as_posix().replace("'", "'\\''") + "'\n" for p in parts),
+                           encoding="utf-8")
         run(["ffmpeg", "-y", "-loglevel", "error", "-f", "concat", "-safe", "0", "-i", str(listing),
              "-c:a", "pcm_s16le", "-ar", str(SR), "-ac", "1", str(out / "narration.wav")])
 
@@ -863,10 +871,14 @@ def main(argv=None):
             "duration": round(total, 3), "words": words,
             "wpm_speech": round(words / (speech / 60), 1) if speech else None,
             "word_timing": "estimated-from-characters", "segments": timings}
+    if NARRATOR_KIND:
+        meta["narrator_voice"] = NARRATOR_KIND
     if cast:
         meta["cast"] = {k: {"gender": v["gender"], "profile_name": v["profile_name"],
                             "synthetic_voice": True, "approved": True}
                         for k, v in cast.items()}
+        if NARRATOR_KIND == "owner":        # the narrator alias resolved to the owner-supplied (real-person) voice
+            meta["cast"]["narrator"].update(profile_name=OWNER_NARRATOR_NAME, synthetic_voice=False)
         meta["voice_policy"] = "male principal narrator plus owner-approved synthetic male/female characters"
     (out / "timings.json").write_text(json.dumps(meta, indent=2), encoding="utf-8")
     write_captions(build_captions(timings), out)
@@ -890,7 +902,7 @@ def main(argv=None):
                 for sid in bad:
                     f = seg_dir / f"{sid}.take"; f.write_text(str((int(f.read_text()) if f.exists() else 0) + 1))
                 print(f"narrate: re-taking {len(bad)} {engine} segment(s) with a new seed: {', '.join(bad)}", file=sys.stderr)
-                argv = [x for x in sys.argv[1:]]
+                argv = list(argv) if argv is not None else sys.argv[1:]
                 if "--retake" in argv:
                     j = argv.index("--retake"); argv[j + 1] = str(a.retake - 1)
                 else:
@@ -940,6 +952,44 @@ def critical_edits(want, heard, critical):
     return edits
 
 
+_ONES = "zero one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen " \
+        "seventeen eighteen nineteen".split()
+_TENS = "_ _ twenty thirty forty fifty sixty seventy eighty ninety".split()
+
+
+def _below_hundred(n):
+    return [_ONES[n]] if n < 20 else [_TENS[n // 10]] + ([_ONES[n % 10]] if n % 10 else [])
+
+
+def spoken_forms(n):
+    """Ways a reader says 0..9999 as words: 'two thousand seventeen' and, for years, 'twenty seventeen'."""
+    if n < 100:
+        return [_below_hundred(n)]
+    forms = []
+    if n < 10000:
+        thousands, rest = divmod(n, 1000)
+        hundreds, low = divmod(rest, 100)
+        words = (_below_hundred(thousands) + ["thousand"] if thousands else []) + \
+                (_ONES[hundreds:hundreds + 1] + ["hundred"] if hundreds else []) + (_below_hundred(low) if low else [])
+        forms.append(words)
+        if n >= 1000 and n % 100 >= 10:                                    # 2017 -> twenty seventeen
+            forms.append(_below_hundred(n // 100) + _below_hundred(n % 100))
+        if n >= 1100 and not n % 100 and n // 100 % 10:                    # 1900 -> nineteen hundred
+            forms.append(_below_hundred(n // 100) + ["hundred"])
+    return forms
+
+
+def number_spoken(digits, heard):
+    """True when a scripted number (e.g. '30') was heard as words ('thirty')."""
+    if len(digits) > 4:
+        return False
+    heard = [w for w in heard if w != "and"]
+    for form in spoken_forms(int(digits)):
+        if any(heard[i:i + len(form)] == form for i in range(len(heard) - len(form) + 1)):
+            return True
+    return False
+
+
 def missing_words(want, heard):
     """Script words not heard, counted with multiplicity (two 'not's scripted, one heard → one missing)."""
     from collections import Counter
@@ -973,7 +1023,7 @@ def asr_check(out: Path, timings, model_name: str):
         missing = missing_words(want, got_list)
         # meaning-critical words: a dropped or added negation / number reverses or changes the claim
         neg_want = sum(w in critical for w in want); neg_got = sum(w in critical for w in got_list)
-        crit_missing = [w for w in missing if w in critical or w.isdigit()]
+        crit_missing = [w for w in missing if w in critical or (w.isdigit() and not number_spoken(w, got_list))]
         crit_edits = critical_edits(want, got_list, critical)
         bad = (len(missing) > max(1, int(len(want) * 0.08)) or bool(crit_missing) or neg_want != neg_got
                or bool(crit_edits))
@@ -985,7 +1035,7 @@ def asr_check(out: Path, timings, model_name: str):
             print(f"  ASR CHECK {seg['id']}: missing {missing[:8]} | heard: {heard[:140]}", file=sys.stderr)
     (out / "asr.json").write_text(json.dumps(report, indent=1), encoding="utf-8")
     print(f"narrate: ASR round-trip {len(timings) - flagged}/{len(timings)} clean (report: {out / 'asr.json'})", file=sys.stderr)
-    return 0
+    return 1 if flagged else 0
 
 
 if __name__ == "__main__":

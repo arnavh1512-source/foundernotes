@@ -57,7 +57,12 @@ def write(path, data):
 
 def digest(path):
     with Path(path).open("rb") as stream:
-        return hashlib.file_digest(stream, "sha256").hexdigest()
+        if hasattr(hashlib, "file_digest"):          # Python 3.11+
+            return hashlib.file_digest(stream, "sha256").hexdigest()
+        h = hashlib.sha256()
+        for block in iter(lambda: stream.read(1 << 20), b""):
+            h.update(block)
+        return h.hexdigest()
 
 
 def text(value, name):
@@ -347,7 +352,9 @@ class StudioLoop:
         for record in records:
             record.update({"video_id": self.state["video_id"], "workflow_stage": self.state["stage"],
                            "source_workflow_sha256": digest(self.root / "workflow.json")})
-            key = hashlib.sha256(json.dumps(record, sort_keys=True).encode()).hexdigest()
+            # Key on the lesson itself, not the stage: exporting again later must not duplicate it.
+            identity = {k: record[k] for k in ("kind", "lesson", "video_id", "render_sha256") if k in record}
+            key = hashlib.sha256(json.dumps(identity, sort_keys=True).encode()).hexdigest()
             path = directory / (key + ".json")
             if not path.exists():
                 write(path, record)
