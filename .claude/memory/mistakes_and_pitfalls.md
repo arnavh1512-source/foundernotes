@@ -383,3 +383,11 @@ The initial entries preserve documented observations from the 2026-11-11 study a
 - Cause / rationale: The close-up returns to the wide at a fixed cutoff unrelated to a new action
 - Correction / recipe: Ease out in advance of the delivery and reframe gradually around the consequence while retaining the dropped papers
 - Verification: Nine exact V24 frames show the gradual pullback from the phone before delivery and tighter framing around the failed catch; the dropped papers and both feet are visible in the last sampled frame. Four captioned frames show visual separation from the action. The 27 motion tests pass, including limb reach and grip checks. Full-speed acting, actual listening and independent interpretation remain pending.
+
+### philosopher-stick-pilot — The dropped sheets look like a single suspended strip
+
+- Recorded (UTC): 2026-11-22T22:48:40+00:00
+- Evidence: Exact V24 frames 1163 and 1215
+- Cause / rationale: Identical final rotation and height leave the page silhouettes joined and raised off the actor floor line
+- Correction / recipe: Separate the final orientations and spacing and stage contact on the same support line as the feet
+- Verification: Baseline verified in encoded samples; exact candidate media pending.

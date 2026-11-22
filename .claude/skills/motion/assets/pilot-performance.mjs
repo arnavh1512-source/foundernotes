@@ -62,7 +62,13 @@ export function pilotTaskAt(time){
  const writing=1-progress(time,32.6,.4);
  const spill=progress(time,37.4,1.2);
  const delivery=progress(time,35.6,1.2),deliveryX=1820-745*delivery;
- const pages=[0,1].map(i=>{const fall=Math.max(0,Math.min(1,time-37.4-i*.2)),k=fall*fall;return {center:pilotBlend([deliveryX+i*30,634-i*6],[1040+i*80,805],k),angle:(i===0?-.45:.6)*Math.sin(Math.PI*k),fallen:k===1};});
+ const pages=[0,1].map(i=>{
+  const fall=Math.max(0,Math.min(1,time-37.4-i*.2)),k=fall*fall;
+  const settleAngle=i===0?-.14:.1;
+  const floorY=830-52*Math.abs(Math.sin(settleAngle))-12*Math.cos(settleAngle);
+  const skid=progress(time,38.4+i*.2,.18)*(i===0?-9:12);
+  return {center:pilotBlend([deliveryX+i*30,634-i*6],[1025+i*123+skid,floorY],k),angle:(i===0?-.45:.6)*Math.sin(Math.PI*k)+settleAngle*k,fallen:k===1};
+ });
  const release=progress(time,37.3,.35),deliveryWrist=[deliveryX+34+600*release,646];
  return {phoneCenter,phoneGrip,gripWeight,writing,spill,pages,deliveryX,deliveryVisible:time>=35.6,deliveryWrist,deliveryHand:progress(time,35.6,.3)*(1-release)};
 }

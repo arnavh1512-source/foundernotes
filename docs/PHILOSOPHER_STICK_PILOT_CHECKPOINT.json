@@ -184,5 +184,10 @@
     "status": "V24 selected-frame verification complete",
     "evidence": "V23 frames 1034 and 1035 jump from close to wide while the actor still holds the phone. Later wide frames leave the missed catch and dropped papers small.",
     "next": "Review whether the paper delivery and failed catch remain clear at normal speed against the original dialogue. Exact listening, caption boundaries, cup sync and independent comprehension remain pending."
+  },
+  "paper_landing_candidate": {
+    "status": "Source candidate. V24 remains verified assembly.",
+    "evidence": "V24 frames 1163 and 1215 show the landed pages aligned edge-to-edge above the actor floor line.",
+    "next": "Verify the exact encoded fall, separate landings, short skids and persistent visible consequences through the final workroom frame. Confirm no floor crop or caption collision and carry V24 audio unchanged."
   }
 }
