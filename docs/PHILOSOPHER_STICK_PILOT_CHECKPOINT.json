@@ -1,6 +1,6 @@
 {
-  "code_commit": "9f8b3a1db6d309811a12a41fd5b413b706b2722d",
-  "workflow_run": 45034785363,
+  "code_commit": "fa77c8a80eb535ee4dbfb28e18ca045cf9558ff0",
+  "workflow_run": 45040309749,
   "previous_pr": {
     "number": 12,
     "observed_state": "merged",
@@ -8,14 +8,14 @@
   },
   "continuation_pr": 13,
   "previous_picture": {
-    "artifact": 14755181187,
-    "sha256": "0f87f5bdb8930a2c442589ff5fcd8123a148334316b3f23cb7461371c9775460",
+    "artifact": 14758649327,
+    "sha256": "a3bd2f55c8912d58079778875b665ec759fd4df9a277565e76d6cbfb0d60dbf4",
     "duration_s": 64.5,
     "width": 1920,
     "height": 1080,
     "fps": 30,
     "frames": 1935,
-    "review_scope": "Exact V16 source and artifact. Eighteen sampled opening and ending frames and four captioned samples inspected. Character visible earlier after lock insert. Complete arch without clipping from the gate. Closing question visible after route crop. V15 remains basis for previously reviewed middle scenes. Normal-speed cadence, sound and independent review pending."
+    "review_scope": "Exact V17 artifact. Nine encoded samples confirm separated task and study settings, phone and dropped paper visibility, and the late parallel-view cue. V16 remains the evidence for its bookend review. Continuous audiovisual review pending."
   },
   "private_audio": {
     "library_id": "libfile_c99d2bfdf94c819198bad6d6fd27be65",
@@ -53,24 +53,24 @@
   "full_production_approved": false,
   "workflow_conclusion": "success",
   "latest_picture": {
-    "artifact": 14758649327,
-    "sha256": "a3bd2f55c8912d58079778875b665ec759fd4df9a277565e76d6cbfb0d60dbf4",
+    "artifact": 14761930860,
+    "sha256": "1ca7d8a601747f0be6fdfbbcbe9334999bf3d64d5a0daded83e50eb47354ef6b",
     "duration_s": 64.5,
     "width": 1920,
     "height": 1080,
     "fps": 30,
     "frames": 1935,
-    "review_scope": "Exact V17 artifact. Nine encoded samples confirm separated task and study settings, phone and dropped paper visibility, and the late parallel-view cue. V16 remains the evidence for its bookend review. Continuous audiovisual review pending."
+    "review_scope": "Nine exact V18 samples show a consistent pen shape that remains on the desk, an unlit phone during the miss, and clear sight of the papers on the floor. Four captioned frames show visual separation from the action. Gaze timing is supported by source and selected expressions. Full-speed acting, actual listening and independent interpretation remain pending."
   },
   "latest_private_assembly": {
-    "name": "internal-pilot-v17.mp4",
-    "sha256": "1e5c0ed33af70e5d2776f33af61f5ecc50fbd6bde188702a41b89cb408cb0404",
+    "name": "internal-pilot-v18.mp4",
+    "sha256": "593a8442a1793eec433005a936eb19495bd29a91dd0d4a196068dbed68921060",
     "duration_s": 64.5,
     "video_frames": 1935,
     "audio_stream_duration_s": 64.482,
-    "review_scope": "Complete decode and four selected captioned samples. Separate text bands and no collision in those frames. Continuous picture, actual listening, narration identity and independent review pending.",
+    "review_scope": "Full decode and four selected captioned frames. Timing, actual sound and independent review pending.",
     "decoded_audio_sha256": "d6ea2c401862c70b5b48597ad0883fbbf30102a83d28c1ac7c889e6d009334da",
-    "audio_verification": "Copied V16 AAC. Decoded hash matches V16."
+    "audio_verification": "V17 AAC copied unchanged with identical decoded hash."
   },
   "tests": {
     "node_tests_passed": 27,
@@ -80,13 +80,13 @@
   "next_priority": "Preserve coherent seated chair/pelvis/thigh/floor support, mouth-height raised cup with unchanged desk rest/contact, palm separation and revised conversation eye line alongside all prior pilot work. Judge the complete normal-speed dialogue, cup contact sound, caption/speaker boundaries and independent viewer comprehension before further stylistic changes or approval. Historical crop-only claims remain pending revalidation; do not alter the narrator or use technical passes as creative approval.",
   "private_continuation_bundle": {
     "library_file_id": "libfile_2a2569310a8481919a251bf91621ecb0",
-    "file_id": "file_000000009254821284d84627340dfe7d",
+    "file_id": "file_00000000818082129274cacdc980ffc0",
     "name": "FounderNotes-Internal-Pilot-Checkpoint-eac2e46.zip",
-    "version": 10,
-    "contents": "V17 picture and private assembly, unchanged dialogue, provisional captions, transition samples and probe. Prior versions retain the V16 and V15 evidence.",
+    "version": 11,
+    "contents": "V18 picture and private assembly, unchanged dialogue, provisional captions, prop-handoff frames and probe. Earlier versions retain V17 and V16 evidence.",
     "delivery_status": "Internal, not approved."
   },
-  "previous_code_commit": "c5655d5552a5ce3992a23761ab311ecdb7f03391",
+  "previous_code_commit": "9f8b3a1db6d309811a12a41fd5b413b706b2722d",
   "intermediate_picture": {
     "code_commit": "a94242892d0afa528508bc69d03ed409ca47af51",
     "artifact": 14367580227,
@@ -151,8 +151,8 @@
     "next": "Confirm whether the vignette reads as an example on first viewing and whether the paired reactions read before the delayed cue. Review complete dialogue, caption/speaker boundaries and cup sync before any gate approval."
   },
   "prop_handoff_candidate": {
-    "status": "Source candidate; exact V17 remains the reviewed baseline.",
-    "next": "Retrieve exact CI render. Check the writing-to-phone transition at 32.6\u201333.7, gaze handoff 35.6\u201336.3, phone screen change at 37.1, paper catch and settled posture. Preserve V17 audio and captions.",
+    "status": "V18 selected-frame verification complete",
+    "next": "Check the normal-speed pen set-down, gaze handoff, phone return and failed catch alongside the original dialogue. Exact listening, caption boundaries, cup sync and independent comprehension remain pending.",
     "evidence": "Exact V17 prop samples at frames 900, 963, 987, 993, 1008, 1040, 1098, 1120 and 1170. Pen length and contact vary, and the incoming paper gaze starts before delivery. The phone screen competes after set-down."
   }
 }

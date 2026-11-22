@@ -183,3 +183,7 @@ Actions 45034785363 and 45034785370 passed for `9f8b3a1db6d309811a12a41fd5b413b7
 ## Workroom prop handoff candidate
 
 Nine exact V17 samples show the pen as a changing diagonal that becomes a desk line before the phone pickup. Source also redirected gaze at 35.5 seconds, before the pages enter at 35.6. The candidate uses a fixed-length pen that rotates to the desk, hands gaze gradually from the pen through the phone to the visible delivery, and dims the phone after set-down so the missed paper catch has a clearer focus. The supplied discipline footage at requested 78–81 seconds was sampled for object separation: the lifted hand, plate and cup remain distinguishable before the cut to a braced reach. No named-channel audiovisual access added. Source tests passed, exact picture and sound review pending.
+
+### Exact V18 verification
+
+Actions 45040309749 passed, source `fa77c8a80eb535ee4dbfb28e18ca045cf9558ff0`, picture artifact 14761930860. Nine exact V18 samples show a consistent pen shape that remains on the desk, an unlit phone during the miss, and clear sight of the papers on the floor. Four captioned frames show visual separation from the action. Gaze timing is supported by source and selected expressions. Full-speed acting, actual listening and independent interpretation remain pending. Full assembly decode and unchanged decoded audio were verified. The current benchmark endpoint lookups yielded page shells or no decoded media. No new named-reference audiovisual, owner or independent approval.

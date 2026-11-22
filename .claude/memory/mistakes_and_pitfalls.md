@@ -334,4 +334,4 @@ The initial entries preserve documented observations from the 2026-11-11 study a
 - Evidence: Exact V17 frames 900, 963, 987 and 993
 - Cause / rationale: Pen was drawn between independent wrist and paper points
 - Correction / recipe: Keep a constant pen length and complete the set-down before the hand reaches the phone
-- Verification: V17 defect supported by source and encoded samples. New exact render review pending.
+- Verification: Nine exact V18 samples show a consistent pen shape that remains on the desk, an unlit phone during the miss, and clear sight of the papers on the floor. Four captioned frames show visual separation from the action. Gaze timing is supported by source and selected expressions. Full-speed acting, actual listening and independent interpretation remain pending.

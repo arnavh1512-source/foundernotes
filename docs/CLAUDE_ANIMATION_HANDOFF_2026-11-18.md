@@ -27,3 +27,5 @@ Latest seated reblock: mentor chair/pelvis and upper body agree; both feet point
 The current private continuation is V16 (bundle version 9). Use the exact V16 source and hashes in the JSON checkpoint. The V15 seated checks remain historical evidence. Full-speed audiovisual and viewer review remain pending.
 
 The current private continuation is V17, bundle version 10. Follow the JSON checkpoint for the exact render and audio hashes. The vignette and paired-view handoff have selected-frame review. Full-speed interpretation, listening and approval are pending.
+
+Current private checkpoint is V18, version 11. Resume using the exact identities in the JSON.
