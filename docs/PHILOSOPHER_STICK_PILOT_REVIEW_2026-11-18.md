@@ -199,3 +199,5 @@ Actions 45046327177 passed, source `819177e201e64247bfce55ce451efb86c37cc7bc`, p
 ## Paired event and final decision candidate
 
 Nine encoded V19 samples at frames 1464, 1485, 1515, 1575, 1650, 1758, 1778, 1804 and 1860 showed two connected attention weaknesses: the bird is easy to miss at reduced scale, and the final reconsideration reads primarily in the head. The candidate strengthens the shared bird silhouette without changing its path or duplicated timing, and lets the torso follow the head while preserving the planted exit feet and departure. Normal-speed perception, sound, direct named benchmarks and independent comprehension remain pending.
+
+The first torso-follow candidate exceeded far-arm reach at 59 seconds. The corrected version brings the relaxed wrists along with the torso during the lookback. All 27 motion tests pass for the correction. The exact render remains pending.

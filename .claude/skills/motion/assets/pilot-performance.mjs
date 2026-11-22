@@ -150,7 +150,7 @@ export function pilotExitAt(time){
   if(fraction>=.5){const k=progress(fraction,.5,.5);world=pilotBlend(world,ground(start+.7),k);world[1]-=18*depth.scale*Math.sin(Math.PI*k);}
   return [190+(world[0]-depth.anchor[0])/depth.scale,740+(world[1]-depth.anchor[1])/depth.scale];
  });
- p.hands=[[155+15*Math.sin(phase),570],[245-15*Math.sin(phase),570]];
+ p.hands=[[155+6*lookback+15*Math.sin(phase),570-7*lookback],[245+6*lookback-15*Math.sin(phase),570-7*lookback]];
  const shoulders=[-5,5].map(d=>[p.chest[0]+d,p.chest[1]]);
  const arms=shoulders.map((a,i)=>solveArm(a,p.hands[i],84,90,1));
  const legs=p.feet.map(f=>solveArm(p.hip,f,115,120,1));
