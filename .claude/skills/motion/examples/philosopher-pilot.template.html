@@ -111,7 +111,7 @@ function hill(x,palette,t){
  s.fillStyle=palette[1];s.beginPath();s.moveTo(0,450);s.bezierCurveTo(190,420,250,200,460,230);s.bezierCurveTo(600,240,650,350,780,330);s.lineTo(780,570);s.lineTo(0,570);s.closePath();s.fill();
  for(const [tx,ty]of [[180,370],[545,270],[650,335]]){stroke(s,[[tx,ty],[tx,ty-100]],8,palette[2]);stroke(s,[[tx-28,ty-55],[tx,ty-85],[tx+26,ty-60]],6,palette[2]);}
  s.fillStyle=palette[2];s.fillRect(380,260,55,65);s.beginPath();s.moveTo(370,260);s.lineTo(407,225);s.lineTo(447,260);s.closePath();s.fill();
- const event=pilotSharedEventAt(t),[birdX,birdY]=event.bird;stroke(s,[[birdX-12,birdY-event.wing],[birdX,birdY],[birdX+12,birdY-event.wing]],4,'#455c61');s.restore();
+ const event=pilotSharedEventAt(t),[birdX,birdY]=event.bird;stroke(s,[[birdX-23,birdY-event.wing],[birdX-11,birdY-event.wing*.65],[birdX,birdY],[birdX+11,birdY-event.wing*.65],[birdX+23,birdY-event.wing]],6,'#354d51');s.restore();
 }
 function views(t){
  s.fillStyle='#e9e5d9';s.fillRect(0,0,1920,1080);

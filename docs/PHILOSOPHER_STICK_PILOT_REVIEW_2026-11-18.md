@@ -195,3 +195,7 @@ Exact V18 frames 1260, 1335 and 1355 show the wrist stays fixed to the handle lo
 ### Exact V19 verification
 
 Actions 45046327177 passed, source `819177e201e64247bfce55ce451efb86c37cc7bc`, picture artifact 14763691675. Nine exact V19 frames show the cup grounded before the wrist withdraws and the mentor gesturing with the free hand while the cup remains at rest. Four captioned frames show visual separation from the action. Gaze timing is supported by source and selected expressions. Full-speed acting, actual listening and independent interpretation remain pending. Full assembly decode and unchanged decoded audio were verified. Fresh Alan Newgrounds indexed content showed player text only. The supplied discipline footage at requested 81–84 seconds shows a separate table grip and supported prop. The individual and ThatGuy lookups yielded no decoded media. Prior named-channel access scopes remain pending. No new named-reference audiovisual, owner or independent approval.
+
+## Paired event and final decision candidate
+
+Nine encoded V19 samples at frames 1464, 1485, 1515, 1575, 1650, 1758, 1778, 1804 and 1860 showed two connected attention weaknesses: the bird is easy to miss at reduced scale, and the final reconsideration reads primarily in the head. The candidate strengthens the shared bird silhouette without changing its path or duplicated timing, and lets the torso follow the head while preserving the planted exit feet and departure. Normal-speed perception, sound, direct named benchmarks and independent comprehension remain pending.

@@ -159,5 +159,10 @@
     "status": "V19 selected-frame verification complete",
     "evidence": "V18 frames 1260, 1335 and 1355 show the grounded cup still attached to the holding wrist.",
     "next": "Check normal-speed cup contact, the gaze handoff and the reply against original dialogue. Exact listening, caption boundaries, cup sync and independent comprehension remain pending."
+  },
+  "paired_exit_candidate": {
+    "status": "Source candidate. V19 remains the reviewed exact cut.",
+    "evidence": "V19 frames 1464\u20131650 show a small bird competing with hills and labels at thumbnail scale; frames 1758, 1778 and 1804 show the exit reconsideration primarily in the head.",
+    "next": "Review both panels at reduced scale before the takeaway and the planted exit lookback before travel. Confirm no clipped bird artifacts or a shifted support foot. Preserve narration/assembly timing."
   }
 }

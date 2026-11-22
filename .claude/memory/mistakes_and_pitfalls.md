@@ -343,3 +343,11 @@ The initial entries preserve documented observations from the 2026-11-11 study a
 - Cause / rationale: Holding wrist always used the cup grip target
 - Correction / recipe: Preserve contact until the cup is supported, then release and check the prop-to-speaker gaze handoff
 - Verification: Nine exact V19 frames show the cup grounded before the wrist withdraws and the mentor gesturing with the free hand while the cup remains at rest. Four captioned frames show visual separation from the action. Gaze timing is supported by source and selected expressions. Full-speed acting, actual listening and independent interpretation remain pending.
+
+### philosopher-stick-pilot — The paired scene stimulus was easy to miss at reduced size
+
+- Recorded (UTC): 2026-11-22T17:48:31+00:00
+- Evidence: V19 frame 1485 reduced to 350 pixels wide; the bird is a much smaller mark than the unrelated background details
+- Cause / rationale: Each panel reduces an already thin silhouette
+- Correction / recipe: Strengthen the shared outline without changing the path or providing either actor a different stimulus
+- Verification: Encoded V19 baseline inspected; candidate render recheck pending.
