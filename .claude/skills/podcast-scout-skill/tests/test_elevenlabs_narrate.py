@@ -45,6 +45,8 @@ class ElevenTests(unittest.TestCase):
             self.assertEqual(source['speakers']['youth']['profile_id'],'one')
             self.assertEqual(source['speakers']['philosopher']['profile_id'],'two')
 
+    @unittest.skipUnless(importlib.util.find_spec('elevenlabs') and importlib.util.find_spec('dotenv'),
+                         'elevenlabs/python-dotenv not installed (CI installs requirements.txt)')
     def test_client_sends_key_from_environment_to_sdk(self):
         from unittest.mock import patch, Mock
         fake=Mock()
@@ -62,5 +64,40 @@ class ElevenTests(unittest.TestCase):
             with patch.object(app,'create_client',side_effect=AssertionError('Must not call API')):
                 self.assertEqual(app.main([str(path),'--out',str(Path(td)/'audio')]),0)
             self.assertFalse((Path(td)/'audio').exists())
+
+    def run_main(self,args):
+        from contextlib import redirect_stderr
+        import io
+        err=io.StringIO()
+        with redirect_stderr(err):code=app.main(args)
+        return code,err.getvalue()
+
+    def test_shared_validator_errors_are_labelled_elevenlabs(self):
+        with tempfile.TemporaryDirectory() as td:
+            path=Path(td)/'script.json'
+            path.write_text(json.dumps({'speakers':{'youth':{'voice_id':'one'}},'segments':[{'id':'s1','speaker':'youth','text':'Hi','pause_after':-1}]}),encoding='utf-8')
+            code,err=self.run_main([str(path),'--out',str(Path(td)/'audio')])
+        self.assertEqual(code,2)
+        self.assertTrue(err.startswith('elevenlabs_narrate: segment s1 pause_after'),err)
+        self.assertNotIn('voicestudio',err)
+
+    def test_only_sdk_errors_are_reported_as_sdk_failure(self):
+        from unittest.mock import patch
+        class FakeApiError(Exception):
+            status_code=401
+        with tempfile.TemporaryDirectory() as td:
+            path=Path(td)/'script.json'
+            path.write_text(json.dumps({'speakers':{'youth':{'voice_id':'one'}},'segments':[{'id':'s1','speaker':'youth','text':'Hello'}]}),encoding='utf-8')
+            args=[str(path),'--out',str(Path(td)/'audio'),'--generate']
+            with patch.object(app,'create_client',side_effect=ModuleNotFoundError("No module named 'elevenlabs'")):
+                code,err=self.run_main(args)
+            self.assertEqual(code,2);self.assertIn('SDK unavailable',err);self.assertNotIn('SDK failure',err)
+            with patch.object(app,'create_client',return_value=object()), \
+                 patch.object(app,'synthesize_segment',side_effect=KeyError('bug')):
+                with self.assertRaises(KeyError):app.main(args)
+            with patch.object(app,'SDK_ERRORS',(FakeApiError,)), patch.object(app,'create_client',return_value=object()), \
+                 patch.object(app,'synthesize_segment',side_effect=FakeApiError('secret body')):
+                code,err=self.run_main(args)
+            self.assertEqual(code,2);self.assertIn('SDK failure FakeApiError status=401',err);self.assertNotIn('secret',err)
 
 if __name__=='__main__':unittest.main()

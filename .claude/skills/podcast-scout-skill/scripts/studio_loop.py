@@ -367,8 +367,9 @@ def produce(run, recipe_path):
     recipe = read(run.artifact(recipe_path))
     mode = recipe.get("mode", "pilot")
     gate_stage, qc_minimum = production_policy(mode)
-    viewer = read(run.artifact(recipe["viewer_plan"]))
-    errors = module("viewer_first_gate").validate(viewer, stage=gate_stage)
+    viewer_path = run.artifact(recipe["viewer_plan"])
+    viewer = read(viewer_path)
+    errors = module("viewer_first_gate").validate(viewer, stage=gate_stage, base_dir=viewer_path.parent)
     plan = read(run.artifact(recipe["shot_plan"]))
     errors += module("creative_router").validate_plan(plan)
     if errors:

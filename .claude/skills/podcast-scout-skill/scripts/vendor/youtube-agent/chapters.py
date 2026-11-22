@@ -14,8 +14,34 @@ the pause was and how much the vocabulary changes across it. It is a first draft
 summariser.
 """
 import json, os, re, sys
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "yt-edit"))
-from deadair import load, parse_ts  # noqa: E402  (same parser, one implementation)
+
+# Upstream imported these from ../yt-edit/deadair.py, which is not vendored here.
+TS = re.compile(r"(?:(\d+):)?(\d{1,2}):(\d{2})[,.](\d{1,3})")
+
+def parse_ts(s):
+    """'01:02:03,450' / '02:03.450' (SRT/VTT) -> seconds."""
+    m = TS.search(s)
+    if not m: raise ValueError(f"bad timestamp: {s!r}")
+    h, mi, sec, frac = m.groups()
+    return int(h or 0) * 3600 + int(mi) * 60 + int(sec) + int(frac.ljust(3, "0")) / 1000
+
+def load(path):
+    """SRT, VTT or whisper JSON -> [(start_s, end_s, text), ...]."""
+    with open(path, encoding="utf-8-sig") as f: raw = f.read()
+    if path.lower().endswith(".json"):
+        data = json.loads(raw)
+        segs = data.get("segments", []) if isinstance(data, dict) else data
+        return [(float(s["start"]), float(s["end"]), str(s["text"]).strip()) for s in segs]
+    cues = []
+    for block in re.split(r"\n\s*\n", raw.replace("\r\n", "\n")):
+        lines = block.strip().splitlines()
+        for i, line in enumerate(lines):
+            if "-->" in line:
+                start, end = line.split("-->", 1)
+                text = " ".join(re.sub(r"<[^>]+>", "", x).strip() for x in lines[i + 1:]).strip()
+                if text: cues.append((parse_ts(start), parse_ts(end), text))
+                break
+    return cues
 
 STOP = set("the a an of for to in on and or is are was were be been with this that it as at by from "
            "you your i my we our they them he she but so if then than there here what which who how "

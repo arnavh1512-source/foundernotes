@@ -266,7 +266,8 @@ class ApprovalAndShortFilmTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, 'evidence changed'):
                 loop.produce(film, 'recipe.json')
             render.assert_not_called()
-        self.assertEqual(gate_calls, [{'stage':'full-production'}])
+        self.assertEqual([call['stage'] for call in gate_calls], ['full-production'])
+        self.assertEqual(gate_calls[0]['base_dir'], film.artifact('viewer.json').parent)  # evidence paths resolve from the plan
         self.assertEqual(film.state['stage'], 'production')
 
     def test_short_film_uses_reviewed_pilot_gates_and_90_second_qc_floor(self):

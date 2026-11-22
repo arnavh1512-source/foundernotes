@@ -15,15 +15,22 @@ from pathlib import Path
 
 CHECKS = ("outsider_understands_problem", "outsider_wants_answer",
           "outsider_already_learned_something")
+REPO = Path(__file__).resolve().parents[4]
+# Template-shaped tokens such as <specific viewer> or <title 1>; not prose like "p < 0.05 and d > 0.3".
+PLACEHOLDER = re.compile(r"<[^\W\d_][\w ,./'-]{0,58}>|\b(TODO|TBD|PLACEHOLDER|INSERT HERE)\b", re.I)
+MIN_PROSE_WORDS = 4
 
 
 def nonblank(value):
-    return isinstance(value, str) and bool(value.strip()) and not bool(
-        re.search(r"<[^>\n]{1,60}>|\b(TODO|TBD|PLACEHOLDER|INSERT HERE)\b", value, re.I)
-    )
+    return isinstance(value, str) and bool(value.strip()) and not PLACEHOLDER.search(value)
 
 
-def validate(plan, *, stage="pre-script"):
+def real_prose(value):
+    words = [w.casefold() for w in re.findall(r"[^\W\d_]+", value)] if isinstance(value, str) else []
+    return len(words) >= MIN_PROSE_WORDS and len(set(words)) > 1
+
+
+def validate(plan, *, stage="pre-script", base_dir=None):
     errors = []
     if stage not in {"pre-script", "full-production"}:
         return [f"Invalid gate stage: {stage}"]
@@ -39,10 +46,14 @@ def validate(plan, *, stage="pre-script"):
             return {}
         return result
 
-    def string_at(obj, key, where):
+    def string_at(obj, key, where, *, prose=False):
         result = obj.get(key) if isinstance(obj, dict) else None
         if not nonblank(result):
             errors.append(f"{where}.{key} must have meaningful non-placeholder text")
+            return ""
+        if prose and not real_prose(result):
+            errors.append(f"{where}.{key} must be a real phrase of at least "
+                          f"{MIN_PROSE_WORDS} words, not one repeated token")
             return ""
         return result.strip()
 
@@ -55,13 +66,14 @@ def validate(plan, *, stage="pre-script"):
 
     # 1 — viewer need
     need = object_at(plan, "viewer_need", "plan")
-    for k in ("who", "struggling_with", "daily_life_situation", "why_care_now"):
-        string_at(need, k, "viewer_need")
+    string_at(need, "who", "viewer_need")
+    for k in ("struggling_with", "daily_life_situation", "why_care_now"):
+        string_at(need, k, "viewer_need", prose=True)
 
     # 2 — learning promise; a filled sentence is mandatory before any script
     learn = object_at(plan, "learning_promise", "plan")
     for k in ("understand", "how_to", "specific_outcome"):
-        string_at(learn, k, "learning_promise")
+        string_at(learn, k, "learning_promise", prose=True)
     sentence = string_at(plan, "viewer_promise_sentence", "plan")
     expected = ("This video is for someone struggling with "
                 + str(need.get("struggling_with", "")).strip()
@@ -112,15 +124,14 @@ def validate(plan, *, stage="pre-script"):
 
     # 4 — first 15–30 seconds: recognition, curiosity AND delivered insight
     opening = object_at(plan, "opening", "plan")
-    for k in ("recognizable_problem", "curiosity_question", "early_insight",
+    for k in ("recognizable_problem", "curiosity_question",
               "first_visual", "first_15_to_30_seconds"):
         string_at(opening, k, "opening")
+    string_at(opening, "early_insight", "opening", prose=True)
     evidence_links(opening, "opening")
-    try:
-        insight_at = float(opening.get("first_insight_at_seconds"))
-    except (ValueError, TypeError):
-        insight_at = -1
-    if not 0 <= insight_at <= 30:
+    insight_at = opening.get("first_insight_at_seconds")
+    if (isinstance(insight_at, bool) or not isinstance(insight_at, (int, float))
+            or not 0 <= insight_at <= 30):
         errors.append("opening.first_insight_at_seconds must be between 0 and 30")
 
     # 5 — learning progression; every chapter must contribute something distinct
@@ -131,11 +142,13 @@ def validate(plan, *, stage="pre-script"):
         if not isinstance(chapter, dict):
             errors.append(f"{where} must be an object")
             continue
-        for k in ("title", "new_question", "new_insight", "distinct_payoff",
+        for k in ("title", "new_question", "new_insight",
                   "daily_life_application_or_knowledge_gain"):
             string_at(chapter, k, where)
+        string_at(chapter, "distinct_payoff", where, prose=True)
         evidence_links(chapter, where)
-        signature = re.sub(r"\s+", " ", str(chapter.get("distinct_payoff", "")).strip().casefold())
+        # Case, punctuation and spacing do not make a payoff distinct.
+        signature = " ".join(re.findall(r"[^\W_]+", str(chapter.get("distinct_payoff", "")).casefold()))
         if signature in signatures:
             errors.append(f"{where}.distinct_payoff repeats another chapter")
         signatures.add(signature)
@@ -192,8 +205,13 @@ def validate(plan, *, stage="pre-script"):
         actual = review.get("actual_seconds")
         if isinstance(actual, bool) or not isinstance(actual, (int, float)) or not 60 <= actual <= 90:
             errors.append("pilot.actual_review.actual_seconds must be 60–90")
-        for k in ("reviewer", "evidence_path", "one_insight_already_delivered"):
-            string_at(review, k, "pilot.actual_review")
+        string_at(review, "reviewer", "pilot.actual_review")
+        string_at(review, "one_insight_already_delivered", "pilot.actual_review", prose=True)
+        proof = string_at(review, "evidence_path", "pilot.actual_review")
+        bases = [Path(base) for base in (base_dir, REPO) if base is not None]
+        if proof and not any((base / proof).is_file() for base in bases):
+            errors.append("pilot.actual_review.evidence_path must name an existing file "
+                          "(relative to the plan's folder or the repo root)")
         answers = object_at(review, "outsider_test", "pilot.actual_review")
         for key in CHECKS:
             if answers.get(key) is not True:
@@ -201,8 +219,8 @@ def validate(plan, *, stage="pre-script"):
     return errors
 
 
-def result(plan, stage):
-    problems = validate(plan, stage=stage)
+def result(plan, stage, base_dir=None):
+    problems = validate(plan, stage=stage, base_dir=base_dir)
     return {"gate": "viewer-first", "stage": stage, "status": "PASS" if not problems else "FAIL",
             "errors": problems,
             "notice": ("Structural gate only: researcher and independent critic must "
@@ -222,7 +240,7 @@ def main(argv=None):
         print(json.dumps({"gate": "viewer-first", "status": "FAIL",
                           "errors": [f"Cannot load plan: {exc}"]}, indent=2))
         return 2
-    report = result(data, args.stage)
+    report = result(data, args.stage, args.plan.resolve().parent)
     if args.out:
         if args.out.exists() or not args.out.parent.is_dir():
             print("Cannot write report: output exists or parent directory missing", file=sys.stderr)

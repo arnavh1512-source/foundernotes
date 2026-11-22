@@ -15,6 +15,8 @@ def catalog():
 
 def validate_import(recipe, root):
     root = Path(root).resolve()
+    if not isinstance(recipe, dict):
+        raise ValueError("Import recipe must be a JSON object")
     backend = recipe.get("backend")
     if backend not in catalog():
         raise ValueError("Choose a registered animation backend")
@@ -24,8 +26,8 @@ def validate_import(recipe, root):
     path = (root / relative).resolve()
     if Path(relative).is_absolute() or not path.is_relative_to(root) or not path.is_file() or not path.stat().st_size:
         raise ValueError("Picture must be nonempty and inside the episode")
-    provenance = recipe.get("picture_provenance", {})
-    if provenance.get("rights_verified") is not True:
+    provenance = recipe.get("picture_provenance")
+    if not isinstance(provenance, dict) or provenance.get("rights_verified") is not True:
         raise ValueError("Verify imported picture rights")
     for key in ("creator", "source", "license", "export_method"):
         if not isinstance(provenance.get(key), str) or not provenance[key].strip():

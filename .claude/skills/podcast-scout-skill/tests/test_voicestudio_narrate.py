@@ -62,26 +62,32 @@ class VoiceStudioTests(unittest.TestCase):
 
     def test_non_loopback_urls_are_rejected(self):
         for value in ['https://localhost:3900','http://example.org','http://127.0.0.1@evil.invalid','http://localhost/path']:
-            with self.subTest(url=value), self.assertRaises(SystemExit): voice.local_url(value)
+            with self.subTest(url=value), self.assertRaises(ValueError): voice.local_url(value)
 
     def test_invalid_audio_is_rejected(self):
         for value in [b'garbage', b'RIFF1234WAVE']:
-            with self.assertRaises(SystemExit): voice.valid_wav(value)
+            with self.assertRaises(ValueError): voice.valid_wav(value)
 
     def test_metadata_matches_ids_not_position_and_rejects_missing_segments(self):
         timing = {'segments':[{'id':'s2'}, {'id':'s1'}]}
         voice.attach_metadata(timing, episode())
         self.assertEqual([s['speaker'] for s in timing['segments']], ['philosopher','youth'])
-        with self.assertRaises(SystemExit): voice.attach_metadata({'segments':[{'id':'s1'}]},episode())
+        with self.assertRaises(ValueError): voice.attach_metadata({'segments':[{'id':'s1'}]},episode())
 
     def test_invalid_pause_is_rejected_before_synthesis(self):
         source=episode(); source['segments'][0]['pause_after']=-1
         self.script.write_text(json.dumps(source))
-        with self.assertRaises(SystemExit): voice.load_episode(self.script)
+        with self.assertRaises(ValueError): voice.load_episode(self.script)
+
+    def test_cli_labels_validation_errors_as_voicestudio(self):
+        source=episode(); source['segments'][0]['pause_after']=-1
+        self.script.write_text(json.dumps(source), encoding='utf-8')
+        with self.assertRaisesRegex(SystemExit, '^voicestudio_narrate: segment s1 pause_after'):
+            voice.main([str(self.script), '--out', str(self.root / 'audio'), '--dry-run'])
 
     def test_redirect_is_not_followed(self):
         origin, calls = self.server(True)
-        with self.assertRaisesRegex(SystemExit, 'HTTP 302'):
+        with self.assertRaisesRegex(ValueError, 'HTTP 302'):
             voice.synthesize(origin, {'text':'test'},10)
         self.assertEqual(len(calls),1)
 

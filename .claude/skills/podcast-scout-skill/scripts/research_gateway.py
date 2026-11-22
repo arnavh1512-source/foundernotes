@@ -25,7 +25,9 @@ import datetime as dt
 import ipaddress
 import json
 import os
+import re
 import shutil
+import socket
 import subprocess
 import sys
 import tempfile
@@ -38,7 +40,7 @@ FALLBACK_ERRORS = {"NEED_SETUP", "UPSTREAM_BROKEN", "TIMEOUT"}
 COMMANDS = {"status", "search", "read", "youtube-search", "transcript"}
 
 
-def _public_url(value):
+def _public_url(value, *, resolve=True):
     if not isinstance(value, str):
         return False
     parsed = urllib.parse.urlsplit(value)
@@ -54,10 +56,21 @@ def _public_url(value):
     if hostname in {"localhost", "localhost.localdomain"} or hostname.endswith((".localhost", ".local", ".internal")):
         return False
     try:
-        ip = ipaddress.ip_address(hostname)
+        return ipaddress.ip_address(hostname).is_global
     except ValueError:
+        pass
+    # Legacy IPv4 spellings (2130706433, 127.1, 0x7f.0.0.1): a numeric last label is an address.
+    if re.fullmatch(r"\d+|0x[0-9a-f]*", hostname.rsplit(".", 1)[-1]):
+        return False
+    if not resolve:
         return True
-    return ip.is_global
+    # ponytail: checks DNS once; the reader re-resolves, so rebinding needs a pinned-IP fetch to close.
+    try:
+        infos = socket.getaddrinfo(hostname, port or (443 if parsed.scheme == "https" else 80),
+                                   type=socket.SOCK_STREAM)
+        return bool(infos) and all(ipaddress.ip_address(info[4][0]).is_global for info in infos)
+    except (OSError, UnicodeError, ValueError):
+        return False
 
 
 def _youtube_target(value):
@@ -65,7 +78,8 @@ def _youtube_target(value):
         return False
     if len(value) == 11 and all(x.isascii() and (x.isalnum() or x in "-_") for x in value):
         return True
-    if not _public_url(value):
+    # The YouTube host allowlist below makes a DNS check unnecessary.
+    if not _public_url(value, resolve=False):
         return False
     hostname = (urllib.parse.urlsplit(value).hostname or "").lower()
     return hostname in {"youtube.com", "www.youtube.com", "m.youtube.com", "youtu.be"}
@@ -112,7 +126,8 @@ def _ytdlp_binary():
     found = shutil.which("yt-dlp")
     if found:
         return found
-    venv = Path(os.environ.get("STUDIO_VENV", Path.home() / ".cache" / "studio-venv")) / "bin" / "yt-dlp"
+    venv = Path(os.environ.get("STUDIO_VENV", Path.home() / ".cache" / "studio-venv"))
+    venv = venv / ("Scripts/yt-dlp.exe" if os.name == "nt" else "bin/yt-dlp")
     return str(venv) if venv.is_file() and os.access(venv, os.X_OK) else None
 
 
@@ -124,7 +139,7 @@ def _watch_url(value):
 
 def _ytdlp_error(stderr):
     text = (stderr or "").lower()
-    if "429" in text or "too many requests" in text:
+    if re.search(r"http error 429\b|too many requests", text):
         return "RATE_LIMITED", "YouTube rate-limited yt-dlp (HTTP 429)"
     if "not a bot" in text or "confirm you" in text:
         return "PLATFORM_BLOCKED", "YouTube asked yt-dlp to sign in to confirm it is not a bot"
@@ -151,7 +166,8 @@ def _vtt_text(content):
 
 def _run_ytdlp(arguments, executable, timeout):
     try:
-        return subprocess.run([executable, *arguments], check=False, capture_output=True,
+        # --ignore-config: never pick up user/system config (cookies, browser state, proxies).
+        return subprocess.run([executable, "--ignore-config", *arguments], check=False, capture_output=True,
                               text=True, encoding="utf-8", errors="replace", timeout=timeout), None
     except subprocess.TimeoutExpired:
         return None, ("TIMEOUT", "yt-dlp timed out (no automatic retry)")
@@ -201,9 +217,7 @@ def _ytdlp(operation, value, *, limit, timeout, executable=None):
                                backend="yt-dlp", items=[{"url": url, "language": language,
                                                          "text": text}]), None
     if completed.returncode != 0:
-        code, message = _ytdlp_error(completed.stderr)
-        if code != "UPSTREAM_BROKEN":
-            return None, (code, message)
+        return None, _ytdlp_error(completed.stderr)  # a crash is not "no subtitles"
     return None, ("NO_TRANSCRIPT", "yt-dlp found no English subtitles")
 
 
@@ -239,6 +253,9 @@ def run(operation, value=None, *, limit=5, timeout=45, executable=None, ytdlp_ex
         return _fallback(operation, code="BAD_INPUT", message="Unsupported research operation")
     if operation in {"search", "youtube-search"} and (not isinstance(value, str) or not value.strip()):
         return _fallback(operation, code="BAD_INPUT", message="A search query is required")
+    if operation in {"search", "youtube-search"} and value.startswith("-"):
+        # Agent-Reach takes the query positionally; a leading '-' would be parsed as an option.
+        return _fallback(operation, code="BAD_INPUT", message="A search query must not start with '-'")
     if operation == "read" and not _public_url(value):
         return _fallback(operation, code="BAD_INPUT", message="A public HTTP(S) URL is required")
     if operation == "transcript" and not _youtube_target(value):
@@ -262,7 +279,8 @@ def run(operation, value=None, *, limit=5, timeout=45, executable=None, ytdlp_ex
         "search": ["web", "search", value or "", "--limit", str(limit)],
         "read": ["web", "read", value or ""],   # only the public web channel; never logged-in channels
         "youtube-search": ["youtube", "search", value or "", "--limit", str(limit)],
-        "transcript": ["youtube", "subtitle", value or "", "--lang", "en,en-orig"],
+        # A bare ID may start with '-'; pass it as a URL so it can never read as an option.
+        "transcript": ["youtube", "subtitle", _watch_url(value or ""), "--lang", "en,en-orig"],
     }
     result = _agent_reach(operation, routing[operation], executable=executable, timeout=timeout)
     if first_attempt:

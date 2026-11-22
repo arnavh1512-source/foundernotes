@@ -276,6 +276,19 @@ CHANNEL_NARRATOR_NAME = "Founder Notes Narrator"
 CHANNEL_NARRATOR_ENGINE = "chatterbox"
 
 
+class _NoRedirect(urllib.request.HTTPRedirectHandler):
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        return None
+
+
+_VB_OPENER = urllib.request.build_opener(urllib.request.ProxyHandler({}), _NoRedirect())
+
+
+def vb_open(request, timeout):
+    """Open a local Voicebox URL: ignores http_proxy and refuses redirects off the loopback origin."""
+    return _VB_OPENER.open(request, timeout=timeout)
+
+
 def voicebox_url():
     url = os.environ.get("VOICEBOX_URL", "http://127.0.0.1:17493").rstrip("/")
     parts = urllib.parse.urlsplit(url)
@@ -308,7 +321,7 @@ def voicebox_channel_profile():
     """Find (or create once) the channel narrator profile in the local voicebox server: the owner-supplied voice when
     its local reference is on this machine, else the SYNTHETIC repo reference (founder-notes-narrator-ref.wav)."""
     base = voicebox_url()
-    with urllib.request.urlopen(f"{base}/profiles", timeout=30) as r:
+    with vb_open(f"{base}/profiles", timeout=30) as r:
         pid, kind = pick_channel_profile(json.loads(r.read()), OWNER_NARRATOR_REF.exists())
     global NARRATOR_KIND
     NARRATOR_KIND = kind
@@ -324,7 +337,7 @@ def voicebox_channel_profile():
     wav_bytes = ref.read_bytes()                                         # an empty profile on the server
     req = urllib.request.Request(f"{base}/profiles", headers={"Content-Type": "application/json"}, data=json.dumps(
         {"name": name, "language": "en", "voice_type": "cloned", "description": desc}).encode())
-    with urllib.request.urlopen(req, timeout=30) as r:
+    with vb_open(req, timeout=30) as r:
         pid = json.loads(r.read())["id"]
     bnd = "----narrate" + hashlib.sha1(txt.encode()).hexdigest()[:12]
     body = (f"--{bnd}\r\nContent-Disposition: form-data; name=\"reference_text\"\r\n\r\n{txt}\r\n"
@@ -332,7 +345,7 @@ def voicebox_channel_profile():
         + wav_bytes + f"\r\n--{bnd}--\r\n".encode()
     req = urllib.request.Request(f"{base}/profiles/{pid}/samples", data=body,
                                  headers={"Content-Type": f"multipart/form-data; boundary={bnd}"})
-    urllib.request.urlopen(req, timeout=60).read()
+    vb_open(req, timeout=60).read()
     print(f"narrate: created the voicebox profile '{name}' from {ref.name}", file=sys.stderr)
     return pid
 
@@ -379,7 +392,7 @@ def synth_voicebox(text, voice, speed, out: Path, seed=42, engine=None):
         req = urllib.request.Request(f"{base}/generate/stream", data=json.dumps(body).encode(),
                                      headers={"Content-Type": "application/json"})
         try:
-            with urllib.request.urlopen(req, timeout=1800) as r:
+            with vb_open(req, timeout=1800) as r:
                 tmp.write_bytes(r.read())
             break
         except urllib.error.HTTPError as e:
@@ -625,7 +638,7 @@ def resolve_voice_cast(cast):
     """
     narrator_id = voicebox_channel_profile()
     try:
-        with urllib.request.urlopen(f"{voicebox_url()}/profiles", timeout=30) as response:
+        with vb_open(f"{voicebox_url()}/profiles", timeout=30) as response:
             profiles = json.loads(response.read())
     except Exception as exc:
         raise RuntimeError(f"could not list Voicebox profiles: {exc}") from exc

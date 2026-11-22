@@ -84,7 +84,7 @@ class NarrateFixes(unittest.TestCase):
             if getattr(request, "data", None) is not None:
                 posted.append(request.full_url)
             return Listing()
-        with tempfile.TemporaryDirectory() as td,              patch.object(narrate.urllib.request, "urlopen", side_effect=fake_urlopen),              patch.object(narrate, "OWNER_NARRATOR_REF", Path(td) / "absent.wav"),              patch.object(narrate, "VOICE_DIR_REPO", Path(td)):
+        with tempfile.TemporaryDirectory() as td,              patch.object(narrate, "vb_open", side_effect=fake_urlopen),              patch.object(narrate, "OWNER_NARRATOR_REF", Path(td) / "absent.wav"),              patch.object(narrate, "VOICE_DIR_REPO", Path(td)):
             with self.assertRaises(OSError):
                 narrate.voicebox_channel_profile()
         self.assertEqual(posted, [])
