@@ -318,4 +318,4 @@ The initial entries preserve documented observations from the 2026-11-11 study a
 - Evidence: Exact V15 picture artifact 14394139231, OpenMontage samples at 62 and 64.4 seconds. The right edge shows cropped bars even after the wide shot established the gate and route. Samples at 56 and 58 show only the lock before the character reappears.
 - Cause / rationale: The route crop centered on x540; its right edge extended into the gate world bounds.
 - Correction / recipe: Frame the whole arch and exclude the gate edge after the visible lookback. Confirm the lock, full layout and destination read in successive shots and keep visual prompts in a consistent lower band.
-- Verification: Baseline verified in encoded frames. Corrected source passes geometry and bundle checks; corrected encoded picture and pacing review remain pending.
+- Verification: Exact V16 asset 14755181187. Selected frames around 57.35 and at 63.2/64.4 show an earlier return to the full layout and a complete arch with no gate fragment. Four encoded captioned samples show separate cue and caption bands. Continuous audiovisual and independent review are pending.

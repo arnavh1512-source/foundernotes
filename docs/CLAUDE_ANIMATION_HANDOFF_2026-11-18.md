@@ -23,3 +23,5 @@ Latest attention batch: actual shared-event gaze; head-first flinch, duck, one-h
 Frame-review correction: review_frames.py now translates validated x/y/width/height into FFmpeg width/height/x/y. Two real frame-tool tests pass; current corrected crops were inspected. Revalidate historical crop-only claims; full-frame evidence is unaffected. This later review/checkpoint change does not alter the rendered animation source above.
 
 Latest seated reblock: mentor chair/pelvis and upper body agree; both feet point forward on the room floor, raised cup follows the mouth while table rest is unchanged, and invitation/explanation palm stays clear. Preserve this with all prior work; full audiovisual and independent review are still required.
+
+The current private continuation is V16 (bundle version 9). Use the exact V16 source and hashes in the JSON checkpoint. The V15 seated checks remain historical evidence. Full-speed audiovisual and viewer review remain pending.

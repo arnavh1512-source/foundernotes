@@ -1,6 +1,6 @@
 {
-  "code_commit": "c9898a2833c5f6b3bd5d6d9b3861aa94fd0aa2a4",
-  "workflow_run": 44228817475,
+  "code_commit": "c5655d5552a5ce3992a23761ab311ecdb7f03391",
+  "workflow_run": 45024135667,
   "previous_pr": {
     "number": 12,
     "observed_state": "merged",
@@ -8,14 +8,14 @@
   },
   "continuation_pr": 13,
   "previous_picture": {
-    "artifact": 14390176125,
-    "sha256": "d3bad8769a5b3badb8daa73a6af452fb36a6504f188226fa4b19d67c5e51197e",
+    "artifact": 14755181187,
+    "sha256": "0f87f5bdb8930a2c442589ff5fcd8123a148334316b3f23cb7461371c9775460",
     "duration_s": 64.5,
     "width": 1920,
     "height": 1080,
     "fps": 30,
     "frames": 1935,
-    "review_scope": "Integrated overview, six demand samples19.95/20.15/20.3/20.4/20.55/20.9 and twelve paired-event samples46/48.8/48.98/49.3/50/51/52/52.5/53/54/55/55.9 inspected. Preparation/body/hand states, head-leading duck, guarded peek/partial rise and distinct final silhouettes are visible. Selected-frame author review only; continuous timing, actual sound and independent comprehension pending."
+    "review_scope": "Exact V16 source and artifact. Eighteen sampled opening and ending frames and four captioned samples inspected. Character visible earlier after lock insert. Complete arch without clipping from the gate. Closing question visible after route crop. V15 remains basis for previously reviewed middle scenes. Normal-speed cadence, sound and independent review pending."
   },
   "private_audio": {
     "library_id": "libfile_c99d2bfdf94c819198bad6d6fd27be65",
@@ -52,24 +52,24 @@
   "full_production_approved": false,
   "workflow_conclusion": "success",
   "latest_picture": {
-    "artifact": 14394139231,
-    "sha256": "747ce4a268c6f82b42c748f57d35be597dd56f3fdb912bfeb2b7864c81ffcb18",
+    "artifact": 14755181187,
+    "sha256": "0f87f5bdb8930a2c442589ff5fcd8123a148334316b3f23cb7461371c9775460",
     "duration_s": 64.5,
     "width": 1920,
     "height": 1080,
     "fps": 30,
     "frames": 1935,
-    "review_scope": "Integrated overview; eight study/support samples14.8/17/20.9/23.5/25.8/26.4/27.4/28.9 and eight cup/explanation samples41/41.3/41.6/41.9/42/44.6/45.4/45.9 inspected, plus corrected close crops of seated support and cup/face/free-hand relationships. Forward thighs, chair/pelvis alignment, floor supports and coherent cup/palm staging are visible in selected frames. Author selected-frame review only; continuous timing, actual sound and independent comprehension remain pending."
+    "review_scope": "Exact V16 source and artifact. Eighteen sampled opening and ending frames and four captioned samples inspected. Character visible earlier after lock insert. Complete arch without clipping from the gate. Closing question visible after route crop. V15 remains basis for previously reviewed middle scenes. Normal-speed cadence, sound and independent review pending."
   },
   "latest_private_assembly": {
-    "name": "internal-pilot-v15.mp4",
-    "sha256": "2e610371c013ae977d6ab3636705db375126f9975a3bb73434033cc67d132681",
+    "name": "internal-pilot-v16.mp4",
+    "sha256": "bd707320408102ab950f6aba680a355cd91816b10c4af883b4712b73d8f30034",
     "duration_s": 64.5,
     "video_frames": 1935,
     "audio_stream_duration_s": 64.482,
-    "review_scope": "Full decode/probe and nine captioned samples14.8/20.9/23.5/27.4/28.9/41.3/41.9/44.6/45.9 inspected. No subject/caption collision observed there; no complete temporal, auditory or independent approval.",
+    "review_scope": "Full decode/probe and four captioned bookend frame samples. Cues are separated from captions visually in these samples. Continuous audiovisual, narration identity and independent review pending.",
     "decoded_audio_sha256": "d6ea2c401862c70b5b48597ad0883fbbf30102a83d28c1ac7c889e6d009334da",
-    "audio_verification": "V11 AAC copied unchanged without filtering or re-encoding; decoded audio hash identical. Original take and speed retained; no narrator identity/listening approval inferred."
+    "audio_verification": "V15 AAC copied unchanged; decoded audio SHA matches prior cut."
   },
   "tests": {
     "node_tests_passed": 27,
@@ -79,13 +79,13 @@
   "next_priority": "Preserve coherent seated chair/pelvis/thigh/floor support, mouth-height raised cup with unchanged desk rest/contact, palm separation and revised conversation eye line alongside all prior pilot work. Judge the complete normal-speed dialogue, cup contact sound, caption/speaker boundaries and independent viewer comprehension before further stylistic changes or approval. Historical crop-only claims remain pending revalidation; do not alter the narrator or use technical passes as creative approval.",
   "private_continuation_bundle": {
     "library_file_id": "libfile_2a2569310a8481919a251bf91621ecb0",
-    "file_id": "file_00000000aaf881fdbadf6b92c5efcca4",
+    "file_id": "file_00000000b38c81f4be14847827e11785",
     "name": "FounderNotes-Internal-Pilot-Checkpoint-eac2e46.zip",
-    "version": 8,
-    "contents": "V15 picture and internal assembly, unchanged dialogue, provisional captions, manifests and selected own-render evidence. Version 7 preserves V11.",
+    "version": 9,
+    "contents": "V16 picture and assembly, unchanged audio, provisional captions, selected bookend samples and probe. Version 8 preserves V15 and seated correction evidence.",
     "delivery_status": "Internal, not approved."
   },
-  "previous_code_commit": "91cf7234fa241e911294ca9e98c045bd8cbe45e1",
+  "previous_code_commit": "c9898a2833c5f6b3bd5d6d9b3861aa94fd0aa2a4",
   "intermediate_picture": {
     "code_commit": "a94242892d0afa528508bc69d03ed409ca47af51",
     "artifact": 14367580227,
@@ -139,9 +139,9 @@
     "remaining": "Continuous audiovisual, named-channel footage and independent/owner approval remain pending."
   },
   "bookend_candidate": {
-    "status": "Source candidate only; V15 remains exact reviewed picture and private assembly.",
+    "status": "V16 selected-frame verification completed; creative approval pending.",
     "baseline_author_review": "Twelve exact V15 frames requested through OpenMontage at 0, 2, 4, 7, 10, 13, 56, 58, 59, 61, 62 and 64.4 seconds. Ending close-up retains clipped gate bars and the lock has two sampled insert frames before the reaction.",
-    "next": "Retrieve the CI artifact for the source candidate on PR 13; check ending edge and active pose, cue placement and transitions through 57.35, 58.6, 60.2, 61.7 and 62.5. Assemble only against unchanged private audio, then review timing and sync.",
+    "next": "Review the entire assembly in real time for sustained attention, lookback cut cadence, the closing read, caption boundaries and actual dialogue and cup sound. Do not retime narration to compensate for unverified visual timing.",
     "reference": "Supplied discipline frame at 8 seconds isolates the waking character inside a clearly readable room; no actual cadence or channel attribution. Named YouTube channel lookups exposed text shells or no decoded media; actual opening, reaction/cut timing and sound remain pending."
   }
 }
