@@ -326,4 +326,4 @@ The initial entries preserve documented observations from the 2026-11-11 study a
 - Evidence: Exact V16 frame pairs 869/870 and 1229/1230. The bookcase, window and chair recur across the illustrative cut, while the mentor and cup disappear and reappear.
 - Cause / rationale: The vignette called the full study background renderer to share the desk surface.
 - Correction / recipe: Share the desk geometry but give the work vignette its own background and palette so the two situations can be distinguished before the label is read. Check both transitions in the exact encoded cut.
-- Verification: Baseline set reuse verified on encoded images. Source correction builds and passes geometry tests. New cut and viewer interpretation pending.
+- Verification: Exact V17 encoded artifact 14758649327 shows the workroom as distinct at both boundaries. The phone, clock, and dropped papers remain visible. The paired-view cue is absent at entry and present during recovery. Four captioned samples show separated bands. Full-speed interpretation and actual listening remain pending.

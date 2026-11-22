@@ -1,6 +1,6 @@
 {
-  "code_commit": "c5655d5552a5ce3992a23761ab311ecdb7f03391",
-  "workflow_run": 45024135667,
+  "code_commit": "9f8b3a1db6d309811a12a41fd5b413b706b2722d",
+  "workflow_run": 45034785363,
   "previous_pr": {
     "number": 12,
     "observed_state": "merged",
@@ -46,30 +46,31 @@
     "thatguy": "Fresh native channel open exposed only footer. Prior watch-page stalled playback remains historical; no new decoded footage/audio.",
     "alan_newgrounds": "Fresh normal cloud-browser visit to original portal316541 returned Site Unavailable / Unable to access this site. No fresh frames/audio; no bot-block cause inferred.",
     "owner_local_chrome": "No local Chrome connection exposed in this session. Remote Chrome was initially mislabeled as owner Chrome; wording corrected and lesson recorded. Remote failure establishes nothing about owner local playback.",
-    "alan_openmontage": "Normal OpenMontage/yt-dlp YouTube metadata resolved, but media fragments were195 bytes and FFmpeg merge failed as invalid input; no decoded footage. Original Newgrounds316541 retrieval failed parsing JSON. No bypass, login or listening claim."
+    "alan_openmontage": "Normal OpenMontage/yt-dlp YouTube metadata resolved, but media fragments were195 bytes and FFmpeg merge failed as invalid input; no decoded footage. Original Newgrounds316541 retrieval failed parsing JSON. No bypass, login or listening claim.",
+    "alan_newgrounds_v17": "Normal Newgrounds extraction returned HTTP 403; text read only. No playback, timing, physical contact study or sound verified in this pass."
   },
   "pre_script_gate": "PASS structural preparation only",
   "full_production_approved": false,
   "workflow_conclusion": "success",
   "latest_picture": {
-    "artifact": 14755181187,
-    "sha256": "0f87f5bdb8930a2c442589ff5fcd8123a148334316b3f23cb7461371c9775460",
+    "artifact": 14758649327,
+    "sha256": "a3bd2f55c8912d58079778875b665ec759fd4df9a277565e76d6cbfb0d60dbf4",
     "duration_s": 64.5,
     "width": 1920,
     "height": 1080,
     "fps": 30,
     "frames": 1935,
-    "review_scope": "Exact V16 source and artifact. Eighteen sampled opening and ending frames and four captioned samples inspected. Character visible earlier after lock insert. Complete arch without clipping from the gate. Closing question visible after route crop. V15 remains basis for previously reviewed middle scenes. Normal-speed cadence, sound and independent review pending."
+    "review_scope": "Exact V17 artifact. Nine encoded samples confirm separated task and study settings, phone and dropped paper visibility, and the late parallel-view cue. V16 remains the evidence for its bookend review. Continuous audiovisual review pending."
   },
   "latest_private_assembly": {
-    "name": "internal-pilot-v16.mp4",
-    "sha256": "bd707320408102ab950f6aba680a355cd91816b10c4af883b4712b73d8f30034",
+    "name": "internal-pilot-v17.mp4",
+    "sha256": "1e5c0ed33af70e5d2776f33af61f5ecc50fbd6bde188702a41b89cb408cb0404",
     "duration_s": 64.5,
     "video_frames": 1935,
     "audio_stream_duration_s": 64.482,
-    "review_scope": "Full decode/probe and four captioned bookend frame samples. Cues are separated from captions visually in these samples. Continuous audiovisual, narration identity and independent review pending.",
+    "review_scope": "Complete decode and four selected captioned samples. Separate text bands and no collision in those frames. Continuous picture, actual listening, narration identity and independent review pending.",
     "decoded_audio_sha256": "d6ea2c401862c70b5b48597ad0883fbbf30102a83d28c1ac7c889e6d009334da",
-    "audio_verification": "V15 AAC copied unchanged; decoded audio SHA matches prior cut."
+    "audio_verification": "Copied V16 AAC. Decoded hash matches V16."
   },
   "tests": {
     "node_tests_passed": 27,
@@ -79,13 +80,13 @@
   "next_priority": "Preserve coherent seated chair/pelvis/thigh/floor support, mouth-height raised cup with unchanged desk rest/contact, palm separation and revised conversation eye line alongside all prior pilot work. Judge the complete normal-speed dialogue, cup contact sound, caption/speaker boundaries and independent viewer comprehension before further stylistic changes or approval. Historical crop-only claims remain pending revalidation; do not alter the narrator or use technical passes as creative approval.",
   "private_continuation_bundle": {
     "library_file_id": "libfile_2a2569310a8481919a251bf91621ecb0",
-    "file_id": "file_00000000b38c81f4be14847827e11785",
+    "file_id": "file_000000009254821284d84627340dfe7d",
     "name": "FounderNotes-Internal-Pilot-Checkpoint-eac2e46.zip",
-    "version": 9,
-    "contents": "V16 picture and assembly, unchanged audio, provisional captions, selected bookend samples and probe. Version 8 preserves V15 and seated correction evidence.",
+    "version": 10,
+    "contents": "V17 picture and private assembly, unchanged dialogue, provisional captions, transition samples and probe. Prior versions retain the V16 and V15 evidence.",
     "delivery_status": "Internal, not approved."
   },
-  "previous_code_commit": "c9898a2833c5f6b3bd5d6d9b3861aa94fd0aa2a4",
+  "previous_code_commit": "c5655d5552a5ce3992a23761ab311ecdb7f03391",
   "intermediate_picture": {
     "code_commit": "a94242892d0afa528508bc69d03ed409ca47af51",
     "artifact": 14367580227,
@@ -145,8 +146,8 @@
     "reference": "Supplied discipline frame at 8 seconds isolates the waking character inside a clearly readable room; no actual cadence or channel attribution. Named YouTube channel lookups exposed text shells or no decoded media; actual opening, reaction/cut timing and sound remain pending."
   },
   "handoff_candidate": {
-    "status": "Source candidate on draft PR 13. V16 remains the exact reviewed baseline.",
+    "status": "V17 encoded still review complete; full-speed interpretation pending.",
     "review": "V16 frame pairs 434/435, 869/870, 1229/1230, 1379/1380, 1679/1680. Study furniture persists into the illustrative task. The parallel-view conclusion is already visible at entry, before either response.",
-    "next": "Inspect CI candidate frames on both sides of 29, 41 and 46 seconds, plus 53.2 and 55.9. Confirm phone and paper readability, task contrast, caption separation and the paired event. Assemble only with unchanged V16 audio and provisional captions. Full-speed audiovisual and independent review pending."
+    "next": "Confirm whether the vignette reads as an example on first viewing and whether the paired reactions read before the delayed cue. Review complete dialogue, caption/speaker boundaries and cup sync before any gate approval."
   }
 }
