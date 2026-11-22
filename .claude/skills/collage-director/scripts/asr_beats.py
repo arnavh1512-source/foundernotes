@@ -6,8 +6,9 @@ import argparse
 import json
 import os
 import subprocess
-import sys
+import time
 
+import paid
 from provider import get_provider
 
 MAX_BEAT_DUR = 9.5
@@ -73,7 +74,11 @@ def segment_words(words, max_dur=MAX_BEAT_DUR, min_dur=MIN_BEAT_DUR, pause_gap=P
     return merged
 
 
-def run(project_dir, src_path, language="en", keyterms=None, max_beat_dur=MAX_BEAT_DUR):
+def run(project_dir, src_path, language="en", keyterms=None, max_beat_dur=MAX_BEAT_DUR,
+        generate=False, max_jobs=paid.DEFAULT_MAX_JOBS, deadline_s=900, poll_s=3):
+    out_file = os.path.join(project_dir, "beats.json")
+    if not paid.approve([("asr", "whisper", out_file)], generate, max_jobs):
+        return
     os.makedirs(project_dir, exist_ok=True)
     audio_temp = os.path.join(project_dir, "_source_audio.mp3")
     extract_audio(src_path, audio_temp)
@@ -83,30 +88,24 @@ def run(project_dir, src_path, language="en", keyterms=None, max_beat_dur=MAX_BE
 
     print("Submitting ASR job...")
     job_id = prov.submit_audio("whisper", audio_url=audio_url, language=language)
-    
+
+    deadline = time.monotonic() + deadline_s
     status = prov.get_status(job_id)
-    import time
-    while status["status"] == "pending":
-        time.sleep(3)
+    while status["status"] == "pending" and time.monotonic() < deadline:
+        time.sleep(poll_s)
         status = prov.get_status(job_id)
 
+    # never invent a transcript: a failed, timed-out or empty ASR stops here
+    if status["status"] == "pending":
+        raise SystemExit(f"ASR job {job_id} still not done after {deadline_s}s "
+                         f"(last error: {status.get('error')}); no beats.json written.")
     if status["status"] == "failed":
-        print(f"ASR failed: {status['error']}; using fall-back dummy segment.")
-        dur = 10.0
-        try:
-            out = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration",
-                                  "-of", "csv=p=0", src_path], capture_output=True, text=True).stdout
-            dur = float(out.strip())
-        except Exception:
-            pass
-        beats = [{"start": 0.0, "end": round(dur, 2), "text": "Presenting talking-head segment."}]
-    else:
-        out_data = status.get("output") or {}
-        words = out_data.get("words", []) if isinstance(out_data, dict) else []
-        if not words:
-            beats = [{"start": 0.0, "end": 8.0, "text": "Talking head transcript."}]
-        else:
-            beats = segment_words(words, max_dur=max_beat_dur)
+        raise SystemExit(f"ASR failed: {status['error']}; no beats.json written.")
+    out_data = status.get("output") or {}
+    words = out_data.get("words", []) if isinstance(out_data, dict) else []
+    if not words:
+        raise SystemExit(f"ASR job {job_id} returned no word timings; no beats.json written.")
+    beats = segment_words(words, max_dur=max_beat_dur)
 
     dims = probe_dims(src_path)
     aspect = nearest_named_aspect(*dims) if dims else "9:16"
@@ -134,8 +133,7 @@ def run(project_dir, src_path, language="en", keyterms=None, max_beat_dur=MAX_BE
         ]
     }
 
-    out_file = os.path.join(project_dir, "beats.json")
-    with open(out_file, "w") as f:
+    with open(out_file, "w", encoding="utf-8") as f:
         json.dump(doc, f, ensure_ascii=False, indent=2)
     print(f"ASR beats skeleton written to {out_file}")
 
@@ -145,5 +143,8 @@ if __name__ == "__main__":
     parser.add_argument("project_dir", help="Project directory")
     parser.add_argument("source", help="Source video or audio file")
     parser.add_argument("--language", default="en")
+    parser.add_argument("--timeout", type=int, default=900, help="seconds to wait for the ASR job (default 900)")
+    paid.add_flags(parser)
     args = parser.parse_args()
-    run(os.path.abspath(args.project_dir), os.path.abspath(args.source), language=args.language)
+    run(os.path.abspath(args.project_dir), os.path.abspath(args.source), language=args.language,
+        generate=args.generate, max_jobs=args.max_jobs, deadline_s=args.timeout)

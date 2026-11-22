@@ -12,7 +12,17 @@ sfx = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(sfx)
 
 
+def resolve_to(*addresses):
+    return lambda host, *a, **k: [(2, 1, 6, "", (address, 443)) for address in addresses]
+
+
 class DownloadSafeguards(unittest.TestCase):
+    def setUp(self):
+        # no real DNS in tests: by default every name resolves to one public address
+        dns = patch.object(sfx.socket, "getaddrinfo", side_effect=resolve_to("93.184.215.14"))
+        dns.start()
+        self.addCleanup(dns.stop)
+
     def test_license_filter_is_strict(self):
         base = {"url": "https://media.example.org/sound.wav"}
         self.assertFalse(sfx.licensed({**base, "license": "by-nc"}, "by"))
@@ -31,6 +41,17 @@ class DownloadSafeguards(unittest.TestCase):
             sfx.safe_role("../../outside")
         with self.assertRaises(ValueError):
             sfx.safe_role("paper/slide")
+
+    def test_names_resolving_to_private_addresses_are_blocked(self):
+        for addresses in (("10.0.0.5",), ("93.184.215.14", "127.0.0.1"), ("::1",), ("169.254.169.254",)):
+            with patch.object(sfx.socket, "getaddrinfo", side_effect=resolve_to(*addresses)):
+                self.assertFalse(sfx.safe_url("https://cdn.example.com/a.wav"), addresses)
+        with patch.object(sfx.socket, "getaddrinfo", side_effect=OSError("no such host")):
+            self.assertFalse(sfx.safe_url("https://cdn.example.com/a.wav"))
+
+    def test_numeric_ip_shorthands_are_blocked(self):
+        for host in ("2130706433", "0x7f.0.0.1", "127.1", "0x7f000001", "017700000001"):
+            self.assertFalse(sfx.safe_url(f"https://{host}/a.wav"), host)
 
     def test_invalid_content_not_saved(self):
         with tempfile.TemporaryDirectory() as temp:

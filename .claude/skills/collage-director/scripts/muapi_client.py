@@ -10,11 +10,14 @@ import os
 import subprocess
 import time
 import urllib.error
+import urllib.parse
 import urllib.request
 
 
 class MuapiError(RuntimeError):
-    pass
+    def __init__(self, message, code=None):
+        super().__init__(message)
+        self.code = code  # HTTP status when the API answered, else None
 
 
 def _load_env():
@@ -31,14 +34,23 @@ def _load_env():
 
 def _key() -> str:
     _load_env()
-    # the session proxy injects a saved api.muapi.ai secret (header x-api-key); any placeholder then works
-    key = os.environ.get("MUAPI_API_KEY") or os.environ.get("MUAPI_KEY") or "proxy-injected"
+    key = os.environ.get("MUAPI_API_KEY") or os.environ.get("MUAPI_KEY")
+    if not key and os.environ.get("MUAPI_KEY_PROXY") == "1":
+        # a session proxy injects the saved api.muapi.ai secret (header x-api-key); the placeholder is replaced
+        key = "proxy-injected"
     if not key:
         raise MuapiError(
-            "MUAPI_API_KEY environment variable is not set. "
-            "Get a key from https://muapi.ai"
+            "MUAPI_API_KEY environment variable is not set (or set MUAPI_KEY_PROXY=1 when a session "
+            "proxy injects the key). Get a key from https://muapi.ai"
         )
     return key
+
+
+def _base() -> str:
+    base = os.environ.get("MUAPI_BASE_URL", "https://api.muapi.ai/api/v1").rstrip("/")
+    if urllib.parse.urlsplit(base).scheme != "https":
+        raise MuapiError("MUAPI_BASE_URL must be an https:// URL (the API key is sent to it).")
+    return base
 
 
 def _headers(json_body: bool = True) -> dict:
@@ -60,8 +72,7 @@ def map_aspect_ratio_to_size(aspect_ratio: str, resolution: str = "1k") -> tuple
 
 
 def _post(endpoint: str, payload: dict, timeout: int = 60) -> dict:
-    base = os.environ.get("MUAPI_BASE_URL", "https://api.muapi.ai/api/v1").rstrip("/")
-    url = f"{base}/{endpoint.lstrip('/')}"
+    url = f"{_base()}/{endpoint.lstrip('/')}"
     req = urllib.request.Request(
         url,
         data=json.dumps(payload).encode(),
@@ -72,20 +83,24 @@ def _post(endpoint: str, payload: dict, timeout: int = 60) -> dict:
         with urllib.request.urlopen(req, timeout=timeout) as r:
             return json.load(r)
     except urllib.error.HTTPError as e:
-        raise MuapiError(f"POST {url} -> {e.code}: {e.read().decode()[:400]}") from e
+        raise MuapiError(f"POST {url} -> {e.code}: {e.read().decode(errors='replace')[:400]}", code=e.code) from e
     except Exception as e:
         raise MuapiError(f"POST {url} failed: {e}") from e
 
 
 def _get(endpoint: str, timeout: int = 60, retries: int = 3) -> dict:
-    base = os.environ.get("MUAPI_BASE_URL", "https://api.muapi.ai/api/v1").rstrip("/")
-    url = f"{base}/{endpoint.lstrip('/')}"
+    url = f"{_base()}/{endpoint.lstrip('/')}"
     last = None
     for i in range(retries):
         try:
             req = urllib.request.Request(url, headers=_headers(json_body=False))
             with urllib.request.urlopen(req, timeout=timeout) as r:
                 return json.load(r)
+        except urllib.error.HTTPError as e:
+            if 400 <= e.code < 500 and e.code != 429:  # bad key / unknown job: retrying cannot help
+                raise MuapiError(f"GET {url} -> {e.code}", code=e.code) from e
+            last = e
+            time.sleep(2 ** i)
         except (urllib.error.URLError, TimeoutError) as e:
             last = e
             time.sleep(2 ** i)
@@ -199,16 +214,19 @@ def generate_audio(model: str, prompt: str, **params) -> str:
 
 def upload(file_path: str) -> str:
     """Upload a local file using curl, returning its hosted URL."""
-    base = os.environ.get("MUAPI_BASE_URL", "https://api.muapi.ai/api/v1").rstrip("/")
+    url = f"{_base()}/upload_file"
     key = _key()
-
+    # quoted so curl takes ; and , in the path literally; the key goes via stdin, never argv
+    quoted = file_path.replace("\\", "\\\\").replace('"', '\\"')
     cmd = [
-        "curl", "-s", "-X", "POST", f"{base}/upload_file",
-        "-H", f"x-api-key: {key}",
-        "-F", f"file=@{file_path}"
+        "curl", "-s", "--proto", "=https", "-X", "POST",
+        "-H", "@-",
+        "-F", f'file=@"{quoted}"',
+        "--", url,
     ]
     try:
-        out = subprocess.run(cmd, capture_output=True, text=True, check=True).stdout
+        out = subprocess.run(cmd, input=f"x-api-key: {key}\n", capture_output=True, text=True,
+                             check=True).stdout
         data = json.loads(out)
         url = data.get("url") or data.get("file_url") or (data.get("data") or {}).get("url")
         if not url:
@@ -221,7 +239,8 @@ def upload(file_path: str) -> str:
 def download(url: str, dest: str) -> str:
     """Download a remote URL to a local destination file using curl."""
     try:
-        subprocess.run(["curl", "-s", "-L", "--retry", "3", "-o", dest, url], check=True)
+        subprocess.run(["curl", "-s", "-L", "--proto", "=https", "--proto-redir", "=https",
+                        "--retry", "3", "-o", dest, "--", url], check=True)
         if not os.path.exists(dest) or os.path.getsize(dest) == 0:
             raise MuapiError(f"Download produced an empty file: {url}")
         return dest

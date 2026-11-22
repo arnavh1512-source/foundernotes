@@ -54,10 +54,15 @@ class MuapiProvider(Provider):
         res = None
         try:
             res = muapi_client._get(f"/predictions/{job_id}/result")
-        except Exception as e:
+        except Exception:
             try:
                 res = muapi_client._get(f"/predictions/{job_id}")
             except Exception as e2:
+                code = getattr(e2, "code", None)
+                if code and 400 <= code < 500 and code != 429:
+                    # refused (bad key, unknown job): not "still running". The job may still exist and bill,
+                    # so it must not be resubmitted either.
+                    return {"status": "failed", "output": None, "error": str(e2), "retry": False}
                 return {"status": "pending", "output": None, "error": str(e2)}
 
         if not res:
@@ -137,7 +142,7 @@ def run_jobs(prov, specs, *, poll_s=3, stall_s=90, max_retries=2, deadline_s=900
                 print(f"  [{key}] completed -> {s['out']}")
             elif st == "failed":
                 reason = res["error"]
-                if s["tries"] <= max_retries:
+                if s["tries"] <= max_retries and res.get("retry", True):
                     print(f"  [{key}] {reason}; retry {s['tries']}/{max_retries}...")
                     try:
                         new_id = s["submit_fn"]()

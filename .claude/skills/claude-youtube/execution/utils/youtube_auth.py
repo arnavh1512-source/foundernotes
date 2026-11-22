@@ -16,9 +16,29 @@ import os
 import sys
 from pathlib import Path
 
+try:
+    from googleapiclient.errors import HttpError
+except ImportError:  # get_*_service() reports the missing package; nothing can raise the real one
+    class HttpError(Exception):
+        pass
+
 TMP_DIR = Path.home() / ".claude" / ".tmp"
 TOKEN_PATH = TMP_DIR / "youtube_oauth_token.json"
 CLIENT_SECRETS_PATH = Path.home() / ".claude" / "youtube_client_secrets.json"
+
+
+def api_error(e):
+    """Status + reason only: str(HttpError) embeds the request URI, which carries key=<API key>."""
+    status = getattr(getattr(e, "resp", None), "status", "?")
+    return {"error": f"YouTube API error {status}: {getattr(e, 'reason', '') or 'request refused'}"}
+
+
+def _write_token(creds):
+    """Owner-only file: the token JSON holds the refresh_token and client_secret."""
+    fd = os.open(TOKEN_PATH, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
+    os.chmod(TOKEN_PATH, 0o600)  # an older token file may have been created world-readable
+    with os.fdopen(fd, "w", encoding="utf-8") as f:
+        f.write(creds.to_json())
 
 
 def get_api_key():
@@ -64,6 +84,8 @@ def get_data_api_service(api_key=None):
     try:
         service = build("youtube", "v3", developerKey=api_key)
         return service, None
+    except HttpError as e:  # a discovery fetch puts key=<API key> in the URI
+        return None, api_error(e)
     except Exception as e:
         return None, {"error": f"Failed to build YouTube service: {e}"}
 
@@ -99,8 +121,7 @@ def get_oauth_service(scopes=None):
     if creds and creds.expired and creds.refresh_token:
         try:
             creds.refresh(Request())
-            with open(TOKEN_PATH, "w") as f:
-                f.write(creds.to_json())
+            _write_token(creds)
         except Exception:
             creds = None
 
@@ -120,8 +141,7 @@ def get_oauth_service(scopes=None):
                 str(CLIENT_SECRETS_PATH), scopes
             )
             creds = flow.run_local_server(port=0)
-            with open(TOKEN_PATH, "w") as f:
-                f.write(creds.to_json())
+            _write_token(creds)
         except Exception as e:
             return None, {"error": f"OAuth flow failed: {e}"}
 

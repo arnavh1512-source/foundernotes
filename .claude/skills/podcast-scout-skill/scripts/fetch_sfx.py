@@ -16,6 +16,7 @@ import json
 import math
 import os
 import re
+import socket
 import sys
 import tempfile
 import time
@@ -40,24 +41,36 @@ def safe_url(url):
     if host in {"localhost", "localhost.localdomain"} or host.endswith((".local", ".internal")):
         return False
     try:
-        address = ipaddress.ip_address(host)
-        if not address.is_global:
-            return False
+        return ipaddress.ip_address(host).is_global
     except ValueError:
         pass
-    return True
+    if re.fullmatch(r"0x[0-9a-f]*|[0-9]+", host.rsplit(".", 1)[-1]):
+        return False  # integer, hex or short IPv4 forms (2130706433, 0x7f.0.0.1, 127.1); no real TLD is numeric
+    return resolves_public(host)
+
+
+def resolves_public(host):
+    """True only when every address the name resolves to is public.
+    ponytail: checked before connecting, so DNS rebinding between this lookup and the connect is not
+    covered; pin the resolved address on the connection if that threat matters."""
+    try:
+        infos = socket.getaddrinfo(host, 443, proto=socket.IPPROTO_TCP)
+        addresses = {info[4][0].split("%")[0] for info in infos}
+        return bool(addresses) and all(ipaddress.ip_address(a).is_global for a in addresses)
+    except (OSError, UnicodeError, ValueError):
+        return False
 
 
 class SafeRedirects(urllib.request.HTTPRedirectHandler):
     def redirect_request(self, req, fp, code, msg, headers, newurl):
         if not safe_url(newurl):
-            raise ValueError("Refusing unsafe audio URL redirect")
+            raise ValueError("Refusing unsafe media URL redirect")
         return super().redirect_request(req, fp, code, msg, headers, newurl)
 
 
 def open_safe(url, timeout=30):
     if not safe_url(url):
-        raise ValueError("Refusing unsafe/non-HTTPS audio URL")
+        raise ValueError("Refusing unsafe/non-HTTPS media URL")
     opener = urllib.request.build_opener(SafeRedirects())
     return opener.open(urllib.request.Request(url, headers={"User-Agent": "FounderNotes/1.0"}), timeout=timeout)
 
