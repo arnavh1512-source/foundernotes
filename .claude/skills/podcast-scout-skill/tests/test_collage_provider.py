@@ -74,6 +74,17 @@ class StatusTests(unittest.TestCase):
 
 
 class ClientTests(unittest.TestCase):
+    def test_api_key_is_not_forwarded_on_redirect(self):
+        seen = []
+        def fake_open(req, timeout=0):
+            seen.append(req)
+            return io.BytesIO(b'{"ok": true}')
+        with patch.dict(os.environ, ENV), patch.object(muapi_client.urllib.request, "urlopen", side_effect=fake_open):
+            muapi_client._post("/x", {"a": 1})
+        req = seen[0]
+        self.assertEqual(req.get_header("X-api-key"), "test-key-not-real")
+        self.assertNotIn("X-api-key", req.headers)   # only unredirected headers are dropped on redirect
+
     def test_missing_key_fails_unless_proxy_flag(self):
         with patch.dict(os.environ, {}, clear=True), patch.object(muapi_client, "_load_env"):
             with self.assertRaisesRegex(muapi_client.MuapiError, "MUAPI_API_KEY"):

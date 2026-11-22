@@ -8,7 +8,7 @@ app's studio client: POST /api/v1/<model>, then poll /api/v1/predictions/<id>/re
 
 Without --generate it only prints the plan (no network). --max-jobs (default 20) caps a batch.
 Key: MUAPI_KEY env var, or a network secret saved for api.muapi.ai (header x-api-key) that the
-session proxy injects — then any placeholder key works. Generations cost money on MuAPI.
+session proxy injects (then also set MUAPI_KEY_PROXY=1). Generations cost money on MuAPI.
 
 Studio rules (see channel-profile.md): use it for environment plates, textures, thumbnails and
 b-roll stills. Never real people or their likeness, never logos/brands/copyrighted characters,
@@ -41,7 +41,8 @@ def safe_model(model):
 
 def _req(method, url, key, body=None, timeout=60):
     data = json.dumps(body).encode() if body is not None else None
-    r = urllib.request.Request(url, data=data, method=method, headers=dict(UA, **{"x-api-key": key}))
+    r = urllib.request.Request(url, data=data, method=method, headers=dict(UA))
+    r.add_unredirected_header("x-api-key", key)      # never forwarded if the API redirects elsewhere
     try:
         with urllib.request.urlopen(r, timeout=timeout) as resp:
             return json.load(resp)
@@ -186,7 +187,9 @@ def main(argv=None):
     if not a.generate:
         print("dry run: nothing sent. Add --generate to submit (spends MuAPI credit).")
         return 0
-    key = os.environ.get("MUAPI_KEY") or "proxy-injected"
+    key = os.environ.get("MUAPI_KEY") or ("proxy-injected" if os.environ.get("MUAPI_KEY_PROXY") == "1" else "")
+    if not key:
+        raise SystemExit("gen_media: set MUAPI_KEY, or MUAPI_KEY_PROXY=1 when a session proxy injects the key.")
     bal = balance(key)
     if bal <= 0:
         raise SystemExit("gen_media: MuAPI balance is $0 — generations would return placeholder samples. Top up at muapi.ai first.")

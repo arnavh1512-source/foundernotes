@@ -7,6 +7,7 @@ import json
 import os
 import subprocess
 import time
+import urllib.request
 
 import paid
 from provider import get_provider
@@ -36,6 +37,41 @@ def nearest_named_aspect(w, h):
 def extract_audio(src, dest):
     subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", src, "-vn",
                     "-acodec", "libmp3lame", "-q:a", "2", dest], check=True)
+
+
+def find_words(obj):
+    """First list of word timings anywhere in an ASR result: dicts with start/end and word or text.
+    The MuAPI whisper result shape is not documented here, so search instead of assuming one path."""
+    if isinstance(obj, dict):
+        for value in obj.values():
+            found = find_words(value)
+            if found:
+                return found
+    elif isinstance(obj, list):
+        items = [w for w in obj if isinstance(w, dict) and "start" in w and "end" in w
+                 and isinstance(w.get("word", w.get("text")), str)]
+        if items and len(items) == len(obj):
+            try:
+                return [{"text": str(w.get("word", w.get("text"))).strip(), "start": float(w["start"]),
+                         "end": float(w["end"])} for w in items if str(w.get("word", w.get("text"))).strip()]
+            except (TypeError, ValueError):
+                return []
+        for value in obj:
+            found = find_words(value)
+            if found:
+                return found
+    return []
+
+
+def fetch_json(url):
+    """Read a hosted JSON result over https; anything else gives None."""
+    if not (isinstance(url, str) and url.startswith("https://")):
+        return None
+    try:
+        with urllib.request.urlopen(url, timeout=60) as response:
+            return json.loads(response.read(16 * 1024 * 1024))
+    except (OSError, ValueError):
+        return None
 
 
 def segment_words(words, max_dur=MAX_BEAT_DUR, min_dur=MIN_BEAT_DUR, pause_gap=PAUSE_GAP_S):
@@ -101,8 +137,9 @@ def run(project_dir, src_path, language="en", keyterms=None, max_beat_dur=MAX_BE
                          f"(last error: {status.get('error')}); no beats.json written.")
     if status["status"] == "failed":
         raise SystemExit(f"ASR failed: {status['error']}; no beats.json written.")
-    out_data = status.get("output") or {}
-    words = out_data.get("words", []) if isinstance(out_data, dict) else []
+    words = find_words(status.get("raw")) or find_words(status.get("output"))
+    if not words and isinstance(status.get("output"), str):
+        words = find_words(fetch_json(status["output"]))   # the result may be a hosted JSON transcript
     if not words:
         raise SystemExit(f"ASR job {job_id} returned no word timings; no beats.json written.")
     beats = segment_words(words, max_dur=max_beat_dur)

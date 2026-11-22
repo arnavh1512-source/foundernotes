@@ -115,7 +115,7 @@ Optional multi-platform research and transcript adapter, rather than a drop-in b
 ## Generative images and clips: Open Generative AI / MuAPI (`scripts/gen_media.py`)
 Open Generative AI (github.com/Anil-matcha/Open-Generative-AI, MIT) is a studio app for MuAPI's model hub,
 which offers 200+ image, video, audio and lip-sync models (Flux, Qwen-Image, Z-Image, Kling, Veo, Wan …).
-We use the same API it uses, from the command line: `gen_media.py`, either with `--model --prompt --aspect --out` or with `--batch plates.json`.
+We use the same API it uses, from the command line: `gen_media.py`, either with `--model --prompt --aspect --out` or with `--batch plates.json`. Without `--generate` it only prints the plan and sends nothing; `--generate` spends MuAPI credit, and `--max-jobs` (default 20) caps a batch. With a proxy-injected key, also set `MUAPI_KEY_PROXY=1`.
 
 **Access.** The tool needs a MuAPI key, saved as a network secret for `api.muapi.ai` (header `x-api-key`).
 Generations are paid.

@@ -60,6 +60,15 @@ def _headers(json_body: bool = True) -> dict:
     return h
 
 
+def _keyed_request(url, *, data=None, method=None, json_body=True):
+    """A Request whose API key is an unredirected header: urllib copies normal headers to a redirect target."""
+    headers = _headers(json_body)
+    req = urllib.request.Request(url, data=data, method=method,
+                                 headers={k: v for k, v in headers.items() if k != "x-api-key"})
+    req.add_unredirected_header("x-api-key", headers["x-api-key"])
+    return req
+
+
 def map_aspect_ratio_to_size(aspect_ratio: str, resolution: str = "1k") -> tuple[int, int]:
     mapping = {
         "16:9": (1280, 720) if resolution == "720p" else (1920, 1080),
@@ -73,12 +82,7 @@ def map_aspect_ratio_to_size(aspect_ratio: str, resolution: str = "1k") -> tuple
 
 def _post(endpoint: str, payload: dict, timeout: int = 60) -> dict:
     url = f"{_base()}/{endpoint.lstrip('/')}"
-    req = urllib.request.Request(
-        url,
-        data=json.dumps(payload).encode(),
-        headers=_headers(),
-        method="POST"
-    )
+    req = _keyed_request(url, data=json.dumps(payload).encode(), method="POST")
     try:
         with urllib.request.urlopen(req, timeout=timeout) as r:
             return json.load(r)
@@ -93,7 +97,7 @@ def _get(endpoint: str, timeout: int = 60, retries: int = 3) -> dict:
     last = None
     for i in range(retries):
         try:
-            req = urllib.request.Request(url, headers=_headers(json_body=False))
+            req = _keyed_request(url, json_body=False)
             with urllib.request.urlopen(req, timeout=timeout) as r:
                 return json.load(r)
         except urllib.error.HTTPError as e:

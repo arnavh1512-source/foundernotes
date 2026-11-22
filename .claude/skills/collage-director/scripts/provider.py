@@ -71,7 +71,7 @@ class MuapiProvider(Provider):
         status = (res.get("status") or (res.get("data") or {}).get("status") or "").lower()
         if status in ("completed", "success", "succeeded"):
             url = muapi_client.extract_url(res)
-            return {"status": "completed", "output": url, "error": None}
+            return {"status": "completed", "output": url, "error": None, "raw": res}
         if status in ("failed", "cancelled"):
             err = res.get("error") or (res.get("data") or {}).get("error") or "Job failed"
             return {"status": "failed", "output": None, "error": str(err)}

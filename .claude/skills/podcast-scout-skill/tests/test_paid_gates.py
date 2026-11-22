@@ -156,5 +156,19 @@ class AsrTests(unittest.TestCase):
         self.assertFalse((self.dir / "beats.json").exists())
 
 
+class AsrWordSearchTests(unittest.TestCase):
+    def test_words_found_in_nested_result(self):
+        raw = {"data": {"outputs": [{"segments": [{"words": [
+            {"word": " Hello", "start": 0.0, "end": 0.4}, {"word": "there.", "start": 0.4, "end": 0.9}]}]}]}}
+        self.assertEqual(asr_beats.find_words(raw),
+                         [{"text": "Hello", "start": 0.0, "end": 0.4}, {"text": "there.", "start": 0.4, "end": 0.9}])
+
+    def test_no_words_in_plain_url_result(self):
+        self.assertEqual(asr_beats.find_words({"status": "completed", "outputs": ["https://x.invalid/a.json"]}), [])
+
+    def test_hosted_result_must_be_https(self):
+        self.assertIsNone(asr_beats.fetch_json("http://x.invalid/a.json"))
+
+
 if __name__ == "__main__":
     unittest.main()
