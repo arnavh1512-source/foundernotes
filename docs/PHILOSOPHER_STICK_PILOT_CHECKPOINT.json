@@ -1,6 +1,6 @@
 {
-  "code_commit": "71c00b6f44fe5d2176e2f8ff3eaab2b40570d63b",
-  "workflow_run": 45069005485,
+  "code_commit": "81f913082ccd0e59412551875bc7ee48a0ce84b6",
+  "workflow_run": 45074703082,
   "previous_pr": {
     "number": 12,
     "observed_state": "merged",
@@ -8,14 +8,14 @@
   },
   "continuation_pr": 13,
   "previous_picture": {
-    "artifact": 14770182081,
-    "sha256": "6d28d96fd9eaaf41d64f5e5d0394d9dd741955ab76af4fcc935c1e238f634a2b",
+    "artifact": 14771734903,
+    "sha256": "0a8cdacc9358fbbf10663511073f77e265f7c9abea5ae0ca57859435a306048f",
     "duration_s": 64.5,
     "width": 1920,
     "height": 1080,
     "fps": 30,
     "frames": 1935,
-    "review_scope": "Nine exact V22 frames show the Youth looking toward the locked gate, the steps and the arch during successive beats. The empty lock insert shows no stray face marks. Four captioned frames show visual separation from the action. The 27 motion tests pass, including limb reach and grip checks. Full-speed acting, actual listening and independent interpretation remain pending."
+    "review_scope": "Nine exact V23 frames show the invitation resolving while the Youth leans in, followed by the cut into the separate workroom. Four captioned frames show visual separation from the action. The 27 motion tests pass, including limb reach and grip checks. Full-speed acting, actual listening and independent interpretation remain pending."
   },
   "private_audio": {
     "library_id": "libfile_c99d2bfdf94c819198bad6d6fd27be65",
@@ -53,24 +53,24 @@
   "full_production_approved": false,
   "workflow_conclusion": "success",
   "latest_picture": {
-    "artifact": 14771734903,
-    "sha256": "0a8cdacc9358fbbf10663511073f77e265f7c9abea5ae0ca57859435a306048f",
+    "artifact": 14774768085,
+    "sha256": "dfef43e5948e21df657a083cbb51492e80a3ecfac116342d132316a0f14633e8",
     "duration_s": 64.5,
     "width": 1920,
     "height": 1080,
     "fps": 30,
     "frames": 1935,
-    "review_scope": "Nine exact V23 frames show the invitation resolving while the Youth leans in, followed by the cut into the separate workroom. Four captioned frames show visual separation from the action. The 27 motion tests pass, including limb reach and grip checks. Full-speed acting, actual listening and independent interpretation remain pending."
+    "review_scope": "Nine exact V24 frames show the gradual pullback from the phone before delivery and tighter framing around the failed catch; the dropped papers and both feet are visible in the last sampled frame. Four captioned frames show visual separation from the action. The 27 motion tests pass, including limb reach and grip checks. Full-speed acting, actual listening and independent interpretation remain pending."
   },
   "latest_private_assembly": {
-    "name": "internal-pilot-v23.mp4",
-    "sha256": "98b198898f41f057740bff4ba7680ec7f680680fc64fe14af53766141e909d18",
+    "name": "internal-pilot-v24.mp4",
+    "sha256": "13242b9509dec629cc5fbbed435a14a3591fde9cffc38d93fd0795c8333f0794",
     "duration_s": 64.5,
     "video_frames": 1935,
     "audio_stream_duration_s": 64.482,
     "review_scope": "Full decode and four selected captioned frames. Timing, actual sound and independent review pending.",
     "decoded_audio_sha256": "d6ea2c401862c70b5b48597ad0883fbbf30102a83d28c1ac7c889e6d009334da",
-    "audio_verification": "V22 AAC copied unchanged with identical decoded hash."
+    "audio_verification": "V23 AAC copied unchanged with identical decoded hash."
   },
   "tests": {
     "node_tests_passed": 27,
@@ -80,13 +80,13 @@
   "next_priority": "Preserve coherent seated chair/pelvis/thigh/floor support, mouth-height raised cup with unchanged desk rest/contact, palm separation and revised conversation eye line alongside all prior pilot work. Judge the complete normal-speed dialogue, cup contact sound, caption/speaker boundaries and independent viewer comprehension before further stylistic changes or approval. Historical crop-only claims remain pending revalidation; do not alter the narrator or use technical passes as creative approval.",
   "private_continuation_bundle": {
     "library_file_id": "libfile_2a2569310a8481919a251bf91621ecb0",
-    "file_id": "file_0000000092908212b80bd97fd502f7d6",
+    "file_id": "file_0000000030d08210bf445bb31797880a",
     "name": "FounderNotes-Internal-Pilot-Checkpoint-eac2e46.zip",
-    "version": 16,
-    "contents": "V23 picture and private assembly, unchanged dialogue, provisional captions, study-handoff frames and probe. Earlier versions retain V22 and V21 evidence.",
+    "version": 17,
+    "contents": "V24 picture and private assembly, unchanged dialogue, provisional captions, workroom-focus frames and probe. Earlier versions retain V23 and V22 evidence.",
     "delivery_status": "Internal, not approved."
   },
-  "previous_code_commit": "9f58f4a652c4d912063b48b9393c51e1103380bb",
+  "previous_code_commit": "71c00b6f44fe5d2176e2f8ff3eaab2b40570d63b",
   "intermediate_picture": {
     "code_commit": "a94242892d0afa528508bc69d03ed409ca47af51",
     "artifact": 14367580227,
@@ -181,8 +181,8 @@
     "next": "Review whether the movement reads as turn-taking at normal speed against the original dialogue. Exact listening, caption boundaries, cup sync and independent comprehension remain pending."
   },
   "workroom_focus_candidate": {
-    "status": "Source candidate. V23 remains the last verified assembly.",
+    "status": "V24 selected-frame verification complete",
     "evidence": "V23 frames 1034 and 1035 jump from close to wide while the actor still holds the phone. Later wide frames leave the missed catch and dropped papers small.",
-    "next": "Check exact CI frames either side of 34.5 and across 35.55\u201341. Ensure incoming hand, paper catch, floor and phone are accounted for, and verify normal-speed motion and sound later."
+    "next": "Review whether the paper delivery and failed catch remain clear at normal speed against the original dialogue. Exact listening, caption boundaries, cup sync and independent comprehension remain pending."
   }
 }
