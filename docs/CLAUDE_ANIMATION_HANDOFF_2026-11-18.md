@@ -43,3 +43,5 @@ Current private checkpoint is V23, version 16. Resume using the exact identities
 Current private checkpoint is V24, version 17. Resume using the exact identities in the JSON.
 
 Current private checkpoint is V25, version 18. Resume using the exact identities in the JSON.
+
+Current private checkpoint is V26, version 19. Resume using the exact identities in the JSON.

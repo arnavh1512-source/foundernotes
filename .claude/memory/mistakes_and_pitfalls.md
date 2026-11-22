@@ -398,4 +398,4 @@ The initial entries preserve documented observations from the 2026-11-11 study a
 - Evidence: Exact V25 frames 1098, 1121 and 1125 show the shoulder end fully inside the frame with no attached body
 - Cause / rationale: A free-standing path remained after the workroom was widened
 - Correction / recipe: Draw a subordinate supporting figure attached to the existing palm so the new obligation has a visible source
-- Verification: Baseline confirmed in encoded samples; candidate render pending.
+- Verification: Nine exact V26 frames show the palm connected to the supporting figure, withdrawal before the missed catch and the two-sheet aftermath. Support foot placement of the secondary actor during entry and withdrawal remains a source-level follow-up. Four captioned frames show visual separation from the action. The 27 motion tests pass, including limb reach and grip checks. Full-speed acting, actual listening and independent interpretation remain pending.
