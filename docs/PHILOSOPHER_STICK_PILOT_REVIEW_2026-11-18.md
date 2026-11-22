@@ -187,3 +187,7 @@ Nine exact V17 samples show the pen as a changing diagonal that becomes a desk l
 ### Exact V18 verification
 
 Actions 45040309749 passed, source `fa77c8a80eb535ee4dbfb28e18ca045cf9558ff0`, picture artifact 14761930860. Nine exact V18 samples show a consistent pen shape that remains on the desk, an unlit phone during the miss, and clear sight of the papers on the floor. Four captioned frames show visual separation from the action. Gaze timing is supported by source and selected expressions. Full-speed acting, actual listening and independent interpretation remain pending. Full assembly decode and unchanged decoded audio were verified. The current benchmark endpoint lookups yielded page shells or no decoded media. No new named-reference audiovisual, owner or independent approval.
+
+## Cup release and conversational handoff candidate
+
+Exact V18 frames 1260, 1335 and 1355 show the wrist stays fixed to the handle long after the cup reaches the table, including through the later reply. The candidate holds grip through contact, retracts the cup hand to rest before the Youth cut, and passes both eyelines from the prop back to the conversation. All 27 geometry tests passed. Exact candidate media and audiovisual pacing remain pending.

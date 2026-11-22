@@ -154,5 +154,10 @@
     "status": "V18 selected-frame verification complete",
     "next": "Check the normal-speed pen set-down, gaze handoff, phone return and failed catch alongside the original dialogue. Exact listening, caption boundaries, cup sync and independent comprehension remain pending.",
     "evidence": "Exact V17 prop samples at frames 900, 963, 987, 993, 1008, 1040, 1098, 1120 and 1170. Pen length and contact vary, and the incoming paper gaze starts before delivery. The phone screen competes after set-down."
+  },
+  "cup_release_candidate": {
+    "status": "Source candidate, V18 remains latest verified assembly.",
+    "evidence": "V18 frames 1260, 1335 and 1355 show the grounded cup still attached to the holding wrist.",
+    "next": "Review exact encoded 41\u201346-second sequence. Check actual cup contact, release and rest, then gaze handoff and explanation silhouette. Preserve the approved take and provisional caption timing."
   }
 }

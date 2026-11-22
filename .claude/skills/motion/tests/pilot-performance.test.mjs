@@ -25,7 +25,8 @@ test('new performances preserve limbs, planted support and the actual cup handle
     assert.ok(Math.abs(distance(a.elbow,a.wrist)-lengths[1])<1e-6);
    }
   }
-  if(['study','cup'].includes(shot.name))assert.ok(distance(actors[1].arms[0].wrist,pilotCupAt(t).grip)<1e-6);
+  if(shot.name==='study'||(shot.name==='cup'&&t<=42.08))assert.ok(distance(actors[1].arms[0].wrist,pilotCupAt(t).grip)<1e-6);
+  if(shot.name==='cup'&&t>=42.54)assert.ok(distance(actors[1].arms[0].wrist,pilotCupAt(t).grip)>60,'wrist releases the handle after set-down');
  }
 });
 

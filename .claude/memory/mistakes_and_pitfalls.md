@@ -335,3 +335,11 @@ The initial entries preserve documented observations from the 2026-11-11 study a
 - Cause / rationale: Pen was drawn between independent wrist and paper points
 - Correction / recipe: Keep a constant pen length and complete the set-down before the hand reaches the phone
 - Verification: Nine exact V18 samples show a consistent pen shape that remains on the desk, an unlit phone during the miss, and clear sight of the papers on the floor. Four captioned frames show visual separation from the action. Gaze timing is supported by source and selected expressions. Full-speed acting, actual listening and independent interpretation remain pending.
+
+### philosopher-stick-pilot — Cup set-down never released the grip
+
+- Recorded (UTC): 2026-11-22T16:53:13+00:00
+- Evidence: Exact V18 encoded frames 1260, 1335 and 1355
+- Cause / rationale: Holding wrist always used the cup grip target
+- Correction / recipe: Preserve contact until the cup is supported, then release and check the prop-to-speaker gaze handoff
+- Verification: Baseline verified in encoded stills. Candidate geometry passed. Exact candidate review pending.

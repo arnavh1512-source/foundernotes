@@ -70,10 +70,11 @@ export function pilotActorAt(time,role,mode='study'){
    p.intent=invite>.2?'invite':reply>.1?'reply':'listen';
   }
   if(time>=41&&time<46){
-   const respond=progress(time,44.5,.65);
+   const release=progress(time,42.08,.46),respond=progress(time,44.5,.65);
+   p.hands[0]=pilotBlend(p.hands[0],[1285,667],release);
    p.chest[0]-=12*respond;p.head[0]-=18*respond;p.head[1]+=5*respond;
    p.hands[1]=pilotBlend(p.hands[1],[1145,510],respond);p.hands[1][1]-=55*Math.sin(Math.PI*respond);
-   p.gaze=time<42.2?pilotCupAt(time).center:[710,385];
+   p.gaze=pilotBlend(pilotCupAt(time).center,[710,385],progress(time,42.18,.48));
    if(respond>.2)p.intent='explain';
   }
  }else if(mode==='burden'){
@@ -122,7 +123,7 @@ export function pilotActorAt(time,role,mode='study'){
    const check=progress(time,44.2,.8);p.hands[1]=pilotBlend(p.hands[1],[745,590],check);
    p.intent=recoil>.2?(check>.5?'skeptical':'defensive'):'listen';
   }
-  p.gaze=[1290,470];
+  p.gaze=time>=41&&time<46?pilotBlend(pilotCupAt(time).center,[1290,470],progress(time,42.35,.52)):[1290,470];
  }
  const normalSide=p.facing===1?-1:1;
  const shoulders=[-5,5].map(d=>[p.chest[0]+d,p.chest[1]]);
