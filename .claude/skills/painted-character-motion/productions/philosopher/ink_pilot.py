@@ -472,7 +472,7 @@ def self_check():
 
 def render(name,start=0,end=DURATION,treatment='story'):
     OUT.mkdir(parents=True,exist_ok=True);picture=OUT/(name+'-picture.mp4')
-    cmd=['ffmpeg','-y','-v','error','-f','rawvideo','-pix_fmt','rgb24','-s',f'{W}x{H}','-r',str(FPS),'-i','-','-an','-c:v','libx264','-threads','4','-preset','veryfast','-crf','18','-pix_fmt','yuv420p',str(picture)]
+    cmd=['ffmpeg','-y','-v','error','-f','rawvideo','-pix_fmt','rgb24','-s',f'{W}x{H}','-r',str(FPS),'-i','-','-an','-vf','scale=out_color_matrix=bt709:out_range=tv,format=yuv420p','-c:v','libx264','-threads','4','-preset','veryfast','-crf','18','-pix_fmt','yuv420p','-colorspace','bt709','-color_primaries','bt709','-color_trc','bt709','-color_range','tv',str(picture)]
     with subprocess.Popen(cmd,stdin=subprocess.PIPE) as p:
         try:
             count=round((end-start)*FPS)

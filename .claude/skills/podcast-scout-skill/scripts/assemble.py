@@ -36,6 +36,11 @@ from pathlib import Path
 from lint_scenes import read_scene_list   # the one scene-list parser, shared with the linter
 
 FORMATS = {"landscape": (1920, 1080), "vertical": (1080, 1920), "square": (1080, 1080)}
+# HD colour: convert with the BT.709 matrix and tag it. swscale's default is BT.601, and players read untagged HD
+# as BT.709, so brand colours shifted. setparams tags the frames, which newer ffmpeg prefers over the CLI flags.
+TO_709 = "scale=iw:ih:out_color_matrix=bt709:out_range=tv"
+TAG_709 = "setparams=color_primaries=bt709:color_trc=bt709:colorspace=bt709:range=tv"
+COLOR_ARGS = ["-colorspace", "bt709", "-color_primaries", "bt709", "-color_trc", "bt709", "-color_range", "tv"]
 
 
 def die(msg):
@@ -62,7 +67,8 @@ def has_audio(path) -> bool:
 def conformant(path, width, height, fps) -> bool:
     """True when the clip's video is already what normalisation would produce, so it can be stream-copied."""
     out = subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries",
-                          "stream=codec_name,width,height,pix_fmt,r_frame_rate,avg_frame_rate,sample_aspect_ratio",
+                          "stream=codec_name,width,height,pix_fmt,r_frame_rate,avg_frame_rate,sample_aspect_ratio,"
+                          "color_space",
                           "-of", "json", str(path)], capture_output=True, text=True).stdout
     try:
         s = json.loads(out)["streams"][0]
@@ -70,7 +76,8 @@ def conformant(path, width, height, fps) -> bool:
         return False
     return (s.get("codec_name") == "h264" and s.get("width") == width and s.get("height") == height
             and s.get("pix_fmt") == "yuv420p" and s.get("r_frame_rate") == s.get("avg_frame_rate") == f"{fps}/1"
-            and s.get("sample_aspect_ratio", "1:1") in ("1:1", "0:1"))
+            and s.get("sample_aspect_ratio", "1:1") in ("1:1", "0:1")
+            and s.get("color_space") == "bt709")    # untagged clips are re-encoded so the colour gets converted
 
 
 def filter_arg(value) -> str:
@@ -165,13 +172,13 @@ def main(argv=None):
             if a.fill == "blur":   # mismatched aspect: blurred, darkened copy of the clip behind it (no black bars)
                 vf = (f"split[bgs][fgs];[bgs]scale={W}:{H}:force_original_aspect_ratio=increase,crop={W}:{H},"
                       f"boxblur=26:2,eq=brightness=-0.06[bg];[fgs]scale={W}:{H}:force_original_aspect_ratio=decrease[fg];"
-                      f"[bg][fg]overlay=(W-w)/2:(H-h)/2,fps={a.fps},format=yuv420p,setsar=1")
+                      f"[bg][fg]overlay=(W-w)/2:(H-h)/2,fps={a.fps},{TO_709},format=yuv420p,setsar=1,{TAG_709}")
             else:
                 vf = (f"scale={W}:{H}:force_original_aspect_ratio=decrease,pad={W}:{H}:(ow-iw)/2:(oh-ih)/2:color=black,"
-                      f"fps={a.fps},format=yuv420p,setsar=1")
+                      f"fps={a.fps},{TO_709},format=yuv420p,setsar=1,{TAG_709}")
             # already H.264 WxH@fps yuv420p: copy instead of adding another lossy generation
             venc = (["-c:v", "copy", "-video_track_timescale", str(tscale)] if conformant(s, W, H, a.fps)
-                    else ["-vf", vf, "-c:v", "libx264", "-preset", "medium", "-crf", "16"])
+                    else ["-vf", vf, "-c:v", "libx264", "-preset", "medium", "-crf", "16", *COLOR_ARGS])
             args = ["-i", s, *venc]
             if a.keep_clip_audio:
                 if has_audio(s):
@@ -200,7 +207,7 @@ def main(argv=None):
                     alast = f"[ax{i}]"
             amap = ["-map", alast, "-c:a", "aac", "-ar", "48000"] if a.keep_clip_audio else []
             ff(inputs + ["-filter_complex", ";".join(chain), "-map", last, *amap, "-c:v", "libx264", "-crf", "16",
-                         "-pix_fmt", "yuv420p", str(picture)])
+                         "-pix_fmt", "yuv420p", *COLOR_ARGS, str(picture)])
         else:
             lst = td / "list.txt"   # concat-demuxer quoting: ' becomes '\''
             lst.write_text("".join("file '" + n.as_posix().replace("'", "'\\''") + "'\n" for n in norm),
@@ -253,7 +260,7 @@ def main(argv=None):
             vchain.append(sub + ":force_style=" + filter_arg(style))
         vmap = "0:v"
         if vchain:
-            fil += ";[0:v]" + ",".join(vchain) + "[vout]"
+            fil += ";[0:v]" + ",".join(vchain + [TAG_709]) + "[vout]"
             vmap = "[vout]"
 
         args = inputs[:]
@@ -266,7 +273,7 @@ def main(argv=None):
             args += ["-map", f"{cap_in}:s", "-c:s", "mov_text", "-metadata:s:s:0", "language=eng"]
         args += ["-c:v", "libx264" if vmap != "0:v" else "copy"]
         if vmap != "0:v":
-            args += ["-preset", "slow", "-crf", "18", "-pix_fmt", "yuv420p", "-profile:v", "high"]
+            args += ["-preset", "slow", "-crf", "18", "-pix_fmt", "yuv420p", "-profile:v", "high", *COLOR_ARGS]
         args += ["-c:a", "aac", "-b:a", "256k", "-ar", "48000", "-t", f"{final_d:.3f}",
                  "-movflags", "+faststart", str(out)]
         ff(args)

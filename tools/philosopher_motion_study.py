@@ -415,7 +415,7 @@ def main():
     if not ffmpeg: raise SystemExit('FFmpeg is required')
     duration=12 if args.style=='stick' else DURATION
     draw=stick_frame if args.style=='stick' else lambda t:frame(t,args.cut)
-    cmd=[ffmpeg,'-v','error','-f','rawvideo','-pix_fmt','rgb24','-s',f'{W}x{H}','-r',str(FPS),'-i','-','-an','-vf','scale=1280:720:flags=lanczos','-c:v','libx264','-preset','fast','-crf','19','-pix_fmt','yuv420p','-movflags','+faststart',str(args.out)]
+    cmd=[ffmpeg,'-v','error','-f','rawvideo','-pix_fmt','rgb24','-s',f'{W}x{H}','-r',str(FPS),'-i','-','-an','-vf','scale=1280:720:flags=lanczos:out_color_matrix=bt709:out_range=tv','-c:v','libx264','-preset','fast','-crf','19','-pix_fmt','yuv420p','-colorspace','bt709','-color_primaries','bt709','-color_trc','bt709','-color_range','tv','-movflags','+faststart',str(args.out)]
     if args.style=='stick':
         audio=args.out.with_suffix('.wav');write_foley(audio,duration)
         cmd[cmd.index('-an'):cmd.index('-an')+1]=['-i',str(audio),'-c:a','aac','-b:a','128k','-shortest']

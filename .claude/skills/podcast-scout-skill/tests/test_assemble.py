@@ -11,7 +11,8 @@ from pathlib import Path
 SCRIPTS = Path(__file__).resolve().parents[1] / "scripts"
 HAS_FF = bool(shutil.which("ffmpeg") and shutil.which("ffprobe"))
 FRAME = 1 / 30
-X264 = ("-c:v", "libx264", "-preset", "ultrafast", "-pix_fmt", "yuv420p")
+X264 = ("-c:v", "libx264", "-preset", "ultrafast", "-pix_fmt", "yuv420p",
+        "-colorspace", "bt709", "-color_primaries", "bt709", "-color_trc", "bt709")   # what render.mjs writes
 X264_TB90K = X264 + ("-video_track_timescale", "90000")   # conformant, but another muxer's timebase
 
 
@@ -29,7 +30,7 @@ def voice(path, seconds):
 
 def video_stream(path):
     out = subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries",
-                          "stream=width,height,r_frame_rate,duration", "-of", "json", str(path)],
+                          "stream=width,height,r_frame_rate,duration,color_space,color_primaries", "-of", "json", str(path)],
                          check=True, capture_output=True, text=True).stdout
     return json.loads(out)["streams"][0]
 
@@ -99,6 +100,7 @@ class AssembleTests(unittest.TestCase):
             held = video_stream(td / "held.mp4")
             self.assertAlmostEqual(float(held["duration"]), 2.6, delta=FRAME + 1e-3)   # narration + 0.1 s, as before
             self.assertEqual((held["width"], held["height"], held["r_frame_rate"]), (1920, 1080, "30/1"))
+            self.assertEqual((held.get("color_space"), held.get("color_primaries")), ("bt709", "bt709"))
 
 
 if __name__ == "__main__":
