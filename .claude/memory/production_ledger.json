@@ -88,6 +88,17 @@
       "owner_approved": false,
       "style_fingerprint": "Original64.5s stick dialogue; preparation/body/hand demand, shared-event gaze and head-leading duck/guarded peek/partial rise versus calm following; V10 work and existing audio preserved.",
       "recorded_at": "2026-11-18T01:57:48+00:00"
+    },
+    {
+      "type": "video",
+      "video_id": "philosopher-stick-pilot-seated-892b700",
+      "summary": "Coherent seated support and cup/invitation staging across the full dialogue pilot",
+      "evidence": "Sourcec9898a2833c5f6b3bd5d6d9b3861aa94fd0aa2a4, CI44228817475/artifact14394139231, exact hashes and16 picture/nine captioned intervals plus support/prop crops in checkpoint/review.",
+      "verification": "27 tests/bundled parse, full decode/probe, author selected encoded samples and unchanged decoded audio. No normal-speed audiovisual, independent or owner approval; full-production FAIL.",
+      "status": "needs_work",
+      "owner_approved": false,
+      "style_fingerprint": "Original64.5s stick dialogue; seated mentor forward thighs, shared chair/pelvis support, mouth-height cup and clear invitation/explanation; earlier work and original audio retained.",
+      "recorded_at": "2026-11-22T11:48:27+00:00"
     }
   ]
 }

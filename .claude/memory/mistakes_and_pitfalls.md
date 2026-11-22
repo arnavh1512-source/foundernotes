@@ -271,3 +271,43 @@ The initial entries preserve documented observations from the 2026-11-11 study a
 - Cause / rationale: review_frames.py passed validated x/y/w/h directly to FFmpeg crop, whose positional order is w/h/x/y. Existing integration test checked only file existence and byte size.
 - Correction / recipe: Translate the CLI crop to width/height/x/y before scaling. Keep input validation, preserve failed evidence, assert actual decoded crop aspect in the existing test and rerun meaningful own-render crops. Revalidate any older claim based only on a pre-fix crop; full-frame review is unaffected.
 - Verification: Regression reproduced before fix; both existing review-frame tests pass after correction. Exact V11 corrected Youth48.98/49.3/52.5/55.9 and mentor48.8/50/52/55.9 crops inspected. This fixes evidence extraction, not artistic approval.
+
+### philosopher-pilot-seated-support — The seated Philosopher used a split standing-like leg pose beside the chair
+
+- Recorded (UTC): 2026-11-18T02:52:25+00:00
+- Evidence: Actual V11 picture d3bad8769a5b3badb8daa73a6af452fb36a6504f188226fa4b19d67c5e51197e, sampled14.8/20.9/23.5/27.4/41.3/44.6/45.9 in review/seated-baseline/strip.jpg. Original hip1320/650, feet1240/830 and1400/830; knees1222.67/711.26 and1300.25/763.29.
+- Cause / rationale: Leg IK reach and floor contacts were checked, but thigh direction/seat height and a seated silhouette were not. One lower leg extended behind the body and chair.
+- Correction / recipe: Reblock the seated pelvis/chest/head and chair together, bring both feet forward on the same floor and preserve original limb and torso proportions. Adjust raised cup path for mouth height without moving its tabletop rest; retain exact handle contact and separate invitation/explanation from cup/steam. Rerender the full pilot and check framing, knees, gaze, cup/face and arm silhouettes.
+- Verification: Baseline selected-frame/source finding verified. Source892b7000ec0a9f1782741e83c23301eaa7d189dc passes24 tests and bundled parse. Exact sourcec9898a2833c5f6b3bd5d6d9b3861aa94fd0aa2a4, CI44228817475/artifact14394139231, picture SHA747ce4a268c6f82b42c748f57d35be597dd56f3fdb912bfeb2b7864c81ffcb18;16 study/cup picture/nine captioned samples plus final critical-transition samples, integrated overview and corrected support/prop crops inspected. Chair-supported forward-thigh silhouette, planted feet, revised cup height and palm separation are visible in those samples.27 tests/bundled parse and full decode/probe pass; decoded audio unchanged. Continuous audiovisual, independent and owner approval remain pending.
+
+### philosopher-pilot-seated-knee-fragment — The seated reblock exposed a knee fragment in the Youth close-up
+
+- Recorded (UTC): 2026-11-18T03:04:48+00:00
+- Evidence: V12 picture bcd7608b773e01b07b42f71023c1dfa8fff4fe5b8cf31728375a4c57f359b603, source892b7000ec0a9f1782741e83c23301eaa7d189dc, CI44226276203/artifact14392688090, actual18.4/19.6 full-frame samples.
+- Cause / rationale: Moving the knees forward crossed the old close-up right/bottom bounds; the earlier face-only exclusion test did not cover the new lower body.
+- Correction / recipe: Raise close-up camera center y510 to465 on the unchanged room axis and test the actual projected leg/toe segments against the viewport. Render the full pilot and inspect exact18.4/19.6 plus neighboring cuts.
+- Verification: Regression verified in the exact V12 encoded samples. Source b16006bbc4edeca880ad99b4e18fef3318e66320 passes26 tests; exact final render recheck pending.
+
+### philosopher-pilot-free-hand-cup-crossing — The invitation free hand passed through the held cup-handle region
+
+- Recorded (UTC): 2026-11-18T03:04:48+00:00
+- Evidence: V12 exact26.45/26.46/26.47 corrected crops inspected; free wrist-to-held-grip distances11.79/10.13/14.44 world pixels. Source892b7000ec0a9f1782741e83c23301eaa7d189dc, picture bcd7608b773e01b07b42f71023c1dfa8fff4fe5b8cf31728375a4c57f359b603.
+- Cause / rationale: The lower rest hand and revised target were joined by a straight path. Checking only the final palm/cup gap missed the intermediate apparent second grip.
+- Correction / recipe: Use an upward arc for both invitation and explanation, preserving endpoints, fixed bone lengths and the actual held-cup wrist. Check free hand/handle separation and elbow/head clearance throughout both motion intervals, then inspect final encoded transitions.
+- Verification: Regression verified in exact V12 crops and geometry; source b16006bbc4edeca880ad99b4e18fef3318e66320 passes26 tests. Exact sourcec9898a2833c5f6b3bd5d6d9b3861aa94fd0aa2a4, CI44228817475/artifact14394139231, picture SHA747ce4a268c6f82b42c748f57d35be597dd56f3fdb912bfeb2b7864c81ffcb18;16 study/cup picture/nine captioned samples plus final critical-transition samples, integrated overview and corrected support/prop crops inspected. Chair-supported forward-thigh silhouette, planted feet, revised cup height and palm separation are visible in those samples.27 tests/bundled parse and full decode/probe pass; decoded audio unchanged. Continuous audiovisual, independent and owner approval remain pending.
+
+### openmontage-cut-heuristic-scope — Automatic scene detection undercounted cuts in our similar-palette stick animation
+
+- Recorded (UTC): 2026-11-18T03:07:14+00:00
+- Evidence: Actual OpenMontage VideoAnalyzer standard run on V12 source892b7000ec0a9f1782741e83c23301eaa7d189dc Output artifacts/pilot-intermediate-v12/video_analysis_brief.json reports3 candidate scenes (0–56,56–58.6,58.6–64.5), while authored pilot shots include14.5/29/41/46 and additional room close-ups. Tool commit2e003e65fa99a0f329478a2c1cdcf26bc481933a.
+- Cause / rationale: Whole-frame FFmpeg content-change threshold is sensitive to palette/area changes; sparse stick motion and same-room camera cuts may not cross it. This is a detector scope limitation, not proof of absent animation.
+- Correction / recipe: Keep the actual source timeline and inspect exact cuts. Treat candidate counts, pacing labels, motion classes and default production-quality fields as unvalidated diagnostics; never add decorative motion or raise a creative score to satisfy them.
+- Verification: Observed in real local OpenMontage analysis. Actual extracted reference keyframes inspected separately; continuous audiovisual comparison and creative approval remain pending.
+
+### philosopher-pilot-offscreen-explanation — The explanation began outside the Youth close-up and exposed only a hand at the edge
+
+- Recorded (UTC): 2026-11-18T03:13:27+00:00
+- Evidence: Actual V14 sourceb16006bbc4edeca880ad99b4e18fef3318e66320, picture3037745a1321b455a112369e473f377862ffe1058c9249ddae58974bcc1cc70a, OpenMontage FrameSampler44.25/44.26/44.27 samples inspected. The same frames show a small knee fragment at the lower right.
+- Cause / rationale: Mentor respond began43.9 while the Youth camera held until44.5. The earlier camera fix covered the challenge close-up but not the later reaction close-up.
+- Correction / recipe: Begin respond on the existing44.5 return cut so the gesture is seen in context; raise both Youth close-ups to exclude forward knees. Keep full handle/face clearance throughout the new44.5–45.15 arc and inspect the exact close-up/return boundary.
+- Verification: V14 selected-frame/source finding verified. Final sourcec9898a2833c5f6b3bd5d6d9b3861aa94fd0aa2a4 passes27 tests/bundled parse. Exact sourcec9898a2833c5f6b3bd5d6d9b3861aa94fd0aa2a4, CI44228817475/artifact14394139231, picture SHA747ce4a268c6f82b42c748f57d35be597dd56f3fdb912bfeb2b7864c81ffcb18;16 study/cup picture/nine captioned samples plus final critical-transition samples, integrated overview and corrected support/prop crops inspected. Chair-supported forward-thigh silhouette, planted feet, revised cup height and palm separation are visible in those samples.27 tests/bundled parse and full decode/probe pass; decoded audio unchanged. Continuous audiovisual, independent and owner approval remain pending.
