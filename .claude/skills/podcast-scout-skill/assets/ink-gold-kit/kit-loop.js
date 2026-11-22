@@ -158,6 +158,8 @@
  *                    Drive the WHOLE scene from the returned t so everything freezes together on contact.
  * K.keys(t, keys)    pose keys [[time, poseObj, mode]] with modes "snap" (hold, jump on the key),
  *                    "out" (fast in, settle), "in" (slow start), "line"; returns the interpolated pose.
+ *                    Keys are sparse: a field keeps its last keyed value until a later key sets it, so
+ *                    nothing pops at a key. To send a part back to rest, key it (e.g. { elB: K.POSE.stand.elB }).
  * Recipe that sells an action: wind-up the opposite way (≈25 % of the move) → a big silhouette change on
  * the release frame ("snap") → freeze on contact (heavier = longer, 0.03–0.2 s) with a small shake →
  * the target reacts → overshooting follow-through → recovery to rest.
@@ -179,16 +181,17 @@
   };
   const EASE = { out: (x) => 1 - Math.pow(1 - x, 4), in: (x) => x * x * x, line: (x) => x };
   K.keys = (t, keys) => {
-    if (t <= keys[0][0]) return Object.assign({}, keys[0][1]);
+    let p0 = Object.assign({}, keys[0][1]);       // the resolved pose at the previous key
+    if (t <= keys[0][0]) return p0;
     for (let i = 1; i < keys.length; i++) {
-      const [t1, p1, mode] = keys[i], [t0, p0] = keys[i - 1];
+      const [t1, p, mode] = keys[i], t0 = keys[i - 1][0], p1 = Object.assign({}, p0, p);
       if (t < t1) {
-        if (mode === "snap") return Object.assign({}, p0);
-        const e = (EASE[mode] || K.eio)((t - t0) / (t1 - t0));
-        return K.mix(Object.assign({}, K.POSE.stand, p0), p1, e);
+        if (mode === "snap") return p0;
+        return K.mix(p0, p1, (EASE[mode] || K.eio)((t - t0) / (t1 - t0)));
       }
+      p0 = p1;
     }
-    return Object.assign({}, keys[keys.length - 1][1]);
+    return p0;
   };
 })();
 
@@ -414,6 +417,7 @@
  * K.word(S, "nothing", { seg: "s10-nothing", n: 0, edge: "start" }) -> scene-local time of that spoken word.
  * Reads window.WORDS (film/words.js, rebuilt by make_words.py after every re-voice) and window.TIMING.
  * Use it for every punch, stamp, hit and reveal that should land ON a word. Never hard-code seconds for those.
+ * A word that is not found throws (a re-voice changed the script), unless the call gives { fallback: seconds }.
  */
 (function () {
   const K = window.K;
@@ -430,7 +434,9 @@
         }
       }
     }
-    console.warn("K.word: not found", word, name);
-    return (o.fallback ?? 0);
+    const where = (o.seg ? `segment ${o.seg}` : `scene ${name} (segments: ${segs.join(", ") || "none"})`) + (o.n ? `, n: ${o.n}` : "");
+    if (o.fallback === undefined) throw new Error(`K.word: "${word}" not found in ${where}`);
+    console.warn(`K.word: "${word}" not found in ${where}; using fallback ${o.fallback}s`);
+    return o.fallback;
   };
 })();

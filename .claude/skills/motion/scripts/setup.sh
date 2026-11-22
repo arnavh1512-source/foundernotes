@@ -37,11 +37,13 @@ install_ffmpeg() {
 
 echo "motion setup ($here)"
 
-if have node; then ok "node $(node -v)"; else bad "node — install Node 18+ first"; echo; exit 1; fi
+# the locked Playwright (package-lock.json) needs Node 20+
+if have node && [ "$(node -p 'process.versions.node.split(".")[0]')" -ge 20 ]; then ok "node $(node -v)"
+else bad "node — install Node 20+ first (found: $(node -v 2>/dev/null || echo none))"; echo; exit 1; fi
 
 if pw_found; then ok "playwright"
 elif $check_only; then bad "playwright"
-else echo "  ...   installing playwright"; (cd "$here" && npm i --no-audit --no-fund --silent playwright) && ok "playwright" || bad "playwright (npm i failed — no network?)"; fi
+else echo "  ...   installing playwright"; (cd "$here" && npm ci --no-audit --no-fund --silent) && ok "playwright" || bad "playwright (npm ci failed — no network?)"; fi
 
 if chromium_found; then ok "chromium"
 elif $check_only; then bad "chromium"

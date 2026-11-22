@@ -35,6 +35,11 @@ Files in this skill:
 | `scripts/setup.sh` | installs what rendering needs (Playwright, Chromium, ffmpeg) if missing; run first |
 | `scripts/check.sh` | reads the real spec of an MP4 and flags frozen stretches and black frames |
 | `assets/template.html` | starting page that already follows the render contract |
+| `assets/story-motion.mjs` | pure stick-figure geometry: two-bone arm/leg solver, held-prop grip, camera layers, shot cuts, word cues |
+| `assets/stick-performance.mjs` | the whole-body stick-figure performance rig (pose keys, planted feet, grips) built on `story-motion.mjs`; start stick animation here |
+| `scripts/build-stick-performance.mjs` | inlines both modules into `examples/stick-gate.template.html` as a renderable page in `studio-output/` (re-runs overwrite) |
+| `remotion/` | Remotion project: a React proof scene on `story-motion.mjs` geometry (`npm run render:proof`), for `--engine remotion` |
+| `tests/` | `npm test`: stick geometry, render encoding, and the Ink & Gold kit's pose/cue helpers |
 | `references/craft.md` | pacing, layout, type, colour and motion numbers; tones; recipes; sound |
 | `references/kinds.md` | what each kind of video needs: shape, length, format, traps |
 | `references/styles.md` | identify the product, then pick the style that fits it |
@@ -138,7 +143,8 @@ from `assets/template.html`. The page must:
 
 `render.mjs` waits for fonts and images, then calls `seek` for every frame. Ship fonts and
 images as local files next to the page or as data URIs; a CDN that fails at render time gives
-you fallback type in the final video.
+you fallback type in the final video. A page error, a local file that fails to load, a broken
+image or a font that fails stops the render with the reason; page console warnings print to stderr.
 
 Open `?t=4.2` in a browser to see any moment; the template supports it.
 
@@ -212,6 +218,15 @@ node $S/render.mjs work/index.html --out video.mp4 --poster 6.5
   (`--stills <t>`).
 - **Transparent output** (lower thirds, overlays): `--alpha` renders a ProRes 4444 `.mov` with a
   transparent background. The page must not paint its own background.
+- **Long videos:** `--workers N` captures with N browser pages at once and still encodes the frames
+  in order, so the output is the same as with one page (default `1`). Capture is the slow part
+  (0.1–0.5 s a frame). The gain depends on the page: 4 workers made the stick rebuild 2.8× faster,
+  but a page that already saturates the CPU (the 75 s painted pilot) got nothing. Time a short test
+  with 1 and 4 before a long render. It relies on `seek(t)` being pure; a page that keeps state
+  between seeks breaks with workers.
+- **Colour:** videos are converted with BT.709 at limited range and tagged so, which is how players
+  read HD; brand hex colours survive the encode. `--blur N` averages the N sub-frames ending on
+  each frame.
 - **`share-copy.txt`:** 1–3 sentences, postable as is, specific, in the video's tone. No
   "excited to share".
 - **Tell the user** where the files are, give one sentence on the creative angle, and offer to
