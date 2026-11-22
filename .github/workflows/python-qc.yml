@@ -89,6 +89,14 @@ jobs:
           python -m unittest discover -s .claude/skills/podcast-scout-skill/tests -p "test_report.py" -v
           python -m unittest discover -s .claude/skills/podcast-scout-skill/tests -p "test_narrate_fixes.py" -v
           python -m unittest discover -s .claude/skills/podcast-scout-skill/tests -p "test_collage_provider.py" -v
+          python -m unittest discover -s .claude/skills/podcast-scout-skill/tests -p "test_assemble.py" -v
+          python -m unittest discover -s .claude/skills/podcast-scout-skill/tests -p "test_karaoke_ass.py" -v
+          python -m unittest discover -s .claude/skills/podcast-scout-skill/tests -p "test_package_lint.py" -v
+          python -m unittest discover -s .claude/skills/podcast-scout-skill/tests -p "test_json_shape_guards.py" -v
+          python -m unittest discover -s .claude/skills/podcast-scout-skill/tests -p "test_vendor_chapters.py" -v
+          python -m unittest discover -s .claude/skills/podcast-scout-skill/tests -p "test_paid_gates.py" -v
+          python -m unittest discover -s .claude/skills/podcast-scout-skill/tests -p "test_gen_media.py" -v
+          python -m unittest discover -s .claude/skills/podcast-scout-skill/tests -p "test_youtube_scripts.py" -v
 
       - name: Test real video decoding
         run: |
