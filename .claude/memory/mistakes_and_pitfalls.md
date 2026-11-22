@@ -374,4 +374,4 @@ The initial entries preserve documented observations from the 2026-11-11 study a
 - Evidence: Exact V22 encoded frames 810, 835, 855 and 869 show an unchanged invitation silhouette
 - Cause / rationale: Invitation strength rose and never returned before the cut
 - Correction / recipe: Let the hand come to rest as the listener commits to the turn; keep the cup hand anchored and verify separation during retraction
-- Verification: Baseline verified in encoded samples. Corrected media review pending.
+- Verification: Nine exact V23 frames show the invitation resolving while the Youth leans in, followed by the cut into the separate workroom. Four captioned frames show visual separation from the action. The 27 motion tests pass, including limb reach and grip checks. Full-speed acting, actual listening and independent interpretation remain pending.
