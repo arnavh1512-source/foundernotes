@@ -90,5 +90,12 @@ class NarrateFixes(unittest.TestCase):
         self.assertEqual(posted, [])
 
 
+    def test_cloud_voice_is_never_picked_automatically(self):
+        with patch.object(narrate, "have_parler", return_value=False),              patch.object(narrate, "have_kokoro", return_value=False),              patch.object(narrate, "have_piper", return_value=False),              patch.object(narrate, "have_edge", return_value=True):
+            with self.assertRaises(SystemExit):
+                narrate.pick_engine(None, None)
+            self.assertEqual(narrate.pick_engine("edge", None), "edge")
+
+
 if __name__ == "__main__":
     unittest.main()

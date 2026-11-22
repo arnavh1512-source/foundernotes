@@ -570,9 +570,9 @@ def pick_engine(requested, voice):
             return eng
         if eng == "piper" and have_piper(v if v in MALE_VOICES["piper"] else DEFAULT_VOICE["piper"]):
             return eng
-        if eng == "edge" and have_edge():
-            return eng
-    die("no TTS engine available. Run scripts/setup_studio.sh (installs Kokoro + Piper male voices).")
+        # edge-tts sends the script to a Microsoft cloud service: never picked automatically, only with --engine edge.
+    die("no local TTS engine available. Run scripts/setup_studio.sh (installs Kokoro + Piper male voices), "
+        "or pass --engine edge to accept the Microsoft cloud voice.")
 
 
 # ---------------------------------------------------------------- optional dialogue casting
