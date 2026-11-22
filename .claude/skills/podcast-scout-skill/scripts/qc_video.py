@@ -17,6 +17,7 @@ Fix 2: Stream decoded frames instead of loading the entire
 """
 
 import argparse
+import hashlib
 import json
 import math
 import os
@@ -30,6 +31,17 @@ try:
 except ImportError:
     np = None
     HAS_NUMPY = False
+
+
+# Motion gate calibration. Starting values, not measured on published
+# episodes: recalibrate on real cuts. A pixel "changed" when any channel
+# moved more than PIXEL_CHANGE of 255 at the 320x180 sample size.
+PIXEL_CHANGE = 16
+MOTION_AREA = 0.0005        # >= 0.05% of the picture changed: something moved
+FULL_CHANGE_AREA = 0.5      # >= 50% changed: a cut or camera move, not acting
+LIVE_MOTION_FAIL = 0.15
+LIVE_MOTION_WARN = 0.35
+STILL_WARN_SECONDS = 2.5
 
 
 def mark_failure(qc_report, message):
@@ -153,9 +165,10 @@ def audit_audio_gaps_and_lufs(
     cmd = [
         "ffmpeg",
         "-i", video_path,
+        "-vn",
         "-af",
         f"silencedetect=noise=-35dB:d={max_silence_gap},"
-        "ebur128=framelog=verbose",
+        "ebur128=framelog=verbose:peak=true",
         "-f", "null", "-",
     ]
 
@@ -207,6 +220,24 @@ def audit_audio_gaps_and_lufs(
             "Loudness could not be measured (no integrated "
             "LUFS reading from FFmpeg).",
         )
+
+    peaks = re.findall(r"Peak:\s*(-?[0-9.]+|-inf)\s*dBFS", res.stderr or "")
+
+    if peaks and peaks[-1] != "-inf":
+        true_peak = float(peaks[-1])
+
+        if true_peak > 0.0:
+            mark_failure(
+                qc_report,
+                f"True peak {true_peak:.1f} dBTP clips (> 0 dBTP).",
+            )
+        elif true_peak > -1.0:
+            qc_report["warnings"].append(
+                f"True peak {true_peak:.1f} dBTP is above the "
+                "-1 dBTP mastering ceiling."
+            )
+        else:
+            qc_report["checks"].append(f"True peak {true_peak:.1f} dBTP")
 
     gaps = []
     pending_start = None
@@ -316,8 +347,8 @@ def run_film_gate(
         return
 
     sample_fps = 10
-    width = 160
-    height = 90
+    width = 320
+    height = 180
     frame_bytes = width * height * 3
 
     cmd = [
@@ -347,6 +378,9 @@ def run_film_gate(
     n_frames = 0
     motion_count = 0
     motion_total = 0
+    full_change_count = 0
+    still_start = None
+    still_runs = []
     blue_purple_count = 0
 
     previous_frame = None
@@ -390,19 +424,31 @@ def run_film_gate(
                 3,
             )
 
-            # Motion analysis
+            # Motion analysis: share of pixels that visibly changed.
+            # A whole-frame mean rewarded hard cuts and camera moves and
+            # missed a figure acting on a still background. Frames where
+            # most of the picture changes (cuts, pans, zooms) are counted
+            # apart; only partial change counts as on-screen motion.
             if previous_frame is not None:
-                delta = np.mean(
-                    np.abs(
-                        frame.astype(np.int16)
-                        - previous_frame.astype(np.int16)
-                    )
-                ) / 255.0
+                diff = np.abs(
+                    frame.astype(np.int16)
+                    - previous_frame.astype(np.int16)
+                )
+                changed = float(np.mean(diff.max(axis=2) > PIXEL_CHANGE))
 
                 motion_total += 1
 
-                if delta > 0.025:
+                if changed >= FULL_CHANGE_AREA:
+                    full_change_count += 1
+                elif changed >= MOTION_AREA:
                     motion_count += 1
+
+                if changed < MOTION_AREA:
+                    if still_start is None:
+                        still_start = n_frames
+                elif still_start is not None:
+                    still_runs.append((still_start, n_frames))
+                    still_start = None
 
             previous_frame = frame
 
@@ -485,38 +531,68 @@ def run_film_gate(
             (blank_start, n_frames)
         )
 
+    if still_start is not None:
+        still_runs.append((still_start, n_frames))
+
     qc_report["checks"].append(
         f"Streamed {n_frames} sampled frames "
         f"at {sample_fps} fps"
     )
 
-    # Motion quality gate
-    fast_motion_ratio = (
+    # Motion quality gate (anti-slideshow)
+    live_motion_ratio = (
         motion_count / motion_total
+        if motion_total > 0
+        else 0.0
+    )
+    full_change_ratio = (
+        full_change_count / motion_total
         if motion_total > 0
         else 0.0
     )
 
     qc_report["checks"].append(
-        "Fast-motion frame ratio: "
-        f"{fast_motion_ratio:.4f} "
-        "(threshold >= 0.035)"
+        "Live-motion ratio: "
+        f"{live_motion_ratio:.3f} of sampled frame pairs show partial "
+        f"on-screen movement (fail < {LIVE_MOTION_FAIL}, "
+        f"warn < {LIVE_MOTION_WARN}); cuts/camera moves "
+        f"{full_change_ratio:.3f}"
     )
 
-    if fast_motion_ratio < 0.035:
+    if live_motion_ratio < LIVE_MOTION_FAIL:
         mark_failure(
             qc_report,
             "FILM GATE RED LIGHT (Anti-PPT): "
-            f"Fast-motion frame ratio is "
-            f"{fast_motion_ratio:.4f} (< 0.035). "
-            "Video may resemble a static slideshow.",
+            f"Live-motion ratio is {live_motion_ratio:.3f} "
+            f"(< {LIVE_MOTION_FAIL}). Pictures mostly hold still "
+            "between cuts or camera moves; the video may resemble "
+            "a slideshow.",
         )
 
-    elif fast_motion_ratio < 0.060:
+    elif live_motion_ratio < LIVE_MOTION_WARN:
         qc_report["warnings"].append(
             "FILM GATE YELLOW: "
-            f"Fast-motion frame ratio is "
-            f"{fast_motion_ratio:.4f} (< 0.060)."
+            f"Live-motion ratio is {live_motion_ratio:.3f} "
+            f"(< {LIVE_MOTION_WARN}). Watch the still stretches."
+        )
+
+    # Long still stretches: a warning to review, because intentional
+    # holds are allowed. Blank frames are reported by the blank gate.
+    long_stills = [
+        (start / sample_fps, end / sample_fps)
+        for start, end in still_runs
+        if (end - start) / sample_fps >= STILL_WARN_SECONDS
+        and start >= 5
+        and end <= n_frames - 10
+    ]
+
+    if long_stills:
+        timecodes = ", ".join(
+            f"{start:.1f}s-{end:.1f}s" for start, end in long_stills[:6]
+        )
+        qc_report["warnings"].append(
+            f"Picture holds still for >= {STILL_WARN_SECONDS}s at "
+            f"{timecodes}; confirm each hold is intentional."
         )
 
     # Blank frame quality gate
@@ -630,8 +706,9 @@ def main(argv=None):
     parser.add_argument(
         "--min-duration",
         type=float,
-        default=480.0,
-        help="Minimum duration in seconds",
+        default=None,
+        help="Minimum duration in seconds "
+        "(default 480 horizontal, 30 vertical)",
     )
 
     parser.add_argument(
@@ -658,6 +735,16 @@ def main(argv=None):
         write_report(args.json, qc_report)
         print(f"QC Status: {qc_report['status']}")
         sys.exit(1)
+
+    # Bind the report to this exact file (skill evaluations check it).
+    digest = hashlib.sha256()
+    try:
+        with open(args.video, "rb") as file:
+            for block in iter(lambda: file.read(1 << 20), b""):
+                digest.update(block)
+        qc_report["video_sha256"] = digest.hexdigest()
+    except OSError:
+        qc_report["video_sha256"] = None    # ffprobe below reports the unreadable file
 
     # Metadata inspection
     info = run_ffprobe(args.video)
@@ -803,11 +890,18 @@ def main(argv=None):
         f"({duration / 60:.2f} min)"
     )
 
-    min_required = (
-        args.min_duration
-        if args.format == "horizontal"
-        else 30.0
-    )
+    if args.min_duration is not None:
+        min_required = args.min_duration
+    else:
+        min_required = 480.0 if args.format == "horizontal" else 30.0
+
+    # Owner rule: the summary Short runs under 60 seconds.
+    if args.format == "vertical" and duration >= 60.0:
+        mark_failure(
+            qc_report,
+            f"SHORT DURATION FAIL: vertical video runs {duration:.2f}s; "
+            "the summary Short must be under 60s.",
+        )
 
     if duration < min_required:
         mark_failure(
@@ -833,6 +927,16 @@ def main(argv=None):
                     timing_data.get("total_duration", 0.0),
                 )
             )
+
+            # The picture can be padded by a held frame or a music
+            # tail, so the narration itself must reach the minimum.
+            if 0 < timing_duration < min_required:
+                mark_failure(
+                    qc_report,
+                    "DURATION GATE FAIL: narration in timings.json "
+                    f"runs {timing_duration:.2f}s, below the required "
+                    f"{min_required:.0f}s.",
+                )
 
             if abs(duration - timing_duration) > 1.0:
                 qc_report["warnings"].append(
