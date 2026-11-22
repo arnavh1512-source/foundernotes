@@ -44,8 +44,9 @@ def extract(video, output, times, crop=None, size=480):
     frames = []
     for index, time in enumerate(times):
         name = f"frame-{index:03d}.jpg"
-        # Seek after -i for accurate decoding rather than nearest keyframe.
-        subprocess.run(["ffmpeg", "-v", "error", "-i", str(video), "-ss", str(time), "-frames:v", "1",
+        # Input seek: jumps to the keyframe before `time`, then decodes and drops frames up to it (frame-accurate
+        # when re-encoding), instead of decoding the whole video from 0 for every frame.
+        subprocess.run(["ffmpeg", "-v", "error", "-ss", str(time), "-i", str(video), "-frames:v", "1",
                         "-vf", ",".join(filters), "-q:v", "2", str(output / name)], check=True, timeout=120)
         if not (output / name).is_file() or not (output / name).stat().st_size:
             raise ValueError(f"No decoded frame at {time}; inspect the source video")
@@ -55,8 +56,11 @@ def extract(video, output, times, crop=None, size=480):
     subprocess.run(["ffmpeg", "-v", "error", "-framerate", "1", "-i", str(output / "frame-%03d.jpg"),
                     "-vf", f"tile={columns}x{rows}:padding=4:margin=4", "-frames:v", "1", "-q:v", "2",
                     str(output / "strip.jpg")], check=True, timeout=120)
+    digest = hashlib.sha256()   # chunked: hashlib.file_digest needs Python 3.11
     with video.open("rb") as source:
-        sha = hashlib.file_digest(source, "sha256").hexdigest()
+        for chunk in iter(lambda: source.read(1 << 20), b""):
+            digest.update(chunk)
+    sha = digest.hexdigest()
     report = {"source": str(video), "source_sha256": sha, "duration": duration, "crop": crop,
               "frames": frames, "strip": "strip.jpg", "creative_approval": False}
     (output / "review.json").write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")

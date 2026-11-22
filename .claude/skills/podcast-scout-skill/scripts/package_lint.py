@@ -12,13 +12,17 @@ package.json:
      "pinned_comment": "optional",
      "sources": ["https://..."]}
 
-Rules (FAIL = fix before upload, WARN = judgement call):
-  titles      1-10 options; <= 60 chars (FAIL >70); front-load: key words within first 40 chars (WARN);
-              <= 2 ALL-CAPS words; no clickbait stock phrases
-  thumbnails  <= 3 words of text (FAIL > 5); text must not repeat the title's words wholesale
-  description first line <= 150 chars and states the payoff; sources listed when claims are made
-  chapters    first is 00:00, >= 3 chapters, each >= 10 s, increasing, titles <= 5 words (WARN)
-  tags        <= 15, no duplicates, total <= 500 chars
+Rules (FAIL = fix before upload, WARN = judgement call). Every video ships with a thumbnail, a title plus
+alternatives, and a description with chapters and sources (owner rule):
+  package     must be a readable JSON object (FAIL)
+  titles      1-10 options (FAIL); <= 60 chars (FAIL >70); <= 2 ALL-CAPS words (WARN); no clickbait stock phrases (FAIL)
+  thumbnails  at least one (FAIL); each an object with text <= 3 words (WARN 4-5, FAIL > 5); text must not repeat the
+              title's words wholesale (WARN); a focal visual (WARN)
+  description present (FAIL); first line <= 150 chars (WARN); every listed source appears in it (FAIL);
+              no sources listed (FAIL)
+  chapters    present (FAIL); first is 00:00, >= 3 chapters, each >= 10 s, increasing (FAIL); every stamp starts a
+              line of the description (FAIL); titles <= 5 words (WARN)
+  tags        strings (FAIL); <= 15 (WARN), no duplicates (WARN), total <= 500 chars (FAIL)
 """
 from __future__ import annotations
 
@@ -48,12 +52,25 @@ def words(s):
     return re.findall(r"[A-Za-z0-9']+", s.lower())
 
 
+def report(out):
+    fails = [o for o in out if o[0] == "FAIL"]
+    for lvl, area, msg in out:
+        print(f"{lvl:4s}  {area:11s} {msg}")
+    print(f"\n{'FAIL' if fails else 'PASS'}: {len(fails)} fail, {sum(o[0] == 'WARN' for o in out)} warn")
+    return 1 if fails else 0
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("package")
     ap.add_argument("--duration", type=float, help="video length in seconds (checks last chapter)")
     a = ap.parse_args(argv)
-    pkg = json.loads(Path(a.package).read_text(encoding="utf-8-sig"))
+    try:
+        pkg = json.loads(Path(a.package).read_text(encoding="utf-8-sig"))
+    except (OSError, ValueError) as exc:
+        return report([("FAIL", "package", f"cannot read {a.package} as JSON: {exc}")])
+    if not isinstance(pkg, dict):
+        return report([("FAIL", "package", "top level must be a JSON object")])
     out = []
 
     def add(level, area, msg):
@@ -62,6 +79,8 @@ def main(argv=None):
     titles = pkg.get("titles") or []
     if not isinstance(titles, list) or not titles:
         add("FAIL", "titles", "no titles"); titles = []
+    elif len(titles) > 10:
+        add("FAIL", "titles", f"{len(titles)} options (max 10)")
     clean = []
     for i, t in enumerate(titles):
         if not isinstance(t, str) or not t.strip():
@@ -84,8 +103,15 @@ def main(argv=None):
     if titles:
         add("OK", "titles", f"{len(titles)} options")
 
-    for th in pkg.get("thumbnails") or []:
+    thumbs = pkg.get("thumbnails") or []
+    if not isinstance(thumbs, list) or not thumbs:
+        add("FAIL", "thumbnail", "no thumbnails (every video ships with one)"); thumbs = []
+    for i, th in enumerate(thumbs):
+        if not isinstance(th, dict):
+            add("FAIL", "thumbnail", f"[{i}] must be an object with text/title_index/focal"); continue
         text = th.get("text", "")
+        if not isinstance(text, str):
+            add("FAIL", "thumbnail", f"[{i}] text must be a string"); continue
         wc = len(words(text))
         if wc > 5:
             add("FAIL", "thumbnail", f"'{text}' has {wc} words (aim <= 3; unreadable on phones)")
@@ -102,17 +128,27 @@ def main(argv=None):
             add("WARN", "thumbnail", "no focal visual described")
 
     desc = pkg.get("description", "")
-    if not desc:
-        add("FAIL", "description", "missing")
+    if not isinstance(desc, str):
+        add("FAIL", "description", "must be a string"); desc = ""
+    if not desc.strip():
+        add("FAIL", "description", "missing"); desc = ""
     else:
         first = desc.strip().splitlines()[0]
         if len(first) > 150:
             add("WARN", "description", f"first line {len(first)} chars; only ~150 show in search")
-        if pkg.get("sources") and not any(s in desc for s in pkg["sources"]):
-            add("WARN", "description", "sources not listed in description")
+    sources = pkg.get("sources") or []
+    if not isinstance(sources, list) or not all(isinstance(s, str) and s.strip() for s in sources):
+        add("FAIL", "sources", "sources must be a list of non-empty strings"); sources = []
+    if not sources:
+        add("FAIL", "sources", "no sources listed (owner rule: every description lists its sources)")
+    missing = [s for s in sources if s.strip() not in desc]
+    if desc and missing:
+        add("FAIL", "description", f"{len(missing)} of {len(sources)} sources not listed: {', '.join(missing)}")
 
     ch = pkg.get("chapters") or []
-    bad = [c for c in ch if not (isinstance(c, (list, tuple)) and len(c) == 2 and secs(c[0]) is not None
+    if not isinstance(ch, list):
+        ch = [ch]   # reported below as one malformed chapter
+    bad =[c for c in ch if not (isinstance(c, (list, tuple)) and len(c) == 2 and secs(c[0]) is not None
                                 and isinstance(c[1], str) and c[1].strip())]
     for c in bad:
         add("FAIL", "chapters", f"malformed chapter {c!r} (need [\"MM:SS\", \"title\"])")
@@ -133,24 +169,25 @@ def main(argv=None):
         for t, title in ch:
             if len(title.split()) > 5:
                 add("WARN", "chapters", f"'{title}' > 5 words")
-        if desc and not all(c[0] in desc for c in ch):
-            add("WARN", "chapters", "chapter stamps not all present in description (YouTube reads them from there)")
-    else:
-        add("WARN", "chapters", "no chapters (recommended for videos > 3 min)")
+        # YouTube reads chapters from stamps that start a description line; "0:00" must not match inside "10:00"
+        listed = {secs(m) for m in re.findall(r"(?m)^[ \t]*((?:\d+:)?\d{1,2}:\d{2})(?![\d:])", desc)}
+        if desc and not all(t in listed for t in times):
+            add("FAIL", "chapters", "chapter stamps not all at the start of a description line (YouTube reads them from there)")
+    elif not bad:
+        add("FAIL", "chapters", "no chapters (every video's description ships with them)")
 
     tags = pkg.get("tags") or []
+    if not isinstance(tags, list):
+        add("FAIL", "tags", "tags must be a list"); tags = []
+    if not all(isinstance(t, str) for t in tags):
+        add("FAIL", "tags", "every tag must be a string"); tags = [t for t in tags if isinstance(t, str)]
     if len(tags) > 15:
         add("WARN", "tags", f"{len(tags)} tags (> 15 adds nothing)")
     if len(set(t.lower() for t in tags)) != len(tags):
         add("WARN", "tags", "duplicate tags")
     if sum(len(t) for t in tags) > 500:
         add("FAIL", "tags", "tags exceed 500 characters")
-
-    fails = [o for o in out if o[0] == "FAIL"]
-    for lvl, area, msg in out:
-        print(f"{lvl:4s}  {area:11s} {msg}")
-    print(f"\n{'FAIL' if fails else 'PASS'}: {len(fails)} fail, {sum(o[0] == 'WARN' for o in out)} warn")
-    return 1 if fails else 0
+    return report(out)
 
 
 if __name__ == "__main__":

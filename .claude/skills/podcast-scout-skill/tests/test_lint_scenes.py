@@ -27,10 +27,38 @@ class SceneLintRegressionTests(unittest.TestCase):
             p = Path(temp) / "storyboard.md"
             p.write_text("| shot | time | camera | screen_text |\n"
                          "|---|---|---|---|\n"
-                         "| 1 | 0.0–3.0 | static | 2026–2027 is the topic |\n")
+                         "| 1 | 0.0–3.0 | static | 2026–2027 is the topic |\n", encoding="utf-8")
             errors, warnings = [], []
             lint.lint_storyboard(p, errors, warnings)
             self.assertEqual(errors, [])
+
+    def test_table_per_chapter_and_mmss_spans(self):
+        with tempfile.TemporaryDirectory() as temp:
+            p = Path(temp) / "storyboard.md"
+            head = "| shot | time | camera | screen_text |\n|---|---|---|---|\n"
+            p.write_text("## Chapter 1\n" + head + "| 1 | 0:00–0:05 | static | Hook |\n"
+                         "\n## Chapter 2\n" + head + "| 2 | 0:05-0:09.5 | pan | Why |\n| 3 | 9.5 to 14 | static | How |\n",
+                         encoding="utf-8")
+            errors, warnings = [], []
+            lint.lint_storyboard(p, errors, warnings)
+            self.assertEqual(errors, [])
+            p.write_text(head + "| 1 | 1:00-1:09 | static | Long |\n", encoding="utf-8")
+            lint.lint_storyboard(p, errors, warnings)
+            self.assertTrue(any("9.00s exceeds" in e for e in errors), errors)
+
+    def test_shared_scene_list_forms(self):
+        with tempfile.TemporaryDirectory() as temp:
+            base = Path(temp)
+            manifest = base / "scenes" / "list.txt"
+            manifest.parent.mkdir()
+            manifest.write_text("# order\n\nffconcat version 1.0\nscenes\\s01.mp4\nmy clip.mp4\n"
+                                "file 'sub\\a b.mp4'\nfile 'it'\\''s.mp4'\n\"quoted plain.mp4\"\n", encoding="utf-8")
+            clips, problems = lint.read_scene_list(manifest)
+            self.assertEqual(problems, [])
+            folder = manifest.parent    # relative to the manifest, not the working directory
+            self.assertEqual(clips, [folder / "scenes\\s01.mp4", folder / "my clip.mp4", folder / "sub\\a b.mp4",
+                                     folder / "it's.mp4", folder / "quoted plain.mp4"])
+            self.assertNotIn("sceness01", str(clips[0]))
 
     def test_detects_invalid_start_end_and_overlaps(self):
         with tempfile.TemporaryDirectory() as temp:
@@ -61,10 +89,10 @@ class SceneLintRegressionTests(unittest.TestCase):
     def test_scene_manifest_rejects_bad_lines(self):
         with tempfile.TemporaryDirectory() as temp:
             manifest = Path(temp) / "list.txt"
-            manifest.write_text("file 'unfinished\nsomething unexpected here\n")
+            manifest.write_text("file 'unfinished\nfile two words.mp4\ninpoint 2.0\n", encoding="utf-8")
             errors = []
             lint.parse_scene_list(manifest, errors)
-            self.assertGreaterEqual(len(errors), 2)
+            self.assertGreaterEqual(len(errors), 3)
 
     def test_missing_and_invalid_timings_fail(self):
         with tempfile.TemporaryDirectory() as temp:

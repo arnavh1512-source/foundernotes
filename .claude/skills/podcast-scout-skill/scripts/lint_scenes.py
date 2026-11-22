@@ -10,8 +10,8 @@ from __future__ import annotations
 import argparse
 import json
 import math
+import os
 import re
-import shlex
 import subprocess
 import sys
 from pathlib import Path
@@ -19,7 +19,13 @@ from pathlib import Path
 MIN_TOTAL_DURATION_SEC = 480.0
 MAX_BEAT_DURATION_SEC = 8.0
 MAX_LABEL_WORDS = 7
-SPAN_RE = re.compile(r"^\s*(\d+(?:\.\d+)?)\s*(?:-|–|—|to)\s*(\d+(?:\.\d+)?)\s*$", re.I)
+_TIME = r"(\d+(?:\.\d+)?|\d{1,2}:[0-5]\d(?:\.\d+)?)"   # plain seconds, or m:ss / mm:ss
+SPAN_RE = re.compile(rf"^\s*{_TIME}\s*(?:-|–|—|to)\s*{_TIME}\s*$", re.I)
+
+
+def _seconds(text):
+    minutes, _, secs = text.rpartition(":")
+    return int(minutes or 0) * 60 + float(secs)
 
 
 def _number(value):
@@ -71,6 +77,8 @@ def lint_storyboard(storyboard_path, errors, warnings):
     text_heavy = 0
     count = 0
     for number, cells in rows[1:]:
+        if cells == header:   # one table per chapter repeats the heading
+            continue
         if len(cells) != len(headers):
             errors.append(f"Storyboard line {number}: expected {len(headers)} cells, got {len(cells)}.")
             continue
@@ -81,7 +89,7 @@ def lint_storyboard(storyboard_path, errors, warnings):
         elif span_idx is not None:
             match = SPAN_RE.fullmatch(cells[span_idx])
             if match:
-                start, end = map(float, match.groups())
+                start, end = map(_seconds, match.groups())
         if start is None or end is None or start < 0 or end <= start:
             errors.append(f"Storyboard line {number}: invalid start/end time.")
         else:
@@ -128,43 +136,77 @@ def lint_html_scene(html_path, errors, warnings):
         warnings.append(f"{path}: wall-clock or unseeded random API may compromise determinism.")
 
 
-def parse_scene_list(path, errors):
-    """Support both simple paths and ffconcat 'file ...' entries."""
+def _ffconcat_token(text):
+    """The PATH of an ffconcat `file PATH` line: '...' is literal and \\x escapes x, except that on Windows
+    only \\' is an escape, so unquoted C:\\clips\\a.mp4 keeps its backslashes."""
+    out, quoted, i = [], False, 0
+    while i < len(text):
+        ch = text[i]
+        if quoted:
+            if ch == "'":
+                quoted = False
+            else:
+                out.append(ch)
+        elif ch == "'":
+            quoted = True
+        elif ch == "\\" and i + 1 < len(text) and (os.name != "nt" or text[i + 1] == "'"):
+            i += 1
+            out.append(text[i])
+        elif ch.isspace():
+            raise ValueError("expected file PATH (quote a path that contains spaces)")
+        else:
+            out.append(ch)
+        i += 1
+    if quoted:
+        raise ValueError("bad quoting")
+    return "".join(out)
+
+
+def read_scene_list(path):
+    """Scene manifest -> (clip paths, problems). Shared by lint_scenes.py and assemble.py.
+
+    One clip per line: a plain path (taken verbatim, so spaces and Windows backslashes survive; one pair of
+    surrounding quotes is dropped) or an ffconcat `file '...'` entry. Blank lines, #comments, the ffconcat
+    header and `option` lines are skipped. Clips are always used whole, so duration/inpoint/outpoint are refused.
+    Relative paths resolve against the manifest's folder, or the working directory when only that exists.
+    """
     manifest = Path(path)
     if not manifest.is_file():
-        errors.append(f"Missing scenes list: {manifest}")
-        return []
-    result = []
-    for number, line in enumerate(manifest.read_text(encoding="utf-8").splitlines(), 1):
+        return [], [f"Missing scenes list: {manifest}"]
+    clips, problems = [], []
+    for number, line in enumerate(manifest.read_text(encoding="utf-8-sig").splitlines(), 1):
         raw = line.strip()
-        if not raw or raw.startswith("#") or raw == "ffconcat version 1.0":
+        if not raw or raw.startswith(("#", "ffconcat version", "option ")):
             continue
-        if raw.startswith(("duration ", "inpoint ", "outpoint ", "option ")):
+        if raw.startswith(("duration ", "inpoint ", "outpoint ")):
+            problems.append(f"Scene list line {number}: '{raw.split()[0]}' is not supported; clips are used whole.")
             continue
-        try:
-            parts = shlex.split(raw)
-        except ValueError:
-            errors.append(f"Scene list line {number}: bad quoting.")
-            continue
-        if parts[0] == "file":
-            if len(parts) != 2:
-                errors.append(f"Scene list line {number}: expected file PATH.")
+        if re.match(r"file\s", raw):
+            try:
+                name = _ffconcat_token(raw[5:].strip())
+            except ValueError as exc:
+                problems.append(f"Scene list line {number}: {exc}.")
                 continue
-            name = parts[1]
-        elif len(parts) == 1:
-            name = parts[0]
         else:
-            errors.append(f"Scene list line {number}: unsupported entry.")
+            name = raw[1:-1] if len(raw) > 1 and raw[0] == raw[-1] and raw[0] in "'\"" else raw
+        if not name.strip():
+            problems.append(f"Scene list line {number}: empty path.")
             continue
         candidate = Path(name)
         if not candidate.is_absolute():
             candidate = manifest.parent / candidate
             if not candidate.exists() and Path(name).exists():
-                candidate = Path(name)  # supports paths relative to cwd
-        result.append(candidate)
-    if not result:
-        errors.append(f"Scenes list contains no clips: {manifest}")
-    return result
+                candidate = Path(name)  # older lists written relative to the working directory
+        clips.append(candidate)
+    return clips, problems
+
+
+def parse_scene_list(path, errors):
+    clips, problems = read_scene_list(path)
+    errors += problems
+    if not clips and Path(path).is_file():
+        errors.append(f"Scenes list contains no clips: {path}")
+    return clips
 
 
 def probe_duration(path):
