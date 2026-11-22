@@ -241,3 +241,7 @@ Actions 45074703082 passed, source `81f913082ccd0e59412551875bc7ee48a0ce84b6`, p
 ## Paper landing and aftermath candidate
 
 Exact V24 frames 1163 and 1215 show the two fallen pages edge-to-edge at the same height, visually above the floor support. The candidate preserves the held delivery and late reach, staggers the final paper orientations and spacing, and gives each sheet a brief skid and contact shadow at the floor line. The aftermath remains visible on the established workroom axis. Exact final media and full-speed timing are pending.
+
+### Exact V25 verification
+
+Actions 45079788019 passed, source `481b306a077e5da97701f0fa0679c8c565f9b9bd`, picture artifact 14777146150. Nine exact V25 frames show the sheets dropping at separate times, touching the floor at distinct angles and remaining visible during the held reaction. Four captioned frames show visual separation from the action. The 27 motion tests pass, including limb reach and grip checks. Full-speed acting, actual listening and independent interpretation remain pending. Full assembly decode and unchanged decoded audio were verified. Supplied discipline frames at requested 295–301 seconds separate an object insert from a wider body-and-furniture composition. This is a still-level prop legibility comparison only. Fresh named lookups yielded text or no decoded footage. Full-speed comparison, sound and independent comprehension remain pending. No new named-reference audiovisual, owner or independent approval.

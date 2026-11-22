@@ -390,4 +390,4 @@ The initial entries preserve documented observations from the 2026-11-11 study a
 - Evidence: Exact V24 frames 1163 and 1215
 - Cause / rationale: Identical final rotation and height leave the page silhouettes joined and raised off the actor floor line
 - Correction / recipe: Separate the final orientations and spacing and stage contact on the same support line as the feet
-- Verification: Baseline verified in encoded samples; exact candidate media pending.
+- Verification: Nine exact V25 frames show the sheets dropping at separate times, touching the floor at distinct angles and remaining visible during the held reaction. Four captioned frames show visual separation from the action. The 27 motion tests pass, including limb reach and grip checks. Full-speed acting, actual listening and independent interpretation remain pending.
