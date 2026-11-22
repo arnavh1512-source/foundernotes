@@ -1,6 +1,9 @@
 
 import importlib.util
 import io
+import shutil
+import subprocess
+import tempfile
 import unittest
 from pathlib import Path
 from subprocess import CompletedProcess
@@ -153,12 +156,29 @@ class ContactSheetTests(unittest.TestCase):
 
 
 class AudioQCTests(unittest.TestCase):
-    def mock_audio_result(self, stderr="", returncode=0):
+    def mock_audio_result(self, stderr="", returncode=0, lufs="-14.0"):
+        if lufs is not None:
+            stderr += f"\n    I:         {lufs} LUFS\n"
         return CompletedProcess(
             args=[],
             returncode=returncode,
             stdout="",
             stderr=stderr,
+        )
+
+    def test_unmeasured_loudness_fails(self):
+        result = report()
+
+        with patch.object(
+            qc.subprocess,
+            "run",
+            return_value=self.mock_audio_result(lufs=None),
+        ):
+            qc.audit_audio_gaps_and_lufs("fake.mp4", result)
+
+        self.assertEqual(result["status"], "FAIL")
+        self.assertTrue(
+            any("could not be measured" in e for e in result["errors"])
         )
 
     def test_clean_audio_passes(self):
@@ -475,6 +495,44 @@ class DurationValidationTests(unittest.TestCase):
                         for error in saved_reports[0]["errors"]
                     )
                 )
+
+
+@unittest.skipUnless(
+    qc.HAS_NUMPY and shutil.which("ffmpeg"),
+    "numpy and ffmpeg are required",
+)
+class BlankFrameGateTests(unittest.TestCase):
+    def gate(self, source):
+        with tempfile.TemporaryDirectory() as directory:
+            video = str(Path(directory) / "clip.mp4")
+            subprocess.run(
+                [
+                    "ffmpeg", "-v", "error", "-y",
+                    "-f", "lavfi", "-i", source,
+                    "-t", "4", "-c:v", "mpeg4", video,
+                ],
+                check=True,
+            )
+            result = report()
+            qc.run_film_gate(video, 4, result)
+            return result
+
+    def test_solid_brand_colour_is_blank(self):
+        # A solid colour has spread between channels but none in space.
+        result = self.gate("color=c=0xF2B134:s=320x180:r=30")
+
+        self.assertTrue(
+            any("Blank/Dead Frame" in e for e in result["errors"]),
+            result,
+        )
+
+    def test_moving_picture_is_not_blank(self):
+        result = self.gate("testsrc2=size=320x180:rate=30")
+
+        self.assertFalse(
+            any("Blank/Dead Frame" in e for e in result["errors"]),
+            result,
+        )
 
 
 if __name__ == "__main__":

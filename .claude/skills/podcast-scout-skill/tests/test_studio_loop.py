@@ -137,11 +137,25 @@ class StudioLoopTests(unittest.TestCase):
             run.critic(report)
         self.assertEqual(run.state, before)
 
+    def registered_with_qc(self, qc):
+        run = self.ready()
+        self.evidence(run, "cut.mp4", "TEST FIXTURE: not real video")
+        self.evidence(run, "qc.json", json.dumps(qc))
+        run.register_render("cut.mp4", "qc.json", duration=65, producer="artist", mode="pilot")
+        return run
+
     def test_failed_technical_qc_cannot_pass_creative_gate(self):
-        run = self.rendered()
-        self.evidence(run, "qc.json", json.dumps({"status": "FAIL", "errors": ["blank frames"]}))
-        with self.assertRaises(ValueError):
+        # Registered as FAIL, so the technical check itself (not the evidence digest) must block.
+        run = self.registered_with_qc({"status": "FAIL", "errors": ["blank frames"]})
+        with self.assertRaisesRegex(ValueError, "technical QC"):
             run.critic(self.review(run))
+
+    def test_qc_warning_does_not_dead_end_the_workflow(self):
+        run = self.registered_with_qc({"status": "WARN", "errors": [], "warnings": ["silence 1.5s"]})
+        run.critic(self.review(run))
+        self.assertEqual(run.state["stage"], "owner_review")
+        run.approve("owner", "evidence.txt")
+        self.assertEqual(run.state["stage"], "approved")
 
     def test_packets_include_limits_and_do_not_claim_agent_ran(self):
         run = self.ready()

@@ -93,7 +93,11 @@ def get_provider(name=None):
 
 
 def run_jobs(prov, specs, *, poll_s=3, stall_s=90, max_retries=2, deadline_s=900):
-    """Submit + poll a batch of jobs with resubmission on failure or stall."""
+    """Submit + poll a batch of jobs, resubmitting only a job the provider reports as failed.
+
+    A job that is still running is never resubmitted: the status carries no progress, so "slow" cannot be told
+    from "stalled", and every resubmission is a new paid job. stall_s is accepted for existing callers and unused;
+    deadline_s bounds the wait."""
     state = {}
     for key, submit_fn in specs.items():
         try:
@@ -102,7 +106,6 @@ def run_jobs(prov, specs, *, poll_s=3, stall_s=90, max_retries=2, deadline_s=900
                 "submit_fn": submit_fn,
                 "id": jid,
                 "tries": 1,
-                "last_change": time.monotonic(),
                 "out": None,
                 "error": None,
                 "done": False,
@@ -114,7 +117,6 @@ def run_jobs(prov, specs, *, poll_s=3, stall_s=90, max_retries=2, deadline_s=900
                 "submit_fn": submit_fn,
                 "id": None,
                 "tries": 1,
-                "last_change": time.monotonic(),
                 "out": None,
                 "error": str(e),
                 "done": True,
@@ -133,15 +135,14 @@ def run_jobs(prov, specs, *, poll_s=3, stall_s=90, max_retries=2, deadline_s=900
                 s["out"] = res["output"]
                 s["done"] = True
                 print(f"  [{key}] completed -> {s['out']}")
-            elif st == "failed" or (time.monotonic() - s["last_change"] > stall_s):
-                reason = res["error"] if st == "failed" else f"stalled >{stall_s}s"
+            elif st == "failed":
+                reason = res["error"]
                 if s["tries"] <= max_retries:
                     print(f"  [{key}] {reason}; retry {s['tries']}/{max_retries}...")
                     try:
                         new_id = s["submit_fn"]()
                         s["id"] = new_id
                         s["tries"] += 1
-                        s["last_change"] = time.monotonic()
                         print(f"  [{key}] re-submitted -> {new_id}")
                     except Exception as e:
                         s["error"] = str(e)

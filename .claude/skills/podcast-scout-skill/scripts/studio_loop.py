@@ -250,7 +250,8 @@ class StudioLoop:
             raise ValueError("Every failed category needs an actionable timestamped finding")
         technical = read(self.artifact(render["qc"]))
         passed = all(categories[k]["status"] == "pass" for k in CATEGORIES) and not findings
-        if passed and (technical.get("status") != "PASS" or technical.get("errors")):
+        # qc_video.py exits 0 on WARN (a deliberate hold or pause): only FAIL or recorded errors block.
+        if passed and (technical.get("status") not in ("PASS", "WARN") or technical.get("errors")):
             raise ValueError("Creative pass cannot override failed technical QC")
         self.state["critiques"].append({"revision": self.state["revision"], "report": report, "evidence": evidence})
         self.state["stage"] = ("owner_review" if passed else "stopped" if findings and self.state["revision"] >= self.state["maximum_cuts"]
@@ -296,7 +297,7 @@ class StudioLoop:
             raise ValueError("Current render requires a passing creative review")
         self.verify_evidence(critique["evidence"])
         technical = read(self.artifact(render["qc"]))
-        if technical.get("status") != "PASS" or technical.get("errors"):
+        if technical.get("status") not in ("PASS", "WARN") or technical.get("errors"):
             raise ValueError("Technical QC must pass")
         return render
 

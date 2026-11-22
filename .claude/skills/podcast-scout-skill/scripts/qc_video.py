@@ -201,6 +201,12 @@ def audit_audio_gaps_and_lufs(
                 f"Loudness {lufs:.1f} LUFS is more than 1.5 LU "
                 f"from the {target_lufs:.0f} LUFS target.",
             )
+    else:
+        mark_failure(
+            qc_report,
+            "Loudness could not be measured (no integrated "
+            "LUFS reading from FFmpeg).",
+        )
 
     gaps = []
     pending_start = None
@@ -401,7 +407,10 @@ def run_film_gate(
             previous_frame = frame
 
             # Blank / solid-color frame detection
-            spatial_std = float(np.std(frame))
+            # Per-channel spread: np.std over RGB together reads a solid
+            # colour as detail. The bottom sixth is the burned caption band.
+            picture_area = frame[: max(1, height * 5 // 6)]
+            spatial_std = float(picture_area.std(axis=(0, 1)).max())
 
             if spatial_std < 3.5:
                 if blank_start is None:
@@ -835,6 +844,28 @@ def main(argv=None):
         except (OSError, ValueError, TypeError) as exc:
             qc_report["warnings"].append(
                 f"Failed to parse timings.json: {exc}"
+            )
+
+    # Container A/V sync: streams must start within one frame of each
+    # other. Narration-to-picture timing inside the streams is not measured.
+    if audio_stream is not None and video_stream is not None:
+        try:
+            offset = abs(
+                float(audio_stream.get("start_time", 0.0))
+                - float(video_stream.get("start_time", 0.0))
+            )
+        except (TypeError, ValueError):
+            offset = 0.0
+
+        if offset > 1.0 / 30.0:
+            mark_failure(
+                qc_report,
+                f"A/V SYNC FAIL: audio and video streams start "
+                f"{offset * 1000:.0f} ms apart (limit one frame).",
+            )
+        else:
+            qc_report["checks"].append(
+                f"A/V stream start offset: {offset * 1000:.0f} ms"
             )
 
     # Audio must cover the picture (a truncated track is not silence)

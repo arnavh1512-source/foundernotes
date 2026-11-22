@@ -34,6 +34,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import urllib.parse
 import urllib.request
 import wave
 from pathlib import Path
@@ -100,6 +101,8 @@ def load_script(path: Path) -> dict:
     seen = set()
     for i, s in enumerate(segs):
         s.setdefault("id", f"s{i+1:02d}")
+        if not re.fullmatch(r"[A-Za-z0-9_-]{1,80}", str(s["id"])):
+            die(f"segment id must be a safe file name (letters, digits, - and _): {s['id']!r}")
         if s["id"] in seen:
             die(f"duplicate segment id {s['id']}")
         seen.add(s["id"])
@@ -273,7 +276,11 @@ CHANNEL_NARRATOR_ENGINE = "chatterbox"
 
 
 def voicebox_url():
-    return os.environ.get("VOICEBOX_URL", "http://127.0.0.1:17493")
+    url = os.environ.get("VOICEBOX_URL", "http://127.0.0.1:17493").rstrip("/")
+    parts = urllib.parse.urlsplit(url)
+    if parts.scheme != "http" or parts.hostname not in ("127.0.0.1", "localhost", "::1"):
+        die(f"VOICEBOX_URL must be a local http server (got {url}): the narrator reference clip is private")
+    return url
 
 
 # Owner rule 2026-11-12: the owner-supplied voice is the channel narrator. It is a real person's voice (consent stated
@@ -524,7 +531,9 @@ def build_captions(timings):
         if len(c) <= 42 or "\n" in c:
             return c
         mid = len(c) // 2
-        cut = min((i for i, ch in enumerate(c) if ch == " "), key=lambda i: abs(i - mid))
+        cut = min((i for i, ch in enumerate(c) if ch == " "), key=lambda i: abs(i - mid), default=None)
+        if cut is None:
+            return c
         return c[:cut] + "\n" + c[cut + 1:]
     cues = [(a, b, two_lines(c)) for a, b, c in merged]
     # small lead-in so captions appear just before the word, never overlapping
@@ -734,6 +743,7 @@ def main(argv=None):
         except Exception as e:
             die(f"voicebox: server not reachable at {voicebox_url()} ({e}); start it with scripts/voicebox_server.sh")
         vb_engine = CHANNEL_NARRATOR_ENGINE
+        voice_key = voice                    # cache on the resolved profile: fallback takes must not survive the owner voice
     speed = a.speed or vcfg.get("speed", 1.0)
     pv = vcfg.get("perform", False)      # earshot: sentence-split takes read MORE synthetic; opt-in only
     perform = engine == "kokoro" and not a.no_perform and pv not in (False, "flat", "off")
@@ -863,6 +873,8 @@ def main(argv=None):
     print(json.dumps({k: meta[k] for k in ("engine", "voice", "duration", "words", "wpm_speech")}))
     if a.asr:
         rc = asr_check(out, timings, a.asr)
+        if rc is None:                       # faster-whisper missing: nothing was checked, so nothing to re-take
+            return 0
         if engine == "voicebox":            # remember what THIS run generated (auto re-takes only touch these)
             gen_file = out / "_generated_this_run.json"
             prev = json.loads(gen_file.read_text()) if (gen_file.exists() and os.environ.get("NARRATE_RETAKE_CHAIN")) else []
@@ -939,14 +951,14 @@ def missing_words(want, heard):
     return out
 
 
-def asr_check(out: Path, timings, model_name: str) -> int:
+def asr_check(out: Path, timings, model_name: str):
     """Transcribe each take and report segments whose displayed words are mostly missing.
     Small models mishear short names: confirm flagged lines by listening before re-taking."""
     try:
         from faster_whisper import WhisperModel
     except Exception:
         print("narrate: --asr needs faster-whisper (pip install faster-whisper 'av<19'); check NOT run", file=sys.stderr)
-        return 0
+        return None
     model = WhisperModel(model_name, device="cpu", compute_type="int8")
     norm = lambda s: re.sub(r"[^a-z0-9 ]", " ", re.sub(r"[’']", "", s.lower())).split()
     critical = {"not", "no", "never", "nor", "none", "nothing", "nobody", "nowhere", "neither", "cannot",
