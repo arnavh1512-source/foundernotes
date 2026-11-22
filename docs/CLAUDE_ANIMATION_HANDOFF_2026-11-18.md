@@ -31,3 +31,5 @@ The current private continuation is V17, bundle version 10. Follow the JSON chec
 Current private checkpoint is V18, version 11. Resume using the exact identities in the JSON.
 
 Current private checkpoint is V19, version 12. Resume using the exact identities in the JSON.
+
+Current private checkpoint is V20, version 13. Resume using the exact identities in the JSON.

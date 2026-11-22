@@ -350,4 +350,4 @@ The initial entries preserve documented observations from the 2026-11-11 study a
 - Evidence: V19 frame 1485 reduced to 350 pixels wide; the bird is a much smaller mark than the unrelated background details
 - Cause / rationale: Each panel reduces an already thin silhouette
 - Correction / recipe: Strengthen the shared outline without changing the path or providing either actor a different stimulus
-- Verification: Encoded V19 baseline inspected; candidate render recheck pending.
+- Verification: Nine exact V20 frames show a clearer shared bird silhouette and the torso following the final lookback before departure. The same bird position and timing are used in both panels. Four captioned frames show visual separation from the action. The far-arm reach issue in the first candidate passed the corrected source sweep. Full-speed acting, actual listening and independent interpretation remain pending.
