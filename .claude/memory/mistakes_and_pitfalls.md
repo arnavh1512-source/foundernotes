@@ -391,3 +391,11 @@ The initial entries preserve documented observations from the 2026-11-11 study a
 - Cause / rationale: Identical final rotation and height leave the page silhouettes joined and raised off the actor floor line
 - Correction / recipe: Separate the final orientations and spacing and stage contact on the same support line as the feet
 - Verification: Nine exact V25 frames show the sheets dropping at separate times, touching the floor at distinct angles and remaining visible during the held reaction. Four captioned frames show visual separation from the action. The 27 motion tests pass, including limb reach and grip checks. Full-speed acting, actual listening and independent interpretation remain pending.
+
+### philosopher-stick-pilot — The paper delivery reads as a floating arm
+
+- Recorded (UTC): 2026-11-22T23:51:08+00:00
+- Evidence: Exact V25 frames 1098, 1121 and 1125 show the shoulder end fully inside the frame with no attached body
+- Cause / rationale: A free-standing path remained after the workroom was widened
+- Correction / recipe: Draw a subordinate supporting figure attached to the existing palm so the new obligation has a visible source
+- Verification: Baseline confirmed in encoded samples; candidate render pending.

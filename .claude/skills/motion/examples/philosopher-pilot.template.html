@@ -94,7 +94,26 @@ function burden(t){
   }
   taskPaper(...page.center,page.angle);
  }
- if(task.deliveryHand>0){const [x,y]=task.deliveryWrist;stroke(s,[[x+220,y-30],[x+100,y-20],[x,y]],9,'#899880');stroke(s,[[x,y],[x-34,y]],7,'#899880');}
+ if(task.deliveryHand>0){
+  const [x,y]=task.deliveryWrist;
+  // Keep the supporting palm visible with a whole-body silhouette through the release.
+  const chest=[x+139,557],hip=[x+158,660],head=[x+128,478];
+  const travel=x-1109;
+  const stride=progress(t,35.6,1.2)*(1-progress(t,36.62,.18));
+  const step=Math.sin(travel*Math.PI/105)*46*stride;
+  const color='#657869';
+  for(const side of [-1,1]){
+   const foot=[hip[0]+side*(36+step),830-Math.max(0,side*step)*.45];
+   const leg=solveArm(hip,foot,93,96,1);
+   stroke(s,[hip,leg.elbow,leg.wrist,[leg.wrist[0]-17,leg.wrist[1]]],7,color);
+  }
+  stroke(s,[hip,chest,[head[0],head[1]+26]],8,color);
+  const arm=solveArm(chest,[x,y],86,82,1);
+  stroke(s,[chest,arm.elbow,arm.wrist,[x-34,y]],8,color);
+  stroke(s,[[chest[0]+5,chest[1]],[chest[0]+40,624],[chest[0]+30,678]],6,color);
+  s.fillStyle='#f5efdf';s.strokeStyle=color;s.lineWidth=5;s.beginPath();s.arc(...head,28,0,Math.PI*2);s.fill();s.stroke();
+  s.fillStyle=color;s.beginPath();s.arc(head[0]-12,head[1]+5,3,0,Math.PI*2);s.fill();
+ }
  // Keys stay on the desk; the clock supplies a competing time constraint.
  s.beginPath();s.arc(1135,592,8,0,Math.PI*2);s.strokeStyle='#a38148';s.lineWidth=4;s.stroke();stroke(s,[[1143,592],[1170,592],[1170,600]],4,'#a38148');
  s.beginPath();s.arc(1110,385,45,0,Math.PI*2);s.fillStyle='#f5efdf';s.fill();s.strokeStyle='#899880';s.lineWidth=5;s.stroke();

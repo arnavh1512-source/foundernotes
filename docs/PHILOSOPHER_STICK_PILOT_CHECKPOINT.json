@@ -189,5 +189,10 @@
     "status": "V25 selected-frame verification complete",
     "evidence": "V24 frames 1163 and 1215 show the landed pages aligned edge-to-edge above the actor floor line.",
     "next": "Review the fall, contact timing and aftermath at full speed with dialogue. Exact listening, caption boundaries, cup sync and independent comprehension remain pending."
+  },
+  "delivery_source_candidate": {
+    "status": "Source candidate. Exact V25 remains verified baseline.",
+    "evidence": "Exact V25 frames 1098, 1121 and 1125 show a disconnected delivery arm fully in view.",
+    "next": "Inspect exact candidate delivery, release, limb clearance, floor and narrator/caption continuity. The delivery figure must read as secondary; review normal-speed gait and independent comprehension remain pending."
   }
 }

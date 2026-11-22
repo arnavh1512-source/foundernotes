@@ -245,3 +245,7 @@ Exact V24 frames 1163 and 1215 show the two fallen pages edge-to-edge at the sam
 ### Exact V25 verification
 
 Actions 45079788019 passed, source `481b306a077e5da97701f0fa0679c8c565f9b9bd`, picture artifact 14777146150. Nine exact V25 frames show the sheets dropping at separate times, touching the floor at distinct angles and remaining visible during the held reaction. Four captioned frames show visual separation from the action. The 27 motion tests pass, including limb reach and grip checks. Full-speed acting, actual listening and independent interpretation remain pending. Full assembly decode and unchanged decoded audio were verified. Supplied discipline frames at requested 295–301 seconds separate an object insert from a wider body-and-furniture composition. This is a still-level prop legibility comparison only. Fresh named lookups yielded text or no decoded footage. Full-speed comparison, sound and independent comprehension remain pending. No new named-reference audiovisual, owner or independent approval.
+
+## Workroom delivery source candidate
+
+V25 frames 1098, 1121 and 1125 show the delivering arm fully detached from any visible body or frame edge. The candidate connects the existing palm path to a subordinate stick figure and preserves the paper release, missed catch and aftermath timing. The figure must read as the supporting actor at the relevant handoff. Exact media and motion review are pending.
