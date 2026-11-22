@@ -95,10 +95,14 @@ function burden(t){
  s.beginPath();s.arc(1110,385,45,0,Math.PI*2);s.fillStyle='#f5efdf';s.fill();s.strokeStyle='#899880';s.lineWidth=5;s.stroke();
  const minute=-Math.PI/2+progress(t,29,12)*.9;stroke(s,[[1110,385],[1110+32*Math.cos(minute),385+32*Math.sin(minute)]],4,youthColor);stroke(s,[[1110,385],[1088,397]],4,youthColor);
  actor(g,youthColor);
- const penHand=t<33.1?g.arms[1].wrist:[865,597];
- stroke(s,[[840+(penHand[0]-846)*task.writing,608-27*task.writing],[penHand[0]+3,608]],3,'#95684d');
- const [x,y]=task.phoneCenter;s.fillStyle='#354c51';s.strokeStyle='#354c51';s.lineWidth=3;s.fillRect(x-20,y-35,40,70);s.fillStyle='#b9cdd0';s.fillRect(x-15,y-27,30,49);
- s.beginPath();s.arc(x,y-10,6,0,Math.PI*2);s.fillStyle='#667981';s.fill();stroke(s,[[x-8,y+10],[x,y+3],[x+8,y+10]],3,'#667981');
+ const [penX,penY]=g.arms[1].wrist;
+ // Set the pen down before reaching for the phone. The pen keeps its length and stays on the paper.
+ const laid=progress(t,32.65,.4),penAngle=1.28*(1-laid);
+ const penCenter=[penX+3+(860-penX-3)*laid,penY+5+(605-penY-5)*laid];
+ const dx=10*Math.cos(penAngle),dy=10*Math.sin(penAngle);
+ stroke(s,[[penCenter[0]-dx,penCenter[1]-dy],[penCenter[0]+dx,penCenter[1]+dy]],4,'#79533d');
+ const [x,y]=task.phoneCenter;s.fillStyle='#354c51';s.strokeStyle='#354c51';s.lineWidth=3;s.fillRect(x-20,y-35,40,70);s.fillStyle=t>=37.1?'#56686b':'#b9cdd0';s.fillRect(x-15,y-27,30,49);
+ if(t<37.1){s.beginPath();s.arc(x,y-10,6,0,Math.PI*2);s.fillStyle='#667981';s.fill();stroke(s,[[x-8,y+10],[x,y+3],[x+8,y+10]],3,'#667981');}
  if(t>=32.6&&t<33.7){const pulse=5+4*Math.sin((t-32.6)*18);for(const side of [-1,1])stroke(s,[[x+side*(27+pulse),y-13],[x+side*(31+pulse),y],[x+side*(27+pulse),y+13]],3,'#a38148');}
  s.restore();words('Responsibilities remain real',960,95,28,'#59625d');
 }

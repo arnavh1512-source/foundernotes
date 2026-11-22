@@ -327,3 +327,11 @@ The initial entries preserve documented observations from the 2026-11-11 study a
 - Cause / rationale: The vignette called the full study background renderer to share the desk surface.
 - Correction / recipe: Share the desk geometry but give the work vignette its own background and palette so the two situations can be distinguished before the label is read. Check both transitions in the exact encoded cut.
 - Verification: Exact V17 encoded artifact 14758649327 shows the workroom as distinct at both boundaries. The phone, clock, and dropped papers remain visible. The paired-view cue is absent at entry and present during recovery. Four captioned samples show separated bands. Full-speed interpretation and actual listening remain pending.
+
+### philosopher-stick-pilot — The pen changed apparent length during the interrupted task
+
+- Recorded (UTC): 2026-11-22T15:47:57+00:00
+- Evidence: Exact V17 frames 900, 963, 987 and 993
+- Cause / rationale: Pen was drawn between independent wrist and paper points
+- Correction / recipe: Keep a constant pen length and complete the set-down before the hand reaches the phone
+- Verification: V17 defect supported by source and encoded samples. New exact render review pending.

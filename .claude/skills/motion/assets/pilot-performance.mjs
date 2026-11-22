@@ -90,7 +90,8 @@ export function pilotActorAt(time,role,mode='study'){
   // The failed reach lands in a supported, specific reaction rather than another generic strain.
   p.hands[0]=pilotBlend(p.hands[0],[790,465],settle);p.hands[0][0]-=30*Math.sin(Math.PI*settle);p.head[1]+=10*settle;
   if(settle>.8)p.intent='defeated';
-  p.gaze=time<32.6?p.hands[1]:time<35.5?task.phoneCenter:task.pages[0].center;
+  const phoneAttention=progress(time,32.6,.28),paperAttention=progress(time,35.8,.45);
+  p.gaze=pilotBlend(pilotBlend(p.hands[1],task.phoneCenter,phoneAttention),task.pages[0].center,paperAttention);
  }else{
   const lean=progress(time,14.5,1.2)*(1-progress(time,22,.8));
   const point=progress(time,15.2,.4)*(1-progress(time,17.5,.5))+.65*progress(time,20,.4)*(1-progress(time,21.4,.4));

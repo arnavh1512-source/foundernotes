@@ -149,5 +149,10 @@
     "status": "V17 encoded still review complete; full-speed interpretation pending.",
     "review": "V16 frame pairs 434/435, 869/870, 1229/1230, 1379/1380, 1679/1680. Study furniture persists into the illustrative task. The parallel-view conclusion is already visible at entry, before either response.",
     "next": "Confirm whether the vignette reads as an example on first viewing and whether the paired reactions read before the delayed cue. Review complete dialogue, caption/speaker boundaries and cup sync before any gate approval."
+  },
+  "prop_handoff_candidate": {
+    "status": "Source candidate; exact V17 remains the reviewed baseline.",
+    "next": "Retrieve exact CI render. Check the writing-to-phone transition at 32.6\u201333.7, gaze handoff 35.6\u201336.3, phone screen change at 37.1, paper catch and settled posture. Preserve V17 audio and captions.",
+    "evidence": "Exact V17 prop samples at frames 900, 963, 987, 993, 1008, 1040, 1098, 1120 and 1170. Pen length and contact vary, and the incoming paper gaze starts before delivery. The phone screen competes after set-down."
   }
 }
