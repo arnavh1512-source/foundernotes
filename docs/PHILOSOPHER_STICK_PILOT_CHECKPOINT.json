@@ -169,5 +169,10 @@
     "status": "V21 selected-frame verification complete",
     "evidence": "V20 frames 480 and 492 show the opening study gesture interrupted by an abrupt framing jump while the body intent stays the same.",
     "next": "Review the camera approach and mentor reaction at full speed against the dialogue. Exact listening, caption boundaries, cup sync and independent comprehension remain pending."
+  },
+  "opening_attention_candidate": {
+    "status": "Source candidate. V21 remains the verified render.",
+    "evidence": "Encoded V21 opening frames 0, 114, 174, 193, 220 and 284 show no visible eye or effort cue, unlike the study and final lookback.",
+    "next": "Verify exact encoded opening eye positions, during brace, recovery, stairs and arrival. Confirm no stray features in the empty exit lock shot. Full-speed comprehension and audio remain pending."
   }
 }

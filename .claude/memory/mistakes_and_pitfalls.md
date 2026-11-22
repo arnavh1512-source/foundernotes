@@ -359,3 +359,11 @@ The initial entries preserve documented observations from the 2026-11-11 study a
 - Cause / rationale: The camera changed scale at a fixed timestamp without a change of gesture
 - Correction / recipe: Move into the existing two-shot during the first lean; retain cuts at later intent changes
 - Verification: Nine exact V21 selected frames show progressive framing into the study two-shot and the mentor settling back at the Youth demand. Four captioned frames show visual separation from the action. The 27 motion tests pass, including limb reach and grip checks. Full-speed acting, actual listening and independent interpretation remain pending.
+
+### philosopher-stick-pilot — The opening lacks a readable gaze target through the route discovery
+
+- Recorded (UTC): 2026-11-22T19:45:52+00:00
+- Evidence: V21 encoded opening frames 114 and 193–284; the face remains blank through the turn and approach
+- Cause / rationale: The original gate drawing rendered head shape only
+- Correction / recipe: Use the same sparse facial vocabulary as the study. Let the eyes lead the turn and settle on the stair and arch targets
+- Verification: Baseline inspected. Corrected encoded render pending.

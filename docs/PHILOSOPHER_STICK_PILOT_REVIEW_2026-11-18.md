@@ -213,3 +213,7 @@ Exact V20 samples show the first room reframing jumping in the middle of a singl
 ### Exact V21 verification
 
 Actions 45057852596 passed, source `ca0ba9073823d58006c7aa86fb920d3000168ca7`, picture artifact 14768456899. Nine exact V21 selected frames show progressive framing into the study two-shot and the mentor settling back at the Youth demand. Four captioned frames show visual separation from the action. The 27 motion tests pass, including limb reach and grip checks. Full-speed acting, actual listening and independent interpretation remain pending. Full assembly decode and unchanged decoded audio were verified. Supplied discipline frames at requested 224–230 seconds contrast a cut that changes the object of attention with the earlier V20 mid-gesture framing jump. No timing or sound inference. Fresh Alan Newgrounds, Day One and ThatGuy reads provided no decoded footage. Prior named-channel scopes remain pending. No new named-reference audiovisual, owner or independent approval.
+
+## Opening attention candidate
+
+Exact V21 gate frames show a blank head during effort and through the discovery. The revised opening marks the Youth’s attention at the lock, redirects it toward the first step before the arch reveal and lifts it to the arch during the approach. An effort mouth reinforces the gate pull and settles on release. The original body timing and measured audio are preserved. Exact source render review pending.

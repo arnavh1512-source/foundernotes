@@ -45,6 +45,15 @@ function draw(t){
  path([g.arms[1].shoulder,g.arms[1].elbow,g.arms[1].wrist]);
  g.legs.forEach((limb,i)=>path([limb.wrist,g.toeTargets[i]],6));
  c.fillStyle='#f5efdf';c.strokeStyle=INK;c.lineWidth=6;c.beginPath();c.arc(...p.head,31,0,Math.PI*2);c.fill();c.stroke();
+ // The look leads the route reveal, and then lifts from the step to the opening.
+ const turn=progress(t,6,0.7),lookUp=progress(t,9.7,2.2);
+ const target=[895+(420-895)*turn+(195-420)*lookUp,537+(780-537)*turn+(370-780)*lookUp];
+ const dx=target[0]-p.head[0],dy=target[1]-p.head[1],distance=Math.hypot(dx,dy)||1;
+ const eyeX=p.head[0]+13*dx/distance,eyeY=p.head[1]+13*dy/distance;
+ c.fillStyle=INK;c.beginPath();c.arc(eyeX,eyeY,3,0,Math.PI*2);c.fill();
+ const effort=progress(t,2.25,.45)*(1-progress(t,3.8,.35));
+ const mouthX=p.head[0]+8*(1-2*turn),mouthY=p.head[1]+13;
+ path([[mouthX-5,mouthY],[mouthX+5,mouthY-4*effort]],3);
  for(const a of g.arms){c.fillStyle=INK;c.beginPath();c.arc(...a.wrist,4,0,Math.PI*2);c.fill();}
  // No captions or dialogue are fabricated for this internal movement exercise.
 }
