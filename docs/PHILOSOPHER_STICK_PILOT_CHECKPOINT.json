@@ -174,5 +174,10 @@
     "status": "V22 selected-frame verification complete",
     "evidence": "Encoded V21 opening frames 0, 114, 174, 193, 220 and 284 show no visible eye or effort cue, unlike the study and final lookback.",
     "next": "Review the opening eye lead, exertion and stair discovery in normal-speed playback with original dialogue. Exact listening, caption boundaries, cup sync and independent comprehension remain pending."
+  },
+  "study_handoff_candidate": {
+    "status": "Source candidate. V22 remains the verified assembly.",
+    "evidence": "V22 encoded frames 810, 835, 855 and 869 show a held invitation while the Youth prepares to answer.",
+    "next": "Check the exact 26\u201329 second exchange and cut into the workroom for genuine turn-taking, arm clearance and caption separation. Preserve actual dialogue audio."
   }
 }

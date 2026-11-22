@@ -67,7 +67,7 @@ export function pilotActorAt(time,role,mode='study'){
   p={hip:[1320,680],chest:[1320,550],head:[1310,465],feet:[[1185,830],[1260,830]],hands:[pilotCupAt(time).grip,[1370,708]],facing:-1,intent:'listen'};
   if(time>=14.5&&time<29){
    const attention=progress(time,15.4,.65)*(1-progress(time,21.7,.65));
-   const reply=progress(time,22.9,.55),invite=progress(time,26.1,.65);
+   const reply=progress(time,22.9,.55),invite=progress(time,26.1,.65)*(1-progress(time,27.75,.85));
    p.chest[0]-=14*attention+14*reply;p.chest[1]+=5*attention+5*reply;
    p.head[0]-=18*attention+20*reply;p.head[1]+=8*attention+5*reply;
    const challenge=progress(time,20.35,.45)*(1-progress(time,21.75,.7));
@@ -118,7 +118,7 @@ export function pilotActorAt(time,role,mode='study'){
    p.hip=pilotBlend(p.hip,[675,640],listening);p.chest=pilotBlend(p.chest,[715,500],listening);p.head=pilotBlend(p.head,[740,420],listening);
    p.hands[0]=pilotBlend(p.hands[0],[810,620],listening);p.hands[1]=pilotBlend(p.hands[1],[755,640],listening);
    const withhold=progress(time,25.2,.35)*(1-progress(time,26.1,.5)),ready=progress(time,27.8,.6);
-   p.chest[0]+=6*withhold+10*ready;p.head[0]+=12*withhold+14*ready;p.head[1]-=4*withhold;
+   p.chest[0]+=6*withhold+17*ready;p.head[0]+=12*withhold+23*ready;p.head[1]+=-4*withhold+7*ready;
    p.hands[1]=pilotBlend(p.hands[1],[805,560],withhold);p.hands[1]=pilotBlend(p.hands[1],[800,610],ready);
    if(listening>.9)p.intent=withhold>.2?'withhold':ready>.2?'ready':'listen';
   }

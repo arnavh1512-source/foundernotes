@@ -367,3 +367,11 @@ The initial entries preserve documented observations from the 2026-11-11 study a
 - Cause / rationale: The original gate drawing rendered head shape only
 - Correction / recipe: Use the same sparse facial vocabulary as the study. Let the eyes lead the turn and settle on the stair and arch targets
 - Verification: Nine exact V22 frames show the Youth looking toward the locked gate, the steps and the arch during successive beats. The empty lock insert shows no stray face marks. Four captioned frames show visual separation from the action. The 27 motion tests pass, including limb reach and grip checks. Full-speed acting, actual listening and independent interpretation remain pending.
+
+### philosopher-stick-pilot — The invitation hand stayed up through the listener’s preparation to answer
+
+- Recorded (UTC): 2026-11-22T20:53:41+00:00
+- Evidence: Exact V22 encoded frames 810, 835, 855 and 869 show an unchanged invitation silhouette
+- Cause / rationale: Invitation strength rose and never returned before the cut
+- Correction / recipe: Let the hand come to rest as the listener commits to the turn; keep the cup hand anchored and verify separation during retraction
+- Verification: Baseline verified in encoded samples. Corrected media review pending.
