@@ -143,5 +143,10 @@
     "baseline_author_review": "Twelve exact V15 frames requested through OpenMontage at 0, 2, 4, 7, 10, 13, 56, 58, 59, 61, 62 and 64.4 seconds. Ending close-up retains clipped gate bars and the lock has two sampled insert frames before the reaction.",
     "next": "Review the entire assembly in real time for sustained attention, lookback cut cadence, the closing read, caption boundaries and actual dialogue and cup sound. Do not retime narration to compensate for unverified visual timing.",
     "reference": "Supplied discipline frame at 8 seconds isolates the waking character inside a clearly readable room; no actual cadence or channel attribution. Named YouTube channel lookups exposed text shells or no decoded media; actual opening, reaction/cut timing and sound remain pending."
+  },
+  "handoff_candidate": {
+    "status": "Source candidate on draft PR 13. V16 remains the exact reviewed baseline.",
+    "review": "V16 frame pairs 434/435, 869/870, 1229/1230, 1379/1380, 1679/1680. Study furniture persists into the illustrative task. The parallel-view conclusion is already visible at entry, before either response.",
+    "next": "Inspect CI candidate frames on both sides of 29, 41 and 46 seconds, plus 53.2 and 55.9. Confirm phone and paper readability, task contrast, caption separation and the paired event. Assemble only with unchanged V16 audio and provisional captions. Full-speed audiovisual and independent review pending."
   }
 }

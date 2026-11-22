@@ -319,3 +319,11 @@ The initial entries preserve documented observations from the 2026-11-11 study a
 - Cause / rationale: The route crop centered on x540; its right edge extended into the gate world bounds.
 - Correction / recipe: Frame the whole arch and exclude the gate edge after the visible lookback. Confirm the lock, full layout and destination read in successive shots and keep visual prompts in a consistent lower band.
 - Verification: Exact V16 asset 14755181187. Selected frames around 57.35 and at 63.2/64.4 show an earlier return to the full layout and a complete arch with no gate fragment. Four encoded captioned samples show separate cue and caption bands. Continuous audiovisual and independent review are pending.
+
+### philosopher-stick-pilot — The illustrative work vignette used the same visible set as the surrounding conversation
+
+- Recorded (UTC): 2026-11-22T14:48:01+00:00
+- Evidence: Exact V16 frame pairs 869/870 and 1229/1230. The bookcase, window and chair recur across the illustrative cut, while the mentor and cup disappear and reappear.
+- Cause / rationale: The vignette called the full study background renderer to share the desk surface.
+- Correction / recipe: Share the desk geometry but give the work vignette its own background and palette so the two situations can be distinguished before the label is read. Check both transitions in the exact encoded cut.
+- Verification: Baseline set reuse verified on encoded images. Source correction builds and passes geometry tests. New cut and viewer interpretation pending.
