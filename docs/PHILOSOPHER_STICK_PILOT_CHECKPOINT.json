@@ -137,5 +137,11 @@
     "reviewed_candidates_this_batch": 3,
     "scope": "V12 seated reblock, V14 contact/crop correction, V15 final shot-handoff correction. Intermediate source-only/CI revisions are not additional approved cuts.",
     "remaining": "Continuous audiovisual, named-channel footage and independent/owner approval remain pending."
+  },
+  "bookend_candidate": {
+    "status": "Source candidate only; V15 remains exact reviewed picture and private assembly.",
+    "baseline_author_review": "Twelve exact V15 frames requested through OpenMontage at 0, 2, 4, 7, 10, 13, 56, 58, 59, 61, 62 and 64.4 seconds. Ending close-up retains clipped gate bars and the lock has two sampled insert frames before the reaction.",
+    "next": "Retrieve the CI artifact for the source candidate on PR 13; check ending edge and active pose, cue placement and transitions through 57.35, 58.6, 60.2, 61.7 and 62.5. Assemble only against unchanged private audio, then review timing and sync.",
+    "reference": "Supplied discipline frame at 8 seconds isolates the waking character inside a clearly readable room; no actual cadence or channel attribution. Named YouTube channel lookups exposed text shells or no decoded media; actual opening, reaction/cut timing and sound remain pending."
   }
 }

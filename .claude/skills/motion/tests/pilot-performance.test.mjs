@@ -131,7 +131,11 @@ test('room framing and ending separate claim, reaction, unchanged lock and chose
  assert.equal(pilotRoomCameraAt(18.8).scale,2);assert.equal(pilotRoomCameraAt(21.3).scale,1.7);
  assert.deepEqual(pilotRoomCameraAt(43.8),{scale:2.05,x:760,y:465});
  assert.equal(pilotRoomCameraAt(45).scale,1.6);
- assert.equal(pilotEndingViewAt(56).mode,'constraint');assert.equal(pilotEndingViewAt(60).mode,'context');
+ assert.equal(pilotEndingViewAt(56).mode,'constraint');assert.equal(pilotEndingViewAt(57.35).mode,'context');
+ const route=pilotEndingViewAt(64.4);
+ const roomX=worldX=>160+(1.3*worldX+219)*1600/1920;
+ assert.ok(route.x+960/route.scale<roomX(758),'the closing crop excludes the edge of the spent obstacle');
+ assert.ok(route.x-960/route.scale<roomX(95)&&route.x+960/route.scale>roomX(295),'the complete arch stays in frame');
  assert.equal(pilotEndingViewAt(64.4).mode,'route');
  const [x,y,w,h]=pilotEndingViewAt(57).crop;
  assert.ok(x>=0&&y>=0&&x+w<=1920&&y+h<=1080);

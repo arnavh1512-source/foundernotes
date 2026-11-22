@@ -311,3 +311,11 @@ The initial entries preserve documented observations from the 2026-11-11 study a
 - Cause / rationale: Mentor respond began43.9 while the Youth camera held until44.5. The earlier camera fix covered the challenge close-up but not the later reaction close-up.
 - Correction / recipe: Begin respond on the existing44.5 return cut so the gesture is seen in context; raise both Youth close-ups to exclude forward knees. Keep full handle/face clearance throughout the new44.5–45.15 arc and inspect the exact close-up/return boundary.
 - Verification: V14 selected-frame/source finding verified. Final sourcec9898a2833c5f6b3bd5d6d9b3861aa94fd0aa2a4 passes27 tests/bundled parse. Exact sourcec9898a2833c5f6b3bd5d6d9b3861aa94fd0aa2a4, CI44228817475/artifact14394139231, picture SHA747ce4a268c6f82b42c748f57d35be597dd56f3fdb912bfeb2b7864c81ffcb18;16 study/cup picture/nine captioned samples plus final critical-transition samples, integrated overview and corrected support/prop crops inspected. Chair-supported forward-thigh silhouette, planted feet, revised cup height and palm separation are visible in those samples.27 tests/bundled parse and full decode/probe pass; decoded audio unchanged. Continuous audiovisual, independent and owner approval remain pending.
+
+### philosopher-stick-pilot — The final arch close-up retained a clipped strip of the spent gate
+
+- Recorded (UTC): 2026-11-22T12:47:39+00:00
+- Evidence: Exact V15 picture artifact 14394139231, OpenMontage samples at 62 and 64.4 seconds. The right edge shows cropped bars even after the wide shot established the gate and route. Samples at 56 and 58 show only the lock before the character reappears.
+- Cause / rationale: The route crop centered on x540; its right edge extended into the gate world bounds.
+- Correction / recipe: Frame the whole arch and exclude the gate edge after the visible lookback. Confirm the lock, full layout and destination read in successive shots and keep visual prompts in a consistent lower band.
+- Verification: Baseline verified in encoded frames. Corrected source passes geometry and bundle checks; corrected encoded picture and pacing review remain pending.

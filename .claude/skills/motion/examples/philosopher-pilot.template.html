@@ -112,8 +112,10 @@ function views(t){
 }
 function gateOpening(t){
  drawGate(t,true);s.drawImage(gateCanvas,160,0,1600,900);
- if(t<5)words('An illustrative problem',960,75,28,'#778174');
- if(t>=10)words('The gate is still locked. The approach changes.',960,875,28);
+ if(t>=12.3)gateCue('Same lock. A different route.');
+}
+function gateCue(text){
+ s.fillStyle='#e9e5d9';s.fillRect(0,840,1920,60);words(text,960,879,34);
 }
 function exit(t){
  drawGate(14.5,false);
@@ -126,9 +128,7 @@ function exit(t){
   const g=pilotExitAt(t);s.save();s.translate(160,0);s.scale(1600/1920,900/1080);s.transform(...cameraAt(14.5).matrix);
   s.translate(...g.depth.anchor);s.scale(g.depth.scale,g.depth.scale);s.translate(-190,-740);actor(g,youthColor);s.restore();s.restore();
  }
- if(view.mode==='route'){
-  s.fillStyle='#e9e5d9';s.fillRect(0,840,1920,60);words('What is fixed? What can I try differently?',960,879,34);
- }
+ if(t>=62.5)gateCue('What is fixed? What can I try differently?');
 }
 function pilotFrame(time){
  if(!Number.isFinite(time))throw new TypeError('time must be finite');

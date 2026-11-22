@@ -31,9 +31,9 @@ export function pilotRoomCameraAt(time){
 }
 export function pilotEndingViewAt(time){
  if(!Number.isFinite(time))throw new TypeError('time must be finite');
- if(time<58.6)return {mode:'constraint',crop:[932,389,900,421.875]};
+ if(time<57.35)return {mode:'constraint',crop:[932,389,900,421.875]};
  if(time<61.7)return {mode:'context',scale:1,x:960,y:450};
- return {mode:'route',scale:1.4,x:540,y:450};
+ return {mode:'route',scale:1.4,x:465,y:450};
 }
 export function pilotCupAt(time){
  // Keep the cup down while replying; the raised cup at41 follows the intervening vignette.
