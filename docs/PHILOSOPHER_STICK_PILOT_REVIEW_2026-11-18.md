@@ -191,3 +191,7 @@ Actions 45040309749 passed, source `fa77c8a80eb535ee4dbfb28e18ca045cf9558ff0`, p
 ## Cup release and conversational handoff candidate
 
 Exact V18 frames 1260, 1335 and 1355 show the wrist stays fixed to the handle long after the cup reaches the table, including through the later reply. The candidate holds grip through contact, retracts the cup hand to rest before the Youth cut, and passes both eyelines from the prop back to the conversation. All 27 geometry tests passed. Exact candidate media and audiovisual pacing remain pending.
+
+### Exact V19 verification
+
+Actions 45046327177 passed, source `819177e201e64247bfce55ce451efb86c37cc7bc`, picture artifact 14763691675. Nine exact V19 frames show the cup grounded before the wrist withdraws and the mentor gesturing with the free hand while the cup remains at rest. Four captioned frames show visual separation from the action. Gaze timing is supported by source and selected expressions. Full-speed acting, actual listening and independent interpretation remain pending. Full assembly decode and unchanged decoded audio were verified. Fresh Alan Newgrounds indexed content showed player text only. The supplied discipline footage at requested 81–84 seconds shows a separate table grip and supported prop. The individual and ThatGuy lookups yielded no decoded media. Prior named-channel access scopes remain pending. No new named-reference audiovisual, owner or independent approval.

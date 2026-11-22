@@ -29,3 +29,5 @@ The current private continuation is V16 (bundle version 9). Use the exact V16 so
 The current private continuation is V17, bundle version 10. Follow the JSON checkpoint for the exact render and audio hashes. The vignette and paired-view handoff have selected-frame review. Full-speed interpretation, listening and approval are pending.
 
 Current private checkpoint is V18, version 11. Resume using the exact identities in the JSON.
+
+Current private checkpoint is V19, version 12. Resume using the exact identities in the JSON.

@@ -342,4 +342,4 @@ The initial entries preserve documented observations from the 2026-11-11 study a
 - Evidence: Exact V18 encoded frames 1260, 1335 and 1355
 - Cause / rationale: Holding wrist always used the cup grip target
 - Correction / recipe: Preserve contact until the cup is supported, then release and check the prop-to-speaker gaze handoff
-- Verification: Baseline verified in encoded stills. Candidate geometry passed. Exact candidate review pending.
+- Verification: Nine exact V19 frames show the cup grounded before the wrist withdraws and the mentor gesturing with the free hand while the cup remains at rest. Four captioned frames show visual separation from the action. Gaze timing is supported by source and selected expressions. Full-speed acting, actual listening and independent interpretation remain pending.

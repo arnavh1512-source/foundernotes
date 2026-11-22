@@ -1,6 +1,6 @@
 {
-  "code_commit": "fa77c8a80eb535ee4dbfb28e18ca045cf9558ff0",
-  "workflow_run": 45040309749,
+  "code_commit": "819177e201e64247bfce55ce451efb86c37cc7bc",
+  "workflow_run": 45046327177,
   "previous_pr": {
     "number": 12,
     "observed_state": "merged",
@@ -8,14 +8,14 @@
   },
   "continuation_pr": 13,
   "previous_picture": {
-    "artifact": 14758649327,
-    "sha256": "a3bd2f55c8912d58079778875b665ec759fd4df9a277565e76d6cbfb0d60dbf4",
+    "artifact": 14761930860,
+    "sha256": "1ca7d8a601747f0be6fdfbbcbe9334999bf3d64d5a0daded83e50eb47354ef6b",
     "duration_s": 64.5,
     "width": 1920,
     "height": 1080,
     "fps": 30,
     "frames": 1935,
-    "review_scope": "Exact V17 artifact. Nine encoded samples confirm separated task and study settings, phone and dropped paper visibility, and the late parallel-view cue. V16 remains the evidence for its bookend review. Continuous audiovisual review pending."
+    "review_scope": "Nine exact V18 samples show a consistent pen shape that remains on the desk, an unlit phone during the miss, and clear sight of the papers on the floor. Four captioned frames show visual separation from the action. Gaze timing is supported by source and selected expressions. Full-speed acting, actual listening and independent interpretation remain pending."
   },
   "private_audio": {
     "library_id": "libfile_c99d2bfdf94c819198bad6d6fd27be65",
@@ -53,24 +53,24 @@
   "full_production_approved": false,
   "workflow_conclusion": "success",
   "latest_picture": {
-    "artifact": 14761930860,
-    "sha256": "1ca7d8a601747f0be6fdfbbcbe9334999bf3d64d5a0daded83e50eb47354ef6b",
+    "artifact": 14763691675,
+    "sha256": "b13f399aaa681f6f77a2ffd7028a6685f16ca18f0e5d46149b2247e9177269f0",
     "duration_s": 64.5,
     "width": 1920,
     "height": 1080,
     "fps": 30,
     "frames": 1935,
-    "review_scope": "Nine exact V18 samples show a consistent pen shape that remains on the desk, an unlit phone during the miss, and clear sight of the papers on the floor. Four captioned frames show visual separation from the action. Gaze timing is supported by source and selected expressions. Full-speed acting, actual listening and independent interpretation remain pending."
+    "review_scope": "Nine exact V19 frames show the cup grounded before the wrist withdraws and the mentor gesturing with the free hand while the cup remains at rest. Four captioned frames show visual separation from the action. Gaze timing is supported by source and selected expressions. Full-speed acting, actual listening and independent interpretation remain pending."
   },
   "latest_private_assembly": {
-    "name": "internal-pilot-v18.mp4",
-    "sha256": "593a8442a1793eec433005a936eb19495bd29a91dd0d4a196068dbed68921060",
+    "name": "internal-pilot-v19.mp4",
+    "sha256": "3ab3259f74f8fc1064218aef886f0910ec2712e2167576af92f53575cc8b5679",
     "duration_s": 64.5,
     "video_frames": 1935,
     "audio_stream_duration_s": 64.482,
     "review_scope": "Full decode and four selected captioned frames. Timing, actual sound and independent review pending.",
     "decoded_audio_sha256": "d6ea2c401862c70b5b48597ad0883fbbf30102a83d28c1ac7c889e6d009334da",
-    "audio_verification": "V17 AAC copied unchanged with identical decoded hash."
+    "audio_verification": "V18 AAC copied unchanged with identical decoded hash."
   },
   "tests": {
     "node_tests_passed": 27,
@@ -80,13 +80,13 @@
   "next_priority": "Preserve coherent seated chair/pelvis/thigh/floor support, mouth-height raised cup with unchanged desk rest/contact, palm separation and revised conversation eye line alongside all prior pilot work. Judge the complete normal-speed dialogue, cup contact sound, caption/speaker boundaries and independent viewer comprehension before further stylistic changes or approval. Historical crop-only claims remain pending revalidation; do not alter the narrator or use technical passes as creative approval.",
   "private_continuation_bundle": {
     "library_file_id": "libfile_2a2569310a8481919a251bf91621ecb0",
-    "file_id": "file_00000000818082129274cacdc980ffc0",
+    "file_id": "file_00000000480081fd97d4e7983f40928f",
     "name": "FounderNotes-Internal-Pilot-Checkpoint-eac2e46.zip",
-    "version": 11,
-    "contents": "V18 picture and private assembly, unchanged dialogue, provisional captions, prop-handoff frames and probe. Earlier versions retain V17 and V16 evidence.",
+    "version": 12,
+    "contents": "V19 picture and private assembly, unchanged dialogue, provisional captions, cup-release frames and probe. Earlier versions retain V18 and V17 evidence.",
     "delivery_status": "Internal, not approved."
   },
-  "previous_code_commit": "9f8b3a1db6d309811a12a41fd5b413b706b2722d",
+  "previous_code_commit": "fa77c8a80eb535ee4dbfb28e18ca045cf9558ff0",
   "intermediate_picture": {
     "code_commit": "a94242892d0afa528508bc69d03ed409ca47af51",
     "artifact": 14367580227,
@@ -156,8 +156,8 @@
     "evidence": "Exact V17 prop samples at frames 900, 963, 987, 993, 1008, 1040, 1098, 1120 and 1170. Pen length and contact vary, and the incoming paper gaze starts before delivery. The phone screen competes after set-down."
   },
   "cup_release_candidate": {
-    "status": "Source candidate, V18 remains latest verified assembly.",
+    "status": "V19 selected-frame verification complete",
     "evidence": "V18 frames 1260, 1335 and 1355 show the grounded cup still attached to the holding wrist.",
-    "next": "Review exact encoded 41\u201346-second sequence. Check actual cup contact, release and rest, then gaze handoff and explanation silhouette. Preserve the approved take and provisional caption timing."
+    "next": "Check normal-speed cup contact, the gaze handoff and the reply against original dialogue. Exact listening, caption boundaries, cup sync and independent comprehension remain pending."
   }
 }
