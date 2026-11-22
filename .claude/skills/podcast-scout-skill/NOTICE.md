@@ -1,7 +1,11 @@
 # Sources and licences
 
-Podcast Scout Studio is original work. It integrates external tools by reference (installed
-separately, never vendored) and adapts ideas and rules from these projects:
+Podcast Scout Studio is original work. Most external tools are integrated by reference and
+installed separately. Some third-party skills and helpers are vendored in this repository with
+their own licence files (for example `.claude/skills/humanizer`, `ponytail`, `motion-design`,
+`huashu-art-motion`, `claude-youtube`, `marketing-growth`, `i-have-adhd`,
+`stickman-video-director`, and `scripts/vendor/youtube-agent`). The studio adapts ideas and rules
+from these projects:
 
 | Project | Licence | How it is used |
 |---|---|---|
