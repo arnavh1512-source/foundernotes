@@ -205,3 +205,7 @@ The first torso-follow candidate exceeded far-arm reach at 59 seconds. The corre
 ### Exact V20 verification
 
 Actions 45051552898 passed, source `25c6f77cdd7fdcdf0405769b2e9223a2a94619e9`, picture artifact 14765542332. Nine exact V20 frames show a clearer shared bird silhouette and the torso following the final lookback before departure. The same bird position and timing are used in both panels. Four captioned frames show visual separation from the action. The far-arm reach issue in the first candidate passed the corrected source sweep. Full-speed acting, actual listening and independent interpretation remain pending. Full assembly decode and unchanged decoded audio were verified. A fresh indexed Alan Newgrounds read exposed player text but no decoded media. PsychToonsHQ and PsychDoodleTV returned no usable decoded media. Prior named-channel access scopes remain pending. No new named-reference audiovisual, owner or independent approval.
+
+## Study entrance and demand reaction candidate
+
+Exact V20 samples show the first room reframing jumping in the middle of a single hand gesture. The candidate grows from the establishing view to the existing two-shot during the Youth’s opening lean, leaving the later close-up and return boundaries intact. It also gives the mentor a restrained head and chest recoil when the Youth commits to his demand. The chair, grip, original dialogue timing and core composition are preserved. Exact revised media and creative review are pending.

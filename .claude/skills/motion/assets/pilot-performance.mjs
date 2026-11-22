@@ -27,6 +27,10 @@ export function pilotRoomCameraAt(time){
  if(time>=22.5&&time<29)return {scale:1.65,x:1190,y:530};
  if(time>=17.7&&time<20.3)return {scale:2,x:760,y:465};
  if(time>=16.4&&time<22.5)return {scale:1.7,x:850,y:520};
+ if(time>=15.25&&time<16.4){
+  const approach=progress(time,15.25,1.15);
+  return {scale:1+.7*approach,x:960-110*approach,y:450+70*approach};
+ }
  return {scale:1,x:960,y:450};
 }
 export function pilotEndingViewAt(time){
@@ -66,6 +70,8 @@ export function pilotActorAt(time,role,mode='study'){
    const reply=progress(time,22.9,.55),invite=progress(time,26.1,.65);
    p.chest[0]-=14*attention+14*reply;p.chest[1]+=5*attention+5*reply;
    p.head[0]-=18*attention+20*reply;p.head[1]+=8*attention+5*reply;
+   const challenge=progress(time,20.35,.45)*(1-progress(time,21.75,.7));
+   p.chest[0]+=14*challenge;p.head[0]+=23*challenge;p.head[1]-=13*challenge;
    p.hands[1]=pilotBlend(p.hands[1],[1145,510],invite);p.hands[1][1]-=55*Math.sin(Math.PI*invite);
    p.intent=invite>.2?'invite':reply>.1?'reply':'listen';
   }

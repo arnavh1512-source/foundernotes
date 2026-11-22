@@ -164,5 +164,10 @@
     "status": "V20 selected-frame verification complete",
     "evidence": "V19 frames 1464\u20131650 show a small bird competing with hills and labels at thumbnail scale; frames 1758, 1778 and 1804 show the exit reconsideration primarily in the head.",
     "next": "Check whether the shared event reads before the reactions and whether the exit decision reads at normal speed with dialogue. Exact listening, caption boundaries, cup sync and independent comprehension remain pending."
+  },
+  "study_entrance_candidate": {
+    "status": "Source candidate; V20 remains verified baseline.",
+    "evidence": "V20 frames 480 and 492 show the opening study gesture interrupted by an abrupt framing jump while the body intent stays the same.",
+    "next": "Review exact CI cut across 14.5\u201322.5 seconds. Check gradual camera crossing at 15.25\u201316.4 and visible mentor reaction to the demand after 20.35 without breaking grip, caption bands or screen direction."
   }
 }

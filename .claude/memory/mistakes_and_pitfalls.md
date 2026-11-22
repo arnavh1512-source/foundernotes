@@ -351,3 +351,11 @@ The initial entries preserve documented observations from the 2026-11-11 study a
 - Cause / rationale: Each panel reduces an already thin silhouette
 - Correction / recipe: Strengthen the shared outline without changing the path or providing either actor a different stimulus
 - Verification: Nine exact V20 frames show a clearer shared bird silhouette and the torso following the final lookback before departure. The same bird position and timing are used in both panels. Four captioned frames show visual separation from the action. The far-arm reach issue in the first candidate passed the corrected source sweep. Full-speed acting, actual listening and independent interpretation remain pending.
+
+### philosopher-stick-pilot — The first study reframing jumps during one uninterrupted action
+
+- Recorded (UTC): 2026-11-22T18:53:55+00:00
+- Evidence: V20 encoded frames 480 and 492 with source cut at 16.4 seconds
+- Cause / rationale: The camera changed scale at a fixed timestamp without a change of gesture
+- Correction / recipe: Move into the existing two-shot during the first lean; retain cuts at later intent changes
+- Verification: Baseline verified in encoded samples; new render pending.
