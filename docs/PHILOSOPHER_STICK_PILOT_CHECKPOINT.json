@@ -179,5 +179,10 @@
     "status": "V23 selected-frame verification complete",
     "evidence": "V22 encoded frames 810, 835, 855 and 869 show a held invitation while the Youth prepares to answer.",
     "next": "Review whether the movement reads as turn-taking at normal speed against the original dialogue. Exact listening, caption boundaries, cup sync and independent comprehension remain pending."
+  },
+  "workroom_focus_candidate": {
+    "status": "Source candidate. V23 remains the last verified assembly.",
+    "evidence": "V23 frames 1034 and 1035 jump from close to wide while the actor still holds the phone. Later wide frames leave the missed catch and dropped papers small.",
+    "next": "Check exact CI frames either side of 34.5 and across 35.55\u201341. Ensure incoming hand, paper catch, floor and phone are accounted for, and verify normal-speed motion and sound later."
   }
 }

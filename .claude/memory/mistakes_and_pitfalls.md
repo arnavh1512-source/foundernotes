@@ -375,3 +375,11 @@ The initial entries preserve documented observations from the 2026-11-11 study a
 - Cause / rationale: Invitation strength rose and never returned before the cut
 - Correction / recipe: Let the hand come to rest as the listener commits to the turn; keep the cup hand anchored and verify separation during retraction
 - Verification: Nine exact V23 frames show the invitation resolving while the Youth leans in, followed by the cut into the separate workroom. Four captioned frames show visual separation from the action. The 27 motion tests pass, including limb reach and grip checks. Full-speed acting, actual listening and independent interpretation remain pending.
+
+### philosopher-stick-pilot — The workroom shot changed abruptly while the phone pose held
+
+- Recorded (UTC): 2026-11-22T21:54:30+00:00
+- Evidence: Exact V23 frames 1034 and 1035 show unchanged phone contact at two significantly different scales
+- Cause / rationale: The close-up returns to the wide at a fixed cutoff unrelated to a new action
+- Correction / recipe: Ease out in advance of the delivery and reframe gradually around the consequence while retaining the dropped papers
+- Verification: Baseline verified in encoded samples. Exact candidate review pending.

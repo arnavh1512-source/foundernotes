@@ -23,7 +23,14 @@ export function pilotRoomCameraAt(time){
  if(time>=42.7&&time<44.5)return {scale:2.05,x:760,y:465};
  if(time>=44.5&&time<46)return {scale:1.6,x:1030,y:530};
  if(time>=32.6&&time<34.5)return {scale:2,x:825,y:525};
- if(time>=29&&time<41)return {scale:1.25,x:930,y:520};
+ if(time>=34.5&&time<35.55){
+  const pullback=progress(time,34.5,1.05);
+  return {scale:2-.75*pullback,x:825+105*pullback,y:525-5*pullback};
+ }
+ if(time>=29&&time<41){
+  const consequence=progress(time,37.45,1.25);
+  return {scale:1.25+.25*consequence,x:930+45*consequence,y:520+25*consequence};
+ }
  if(time>=22.5&&time<29)return {scale:1.65,x:1190,y:530};
  if(time>=17.7&&time<20.3)return {scale:2,x:760,y:465};
  if(time>=16.4&&time<22.5)return {scale:1.7,x:850,y:520};
