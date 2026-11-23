@@ -422,4 +422,4 @@ The initial entries preserve documented observations from the 2026-11-11 study a
 - Evidence: V28 encoded frames 1849 and 1851 and the 61.7-second source cut
 - Cause / rationale: The cut timestamp is well after the departure begins
 - Correction / recipe: Give the Youth a planted choice beat and cut during the first stride
-- Verification: V28 baseline inspected. Exact candidate review pending.
+- Verification: Nine exact V29 frames show the lookback with the lock still shut, return of attention to the route, and an arch cut earlier in the first movement. Four captioned frames show visual separation from the action. The 27 motion tests pass, including limb reach and grip checks. Full-speed acting, actual listening and independent interpretation remain pending.

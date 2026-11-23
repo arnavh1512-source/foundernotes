@@ -1,6 +1,6 @@
 {
-  "code_commit": "750d6b331873865c37c85f0937ef3168c347b06e",
-  "workflow_run": 45096931371,
+  "code_commit": "734c01053aced5828d6cadf68ca27592caa6865c",
+  "workflow_run": 45102445897,
   "previous_pr": {
     "number": 12,
     "observed_state": "merged",
@@ -8,14 +8,14 @@
   },
   "continuation_pr": 13,
   "previous_picture": {
-    "artifact": 14780819646,
-    "sha256": "950ecb066cfbbb0f46c60f2a5076cad4f98e76b2d1c43034dfa0d539a4656b10",
+    "artifact": 14783154477,
+    "sha256": "d9aef4431c52157063b4edb4f0897d3631b47d19126b32fa12a8a2b52077a84a",
     "duration_s": 64.5,
     "width": 1920,
     "height": 1080,
     "fps": 30,
     "frames": 1935,
-    "review_scope": "Nine exact V27 frames show an independent arm withdrawal and a staged carrier retreat, with the Youth and dropped papers still visible. World-space stance intervals are authored in source. Four captioned frames show visual separation from the action. The 27 motion tests pass, including limb reach and grip checks. Full-speed acting, actual listening and independent interpretation remain pending."
+    "review_scope": "Nine exact V28 frames show the cup leaving the Youth close-up and returning on the established two-shot; the Youth\u2019s head starts the reaction ahead of the hands and torso. Four captioned frames show visual separation from the action. The 27 motion tests pass, including limb reach and grip checks. Full-speed acting, actual listening and independent interpretation remain pending."
   },
   "private_audio": {
     "library_id": "libfile_c99d2bfdf94c819198bad6d6fd27be65",
@@ -53,24 +53,24 @@
   "full_production_approved": false,
   "workflow_conclusion": "success",
   "latest_picture": {
-    "artifact": 14783154477,
-    "sha256": "d9aef4431c52157063b4edb4f0897d3631b47d19126b32fa12a8a2b52077a84a",
+    "artifact": 14786560099,
+    "sha256": "68623f1285935ada0caa3390b132204b31b017c21e2ebf1b08b100c5af13f777",
     "duration_s": 64.5,
     "width": 1920,
     "height": 1080,
     "fps": 30,
     "frames": 1935,
-    "review_scope": "Nine exact V28 frames show the cup leaving the Youth close-up and returning on the established two-shot; the Youth\u2019s head starts the reaction ahead of the hands and torso. Four captioned frames show visual separation from the action. The 27 motion tests pass, including limb reach and grip checks. Full-speed acting, actual listening and independent interpretation remain pending."
+    "review_scope": "Nine exact V29 frames show the lookback with the lock still shut, return of attention to the route, and an arch cut earlier in the first movement. Four captioned frames show visual separation from the action. The 27 motion tests pass, including limb reach and grip checks. Full-speed acting, actual listening and independent interpretation remain pending."
   },
   "latest_private_assembly": {
-    "name": "internal-pilot-v28.mp4",
-    "sha256": "6972fc83ef8ab3b2b6976e0d6ae4d30c58254a40b1de59a307ba3bb7dd56b0c7",
+    "name": "internal-pilot-v29.mp4",
+    "sha256": "d1f961c88f4e7173f9ad640aeae7e622ffd44ac0a2c3d94685575de002822592",
     "duration_s": 64.5,
     "video_frames": 1935,
     "audio_stream_duration_s": 64.482,
     "review_scope": "Full decode and four selected captioned frames. Timing, actual sound and independent review pending.",
     "decoded_audio_sha256": "d6ea2c401862c70b5b48597ad0883fbbf30102a83d28c1ac7c889e6d009334da",
-    "audio_verification": "V27 AAC copied unchanged with identical decoded hash."
+    "audio_verification": "V28 AAC copied unchanged with identical decoded hash."
   },
   "tests": {
     "node_tests_passed": 27,
@@ -80,13 +80,13 @@
   "next_priority": "Preserve coherent seated chair/pelvis/thigh/floor support, mouth-height raised cup with unchanged desk rest/contact, palm separation and revised conversation eye line alongside all prior pilot work. Judge the complete normal-speed dialogue, cup contact sound, caption/speaker boundaries and independent viewer comprehension before further stylistic changes or approval. Historical crop-only claims remain pending revalidation; do not alter the narrator or use technical passes as creative approval.",
   "private_continuation_bundle": {
     "library_file_id": "libfile_2a2569310a8481919a251bf91621ecb0",
-    "file_id": "file_00000000a1d481fd96f39156dacf8771",
+    "file_id": "file_00000000858c81f4b0274be819797084",
     "name": "FounderNotes-Internal-Pilot-Checkpoint-eac2e46.zip",
-    "version": 21,
-    "contents": "V28 picture and private assembly, unchanged dialogue, provisional captions, reply-focus frames and probe. Earlier versions retain V27 and V26 evidence.",
+    "version": 22,
+    "contents": "V29 picture and private assembly, unchanged dialogue, provisional captions, departure frames and probe. Earlier versions retain V28 and V27 evidence.",
     "delivery_status": "Internal, not approved."
   },
-  "previous_code_commit": "16ac1cfd99ab21851359562bfd99842946207d2d",
+  "previous_code_commit": "750d6b331873865c37c85f0937ef3168c347b06e",
   "intermediate_picture": {
     "code_commit": "a94242892d0afa528508bc69d03ed409ca47af51",
     "artifact": 14367580227,
@@ -206,8 +206,8 @@
     "next": "Review the head lead, speaker boundaries and returned two-shot at normal speed with dialogue. Exact listening, caption boundaries, cup sync and independent comprehension remain pending."
   },
   "departure_candidate": {
-    "status": "Source candidate; V28 remains latest exact assembly.",
+    "status": "V29 selected-frame verification complete",
     "evidence": "V28 frames 1849 and 1851 show a hard crop during the ongoing exit walk.",
-    "next": "Review the exact 59.8\u201364.5 second cut for the planted shift, cut on the first swing, complete arch, excluded gate edge, captions and continuous motion."
+    "next": "Review the planted choice and first-step cut at normal speed alongside the dialogue. Exact listening, caption boundaries, cup sync and independent comprehension remain pending."
   }
 }
