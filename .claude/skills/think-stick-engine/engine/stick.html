@@ -1,0 +1,162 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+@font-face{font-family:Inst;font-weight:700;src:url(fonts/InstrumentSans-Bold.ttf)}
+html,body{margin:0;background:#000}canvas{display:block}
+</style><script src="timing.js"></script><script src="turns.js"></script><script src="shots.js"></script></head><body><span style="font-family:Inst;font-weight:700;position:absolute;opacity:0">a</span><canvas id="c" width="1920" height="1080"></canvas><script>
+// Stick engine: original faceless stick characters, whole-body acting, 30 fps eased motion, physical gags on a paper void.
+const W=1920,H=1080,G=820,Q=new URLSearchParams(location.search);
+const T0=+(Q.get('from')||0), T1=+(Q.get('to')||window.DUR);
+window.MOTION={width:W,height:H,fps:30,duration:+(T1-T0).toFixed(3)};
+const cv=document.getElementById('c'),x=cv.getContext('2d'); const LOGO=new Image(); LOGO.src='logo.png';
+const INK='#1c1c1f', PAPER='#f3f0e8', LINE='#cfc7b6', RED='#d8342b', WARM='#ffd98a';
+const cl=(v,a=0,b=1)=>Math.max(a,Math.min(b,v)), lerp=(a,b,u)=>a+(b-a)*u, ph=(u,a,b)=>cl((u-a)/(b-a));
+const io=u=>u<.5?2*u*u:1-Math.pow(-2*u+2,2)/2, out=u=>1-Math.pow(1-u,3), inn=u=>u*u*u, back=u=>{const c=1.9;return 1+(c+1)*Math.pow(u-1,3)+c*Math.pow(u-1,2)};
+const EZ={io,out,inn,back,lin:u=>u};
+function rnd(s){let a=(s*2654435761)>>>0;a^=a<<13;a>>>=0;a^=a>>17;a^=a<<5;a>>>=0;return (a%100000)/100000}
+// ---------- poses
+const STAND={lean:.04,head:0,af1:.18,af2:.12,ab1:-.14,ab2:.14,lf1:.1,lf2:-.05,lb1:-.1,lb2:-.05,air:0,rot:0};
+const P=(o={})=>({...STAND,...o});
+function mix(a,b,k){ const r={...a}; for(const key in b){ if(typeof b[key]==='number') r[key]=lerp(a[key]??STAND[key]??0,b[key],k); else r[key]=b[key] } return r }
+// keys: [[u,pose,ease]] -> pose at u (ease applies to the segment ending at that key)
+function K(u,keys){ if(u<=keys[0][0]) return P(keys[0][1]); for(let i=1;i<keys.length;i++){ if(u<=keys[i][0]){ const [a,pa]=keys[i-1],[b,pb,e]=keys[i]; return mix(P(pa),P(pb),(EZ[e||'io'])((u-a)/(b-a))) } } return P(keys[keys.length-1][1]) }
+function walk(t,f=1.6,amp=1,o={}){ const p=t*f*Math.PI*2, s=Math.sin(p); return P({lean:.08*amp,af1:-.5*s*amp,af2:.35,ab1:.5*s*amp,ab2:.35,lf1:.5*s*amp,lf2:-Math.max(0,Math.cos(p))*.7*amp-.05,lb1:-.5*s*amp,lb2:-Math.max(0,-Math.cos(p))*.7*amp-.05,air:Math.abs(Math.cos(p))*5*amp,...o}) }
+function run(t,f=2.6,o={}){ return walk(t,f,1.7,{lean:.35,af2:1.2,ab2:1.2,...o}) }
+// ---------- figure
+const TL=84, HR=25, UA=46, FA=46, TH=56, SH=56;
+// talk acting: a gesture vocabulary per character. The speaker changes gesture every ~1-1.6 s (never the same twice in a row),
+// with drawn hand shapes; listeners react. Scenes opt in to full gestures with o.talk; elsewhere a light, varied beat is used.
+const hsh=(a,b)=>{ let h=Math.floor(a*1000)*374761393+b*668265263; h=(h^(h>>>13))*1274126177; return ((h^(h>>>16))>>>0) };
+const GEST={
+ point:{af1:1.6,af2:.05,hF:'point'}, fingerUp:{af1:.9,af2:1.95,hF:'point'}, palmUp:{af1:.75,af2:.9,ab1:.65,ab2:.9,hF:'palm',hB:'palm'},
+ spread:{af1:1.35,af2:-.3,ab1:1.3,ab2:-.3,hF:'palm',hB:'palm'}, chest:{af1:.45,af2:2.45,hF:'palm'}, chop:{af1:1.1,af2:.3,hF:'palm',osc:['af1',.35,9]},
+ count:{af1:.85,af2:1.65,ab1:.7,ab2:1.35,hF:'palm',hB:'point',osc:['ab2',.25,8]}, chin:{af1:.35,af2:2.75,hF:'fist',head:.1},
+ fistShake:{af1:1.25,af2:1.45,hF:'fist',osc:['af2',.3,14]}, dismiss:{af1:.6,af2:.4,hF:'palm',osc:['af1',.6,4]}, headTap:{af1:.95,af2:2.6,hF:'point',osc:['af2',.12,10]},
+ thumbsUp:{af1:.6,af2:1.55,hF:'thumb'}, hips:{af1:-.55,af2:2.3,ab1:-.55,ab2:2.3,hF:'fist',hB:'fist'}, steeple:{af1:.8,af2:1.25,ab1:.8,ab2:1.25,hF:'palm',hB:'palm'},
+ shrug:{af1:.9,af2:-1.25,ab1:.9,ab2:-1.25,hF:'palm',hB:'palm',head:.15}, rub:{af1:.8,af2:1.0,ab1:.75,ab2:1.05,hF:'fist',hB:'fist',osc:['af2',.18,12]},
+ fold:{af1:1.05,af2:1.95,ab1:1.0,ab2:1.95}, scratch:{af1:1.0,af2:2.85,hF:'fist',osc:['af2',.15,12]}, nod:{head:.0,nod:1}, rest:{} };
+const VOCAB={youth:['point','fistShake','spread','chest','chop','count','dismiss','headTap','shrug','hips','palmUp'],
+ philosopher:['fingerUp','palmUp','steeple','chin','chest','spread','count','point','thumbsUp','rub'], mother:['point','hips','chop','fistShake','dismiss','palmUp']};
+const LISTEN={youth:['rest','rest','fold','chin','rest','hips'],philosopher:['rest','steeple','rest','chin'],mother:['rest','hips','rest']};
+function roleOf(o){ return o.scarf?'youth':o.beard?'philosopher':o.col==='#c0712e'?'mother':null }
+const REST_ST={af1:.15,af2:.12,ab1:-.12,ab2:.14}, REST_SIT={af1:.85,af2:.15,ab1:.75,ab2:.15};
+const ARMS=['af1','af2','ab1','ab2'];
+const spring=t=>t<=0?0:1-Math.exp(-t/.075)*Math.cos(t*13);            // fast in, small overshoot, settles
+const damp=(t,f=16,tau=.18)=>t<=0?0:Math.exp(-t/tau)*Math.sin(t*f);   // one beat that dies away
+function armsOf(rest,g){ const q={}; for(const k of ARMS) q[k]=g&&g[k]!==undefined?g[k]:rest[k]; return q }
+function blendArms(a,b,k){ const q={}; for(const k2 of ARMS) q[k2]=lerp(a[k2],b[k2],k); return q }
+const GW={youth:{point:3,spread:2,chest:2,palmUp:3,chop:2,count:1,dismiss:2,fistShake:1,headTap:1,shrug:1,hips:1},
+ philosopher:{palmUp:3,fingerUp:2,steeple:1,chin:1,chest:2,spread:1,count:1,point:1,thumbsUp:1,rub:1}, mother:{point:3,chop:2,hips:1,palmUp:1,dismiss:1,fistShake:1}};
+function pickG(r,seed,prev){ const W=GW[r], ks=Object.keys(W), tot=ks.reduce((a,k)=>a+W[k],0); let h=hsh(seed,7)%tot;
+  for(const k of ks){ if((h-=W[k])<0){ return k===prev?ks[(ks.indexOf(k)+1)%ks.length]:k } } return ks[0] }
+// plan of gestures for one spoken line: each stressed beat starts a new gesture, a small "beat" on the held one, or a rest
+function planFor(sp,r){ const key=sp[0].toFixed(3); window._PL=window._PL||{}; if(window._PL[key]) return window._PL[key];
+  const E=((window.EMPH||{})[key]||[sp[0]+.1]); const L=[]; let prev=null;
+  E.forEach((e,j)=>{ const h=hsh(e,j); let kind='new';
+    if(j>0&&e-E[j-1]<1.5&&h%3===0) kind='beat'; else if(j>0&&h%(r==='philosopher'?4:6)===0) kind='rest';
+    const g=kind==='new'?pickG(r,e,prev):kind==='beat'?prev:null; if(g) prev=g;
+    L.push({t:e-.15,kind,g,hold:1.3+(h%9)*.1}) }); return (window._PL[key]=L) }
+function gestureAt(plan,rest,now,end){ // arms + hand shapes + accents at time now
+  let arms=rest, hF=null, hB=null, nod=0, lean=0, flick=0;
+  for(let j=0;j<plan.length;j++){ const b=plan[j]; if(now<b.t) break; const nxt=j+1<plan.length?plan[j+1].t:end+.4, t=now-b.t;
+    const relaxAt=Math.min(b.hold,nxt-b.t); const out=t>relaxAt?io(Math.min(1,(t-relaxAt)/.55)):0;
+    const target=b.g?armsOf(rest,GEST[b.g]):rest, k=Math.min(1.06,spring(t))*(1-out);
+    arms=blendArms(arms,target,k); if(b.g&&k>.55){ hF=GEST[b.g].hF||null; hB=GEST[b.g].hB||null }
+    nod=.09*damp(t,14,.22); lean=.04*k*(b.g?1:0); if(b.kind==='beat') flick=.22*damp(t,15,.2);
+    if(b.g&&GEST[b.g].osc){ const [kk,am]=GEST[b.g].osc; arms={...arms,[kk]:arms[kk]+am*.8*damp(t,12,.3)} } }
+  arms={...arms, af1:arms.af1+flick}; return {arms,hF,hB,nod,lean} }
+function talkPose(p,o){ const r=roleOf(o); if(!r||o.noTalk||!window.SPEAK) return p; const sp=window.SPEAK.find(q=>NOW>=q[0]-.2&&NOW<q[1]+.3);
+  const seated=(p.lf1||0)>1.2, breathe={head:(p.head||0)+.02*Math.sin(NOW*1.7+(r==='youth'?1:0)), lean:(p.lean||0)+.012*Math.sin(NOW*1.1)};
+  if(o.talk){ const rest=seated?REST_SIT:REST_ST;
+    if(sp&&sp[2]===r){ const g=gestureAt(planFor(sp,r),rest,NOW,sp[1]); return {...p,...g.arms,head:breathe.head+g.nod,lean:breathe.lean+g.lean,hF:g.hF,hB:g.hB} }
+    // listening: still, breathing, slow posture changes every ~6-9 s, an occasional nod on the speaker's stresses
+    const slot=Math.floor(NOW/7.5), opts=LISTEN[r], cur=opts[hsh(slot,r.length)%opts.length], prv=opts[hsh(slot-1,r.length)%opts.length];
+    const tin=NOW-slot*7.5, kk=io(Math.min(1,tin/.9)); let arms=blendArms(armsOf(rest,GEST[prv]),armsOf(rest,GEST[cur]),kk);
+    let nod=0; if(sp){ const E=(window.EMPH||{})[sp[0].toFixed(3)]||[]; for(const e of E){ if(NOW>=e&&hsh(e,5)%3===0) nod=.07*damp(NOW-e,10,.3) } }
+    return {...p,...arms,head:breathe.head+nod,lean:breathe.lean} }
+  // prop scenes: no arm takeover; a small lift of one arm and a nod on each stressed word
+  if(!sp) return p; if(sp[2]!==r) return {...p,...breathe};
+  const E=(window.EMPH||{})[sp[0].toFixed(3)]||[]; let lift=0,nod=0; for(const e of E){ const t=NOW-(e-.12); if(t>0){ lift=.3*Math.min(1,spring(t))*Math.max(0,1-t/1.2); nod=.08*damp(t,13,.22) } }
+  const arm=hsh(sp[0],3)%2; const q={...p,head:breathe.head+nod,lean:breathe.lean+.03*lift}; if(arm) q.af1=(p.af1||0)+lift; else q.ab1=(p.ab1||0)+lift; return q }
+function handGlyph(J,e,h,kind,s,col){ if(!kind) return; const dx=J[h][0]-J[e][0], dy=J[h][1]-J[e][1], L=Math.hypot(dx,dy)||1, ux=dx/L, uy=dy/L, nx=-uy, ny=ux, [hx,hy]=J[h];
+  x.save(); x.strokeStyle=col; x.fillStyle=col; x.lineCap='round'; x.lineWidth=5*s;
+  if(kind==='fist'){ x.beginPath(); x.arc(hx,hy,8.5*s,0,Math.PI*2); x.fill() }
+  else if(kind==='point'){ x.beginPath(); x.arc(hx,hy,7*s,0,Math.PI*2); x.fill(); x.beginPath(); x.moveTo(hx,hy); x.lineTo(hx+ux*16*s,hy+uy*16*s); x.stroke() }
+  else if(kind==='thumb'){ x.beginPath(); x.arc(hx,hy,8*s,0,Math.PI*2); x.fill(); x.beginPath(); x.moveTo(hx,hy); x.lineTo(hx,hy-17*s); x.stroke() }
+  else { for(let i=-1;i<=1;i++){ const a=i*.42, cx=ux*Math.cos(a)-uy*Math.sin(a), cy=ux*Math.sin(a)+uy*Math.cos(a); x.beginPath(); x.moveTo(hx,hy); x.lineTo(hx+cx*13*s,hy+cy*13*s); x.stroke() } x.beginPath(); x.moveTo(hx,hy); x.lineTo(hx+nx*9*s,hy+ny*9*s); x.stroke() }
+  x.restore() }
+function fig(X,p,s=1.6,o={}){ p=talkPose(p,o); const d=p.dir??o.dir??1; const pt=(a,l)=>[Math.sin(a)*d*l,Math.cos(a)*l], add=(a,b)=>[a[0]+b[0],a[1]+b[1]];
+  const hip=[0,0], neck=[Math.sin(p.lean)*d*TL,-Math.cos(p.lean)*TL], hd=add(neck,[Math.sin(p.lean+p.head)*d*(HR+5),-Math.cos(p.lean+p.head)*(HR+5)]), sh=[neck[0]*.9,neck[1]*.88];
+  const kf=add(hip,pt(p.lf1,TH)), ff=add(kf,pt(p.lf1+p.lf2,SH)), kb=add(hip,pt(p.lb1,TH)), fb=add(kb,pt(p.lb1+p.lb2,SH));
+  const ef=add(sh,pt(p.af1,UA)), hf=add(ef,pt(p.af1+p.af2,FA)), eb=add(sh,pt(p.ab1,UA)), hb=add(eb,pt(p.ab1+p.ab2,FA));
+  let pts={hip,neck,hd,sh,kf,ff,kb,fb,ef,hf,eb,hb}; const r=p.rot||0;
+  if(r) for(const k in pts){ const [a,b]=pts[k]; pts[k]=[a*Math.cos(r)-b*Math.sin(r),a*Math.sin(r)+b*Math.cos(r)] }
+  const low=Math.max(pts.ff[1],pts.fb[1],pts.kf[1],pts.kb[1],pts.hd[1]+HR,pts.hf[1]*.0);
+  const Y=o.y??(p.gy!=null?G-p.gy*s:G-low*s-(p.air||0)*s);
+  const w=k=>[X+pts[k][0]*s,Y+pts[k][1]*s]; const J={}; for(const k in pts) J[k]=w(k);
+  if(!o.noShadow){ const hgt=cl((G-Y)/(s*130)-0.9,0,3); x.save(); x.globalAlpha=.13/(1+hgt*.6); x.fillStyle=INK; x.beginPath(); x.ellipse(X,G+4,(70+20*hgt)*s,9*s,0,0,Math.PI*2); x.fill(); x.restore() }
+  const col=o.col||INK; x.save(); x.lineCap='round'; x.lineJoin='round'; x.strokeStyle=col; x.lineWidth=11*s*(o.lw||1);
+  const pl=(...ks)=>{ x.beginPath(); ks.forEach((k,i)=>i?x.lineTo(...J[k]):x.moveTo(...J[k])); x.stroke() };
+  x.globalAlpha=(o.a??1); pl('sh','eb','hb'); pl('hip','kb','fb'); pl('hip','kf','ff'); pl('hip','neck'); pl('sh','ef','hf');
+  x.fillStyle=col; x.beginPath(); x.arc(J.hd[0],J.hd[1],HR*s,0,Math.PI*2); x.fill(); handGlyph(J,'ef','hf',p.hF,s,col); handGlyph(J,'eb','hb',p.hB,s,col);
+  // accessories (identity without faces)
+  const fx=Math.sin(p.lean+p.head+r)*d, fy=-Math.cos(p.lean+p.head+r);
+  if(o.scarf){ const wv=Math.sin(NOW*9)*.5+(o.wind||0); x.strokeStyle=RED; x.lineWidth=9*s; x.beginPath(); x.moveTo(...J.neck); x.quadraticCurveTo(J.neck[0]-d*40*s,J.neck[1]+(-6+wv*14)*s,J.neck[0]-d*(78+(o.wind||0)*30)*s,J.neck[1]+(10+wv*22-(o.wind||0)*20)*s); x.stroke(); x.beginPath(); x.arc(J.neck[0],J.neck[1]-2*s,9*s,0,Math.PI*2); x.fillStyle=RED; x.fill() }
+  if(o.beard){ x.fillStyle='#f1eee6'; x.strokeStyle=col; x.lineWidth=3*s; const bx=J.hd[0]+fx*8*s, by=J.hd[1]+12*s; x.beginPath(); x.moveTo(bx-d*16*s,by-6*s); x.quadraticCurveTo(bx+d*24*s,by-2*s,bx+d*8*s,by+30*s); x.quadraticCurveTo(bx-d*8*s,by+14*s,bx-d*16*s,by-6*s); x.fill() }
+  if(o.glasses){ x.strokeStyle='#f1eee6'; x.lineWidth=3.2*s; const gx=J.hd[0]+d*12*s+fx*2*s, gy=J.hd[1]-4*s; x.beginPath(); x.arc(gx,gy,7*s,0,Math.PI*2); x.stroke(); x.beginPath(); x.arc(gx-d*15*s,gy,6*s,0,Math.PI*2); x.stroke() }
+  if(o.stache){ x.strokeStyle='#f1eee6'; x.lineWidth=4*s; x.beginPath(); x.moveTo(J.hd[0]+d*4*s,J.hd[1]+9*s); x.lineTo(J.hd[0]+d*20*s,J.hd[1]+8*s); x.stroke() }
+  x.restore(); if(!o.noFace&&Math.abs(p.rot||0)<.35) drawCastFace(J,d,s,o,p); return J }
+
+// faces: expression from the scene or the line (speaker / listener), mouth from the voice, blinking
+const SCENE_EXPR={cafe:{youth:'angry'},explode:{youth:'shouting'},blame:{youth:'angry'},hangup:{mother:'angry'},glare:{youth:'angry'},headBurst:{youth:'worried'},
+ bookAvalanche:{youth:'shocked'},copyY:{youth:'sad'},mirrorY:{youth:'sad'},mirror:{youth:'sad'},wallRoad:{youth:'worried'},spotNow:{youth:'calm'},goalBubble:{youth:'angry'},
+ coldMachine:{youth:'worried'},ifOnlyFlood:{youth:'worried'},ifonly2:{youth:'worried'},judged:{youth:'worried'},novelistClock:{youth:'thinking'},repaint:{youth:'happy'},
+ stairsUp:{youth:'happy'},decide:{youth:'angry'},cage:{youth:'sad'},feelings:{youth:'thinking'},kidCross:{youth:'thinking'},forkRoad:{youth:'thinking'},
+ coffeeEnd:{youth:'calm'},comeBack:{youth:'happy',philosopher:'happy'},endask:{philosopher:'happy'},wellSeasons:{youth:'thinking'},meaningDial:{youth:'thinking'},
+ angerSwitch:{mother:'angry'},mom:{mother:'shouting'},phone:{mother:'happy'},momRecap:{mother:'angry'},lookStudy:{youth:'thinking'},ysun:{youth:'sad'},
+ tip1:{youth:'calm'},tip2:{youth:'calm'},tip3:{youth:'calm'},tip4:{youth:'happy'},hereNow:{youth:'calm'},choiceBack:{youth:'happy'},excuses:{youth:'worried'},drawerLock:{youth:'worried'}};
+function faceRole(o){ return roleOf(o)||(o.col==='#3d7fa8'?'kid':o.col==='#e0a52b'?'yfriend':null) }
+function drawCastFace(J,d,s,o,p){ const r=faceRole(o); if(!r) return;
+  let ex=r==='philosopher'?'calm':r==='kid'?'neutral':r==='yfriend'?'happy':'neutral', talk=0;
+  const sp=window.SPEAK&&window.SPEAK.find(q=>NOW>=q[0]&&NOW<q[1]);
+  if(sp&&window.LEXPR){ const L=window.LEXPR[sp[0].toFixed(3)]; if(L){ if(sp[2]===r&&L[0]) ex=L[0]; else if(sp[2]!==r&&L[1]&&(r==='youth'||r==='philosopher')) ex=L[1] } }
+  if(r==='kid') ex=(sp&&sp[2]==='mother'&&sp[0]<16)?'worried':ex;
+  const se=SCENE_EXPR[window.SCN]; if(se&&se[r]&&!(sp&&sp[2]===r)) ex=se[r];
+  if(o.expr) ex=o.expr;
+  if(sp&&sp[2]===r&&window.ENV){ const f=Math.floor(NOW*30); talk=(+(window.ENV[f]||0))/9*.85 }
+  const per=r==='philosopher'?4.7:r==='youth'?3.6:4.2, ph=(NOW+(r.length*.77))%per, blink=ph<.13?1:0;
+  face(J,d,s,o,ex,talk,blink) }
+// smear: ghost poses drawn a few frames behind for fast moves
+function ghost(X,poseAt,ts,s,o,n=3,dt=.035){ for(let i=n;i>=1;i--) fig(X(ts-i*dt),poseAt(ts-i*dt),s,{...o,a:.12*(n-i+1)/n,noShadow:1}) }
+// ---------- world
+let GRAIN=null; function grain(){ if(GRAIN) return GRAIN; GRAIN=document.createElement('canvas'); GRAIN.width=480; GRAIN.height=270; const g=GRAIN.getContext('2d'), im=g.createImageData(480,270); for(let i=0;i<im.data.length;i+=4){ const v=rnd(i+7)*255; im.data[i]=im.data[i+1]=im.data[i+2]=v; im.data[i+3]=14 } g.putImageData(im,0,0); return GRAIN }
+function paper(tone){ x.fillStyle=tone||window.TONE||PAPER; x.fillRect(-4*W,-4*H,9*W,9*H) }
+function ground(a=1){ x.save(); x.globalAlpha=a; x.strokeStyle=LINE; x.lineWidth=5; x.beginPath(); x.moveTo(-3*W,G); x.lineTo(4*W,G); x.stroke(); x.restore() }
+let SHAKE=0, CAMZ=1, CAMX=0; function cam(cx,cy,z){ const sx=SHAKE?(rnd(Math.floor(NOW*30))-.5)*SHAKE:0, sy=SHAKE?(rnd(Math.floor(NOW*30)+99)-.5)*SHAKE:0; x.translate(W/2+sx,H/2+sy); x.scale(z*1.18*CAMZ,z*1.18*CAMZ); x.translate(-cx-CAMX,-cy) }
+function shakeAt(ts,t0,amp=26,dur=.3){ const k=(ts-t0)/dur; if(k>0&&k<1) SHAKE=Math.max(SHAKE,amp*(1-k)) }
+function block(cx,cy,w,h,txt,rot=0,o={}){ x.save(); x.translate(cx,cy); x.rotate(rot); x.fillStyle=o.fill||INK; x.beginPath(); x.roundRect(-w/2,-h/2,w,h,10); x.fill(); if(o.crack){ x.strokeStyle=PAPER; x.lineWidth=4; x.beginPath(); x.moveTo(-w*.1,-h/2); x.lineTo(w*.05,-h*.1); x.lineTo(-w*.08,h*.15); x.lineTo(w*.04,h/2); x.stroke() } x.fillStyle=o.txt||'#f6f2e9'; x.textAlign='center'; x.textBaseline='middle'; const ls=txt.split('|'); let f=h*.42/Math.max(1,ls.length*.82); x.font=`700 ${f}px Inst`; const mw=Math.max(...ls.map(l=>x.measureText(l).width)); if(mw>w*.86){ f*=w*.86/mw; x.font=`700 ${f}px Inst` } ls.forEach((l,i)=>x.fillText(l,0,h*.04+(i-(ls.length-1)/2)*f*1.05)); x.restore() }
+function chain(a,b,sag=40,broken=-1,k=1){ const n=Math.max(4,Math.round(Math.hypot(b[0]-a[0],b[1]-a[1])/26)); x.save(); x.strokeStyle='#6d6a64'; x.lineWidth=5; for(let i=0;i<n;i++){ const u=(i+.5)/n; if(broken>=0&&Math.abs(u-broken)<.06) continue; const px=lerp(a[0],b[0],u), py=lerp(a[1],b[1],u)+Math.sin(u*Math.PI)*sag; let ox=0,oy=0; if(broken>=0){ const side=u<broken?-1:1, q=k; ox=side*q*(30+rnd(i)*90); oy=q*q*(120+rnd(i+3)*180)-q*(60+rnd(i+5)*60); oy=Math.min(oy,G-8-py) } x.beginPath(); x.ellipse(px+ox,py+oy,12,7,(i%2?.5:-.5)+(broken>=0?k*rnd(i)*4:0),0,Math.PI*2); x.stroke() } x.restore() }
+function burst(X,Y,k,r=90,col=INK){ if(k<=0||k>=1) return; x.save(); x.strokeStyle=col; x.lineWidth=7*(1-k)+1; x.lineCap='round'; for(let i=0;i<10;i++){ const a=i/10*Math.PI*2+.3, r0=r*(.3+k*.9), r1=r*(.6+k*1.4); x.beginPath(); x.moveTo(X+Math.cos(a)*r0,Y+Math.sin(a)*r0); x.lineTo(X+Math.cos(a)*r1,Y+Math.sin(a)*r1); x.stroke() } x.restore() }
+function dust(X,k,n=6,sp=1){ if(k<=0||k>=1) return; x.save(); x.fillStyle='#bdb5a4'; for(let i=0;i<n;i++){ const d=(i%2?1:-1)*(30+i*22)*sp*out(k); x.globalAlpha=.55*(1-k); x.beginPath(); x.arc(X+d,G-10-k*30*rnd(i+1),(12+rnd(i)*14)*(0.6+k),0,Math.PI*2); x.fill() } x.restore() }
+function speed(X,Y,len,k,d=1){ if(k<=0) return; x.save(); x.strokeStyle=INK; x.globalAlpha=.35*k; x.lineWidth=4; for(let i=0;i<5;i++){ const yy=Y-120+i*55; x.beginPath(); x.moveTo(X-d*(60+rnd(i)*40),yy); x.lineTo(X-d*(60+len*(.5+rnd(i+9)*.5)),yy); x.stroke() } x.restore() }
+function doorway(X,open=0,w=230,h=430,o={}){ const top=G-h; x.save(); x.fillStyle=WARM; x.globalAlpha=.25+.75*open; x.fillRect(X,top,w,h); x.restore(); x.save(); x.strokeStyle=INK; x.lineWidth=9; x.lineJoin='round'; x.beginPath(); x.moveTo(X-10,G); x.lineTo(X-10,top-10); x.lineTo(X+w+10,top-10); x.lineTo(X+w+10,G); x.stroke();
+  if(o.off){ x.restore(); return } const dw=w*Math.cos(open*1.35); x.fillStyle=o.slab||'#efe7d6'; x.beginPath(); x.moveTo(X,top); x.lineTo(X+dw,top+open*26); x.lineTo(X+dw,G-open*10); x.lineTo(X,G); x.closePath(); x.fill(); x.stroke(); x.fillStyle=INK; x.beginPath(); x.arc(X+dw-24*Math.cos(open*1.35),top+h*.55,9,0,Math.PI*2); x.fill(); x.restore() }
+function cup(X,Y,s=1,steam=1){ x.save(); x.fillStyle='#f6f2e9'; x.strokeStyle=INK; x.lineWidth=5*s; x.beginPath(); x.roundRect(X-17*s,Y-30*s,34*s,30*s,5*s); x.fill(); x.stroke(); x.beginPath(); x.arc(X+19*s,Y-15*s,8*s,-1.4,1.4); x.stroke(); if(steam){ x.globalAlpha=.4; x.lineWidth=3*s; for(let i=0;i<2;i++){ x.beginPath(); x.moveTo(X-5*s+i*10*s,Y-38*s); x.quadraticCurveTo(X-14*s+i*10*s+Math.sin(NOW*3+i)*6,Y-58*s,X-3*s+i*10*s,Y-80*s); x.stroke() } } x.restore() }
+function table(X,w=360,h=150){ x.save(); x.strokeStyle=INK; x.lineWidth=9; x.lineCap='round'; x.beginPath(); x.moveTo(X,G-h); x.lineTo(X+w,G-h); x.moveTo(X+30,G-h); x.lineTo(X+30,G); x.moveTo(X+w-30,G-h); x.lineTo(X+w-30,G); x.stroke(); x.restore() }
+function chair(X,s=1.6,d=1){ x.save(); x.strokeStyle=INK; x.lineWidth=8; x.lineCap='round'; const sy=G-56*s; x.beginPath(); x.moveTo(X-34*s,sy); x.lineTo(X+34*s,sy); x.moveTo(X-30*s,sy); x.lineTo(X-30*s,G); x.moveTo(X+30*s,sy); x.lineTo(X+30*s,G); x.moveTo(X-d*34*s,sy); x.lineTo(X-d*38*s,sy-80*s); x.stroke(); x.restore() }
+function logoMark(X,Y,r){ if(!LOGO.complete||!LOGO.naturalWidth) return; x.save(); x.beginPath(); x.arc(X,Y,r,0,Math.PI*2); x.clip(); x.drawImage(LOGO,360,375,560,560,X-r,Y-r,2*r,2*r); x.restore(); x.save(); x.strokeStyle='#f6efdf'; x.lineWidth=3; x.beginPath(); x.arc(X,Y,r,0,Math.PI*2); x.stroke(); x.restore() }
+const S={}; let NOW=0;
+</script><script src="scenes.js"></script><script src="scenes2.js"></script><script src="scenes3.js"></script><script src="scenes4.js"></script><script src="scenes5.js"></script><script src="faces.js"></script><script src="expr.js"></script><script src="env.js"></script><script>
+const SEGS=window.SEG, ORDER=Object.keys(SEGS), SPAN={}; ORDER.forEach((id,i)=>{ SPAN[id]=[i?SEGS[id][0]:0, i<ORDER.length-1?SEGS[ORDER[i+1]][0]:window.DUR] });
+const STUDY=new Set(['duo','study2','lookStudy','phtalk','ymtalk','philCalm','likeSelf','outOfQ','sitdown2']);
+const SH_=[], TURNS=(window.TURNS||[]); window.SHOTS2.forEach(s=>{ const t0=lerp(SPAN[s.seg][0],SPAN[s.seg][1],s.a), t1=lerp(SPAN[s.seg][0],SPAN[s.seg][1],s.b);
+  // cut on each speaker change inside the shot, then split long pieces into ~3 s camera setups
+  let pts=[t0, ...TURNS.filter(u=>u>t0+0.9&&u<t1-0.9), t1], cuts=[t0];
+  cuts.push(t1);
+  for(let i=0;i<cuts.length-1;i++) SH_.push({args:s.args,turn:i>0&&TURNS.some(u=>Math.abs(u-cuts[i])<1e-6),t0:cuts[i],t1:cuts[i+1],s0:t0,s1:t1,n:s.n,z:1,px:s.n==='endcard'?0:[0,0,0][i%3]}) });
+window.seek=async(tt)=>{ if(!LOGO.complete) await LOGO.decode().catch(()=>{}); const t=Math.min(T1-1e-3,T0+tt); NOW=t; const sh=SH_.find(s=>t>=s.t0&&t<s.t1)||SH_[SH_.length-1]; const d=sh.s1-sh.s0, ts=t-sh.s0; CAMZ=sh.z; CAMX=sh.px||0; if(false&&sh.turn){ const q=Math.min(1,(t-sh.t0)/.45); CAMZ=sh.z*(1+.28*Math.pow(1-q,3)) }
+  x.setTransform(1,0,0,1,0,0); x.globalAlpha=1; SHAKE=0; x.fillStyle=PAPER; x.fillRect(0,0,W,H);
+  window.SCN=sh.n; window.TONE=STUDY.has(sh.n)?'#ead9bd':null; S[sh.n](ts/d,ts,d,sh.args); if(SHAKE>0){ const sk=SHAKE; x.setTransform(1,0,0,1,0,0); x.globalAlpha=1; x.fillStyle=PAPER; x.fillRect(0,0,W,H); SHAKE=sk; S[sh.n](ts/d,ts,d,sh.args); } // scene sets SHAKE before calling cam via pre-pass
+  x.setTransform(1,0,0,1,0,0); x.globalAlpha=1; x.drawImage(grain(),0,0,W,H);
+  const vg=x.createRadialGradient(W/2,H/2,H*.45,W/2,H/2,H*1.0); vg.addColorStop(0,'rgba(0,0,0,0)'); vg.addColorStop(1,'rgba(40,30,20,.12)'); x.fillStyle=vg; x.fillRect(0,0,W,H);
+  logoMark(1838,82,58) };
+document.fonts.ready.then(()=>seek(+(Q.get('t')||0)));
+</script></body></html>
