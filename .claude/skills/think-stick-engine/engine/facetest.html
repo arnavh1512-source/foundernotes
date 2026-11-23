@@ -99,13 +99,35 @@ function fig(X,p,s=1.6,o={}){ p=talkPose(p,o); const d=p.dir??o.dir??1; const pt
   x.fillStyle=col; x.beginPath(); x.arc(J.hd[0],J.hd[1],HR*s,0,Math.PI*2); x.fill(); handGlyph(J,'ef','hf',p.hF,s,col); handGlyph(J,'eb','hb',p.hB,s,col);
   // accessories (identity without faces)
   const fx=Math.sin(p.lean+p.head+r)*d, fy=-Math.cos(p.lean+p.head+r);
-  if(o.scarf){ const wv=Math.sin(NOW*9)*.5+(o.wind||0); x.strokeStyle=RED; x.lineWidth=9*s; x.beginPath(); x.moveTo(...J.neck); x.quadraticCurveTo(J.neck[0]-d*40*s,J.neck[1]+(-6+wv*14)*s,J.neck[0]-d*(78+(o.wind||0)*30)*s,J.neck[1]+(10+wv*22-(o.wind||0)*20)*s); x.stroke(); x.beginPath(); x.arc(J.neck[0],J.neck[1]-2*s,9*s,0,Math.PI*2); x.fillStyle=RED; x.fill() }
+  if(o.scarf) drawScarf(J,d,s,o);
   if(o.beard) drawBeard(J,d,s,col);
   if(o.glasses){ x.strokeStyle='#f1eee6'; x.lineWidth=3.2*s; const gx=J.hd[0]+d*12*s+fx*2*s, gy=J.hd[1]-4*s; x.beginPath(); x.arc(gx,gy,7*s,0,Math.PI*2); x.stroke(); x.beginPath(); x.arc(gx-d*15*s,gy,6*s,0,Math.PI*2); x.stroke() }
   if(o.stache){ x.strokeStyle='#f1eee6'; x.lineWidth=4*s; x.beginPath(); x.moveTo(J.hd[0]+d*4*s,J.hd[1]+9*s); x.lineTo(J.hd[0]+d*20*s,J.hd[1]+8*s); x.stroke() }
   x.restore(); if(!o.noFace&&Math.abs(p.rot||0)<.35) drawCastFace(J,d,s,o,p); return J }
 
 
+
+// scarf: cloth band around the neck with a knot, a tapered tail that flutters, darker stripes and a fringed end
+function drawScarf(J,d,s,o){ const RD='#d8342b', DK='#a8231d', wind=o.wind||0, [nx,ny]=J.neck;
+  const L=(70+wind*30)*s, N=12, pts=[];
+  for(let i=0;i<=N;i++){ const u=i/N, fl=Math.sin(NOW*7-u*5)*(4+u*10+wind*8)*s;
+    pts.push([nx-d*(6*s+u*L), ny+(4*s+u*u*(26-wind*22)*s)+fl*u]) }
+  const W=u=>(8+u*4)*s; const side=[],other=[];
+  for(let i=0;i<=N;i++){ const a=pts[Math.max(0,i-1)], b=pts[Math.min(N,i+1)], tx=b[0]-a[0], ty=b[1]-a[1], l=Math.hypot(tx,ty)||1, nx2=-ty/l, ny2=tx/l, w=W(i/N)/2;
+    side.push([pts[i][0]+nx2*w,pts[i][1]+ny2*w]); other.push([pts[i][0]-nx2*w,pts[i][1]-ny2*w]) }
+  x.save(); x.lineJoin='round'; x.lineCap='round';
+  // tail
+  x.fillStyle=RD; x.beginPath(); x.moveTo(...side[0]); side.forEach(q=>x.lineTo(...q)); for(let i=N;i>=0;i--) x.lineTo(...other[i]); x.closePath(); x.fill();
+  // stripes across the tail
+  x.strokeStyle=DK; x.lineWidth=2.6*s; [.55,.72].forEach(u=>{ const i=Math.round(u*N); x.beginPath(); x.moveTo(...side[i]); x.lineTo(...other[i]); x.stroke() });
+  // fringe
+  x.strokeStyle=RD; x.lineWidth=1.8*s; const e=pts[N], pv=pts[N-1], ex=e[0]-pv[0], ey=e[1]-pv[1], el=Math.hypot(ex,ey)||1;
+  for(let k=0;k<5;k++){ const t=k/4, bx=lerp(side[N][0],other[N][0],t), by=lerp(side[N][1],other[N][1],t); x.beginPath(); x.moveTo(bx,by); x.lineTo(bx+ex/el*6*s,by+ey/el*6*s+Math.sin(NOW*9+k)*1.2*s); x.stroke() }
+  // band around the neck and the knot
+  x.fillStyle=RD; x.beginPath(); x.ellipse(nx,ny+2*s,15*s,7*s,d*.15,0,Math.PI*2); x.fill();
+  x.strokeStyle=DK; x.lineWidth=2*s; x.beginPath(); x.ellipse(nx,ny+2*s,15*s,7*s,d*.15,.15*Math.PI,.85*Math.PI); x.stroke();
+  x.fillStyle=DK; x.beginPath(); x.arc(nx-d*5*s,ny+5*s,4.5*s,0,Math.PI*2); x.fill();
+  x.restore() }
 // beard: follows the jaw from sideburn to sideburn, rounded wavy chin, moustache and a few strands
 function drawBeard(J,d,s,col){ const R=HR*s, hx=J.hd[0]+d*.12*R, hy=J.hd[1], B='#f1eee6', S2='#d8d1c3';
   const P=(a,r=1)=>[J.hd[0]+Math.cos(a)*R*r, hy+Math.sin(a)*R*r];
