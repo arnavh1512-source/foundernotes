@@ -18,17 +18,17 @@ S.explode=(u,ts,d)=>{ cam(980,520,1.45); paper(); ground(); const w=Math.sin(ts*
 S.blame=(u,ts,d)=>{ cam(960,540,1.3); paper(); ground(); const J=fig(900,K(ts,[[0,{af1:.3}],[.5,{af1:1.6,af2:1.2,ab1:1.6,ab2:1.2,lean:-.05,head:.2},'back'],[d,{af1:1.7,af2:1.1,ab1:1.7,ab2:1.1,head:.15}]]),1.6,YOU); stain(J,1); cloud(J.hd[0]+10,J.hd[1]-150,.6+.05*Math.sin(ts*3),RED); x.save(); x.fillStyle='#fff'; x.font='700 30px Inst'; x.textAlign='center'; x.fillText('ANGER',J.hd[0]+10,J.hd[1]-140); x.restore() };
 function momScene(ts,d,mode){ cam(980,560,1.08); paper(); ground(); if(!window.BG){ x.strokeStyle=LINE; x.lineWidth=6; x.strokeRect(400,240,260,200) } cafeTable(1380);
   const polite=mode==='phone'; const yell=Math.sin(ts*10);
-  const p=polite?P({dir:1,lean:.12,head:.15,af1:.35,af2:.3,ab1:-2.05,ab2:-1.55}):P({dir:1,lean:.28,af1:1.55+yell*.15,af2:.1,ab1:-.4,head:-.1});
-  const J=fig(820,p,1.6,{...MOM,dir:1}); fig(1120,P({dir:-1,head:polite?.1:.45,lean:polite?.05:.25,af1:polite?.3:1.6,af2:polite?.2:1.9,ab1:1.5,ab2:1.9}),1.15,{...KID,dir:-1});
-  if(!polite){ megaphone(J.hf[0],J.hf[1],1,1.2); shout({hd:[J.hf[0]+80,J.hf[1]]},1,.8+.2*Math.abs(yell),1); } else { megaphone(1330,G-170,1,1); phoneAt(J.hd[0]-HR*1.6*1.05,J.hd[1]+4,1.0,1) } return J }
+  const p=polite?P({dir:1,lean:.12,head:.15,af1:.12,af2:.1}):P({dir:1,lean:.28,af1:1.55+yell*.15,af2:.1,ab1:-.4,head:-.1});
+  const J=fig(820,p,1.6,{...MOM,dir:1,hideB:polite}); fig(1120,P({dir:-1,head:polite?.1:.45,lean:polite?.05:.25,af1:polite?.3:1.6,af2:polite?.2:1.9,ab1:1.5,ab2:1.9}),1.15,{...KID,dir:-1});
+  if(!polite){ megaphone(J.hf[0],J.hf[1],1,1.2); shout({hd:[J.hf[0]+80,J.hf[1]]},1,.8+.2*Math.abs(yell),1); } else { megaphone(1330,G-170,1,1); phoneHold(J,1,1.6,MOM.col) } return J }
 S.mom=(u,ts,d)=>{ const rg=d*.62; momScene(ts,d,'yell'); if(ts>rg){ phoneAt(1400,G-165,1.1,1); ring(1400,G-170,ts,1) } else phoneAt(1400,G-165,1.1,0) };
 S.phone=(u,ts,d)=>{ const J=momScene(ts,d,'phone'); x.save(); x.font='700 44px Inst'; x.fillStyle=INK; x.textAlign='center'; x.globalAlpha=ph(ts,.05,.25); x.fillText('"Hello?"',J.hd[0]+60,J.hd[1]-100); x.restore() };
 // n03: five friendly minutes, hang up, yell again; anger as a tool
 S.hangup=(u,ts,d)=>{ const back1=d*.45; cam(980,560,1.08); paper(); ground(); if(!window.BG){ x.strokeStyle=LINE; x.lineWidth=6; x.strokeRect(400,240,260,200) } cafeTable(1380);
   const yelling=ts>back1+.3; const k=ph(ts,back1,back1+.3); const yl=Math.sin(ts*10);
-  const p=ts<back1?P({lean:.12,head:.15,af1:2.9,af2:2.6,ab1:.4}):K(ts,[[back1,{lean:.12,af1:2.0,af2:.3,ab1:.4}],[back1+.3,{lean:.3,af1:1.55,af2:.1,ab1:-.4},'back'],[d,{lean:.3+.04*yl,af1:1.55+.15*yl,af2:.1,ab1:-.4}]]);
-  const J=fig(820,p,1.6,MOM); fig(1120,P({dir:-1,head:yelling?.45:.1,lean:yelling?.25:.05,af1:1.6,af2:1.9,ab1:1.5,ab2:1.9}),1.15,{...KID,dir:-1});
-  if(ts<back1){ phoneAt(J.hd[0]-HR*1.6*1.05,J.hd[1]+4,1.0,1); megaphone(1330,G-170,1,1); x.save(); x.fillStyle=INK; x.font='700 40px Inst'; x.textAlign='center'; x.fillText(Math.min(5,1+Math.floor(ts/back1*5))+' min',1600,300); x.restore() } else { phoneAt(1400,G-165,1.1,0); if(k<1) megaphone(lerp(1330,J.hf[0],out(k)),lerp(G-170,J.hf[1],out(k)),1,lerp(1,1.2,k)); else { megaphone(J.hf[0],J.hf[1],1,1.2); shout({hd:[J.hf[0]+80,J.hf[1]]},1,.9,1) } } };
+  const p=ts<back1?P({lean:.12,head:.15,af1:.12,af2:.1}):K(ts,[[back1,{lean:.12,af1:2.0,af2:.3,ab1:.4}],[back1+.3,{lean:.3,af1:1.55,af2:.1,ab1:-.4},'back'],[d,{lean:.3+.04*yl,af1:1.55+.15*yl,af2:.1,ab1:-.4}]]);
+  const J=fig(820,p,1.6,{...MOM,hideB:ts<back1}); fig(1120,P({dir:-1,head:yelling?.45:.1,lean:yelling?.25:.05,af1:1.6,af2:1.9,ab1:1.5,ab2:1.9}),1.15,{...KID,dir:-1});
+  if(ts<back1){ phoneHold(J,1,1.6,MOM.col); megaphone(1330,G-170,1,1); x.save(); x.fillStyle=INK; x.font='700 40px Inst'; x.textAlign='center'; x.fillText(Math.min(5,1+Math.floor(ts/back1*5))+' min',1600,300); x.restore() } else { phoneAt(1400,G-165,1.1,0); if(k<1) megaphone(lerp(1330,J.hf[0],out(k)),lerp(G-170,J.hf[1],out(k)),1,lerp(1,1.2,k)); else { megaphone(J.hf[0],J.hf[1],1,1.2); shout({hd:[J.hf[0]+80,J.hf[1]]},1,.9,1) } } };
 S.toolbox=(u,ts,d)=>{ cam(960,520,1.15); paper(); ground(); const k=back(ph(ts,.1,.45)); x.save(); x.translate(960,G); x.scale(k,k); x.fillStyle=RED; x.strokeStyle=INK; x.lineWidth=8; x.beginPath(); x.roundRect(-260,-180,520,180,16); x.fill(); x.stroke(); x.beginPath(); x.roundRect(-90,-230,180,60,20); x.stroke(); x.fillStyle='#fff'; x.font='700 60px Inst'; x.textAlign='center'; x.fillText('TOOLS',0,-75); x.restore();
   const lift=ph(ts,.8,1.4); megaphone(960-40,G-200-lift*240+Math.sin(ts*3)*6,1,1.8*k); if(lift>.9) block(960,260,360,90,'A TOOL?',0,{fill:INK}) };
 // n04: back in the study

@@ -95,7 +95,7 @@ function fig(X,p,s=1.6,o={}){ p=talkPose(p,o); const d=p.dir??o.dir??1; const pt
   if(!o.noShadow){ const hgt=cl((G-Y)/(s*130)-0.9,0,3); x.save(); x.globalAlpha=.13/(1+hgt*.6); x.fillStyle=INK; x.beginPath(); x.ellipse(X,G+4,(70+20*hgt)*s,9*s,0,0,Math.PI*2); x.fill(); x.restore() }
   const col=o.col||INK; x.save(); x.lineCap='round'; x.lineJoin='round'; x.strokeStyle=col; x.lineWidth=11*s*(o.lw||1);
   const pl=(...ks)=>{ x.beginPath(); ks.forEach((k,i)=>i?x.lineTo(...J[k]):x.moveTo(...J[k])); x.stroke() };
-  x.globalAlpha=(o.a??1); pl('sh','eb','hb'); pl('hip','kb','fb'); pl('hip','kf','ff'); pl('hip','neck'); pl('sh','ef','hf');
+  x.globalAlpha=(o.a??1); if(!o.hideB) pl('sh','eb','hb'); pl('hip','kb','fb'); pl('hip','kf','ff'); pl('hip','neck'); pl('sh','ef','hf');
   if(o.female) drawHairBack(J,d,s,o);
   x.fillStyle=col; x.beginPath(); x.arc(J.hd[0],J.hd[1],HR*s,0,Math.PI*2); x.fill(); if(o.female){ drawSkirt(J,d,s,o,p); drawHairFront(J,d,s,o) } handGlyph(J,'ef','hf',p.hF,s,col); handGlyph(J,'eb','hb',p.hB,s,col);
   // accessories (identity without faces)
@@ -124,6 +124,18 @@ function drawSkirt(J,d,s,o,p){ if(Math.abs(p.rot||0)>.35) return; const [hx,hy]=
   x.quadraticCurveTo(hx+spread*.9,(wy+bot)/2,hx+spread,bot); x.quadraticCurveTo(hx,bot+7*s,hx-spread,bot); x.quadraticCurveTo(hx-spread*.9,(wy+bot)/2,lerp(hx,sh[0],.18)-11*s,wy); x.fill();
   // dress top over the torso
   x.lineCap='round'; x.strokeStyle=o.dress||'#7a3b6a'; x.lineWidth=17*s; x.beginPath(); x.moveTo(lerp(hx,sh[0],.15),lerp(hy,sh[1],.15)); x.lineTo(lerp(hx,sh[0],.85),lerp(hy,sh[1],.85)); x.stroke(); x.restore() }
+
+// holding a phone at the ear: the arm comes up beside the body (elbow down by the ribs, forearm up to the ear), hand gripping the phone
+function phoneHold(J,d,s,col){ const R=HR*s, [hx,hy]=J.hd, E=[hx-d*.98*R,hy+.12*R], H=[E[0]-d*.05*R,E[1]+.62*R], S0=J.sh, L1=UA*s, L2=FA*s;
+  const dx=H[0]-S0[0], dy=H[1]-S0[1], D=Math.min(L1+L2-1,Math.hypot(dx,dy)), a=Math.atan2(dy,dx), c=Math.acos(Math.max(-1,Math.min(1,(L1*L1+D*D-L2*L2)/(2*L1*D))));
+  const el=[S0[0]+d*.5*R,S0[1]+L1*.7];   // elbow down by the ribs: the forearm rises beside the body to the phone
+  x.save(); x.lineCap='round'; x.lineJoin='round';
+  // phone against the ear
+  x.translate(E[0],E[1]); x.rotate(-d*.12); x.fillStyle=INK; x.beginPath(); x.roundRect(-8*s,-18*s,16*s,36*s,4*s); x.fill(); x.fillStyle='#9fd3ff'; x.fillRect(-5.5*s,-14*s,11*s,26*s); x.rotate(d*.12); x.translate(-E[0],-E[1]);
+  // arm and hand in front
+  x.strokeStyle=col; x.lineWidth=11*s; x.beginPath(); x.moveTo(...S0); x.lineTo(...el); x.lineTo(...H); x.stroke();
+  x.fillStyle=col; x.beginPath(); x.ellipse(H[0],H[1]-4*s,8*s,9.5*s,0,0,7); x.fill();
+  x.restore() }
 // scarf: cloth band around the neck with a knot, a tapered tail that flutters, darker stripes and a fringed end
 function drawScarf(J,d,s,o){ const RD='#d8342b', DK='#a8231d', wind=o.wind||0, [nx,ny]=J.neck;
   const L=(70+wind*30)*s, N=12, pts=[];
