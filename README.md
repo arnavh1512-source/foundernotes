@@ -2,7 +2,7 @@
 
 **An AI-assisted production studio for research-driven YouTube explainers.**
 
-FounderNotes is the Claude Code workspace behind [Founder Notes](https://www.youtube.com/@FounderNotesin). It takes a topic, podcast, transcript, or reference material through research, editorial development, narration, scene production, sound, quality review, and YouTube packaging.
+FounderNotes is the Claude Code workspace behind the YouTube channel **[Think!](https://www.youtube.com/@Thhiinkk)** (formerly Founder Notes); its logo is in [`assets/brand/`](.claude/skills/podcast-scout-skill/assets/brand/). It takes a topic, podcast, transcript, or reference material through research, editorial development, narration, scene production, sound, quality review, and YouTube packaging.
 
 **One goal:** tell an accurate, engaging story with purposeful visuals—not a collection of disconnected effects.
 

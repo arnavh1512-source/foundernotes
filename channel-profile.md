@@ -3,7 +3,7 @@
 Values left as `TBD` fall back to the defaults shown.
 
 ## Identity
-- **Channel name:** Founder Notes (@FounderNotesin, https://www.youtube.com/@FounderNotesin)
+- **Channel name:** Think! (renamed from Founder Notes on 2026-11-20; handle @Thhiinkk, https://www.youtube.com/@Thhiinkk; old handle @FounderNotesin)
 - **Niche / promise:** The hidden mechanisms, mental models, and counter-intuitive playbooks behind great founders and systems, drawn step by step.
 - **Audience:** English-speaking, global, curious non-specialists and builders; no assumed prior knowledge
 - **What we never do:** clickbait we can't pay off; medical/financial advice; reuse of podcast footage or voices; generic AI slideshow templates
@@ -47,9 +47,9 @@ Values left as `TBD` fall back to the defaults shown.
 - Real people are never drawn (unless using C-roll photographic cutout stickers for historical artifacts/products).
 
 ## Channel identity and the ending (owner rule)
-- **The channel:** Founder Notes, at https://www.youtube.com/@FounderNotesin. The tagline is "One big idea from every conversation, drawn step by step."
-- **The logo:** `assets/ink-gold-kit/channel/logo.png`.
+- **The channel:** Think! (https://www.youtube.com/@Thhiinkk, formerly Founder Notes). The tagline is "One big idea from every conversation, drawn step by step."
+- **The logo:** `assets/brand/think-logo.png` (white pixel speech bubble on black reading "Think", the "i" stacked pink #FF65C3, yellow #FDDF5B, blue #38B6FF). The old `assets/ink-gold-kit/channel/logo.png` is retired.
 - **The ending of every video:**
   - the **closing narration line** asks viewers to subscribe and asks the comment question.
-  - the **end card** is `K.endCard(S)`: logo, "Subscribe to FOUNDER NOTES", a cursor clicking the subscribe button, and next-video card placeholder.
+  - the **end card** is `K.endCard(S)`: logo, "Subscribe to THINK!", a cursor clicking the subscribe button, and next-video card placeholder.
 
