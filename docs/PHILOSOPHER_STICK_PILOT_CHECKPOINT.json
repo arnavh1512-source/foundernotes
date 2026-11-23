@@ -1,6 +1,6 @@
 {
-  "code_commit": "d227829022e69be3bd2cba18df9ffb1d315237d9",
-  "workflow_run": 45108008311,
+  "code_commit": "451a6bf99effa020449c8740b4528210f5be5f35",
+  "workflow_run": 45114516710,
   "previous_pr": {
     "number": 12,
     "observed_state": "merged",
@@ -8,14 +8,14 @@
   },
   "continuation_pr": 13,
   "previous_picture": {
-    "artifact": 14786560099,
-    "sha256": "68623f1285935ada0caa3390b132204b31b017c21e2ebf1b08b100c5af13f777",
+    "artifact": 14787594429,
+    "sha256": "7d1eecde35d12a450c58a627c1dfe3077dee7a90e9150a9a813b5e964c1f1d91",
     "duration_s": 64.5,
     "width": 1920,
     "height": 1080,
     "fps": 30,
     "frames": 1935,
-    "review_scope": "Nine exact V29 frames show the lookback with the lock still shut, return of attention to the route, and an arch cut earlier in the first movement. Four captioned frames show visual separation from the action. The 27 motion tests pass, including limb reach and grip checks. Full-speed acting, actual listening and independent interpretation remain pending."
+    "review_scope": "Nine exact V30 frames show the arch walk leading to a settled final silhouette under the viewer prompt. Source tests verify the final foot targets remain stable. Four captioned frames show visual separation from the action. The 27 motion tests pass, including limb reach and grip checks. Full-speed acting, actual listening and independent interpretation remain pending."
   },
   "private_audio": {
     "library_id": "libfile_c99d2bfdf94c819198bad6d6fd27be65",
@@ -53,24 +53,24 @@
   "full_production_approved": false,
   "workflow_conclusion": "success",
   "latest_picture": {
-    "artifact": 14787594429,
-    "sha256": "7d1eecde35d12a450c58a627c1dfe3077dee7a90e9150a9a813b5e964c1f1d91",
+    "artifact": 14790833688,
+    "sha256": "ae7a3256454bda5be35f921b992454e9e80143f6f2a88d99d72a0eeca517f2f3",
     "duration_s": 64.5,
     "width": 1920,
     "height": 1080,
     "fps": 30,
     "frames": 1935,
-    "review_scope": "Nine exact V30 frames show the arch walk leading to a settled final silhouette under the viewer prompt. Source tests verify the final foot targets remain stable. Four captioned frames show visual separation from the action. The 27 motion tests pass, including limb reach and grip checks. Full-speed acting, actual listening and independent interpretation remain pending."
+    "review_scope": "Exact V31 sequenced stills show both full figures in the paired composition, clear separation between the Youth and the nearby tree, and the Philosopher releasing the bird gaze before the Youth. The original wide and ending scenes remain in the full 64.5-second assembly. Full-speed reaction timing, actual listening and independent interpretation remain pending."
   },
   "latest_private_assembly": {
-    "name": "internal-pilot-v30.mp4",
-    "sha256": "509d8bbf146442d07c4405949022fdd54e41505af5f6d354c8e41d52d3b2f9fd",
+    "name": "internal-pilot-v31.mp4",
+    "sha256": "6f6e0ada2ad79810bfb32d86dbd86e79e6f389b0557afc88467b50e77f6f9ccb",
     "duration_s": 64.5,
     "video_frames": 1935,
     "audio_stream_duration_s": 64.482,
-    "review_scope": "Full decode and four selected captioned frames. Timing, actual sound and independent review pending.",
+    "review_scope": "Full decode and selected captioned frames. Full-speed timing and actual sound remain pending.",
     "decoded_audio_sha256": "d6ea2c401862c70b5b48597ad0883fbbf30102a83d28c1ac7c889e6d009334da",
-    "audio_verification": "V29 AAC copied unchanged with identical decoded hash."
+    "audio_verification": "V30 AAC copied unchanged with identical decoded hash."
   },
   "tests": {
     "node_tests_passed": 27,
@@ -80,13 +80,13 @@
   "next_priority": "Preserve coherent seated chair/pelvis/thigh/floor support, mouth-height raised cup with unchanged desk rest/contact, palm separation and revised conversation eye line alongside all prior pilot work. Judge the complete normal-speed dialogue, cup contact sound, caption/speaker boundaries and independent viewer comprehension before further stylistic changes or approval. Historical crop-only claims remain pending revalidation; do not alter the narrator or use technical passes as creative approval.",
   "private_continuation_bundle": {
     "library_file_id": "libfile_2a2569310a8481919a251bf91621ecb0",
-    "file_id": "file_000000004dfc822f9ed448daef7d369c",
+    "file_id": "file_000000000f6881fd936ada0e305780c0",
     "name": "FounderNotes-Internal-Pilot-Checkpoint-eac2e46.zip",
-    "version": 23,
-    "contents": "V30 picture and private assembly, unchanged dialogue, provisional captions, ending-settle frames and probe. Earlier versions retain V29 and V28 evidence.",
+    "version": 24,
+    "contents": "V31 picture and private assembly, unchanged approved dialogue, provisional captions and paired-scene evidence. Earlier versions retain V30 evidence.",
     "delivery_status": "Internal, not approved."
   },
-  "previous_code_commit": "734c01053aced5828d6cadf68ca27592caa6865c",
+  "previous_code_commit": "d227829022e69be3bd2cba18df9ffb1d315237d9",
   "intermediate_picture": {
     "code_commit": "a94242892d0afa528508bc69d03ed409ca47af51",
     "artifact": 14367580227,
@@ -214,5 +214,9 @@
     "status": "V30 selected-frame verification complete",
     "evidence": "V29 decoded frames 1902, 1910, 1920 and 1934 retain a walk cycle through the exit question.",
     "next": "Review the ending arrival, last caption and audio cutoff at normal speed. Exact listening, caption boundaries, cup sync and independent comprehension remain pending."
+  },
+  "paired_framing_candidate": {
+    "status": "V31 selected-frame verification complete",
+    "next": "Listen to the approved narration and watch at normal speed to verify the delayed notice, release, panel-to-lock transition and caption timing. Compare named references with decoded media and secure independent comprehension review."
   }
 }

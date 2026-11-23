@@ -431,3 +431,11 @@ The initial entries preserve documented observations from the 2026-11-11 study a
 - Cause / rationale: The walk loop ran to clip end without a settle state
 - Correction / recipe: Align the last swing with a plant and hold the completed arrival under the existing question
 - Verification: Nine exact V30 frames show the arch walk leading to a settled final silhouette under the viewer prompt. Source tests verify the final foot targets remain stable. Four captioned frames show visual separation from the action. The 27 motion tests pass, including limb reach and grip checks. Full-speed acting, actual listening and independent interpretation remain pending.
+
+### philosopher-stick-pilot — The paired panels give landscape shapes weight comparable to the acting
+
+- Recorded (UTC): 2026-11-23T04:54:41+00:00
+- Evidence: Exact V30 frames 1380, 1464, 1490, 1515, 1575 and 1679, plus the panel-space projection in pilot-performance.mjs
+- Cause / rationale: Both actors were scaled to 0.66 and the foreground tree sat close to the Youth's raised-arm silhouette. The Philosopher remained attached to the bird's gaze target to the cut.
+- Correction / recipe: Give both rigs the same larger projection, separate tree and silhouette, and return the Philosopher's gaze to the landscape while the Youth keeps tracking the same bird.
+- Verification: Exact V31 sequenced stills show both full figures in the paired composition, clear separation between the Youth and the nearby tree, and the Philosopher releasing the bird gaze before the Youth. The original wide and ending scenes remain in the full 64.5-second assembly. Full-speed reaction timing, actual listening and independent interpretation remain pending.
