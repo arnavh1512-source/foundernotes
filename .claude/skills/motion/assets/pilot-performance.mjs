@@ -187,6 +187,8 @@ export function pilotSharedEventAt(time){
  if(!Number.isFinite(time))throw new TypeError('time must be finite');
  return {bird:[-30+(time-46)*84,120],wing:9+5*Math.sin(time*6)};
 }
+export const PILOT_VIEW_PROJECTION={anchor:[240,535], origin:[690,830], scale:.83};
+
 export function pilotViewActorAt(time,role){
  if(!Number.isFinite(time))throw new TypeError('time must be finite');
  if(!['youth','philosopher'].includes(role))throw new TypeError('unknown actor');
@@ -194,9 +196,6 @@ export function pilotViewActorAt(time,role){
  const duck=progress(time,49,.28),peek=progress(time,51.6,.7),rise=progress(time,53.2,1.1);
  const startle=role==='youth'?duck*(1-.6*rise):0;
  const p={hip:pilotBlend([690,610],[680,680],startle),chest:pilotBlend([700,470],[680,550],startle),head:[710,385],feet:[[620,830],[760,830]],hands:[[690,630],[745,625]],facing:1,intent:'observe'};
- // The eyes locate the same panel-space event before the body reacts.
- const bird=pilotSharedEventAt(time).bird,target=[690+(bird[0]-240)/.66,830+(bird[1]-535)/.66];
- p.gaze=pilotBlend([p.head[0]+80,p.head[1]-35],target,notice);
  if(role==='youth'){
   const flinch=progress(time,48.9,.22)*(1-.55*rise),shield=progress(time,49.05,.24);
   p.head=pilotBlend(p.head,[690,465],flinch);p.head[0]+=12*peek;
@@ -210,6 +209,12 @@ export function pilotViewActorAt(time,role){
   p.chest[0]-=8*notice;p.chest[1]-=6*notice;p.head[0]+=(-15+25*turn)*notice;p.head[1]-=15*notice;
   p.hands[1]=pilotBlend(p.hands[1],[810,395],follow);p.intent=follow>.2?'curious':'observe';
  }
+ // Maintain a shared target through the pass, then let the calm observer
+ // return to the landscape while the Youth keeps checking the flight path.
+ const {anchor,origin,scale}=PILOT_VIEW_PROJECTION;
+ const target=pilotSharedEventAt(time).bird.map((coordinate,axis)=>origin[axis]+(coordinate-anchor[axis])/scale);
+ const release=role==='philosopher'?progress(time,55,.72):0;
+ p.gaze=pilotBlend([p.head[0]+80,p.head[1]-20],target,notice*(1-release));
  const shoulders=[-5,5].map(d=>[p.chest[0]+d,p.chest[1]]);
  const arms=shoulders.map((a,i)=>solveArm(a,p.hands[i],84,90,i===0?-1:1));
  const legs=p.feet.map(f=>solveArm(p.hip,f,115,120,-1));

@@ -1,7 +1,7 @@
 import test from 'node:test';
 import {progress} from '../assets/story-motion.mjs';
 import assert from 'node:assert/strict';
-import {PILOT_DURATION,PILOT_SHOTS,pilotShotAt,pilotCupAt,pilotActorAt,pilotExitAt,pilotTaskAt,pilotSharedEventAt,pilotViewActorAt,pilotRoomCameraAt,pilotEndingViewAt} from '../assets/pilot-performance.mjs';
+import {PILOT_DURATION,PILOT_SHOTS,PILOT_VIEW_PROJECTION,pilotShotAt,pilotCupAt,pilotActorAt,pilotExitAt,pilotTaskAt,pilotSharedEventAt,pilotViewActorAt,pilotRoomCameraAt,pilotEndingViewAt} from '../assets/pilot-performance.mjs';
 const distance=(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1]);
 test('pilot shots cover the measured take with no gaps',()=>{
  assert.equal(PILOT_SHOTS[0].start,0);assert.equal(PILOT_SHOTS.at(-1).end,PILOT_DURATION);
@@ -180,9 +180,10 @@ test('the ending shows a planted reconsideration before committed travel',()=>{
 
 
 test('shared-event attention tracks the actual panel bird and retains different consequences',()=>{
- for(const role of ['youth','philosopher'])for(const t of [49.3,50,52,54,55.9]){
+ const {anchor,origin,scale}=PILOT_VIEW_PROJECTION;
+ for(const role of ['youth','philosopher'])for(const t of [49.3,50,52,54,55]){
   const g=pilotViewActorAt(t,role),bird=pilotSharedEventAt(t).bird;
-  assert.ok(distance(g.pose.gaze,[690+(bird[0]-240)/.66,830+(bird[1]-535)/.66])<1e-6);
+  assert.ok(distance(g.pose.gaze,bird.map((coordinate,axis)=>origin[axis]+(coordinate-anchor[axis])/scale))<1e-6);
  }
  const early=pilotViewActorAt(48.98,'youth'),duck=pilotViewActorAt(50,'youth'),peek=pilotViewActorAt(52.5,'youth'),end=pilotViewActorAt(55.9,'youth');
  assert.ok(early.pose.head[1]>400,'head flinch leads the duck');
@@ -191,6 +192,9 @@ test('shared-event attention tracks the actual panel bird and retains different 
  assert.equal(end.pose.intent,'guarded');assert.ok(end.pose.hip[1]>635,'do not reset to the opening pose');
  assert.ok(end.pose.hands[0][1]<end.pose.head[1]+40,'one shielding hand remains up');
  const mentor=pilotViewActorAt(55.9,'philosopher');assert.ok(mentor.pose.hip[1]<end.pose.hip[1]-20);
+ assert.deepEqual(mentor.pose.gaze,[mentor.pose.head[0]+80,mentor.pose.head[1]-20]);
+ const lateBird=pilotSharedEventAt(55.9).bird;
+ assert.ok(distance(end.pose.gaze,lateBird.map((coordinate,axis)=>origin[axis]+(coordinate-anchor[axis])/scale))<1e-6);
 });
 
 

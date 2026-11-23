@@ -137,16 +137,17 @@ function burden(t){
 function hill(x,palette,t){
  s.save();s.translate(x,180);s.beginPath();s.rect(0,0,780,570);s.clip();s.fillStyle=palette[0];s.fillRect(0,0,780,570);
  s.fillStyle=palette[1];s.beginPath();s.moveTo(0,450);s.bezierCurveTo(190,420,250,200,460,230);s.bezierCurveTo(600,240,650,350,780,330);s.lineTo(780,570);s.lineTo(0,570);s.closePath();s.fill();
- for(const [tx,ty]of [[180,370],[545,270],[650,335]]){stroke(s,[[tx,ty],[tx,ty-100]],8,palette[2]);stroke(s,[[tx-28,ty-55],[tx,ty-85],[tx+26,ty-60]],6,palette[2]);}
+ for(const [tx,ty]of [[112,375],[545,270],[650,335]]){stroke(s,[[tx,ty],[tx,ty-100]],8,palette[2]);stroke(s,[[tx-28,ty-55],[tx,ty-85],[tx+26,ty-60]],6,palette[2]);}
  s.fillStyle=palette[2];s.fillRect(380,260,55,65);s.beginPath();s.moveTo(370,260);s.lineTo(407,225);s.lineTo(447,260);s.closePath();s.fill();
  const event=pilotSharedEventAt(t),[birdX,birdY]=event.bird;stroke(s,[[birdX-23,birdY-event.wing],[birdX-11,birdY-event.wing*.65],[birdX,birdY],[birdX+11,birdY-event.wing*.65],[birdX+23,birdY-event.wing]],6,'#354d51');s.restore();
 }
 function views(t){
  s.fillStyle='#e9e5d9';s.fillRect(0,0,1920,1080);
- const palette=['#e6e1cb','#c2cbb0','#8b9d86'];
+ const {anchor,origin,scale}=PILOT_VIEW_PROJECTION;
+ const palette=['#e6e1cb','#c2cbb0','#a2ad94'];
  hill(120,palette,t);hill(1020,palette,t);
  for(const [x,role,color]of [[120,'youth',youthColor],[1020,'philosopher',mentorColor]]){
-  s.save();s.beginPath();s.rect(x,180,780,570);s.clip();s.translate(x+240,180+535);s.scale(.66,.66);s.translate(-690,-830);actor(pilotViewActorAt(t,role),color);s.restore();
+  s.save();s.beginPath();s.rect(x,180,780,570);s.clip();s.translate(x+anchor[0],180+anchor[1]);s.scale(scale,scale);s.translate(-origin[0],-origin[1]);actor(pilotViewActorAt(t,role),color);s.restore();
  }
  words('YOUTH',510,135,28,youthColor);words('PHILOSOPHER',1410,135,28,mentorColor);
  if(t>=53.2)words('Same event. Different reactions.',960,830,32);
