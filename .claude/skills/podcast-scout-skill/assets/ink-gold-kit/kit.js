@@ -335,9 +335,10 @@
   };
   // acting helpers (returns 0..1-ish curves): anticipation dips ~25 % the other way before the move,
   // settle overshoots ~6 % and rests by ~0.4 s, lag samples a driver a few frames late for follow-through
-  K.anticipate = (t, t0, dur, pre = 0.2, amt = 0.25) => t < t0 - pre ? 0 : t < t0 ? -amt * Math.sin(((t - (t0 - pre)) / pre) * Math.PI / 2) : -amt * (1 - K.eo(K.prog(t, t0, dur * 0.35))) + K.eo(K.prog(t, t0, dur)) * (1 + amt * 0) ;
+  // (part i of a chain lags i × frames, and rests on the driver's own value)
+  K.anticipate = (t, t0, dur, pre = 0.2, amt = 0.25) => t < t0 - pre ? 0 : t < t0 ? -amt * Math.sin(((t - (t0 - pre)) / pre) * Math.PI / 2) : -amt * (1 - K.eo(K.prog(t, t0, dur * 0.35))) + K.eo(K.prog(t, t0, dur));
   K.settle = (t, t0, dur = 0.5, over = 0.06) => { const k = K.prog(t, t0, dur); return k >= 1 ? 1 : K.eo(k) + over * Math.sin(k * Math.PI) * (1 - k); };
-  K.lag = (fn, t, frames = 3, i = 1) => fn(t - (frames / 30) * i) * (1 + 0.15 * i);
+  K.lag = (fn, t, frames = 3, i = 1) => fn(t - (frames / 30) * i);
   K.alive = (t, seed = 0) => ({ bob: Math.sin(t * 1.7 + seed) * 2, head: Math.sin(t * 0.6 + seed) * 1.5, blink: K.blink(t, seed) });
   K.talk = (t) => ({ open: 0.15 + 0.35 * Math.abs(Math.sin(t * 9.5) * Math.sin(t * 3.1)) });
 

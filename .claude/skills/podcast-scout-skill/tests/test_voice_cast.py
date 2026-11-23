@@ -3,10 +3,14 @@ import importlib.util
 import io
 import json
 import math
+import os
 import shutil
 import tempfile
+import threading
 import unittest
+import urllib.error
 import wave
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from unittest.mock import patch
 
@@ -83,7 +87,7 @@ class CastPolicy(unittest.TestCase):
             "preset_voice_id": entry["preset_voice_id"]
         } for speaker, entry in script["cast"].items() if speaker != "narrator"]
         with patch.object(narrate, "voicebox_channel_profile", return_value="narrator-id"), \
-             patch.object(narrate.urllib.request, "urlopen", return_value=io.BytesIO(json.dumps(profiles).encode())):
+             patch.object(narrate, "vb_open", return_value=io.BytesIO(json.dumps(profiles).encode())):
             result = narrate.resolve_voice_cast(script["cast"])
         self.assertEqual(result["investor"], {"id": "p-investor", "engine": "kokoro",
                                               "voice_type": "preset"})
@@ -100,7 +104,7 @@ class CastPolicy(unittest.TestCase):
                      "default_engine": "qwen_voice_design",
                      "design_prompt": "Original adult female voice, clear and conversational."}]
         with patch.object(narrate, "voicebox_channel_profile", return_value="narrator-id"), \
-             patch.object(narrate.urllib.request, "urlopen", return_value=io.BytesIO(json.dumps(profiles).encode())):
+             patch.object(narrate, "vb_open", return_value=io.BytesIO(json.dumps(profiles).encode())):
             result = narrate.resolve_voice_cast(script["cast"])
         self.assertEqual(result["investor"]["engine"], "qwen_voice_design")
 
@@ -111,7 +115,7 @@ class CastPolicy(unittest.TestCase):
                      "id": "bad-preset", "voice_type": "preset", "preset_engine": "kokoro",
                      "preset_voice_id": "af_heart", "sample_count": 0}]
         with patch.object(narrate, "voicebox_channel_profile", return_value="narrator-id"), \
-             patch.object(narrate.urllib.request, "urlopen", return_value=io.BytesIO(json.dumps(profiles).encode())):
+             patch.object(narrate, "vb_open", return_value=io.BytesIO(json.dumps(profiles).encode())):
             with self.assertRaisesRegex(ValueError, "gender does not match"):
                 narrate.resolve_voice_cast({"narrator": script["cast"]["narrator"],
                                            "investor": script["cast"]["investor"]})
@@ -124,13 +128,13 @@ class CastPolicy(unittest.TestCase):
         profiles = [{"name": cast["profile_name"], "id": f"p-{key}", "sample_count": 1}
                     for key, cast in script["cast"].items() if key != "narrator"]
         with patch.object(narrate, "voicebox_channel_profile", return_value="narrator-id"), \
-             patch.object(narrate.urllib.request, "urlopen", return_value=io.BytesIO(json.dumps(profiles).encode())):
+             patch.object(narrate, "vb_open", return_value=io.BytesIO(json.dumps(profiles).encode())):
             resolved = narrate.resolve_voice_cast(script["cast"])
         self.assertEqual(resolved["narrator"]["id"], "narrator-id")
         self.assertEqual(resolved["investor"]["id"], "p-investor")
         profiles[0]["sample_count"] = 0
         with patch.object(narrate, "voicebox_channel_profile", return_value="narrator-id"), \
-             patch.object(narrate.urllib.request, "urlopen", return_value=io.BytesIO(json.dumps(profiles).encode())):
+             patch.object(narrate, "vb_open", return_value=io.BytesIO(json.dumps(profiles).encode())):
             with self.assertRaisesRegex(ValueError, "cloned profile has no approved audio sample"):
                 narrate.resolve_voice_cast(script["cast"])
 
@@ -161,9 +165,40 @@ class LocalCastProvisioning(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "design_prompt"):
             setup_cast.choose_voice_type(designed, "designed", Path("."))
 
+    def test_loopback_calls_ignore_proxies_and_refuse_redirects(self):
+        received = []
+
+        class Handler(BaseHTTPRequestHandler):
+            def log_message(self, *args):
+                pass
+
+            def do_GET(self):
+                received.append(self.path)
+                if self.path == "/profiles" and len(received) > 1:
+                    self.send_response(302)
+                    self.send_header("Location", "/elsewhere")
+                    self.end_headers()
+                    return
+                self.send_response(200)
+                self.end_headers()
+                self.wfile.write(b"[]")
+
+        server = ThreadingHTTPServer(("127.0.0.1", 0), Handler)
+        threading.Thread(target=server.serve_forever, daemon=True).start()
+        self.addCleanup(server.server_close)
+        self.addCleanup(server.shutdown)
+        base = f"http://127.0.0.1:{server.server_port}"
+        dead_proxy = {"http_proxy": "http://127.0.0.1:9", "HTTP_PROXY": "http://127.0.0.1:9",
+                      "no_proxy": "", "NO_PROXY": ""}
+        with patch.dict(os.environ, dead_proxy):
+            self.assertEqual(setup_cast.profiles(base), [])
+        with self.assertRaises(urllib.error.HTTPError):
+            setup_cast.profiles(base)
+        self.assertEqual(received, ["/profiles", "/profiles"])
+
     def test_preset_uses_single_voicebox_profile_api_call(self):
         entry = example()["cast"]["investor"]
-        with patch.object(setup_cast.urllib.request, "urlopen",
+        with patch.object(setup_cast.OPENER, "open",
                           return_value=io.BytesIO(b'{"id":"new-preset"}')) as connection:
             identity = setup_cast.create_profile("http://127.0.0.1:17493", entry)
         self.assertEqual(identity, "new-preset")
@@ -184,7 +219,8 @@ class LocalCastProvisioning(unittest.TestCase):
                 wav.setsampwidth(2)
                 wav.setframerate(24000)
                 wav.writeframes(b"\x01\x00" * 12000)
-            self.assertEqual(setup_cast.verify_reference(entry, "character", root), reference)
+            # Windows temp dirs may be 8.3 short names; the function returns the resolved path.
+            self.assertEqual(setup_cast.verify_reference(entry, "character", root), reference.resolve())
             entry["synthetic_voice"] = False
             with self.assertRaisesRegex(ValueError, "original synthetic"):
                 setup_cast.verify_reference(entry, "character", root)

@@ -25,7 +25,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from utils.quota_tracker import check_quota, consume_quota
-from utils.youtube_auth import get_data_api_service
+from utils.youtube_auth import HttpError, api_error, get_data_api_service
 
 TMP_DIR = Path.home() / ".claude" / ".tmp"
 
@@ -188,14 +188,18 @@ def main():
         published_after = dt.strftime("%Y-%m-%dT00:00:00Z")
 
     # Search
-    videos = search_videos(
-        service,
-        query=args.query,
-        channel_id=args.channel_id,
-        max_results=args.max_results,
-        order=args.order,
-        published_after=published_after,
-    )
+    try:
+        videos = search_videos(
+            service,
+            query=args.query,
+            channel_id=args.channel_id,
+            max_results=args.max_results,
+            order=args.order,
+            published_after=published_after,
+        )
+    except HttpError as e:
+        print(json.dumps(api_error(e)), file=sys.stderr)
+        sys.exit(1)
 
     if args.flag_outliers:
         videos = flag_outliers(videos)

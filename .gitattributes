@@ -1,0 +1,2 @@
+# Shell scripts keep LF endings; with CRLF, bash on Windows stops with "command not found" errors.
+*.sh text eol=lf

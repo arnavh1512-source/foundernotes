@@ -76,6 +76,21 @@ class ViewerValueTests(unittest.TestCase):
         s["viewer_interest"][0]["confidence"] = "observed_public_signal"
         self.assertTrue(any("public-comment" in x for x in v.validate(s)))
 
+    def test_malformed_list_items_fail_instead_of_crashing(self):
+        s = sample()
+        s["viewer_interest"] = ["just a string", "another"]
+        s["hooks"] = ["a", "b", "c"]
+        errors = v.validate(s)
+        self.assertTrue(any("viewer_interest[0]: object required" in x for x in errors))
+        self.assertTrue(any("hooks[2]: object required" in x for x in errors))
+
+    def test_comparison_signs_in_prose_are_not_placeholders(self):
+        s = sample()
+        s["why_watch"]["stakes"] = "the reported effect was p < 0.05 and d > 0.3"
+        self.assertEqual(v.validate(s), [])
+        s["why_watch"]["stakes"] = "<stakes here>"
+        self.assertTrue(any("why_watch.stakes" in x for x in v.validate(s)))
+
     def test_cli_writes_new_markdown_and_never_overwrites(self):
         with tempfile.TemporaryDirectory() as td:
             data_file = Path(td) / "source.json"

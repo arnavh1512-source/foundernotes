@@ -91,11 +91,18 @@ class PackageLint(unittest.TestCase):
     def good(self):
         return {"titles": ["You Read It. Can You Explain It?"],
                 "thumbnails": [{"title_index": 0, "text": "BLANK PAGE", "focal": "empty speech bubble"}],
-                "description": "Explaining beats rereading for spotting gaps.\n00:00 Test\n00:41 Why\n02:10 How",
-                "chapters": [["00:00", "Test"], ["00:41", "Why"], ["02:10", "How"]], "tags": ["study"]}
+                "description": "Explaining beats rereading for spotting gaps.\n00:00 Test\n00:41 Why\n02:10 How\n"
+                               "Sources: https://example.org/self-explanation-study",
+                "chapters": [["00:00", "Test"], ["00:41", "Why"], ["02:10", "How"]], "tags": ["study"],
+                "sources": ["https://example.org/self-explanation-study"]}
 
     def test_good_passes(self):
         self.assertEqual(self.run_lint(self.good(), "--duration", "240"), 0)
+
+    def test_missing_sources_fails(self):
+        pkg = self.good()
+        del pkg["sources"]
+        self.assertEqual(self.run_lint(pkg, "--duration", "240"), 1)
 
     def test_long_title_fails(self):
         pkg = self.good()

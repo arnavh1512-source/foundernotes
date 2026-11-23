@@ -34,6 +34,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import urllib.parse
 import urllib.request
 import wave
 from pathlib import Path
@@ -65,7 +66,8 @@ PARLER_VOICE_V = "anchor-c1"   # one channel voice: anchor take + best-of-N spea
 
 
 def parler_python():
-    return os.environ.get("PARLER_PYTHON") or str(Path.home() / ".cache" / "venv-parler" / "bin" / "python")
+    venv = Path.home() / ".cache" / "venv-parler"
+    return os.environ.get("PARLER_PYTHON") or str(venv / "Scripts" / "python.exe" if os.name == "nt" else venv / "bin" / "python")
 
 
 def have_parler() -> bool:
@@ -100,6 +102,8 @@ def load_script(path: Path) -> dict:
     seen = set()
     for i, s in enumerate(segs):
         s.setdefault("id", f"s{i+1:02d}")
+        if not re.fullmatch(r"[A-Za-z0-9_-]{1,80}", str(s["id"])):
+            die(f"segment id must be a safe file name (letters, digits, - and _): {s['id']!r}")
         if s["id"] in seen:
             die(f"duplicate segment id {s['id']}")
         seen.add(s["id"])
@@ -272,14 +276,34 @@ CHANNEL_NARRATOR_NAME = "Founder Notes Narrator"
 CHANNEL_NARRATOR_ENGINE = "chatterbox"
 
 
+class _NoRedirect(urllib.request.HTTPRedirectHandler):
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        return None
+
+
+_VB_OPENER = urllib.request.build_opener(urllib.request.ProxyHandler({}), _NoRedirect())
+
+
+def vb_open(request, timeout):
+    """Open a local Voicebox URL: ignores http_proxy and refuses redirects off the loopback origin."""
+    return _VB_OPENER.open(request, timeout=timeout)
+
+
 def voicebox_url():
-    return os.environ.get("VOICEBOX_URL", "http://127.0.0.1:17493")
+    url = os.environ.get("VOICEBOX_URL", "http://127.0.0.1:17493").rstrip("/")
+    parts = urllib.parse.urlsplit(url)
+    if parts.scheme != "http" or parts.hostname not in ("127.0.0.1", "localhost", "::1"):
+        die(f"VOICEBOX_URL must be a local http server (got {url}): the narrator reference clip is private")
+    return url
 
 
 # Owner rule 2026-11-12: the owner-supplied voice is the channel narrator. It is a real person's voice (consent stated
 # by the owner), so its reference clip lives in a git-ignored folder and is never committed to this public repo.
 OWNER_NARRATOR_NAME = "Owner-Supplied Narrator (consented)"
 OWNER_NARRATOR_REF = VOICE_DIR_REPO / "local" / "owner-narrator-ref.wav"
+
+
+NARRATOR_KIND = None   # "owner" or "synthetic" once voicebox_channel_profile() has resolved the alias
 
 
 def pick_channel_profile(profiles, owner_ref_exists):
@@ -297,8 +321,10 @@ def voicebox_channel_profile():
     """Find (or create once) the channel narrator profile in the local voicebox server: the owner-supplied voice when
     its local reference is on this machine, else the SYNTHETIC repo reference (founder-notes-narrator-ref.wav)."""
     base = voicebox_url()
-    with urllib.request.urlopen(f"{base}/profiles", timeout=30) as r:
+    with vb_open(f"{base}/profiles", timeout=30) as r:
         pid, kind = pick_channel_profile(json.loads(r.read()), OWNER_NARRATOR_REF.exists())
+    global NARRATOR_KIND
+    NARRATOR_KIND = kind
     if kind == "synthetic":
         print(f"narrate: WARNING owner narrator reference not found at {OWNER_NARRATOR_REF}; using the synthetic "
               "fallback voice. Ask the owner for the clip before narrating a real video.", file=sys.stderr)
@@ -307,18 +333,19 @@ def voicebox_channel_profile():
     name, desc, ref = ((OWNER_NARRATOR_NAME, "Cloned from an owner-supplied recording; speaker consent stated by owner", OWNER_NARRATOR_REF)
                        if kind == "owner" else
                        (CHANNEL_NARRATOR_NAME, "Synthetic channel narrator (owner-approved). Not a real person.", VOICE_DIR_REPO / "founder-notes-narrator-ref.wav"))
+    txt = ref.with_suffix(".txt").read_text(encoding="utf-8").strip()   # read first: a missing file must not leave
+    wav_bytes = ref.read_bytes()                                         # an empty profile on the server
     req = urllib.request.Request(f"{base}/profiles", headers={"Content-Type": "application/json"}, data=json.dumps(
         {"name": name, "language": "en", "voice_type": "cloned", "description": desc}).encode())
-    with urllib.request.urlopen(req, timeout=30) as r:
+    with vb_open(req, timeout=30) as r:
         pid = json.loads(r.read())["id"]
-    txt = ref.with_suffix(".txt").read_text().strip()
     bnd = "----narrate" + hashlib.sha1(txt.encode()).hexdigest()[:12]
     body = (f"--{bnd}\r\nContent-Disposition: form-data; name=\"reference_text\"\r\n\r\n{txt}\r\n"
             f"--{bnd}\r\nContent-Disposition: form-data; name=\"file\"; filename=\"ref.wav\"\r\nContent-Type: audio/wav\r\n\r\n").encode() \
-        + ref.read_bytes() + f"\r\n--{bnd}--\r\n".encode()
+        + wav_bytes + f"\r\n--{bnd}--\r\n".encode()
     req = urllib.request.Request(f"{base}/profiles/{pid}/samples", data=body,
                                  headers={"Content-Type": f"multipart/form-data; boundary={bnd}"})
-    urllib.request.urlopen(req, timeout=60).read()
+    vb_open(req, timeout=60).read()
     print(f"narrate: created the voicebox profile '{name}' from {ref.name}", file=sys.stderr)
     return pid
 
@@ -365,7 +392,7 @@ def synth_voicebox(text, voice, speed, out: Path, seed=42, engine=None):
         req = urllib.request.Request(f"{base}/generate/stream", data=json.dumps(body).encode(),
                                      headers={"Content-Type": "application/json"})
         try:
-            with urllib.request.urlopen(req, timeout=1800) as r:
+            with vb_open(req, timeout=1800) as r:
                 tmp.write_bytes(r.read())
             break
         except urllib.error.HTTPError as e:
@@ -524,7 +551,9 @@ def build_captions(timings):
         if len(c) <= 42 or "\n" in c:
             return c
         mid = len(c) // 2
-        cut = min((i for i, ch in enumerate(c) if ch == " "), key=lambda i: abs(i - mid))
+        cut = min((i for i, ch in enumerate(c) if ch == " "), key=lambda i: abs(i - mid), default=None)
+        if cut is None:
+            return c
         return c[:cut] + "\n" + c[cut + 1:]
     cues = [(a, b, two_lines(c)) for a, b, c in merged]
     # small lead-in so captions appear just before the word, never overlapping
@@ -554,9 +583,9 @@ def pick_engine(requested, voice):
             return eng
         if eng == "piper" and have_piper(v if v in MALE_VOICES["piper"] else DEFAULT_VOICE["piper"]):
             return eng
-        if eng == "edge" and have_edge():
-            return eng
-    die("no TTS engine available. Run scripts/setup_studio.sh (installs Kokoro + Piper male voices).")
+        # edge-tts sends the script to a Microsoft cloud service: never picked automatically, only with --engine edge.
+    die("no local TTS engine available. Run scripts/setup_studio.sh (installs Kokoro + Piper male voices), "
+        "or pass --engine edge to accept the Microsoft cloud voice.")
 
 
 # ---------------------------------------------------------------- optional dialogue casting
@@ -609,7 +638,7 @@ def resolve_voice_cast(cast):
     """
     narrator_id = voicebox_channel_profile()
     try:
-        with urllib.request.urlopen(f"{voicebox_url()}/profiles", timeout=30) as response:
+        with vb_open(f"{voicebox_url()}/profiles", timeout=30) as response:
             profiles = json.loads(response.read())
     except Exception as exc:
         raise RuntimeError(f"could not list Voicebox profiles: {exc}") from exc
@@ -734,6 +763,7 @@ def main(argv=None):
         except Exception as e:
             die(f"voicebox: server not reachable at {voicebox_url()} ({e}); start it with scripts/voicebox_server.sh")
         vb_engine = CHANNEL_NARRATOR_ENGINE
+        voice_key = voice                    # cache on the resolved profile: fallback takes must not survive the owner voice
     speed = a.speed or vcfg.get("speed", 1.0)
     pv = vcfg.get("perform", False)      # earshot: sentence-split takes read MORE synthetic; opt-in only
     perform = engine == "kokoro" and not a.no_perform and pv not in (False, "flat", "off")
@@ -836,7 +866,8 @@ def main(argv=None):
             parts.append(gw)
             clock += wav_seconds(gw)
         listing = td / "list.txt"
-        listing.write_text("".join(f"file '{Path(p).resolve().as_posix()}'\n" for p in parts))
+        listing.write_text("".join("file '" + Path(p).resolve().as_posix().replace("'", "'\\''") + "'\n" for p in parts),
+                           encoding="utf-8")
         run(["ffmpeg", "-y", "-loglevel", "error", "-f", "concat", "-safe", "0", "-i", str(listing),
              "-c:a", "pcm_s16le", "-ar", str(SR), "-ac", "1", str(out / "narration.wav")])
 
@@ -853,16 +884,22 @@ def main(argv=None):
             "duration": round(total, 3), "words": words,
             "wpm_speech": round(words / (speech / 60), 1) if speech else None,
             "word_timing": "estimated-from-characters", "segments": timings}
+    if NARRATOR_KIND:
+        meta["narrator_voice"] = NARRATOR_KIND
     if cast:
         meta["cast"] = {k: {"gender": v["gender"], "profile_name": v["profile_name"],
                             "synthetic_voice": True, "approved": True}
                         for k, v in cast.items()}
+        if NARRATOR_KIND == "owner":        # the narrator alias resolved to the owner-supplied (real-person) voice
+            meta["cast"]["narrator"].update(profile_name=OWNER_NARRATOR_NAME, synthetic_voice=False)
         meta["voice_policy"] = "male principal narrator plus owner-approved synthetic male/female characters"
     (out / "timings.json").write_text(json.dumps(meta, indent=2), encoding="utf-8")
     write_captions(build_captions(timings), out)
     print(json.dumps({k: meta[k] for k in ("engine", "voice", "duration", "words", "wpm_speech")}))
     if a.asr:
         rc = asr_check(out, timings, a.asr)
+        if rc is None:                       # faster-whisper missing: nothing was checked, so nothing to re-take
+            return 0
         if engine == "voicebox":            # remember what THIS run generated (auto re-takes only touch these)
             gen_file = out / "_generated_this_run.json"
             prev = json.loads(gen_file.read_text()) if (gen_file.exists() and os.environ.get("NARRATE_RETAKE_CHAIN")) else []
@@ -878,7 +915,7 @@ def main(argv=None):
                 for sid in bad:
                     f = seg_dir / f"{sid}.take"; f.write_text(str((int(f.read_text()) if f.exists() else 0) + 1))
                 print(f"narrate: re-taking {len(bad)} {engine} segment(s) with a new seed: {', '.join(bad)}", file=sys.stderr)
-                argv = [x for x in sys.argv[1:]]
+                argv = list(argv) if argv is not None else sys.argv[1:]
                 if "--retake" in argv:
                     j = argv.index("--retake"); argv[j + 1] = str(a.retake - 1)
                 else:
@@ -928,6 +965,44 @@ def critical_edits(want, heard, critical):
     return edits
 
 
+_ONES = "zero one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen " \
+        "seventeen eighteen nineteen".split()
+_TENS = "_ _ twenty thirty forty fifty sixty seventy eighty ninety".split()
+
+
+def _below_hundred(n):
+    return [_ONES[n]] if n < 20 else [_TENS[n // 10]] + ([_ONES[n % 10]] if n % 10 else [])
+
+
+def spoken_forms(n):
+    """Ways a reader says 0..9999 as words: 'two thousand seventeen' and, for years, 'twenty seventeen'."""
+    if n < 100:
+        return [_below_hundred(n)]
+    forms = []
+    if n < 10000:
+        thousands, rest = divmod(n, 1000)
+        hundreds, low = divmod(rest, 100)
+        words = (_below_hundred(thousands) + ["thousand"] if thousands else []) + \
+                (_ONES[hundreds:hundreds + 1] + ["hundred"] if hundreds else []) + (_below_hundred(low) if low else [])
+        forms.append(words)
+        if n >= 1000 and n % 100 >= 10:                                    # 2017 -> twenty seventeen
+            forms.append(_below_hundred(n // 100) + _below_hundred(n % 100))
+        if n >= 1100 and not n % 100 and n // 100 % 10:                    # 1900 -> nineteen hundred
+            forms.append(_below_hundred(n // 100) + ["hundred"])
+    return forms
+
+
+def number_spoken(digits, heard):
+    """True when a scripted number (e.g. '30') was heard as words ('thirty')."""
+    if len(digits) > 4:
+        return False
+    heard = [w for w in heard if w != "and"]
+    for form in spoken_forms(int(digits)):
+        if any(heard[i:i + len(form)] == form for i in range(len(heard) - len(form) + 1)):
+            return True
+    return False
+
+
 def missing_words(want, heard):
     """Script words not heard, counted with multiplicity (two 'not's scripted, one heard → one missing)."""
     from collections import Counter
@@ -939,14 +1014,14 @@ def missing_words(want, heard):
     return out
 
 
-def asr_check(out: Path, timings, model_name: str) -> int:
+def asr_check(out: Path, timings, model_name: str):
     """Transcribe each take and report segments whose displayed words are mostly missing.
     Small models mishear short names: confirm flagged lines by listening before re-taking."""
     try:
         from faster_whisper import WhisperModel
     except Exception:
         print("narrate: --asr needs faster-whisper (pip install faster-whisper 'av<19'); check NOT run", file=sys.stderr)
-        return 0
+        return None
     model = WhisperModel(model_name, device="cpu", compute_type="int8")
     norm = lambda s: re.sub(r"[^a-z0-9 ]", " ", re.sub(r"[’']", "", s.lower())).split()
     critical = {"not", "no", "never", "nor", "none", "nothing", "nobody", "nowhere", "neither", "cannot",
@@ -961,7 +1036,7 @@ def asr_check(out: Path, timings, model_name: str) -> int:
         missing = missing_words(want, got_list)
         # meaning-critical words: a dropped or added negation / number reverses or changes the claim
         neg_want = sum(w in critical for w in want); neg_got = sum(w in critical for w in got_list)
-        crit_missing = [w for w in missing if w in critical or w.isdigit()]
+        crit_missing = [w for w in missing if w in critical or (w.isdigit() and not number_spoken(w, got_list))]
         crit_edits = critical_edits(want, got_list, critical)
         bad = (len(missing) > max(1, int(len(want) * 0.08)) or bool(crit_missing) or neg_want != neg_got
                or bool(crit_edits))
@@ -973,7 +1048,7 @@ def asr_check(out: Path, timings, model_name: str) -> int:
             print(f"  ASR CHECK {seg['id']}: missing {missing[:8]} | heard: {heard[:140]}", file=sys.stderr)
     (out / "asr.json").write_text(json.dumps(report, indent=1), encoding="utf-8")
     print(f"narrate: ASR round-trip {len(timings) - flagged}/{len(timings)} clean (report: {out / 'asr.json'})", file=sys.stderr)
-    return 0
+    return 1 if flagged else 0
 
 
 if __name__ == "__main__":

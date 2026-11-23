@@ -1,6 +1,9 @@
 
 import importlib.util
 import io
+import shutil
+import subprocess
+import tempfile
 import unittest
 from pathlib import Path
 from subprocess import CompletedProcess
@@ -153,12 +156,29 @@ class ContactSheetTests(unittest.TestCase):
 
 
 class AudioQCTests(unittest.TestCase):
-    def mock_audio_result(self, stderr="", returncode=0):
+    def mock_audio_result(self, stderr="", returncode=0, lufs="-14.0"):
+        if lufs is not None:
+            stderr += f"\n    I:         {lufs} LUFS\n"
         return CompletedProcess(
             args=[],
             returncode=returncode,
             stdout="",
             stderr=stderr,
+        )
+
+    def test_unmeasured_loudness_fails(self):
+        result = report()
+
+        with patch.object(
+            qc.subprocess,
+            "run",
+            return_value=self.mock_audio_result(lufs=None),
+        ):
+            qc.audit_audio_gaps_and_lufs("fake.mp4", result)
+
+        self.assertEqual(result["status"], "FAIL")
+        self.assertTrue(
+            any("could not be measured" in e for e in result["errors"])
         )
 
     def test_clean_audio_passes(self):
@@ -475,6 +495,132 @@ class DurationValidationTests(unittest.TestCase):
                         for error in saved_reports[0]["errors"]
                     )
                 )
+
+
+@unittest.skipUnless(
+    qc.HAS_NUMPY and shutil.which("ffmpeg"),
+    "numpy and ffmpeg are required",
+)
+class BlankFrameGateTests(unittest.TestCase):
+    def gate(self, source):
+        with tempfile.TemporaryDirectory() as directory:
+            video = str(Path(directory) / "clip.mp4")
+            subprocess.run(
+                [
+                    "ffmpeg", "-v", "error", "-y",
+                    "-f", "lavfi", "-i", source,
+                    "-t", "4", "-c:v", "mpeg4", video,
+                ],
+                check=True,
+            )
+            result = report()
+            qc.run_film_gate(video, 4, result)
+            return result
+
+    def test_solid_brand_colour_is_blank(self):
+        # A solid colour has spread between channels but none in space.
+        result = self.gate("color=c=0xF2B134:s=320x180:r=30")
+
+        self.assertTrue(
+            any("Blank/Dead Frame" in e for e in result["errors"]),
+            result,
+        )
+
+    def test_moving_picture_is_not_blank(self):
+        result = self.gate("testsrc2=size=320x180:rate=30")
+
+        self.assertFalse(
+            any("Blank/Dead Frame" in e for e in result["errors"]),
+            result,
+        )
+
+
+@unittest.skipUnless(
+    qc.HAS_NUMPY and shutil.which("ffmpeg"),
+    "numpy and ffmpeg are required",
+)
+class MotionGateTests(unittest.TestCase):
+    def render(self, directory, inputs, graph, seconds=6):
+        video = str(Path(directory) / "clip.mp4")
+        command = ["ffmpeg", "-v", "error", "-y"]
+        for source in inputs:
+            command += ["-f", "lavfi", "-i", source]
+        command += ["-filter_complex", graph, "-t", str(seconds),
+                    "-c:v", "libx264", "-pix_fmt", "yuv420p", video]
+        subprocess.run(command, check=True)
+        return video
+
+    def gate(self, inputs, graph, seconds=6):
+        with tempfile.TemporaryDirectory() as directory:
+            result = report()
+            qc.run_film_gate(self.render(directory, inputs, graph, seconds), seconds, result)
+            return result
+
+    def test_small_figure_moving_on_still_background_passes(self):
+        # The channel's core look: a small figure acting on a still set.
+        result = self.gate(
+            ["color=c=white:s=640x360:r=30", "color=c=black:s=10x60:r=30"],
+            "[0][1]overlay=x='200+120*sin(2*PI*t/2)':y=150:eval=frame",
+        )
+        self.assertFalse(any("Anti-PPT" in e for e in result["errors"]), result)
+
+    def test_still_cards_with_frequent_cuts_fail(self):
+        # Hard cuts every second used to satisfy the whole-frame metric.
+        card = "{}=size=640x360:rate=30,trim=0:0.04,loop=29:1,setpts=N/30/TB"
+        result = self.gate(
+            [card.format("testsrc"), card.format("smptebars")],
+            "[0]split=3[a][c][e];[1]split=3[b][d][f];"
+            "[a][b][c][d][e][f]concat=n=6:v=1",
+        )
+        self.assertTrue(any("Anti-PPT" in e for e in result["errors"]), result)
+
+    def test_long_hold_is_a_warning_not_a_failure(self):
+        result = self.gate(
+            ["color=c=white:s=640x360:r=30", "color=c=black:s=10x60:r=30"],
+            "[0][1]overlay=x='if(lt(t,1),200+100*t,if(gt(t,5),300+100*(t-5),300))'"
+            ":y=150:eval=frame",
+        )
+        self.assertTrue(any("holds still" in w for w in result["warnings"]), result)
+        self.assertFalse(any("holds still" in e for e in result["errors"]), result)
+
+
+@unittest.skipUnless(
+    qc.HAS_NUMPY and shutil.which("ffmpeg"),
+    "numpy and ffmpeg are required",
+)
+class DurationGateTests(unittest.TestCase):
+    def run_qc(self, seconds, extra, vertical=False):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            video = root / "film.mp4"
+            size = "180x320" if vertical else "320x180"
+            subprocess.run([
+                "ffmpeg", "-v", "error", "-y",
+                "-f", "lavfi", "-i", f"testsrc2=size={size}:rate=30",
+                "-f", "lavfi", "-i", "sine=frequency=440:sample_rate=48000",
+                "-t", str(seconds), "-c:v", "libx264", "-pix_fmt", "yuv420p",
+                "-c:a", "aac", str(video),
+            ], check=True)
+            argv = [str(video), "--json", str(root / "qc.json"),
+                    "--sheet", str(root / "sheet.jpg"), *extra]
+            for index, item in enumerate(argv):
+                if item == "TIMINGS":
+                    (root / "timings.json").write_text('{"duration": 2.0}', encoding="utf-8")
+                    argv[index] = str(root / "timings.json")
+            try:
+                qc.main(argv)
+            except SystemExit:
+                pass
+            import json
+            return json.loads((root / "qc.json").read_text(encoding="utf-8"))
+
+    def test_short_narration_fails_even_when_the_picture_is_long_enough(self):
+        result = self.run_qc(4, ["--min-duration", "3", "--timings", "TIMINGS"])
+        self.assertTrue(any("narration in timings.json" in e for e in result["errors"]), result)
+
+    def test_report_is_bound_to_the_video(self):
+        result = self.run_qc(4, ["--min-duration", "3"])
+        self.assertEqual(len(result["video_sha256"]), 64)
 
 
 if __name__ == "__main__":

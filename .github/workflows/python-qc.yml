@@ -28,7 +28,7 @@ jobs:
 
       - name: Install test dependencies
         run: |
-          python -m pip install numpy
+          python -m pip install -r requirements-dev.txt
 
       - name: Run QC behavioral tests
         run: |
@@ -87,6 +87,16 @@ jobs:
           python -m unittest discover -s .claude/skills/podcast-scout-skill/tests -p "test_review_regressions.py" -v
           python -m unittest discover -s .claude/skills/podcast-scout-skill/tests -p "test_channel_narrator.py" -v
           python -m unittest discover -s .claude/skills/podcast-scout-skill/tests -p "test_report.py" -v
+          python -m unittest discover -s .claude/skills/podcast-scout-skill/tests -p "test_narrate_fixes.py" -v
+          python -m unittest discover -s .claude/skills/podcast-scout-skill/tests -p "test_collage_provider.py" -v
+          python -m unittest discover -s .claude/skills/podcast-scout-skill/tests -p "test_assemble.py" -v
+          python -m unittest discover -s .claude/skills/podcast-scout-skill/tests -p "test_karaoke_ass.py" -v
+          python -m unittest discover -s .claude/skills/podcast-scout-skill/tests -p "test_package_lint.py" -v
+          python -m unittest discover -s .claude/skills/podcast-scout-skill/tests -p "test_json_shape_guards.py" -v
+          python -m unittest discover -s .claude/skills/podcast-scout-skill/tests -p "test_vendor_chapters.py" -v
+          python -m unittest discover -s .claude/skills/podcast-scout-skill/tests -p "test_paid_gates.py" -v
+          python -m unittest discover -s .claude/skills/podcast-scout-skill/tests -p "test_gen_media.py" -v
+          python -m unittest discover -s .claude/skills/podcast-scout-skill/tests -p "test_youtube_scripts.py" -v
 
       - name: Test real video decoding
         run: |
@@ -144,6 +154,11 @@ jobs:
 
               print("Real video QC tests passed.")
           PY
+
+      - name: Test the Pillow motion study and the legacy Obscura reader
+        run: |
+          python -m unittest discover -s tools -p "test_*.py" -v
+          node --test .claude/skills/podcast-scout-skill/scripts/obscura-research.test.mjs
 
       - name: Check Python syntax across all studio skills and tests
         run: |

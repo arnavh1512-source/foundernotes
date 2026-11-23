@@ -34,22 +34,29 @@ The upstream instructions are kept unchanged in `SKILL.upstream.md`. This file o
 
 ## Prerequisites
 - **MuAPI access:**
-  - A MuAPI key saved as the session network secret for `api.muapi.ai` (header `x-api-key`); the scripts then work without `MUAPI_API_KEY`.
+  - `MUAPI_API_KEY`, or a MuAPI key saved as the session network secret for `api.muapi.ai` (header `x-api-key`) plus `MUAPI_KEY_PROXY=1` so the scripts send a placeholder for the proxy to replace. Without either they stop with an error.
   - **Credit on the account.** An unfunded account gets stock samples back. Check first:
     `curl -s -H "x-api-key: proxy-injected" https://api.muapi.ai/api/v1/account/balance`.
 - **Local tools:** `ffmpeg`/`ffprobe`, and Python 3 with Pillow.
+
+## Spending gate
+Every paid stage (`style_bakeoff.py`, `keyframes.py`, `clips.py`, `audio.py`, `asr_beats.py`, `aroll_clips.py`,
+`croll_keyframes.py`) only prints its plan by default: job count, model and output file per job, with no network call.
+Add `--generate` to submit. `--max-jobs N` (default 20) refuses a real run whose plan is bigger; failed jobs may be
+resubmitted up to twice. `audio.py` reuses narration that already has an audio file (delete it to re-voice), and a
+`voice.clone_ref` run also needs `--allow-clone-upload`, because the recording is sent to MuAPI.
 
 ## Workflow (B-roll: topic → film)
 1. Write `studio-output/<slug>/collage/beats.json`. Follow `examples/sample-beats.json`.
    - Hook-led beats.
    - Narration copied from the fact-locked script.
    - Set `"voice": {"voice_id": "English_expressive_narrator"}` only if not using our narrate.py.
-2. `python3 scripts/style_bakeoff.py <dir>`: render one beat in 3–4 themes and **show the owner** before committing (gate 1).
-3. `python3 scripts/keyframes.py <dir>`: generate the collage posters. Check every one for misspelled text and likenesses.
-4. `python3 scripts/clips.py <dir>`: animate the posters. This is the expensive step, so ask before running a whole film.
+2. `python3 scripts/style_bakeoff.py <dir> --generate`: render one beat in 3–4 themes and **show the owner** before committing (gate 1).
+3. `python3 scripts/keyframes.py <dir> --generate`: generate the collage posters. Check every one for misspelled text and likenesses.
+4. `python3 scripts/clips.py <dir>` prints the plan; with `--generate` it animates the posters. This is the expensive step, so ask before running a whole film.
 5. Audio, either way:
    - preferred: `podcast-scout-skill/scripts/narrate.py` (am_michael) plus our own score;
-   - or: `python3 scripts/audio.py <dir>`.
+   - or: `python3 scripts/audio.py <dir> --generate`.
 6. Assembly, either way:
    - `python3 scripts/assemble.py <dir>`;
    - or hand the clips to `podcast-scout-skill/scripts/assemble.py` with our narration (burned subtitles, −14 LUFS).
@@ -58,7 +65,9 @@ The upstream instructions are kept unchanged in `SKILL.upstream.md`. This file o
 **Inserts into an Ink & Gold film:** run steps 2–4 for selected beats only and drop the clips into
 `scenes/` like any other scene. Keep the seam rules: the vector law, and no two adjacent scenes with the same backdrop.
 
-A-roll and C-roll modes: see `SKILL.upstream.md`, under the real-people rule above.
+A-roll and C-roll modes: see `SKILL.upstream.md`, under the real-people rule above. Its commands predate the
+spending gate: add `--generate` to `asr_beats.py`, `aroll_clips.py`, `croll_keyframes.py`, `clips.py` and `audio.py`
+for a real run.
 
 ## Prompt guide
 Read `references/prompt-guide.md` (the 5-part prompt, theme presets, designing for animation) and
@@ -68,5 +77,6 @@ Read `references/prompt-guide.md` (the 5-part prompt, theme presets, designing f
 Upstream is MIT (stated in its package.json and README; no LICENSE file in the repo). Our changes:
 - the male-voice allowlist;
 - the cloning guard;
-- proxy-key support;
+- proxy-key support (opt-in via `MUAPI_KEY_PROXY=1`);
+- the spending gate (`--generate`, `--max-jobs`), https-only API base and downloads, no API key on the curl command line;
 - these rules.

@@ -84,7 +84,7 @@ class LemoBackendTests(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
         self.addCleanup(self.tmp.cleanup)
-        base = Path(self.tmp.name)
+        base = Path(self.tmp.name).resolve()  # Windows temp paths can be 8.3 short names
         self.root = base / "lemo"
         self.project = base / "owner-created-scene"
         self.out = base / "scene.mp4"

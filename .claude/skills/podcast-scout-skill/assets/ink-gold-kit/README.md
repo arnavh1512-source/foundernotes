@@ -16,7 +16,8 @@ Copy this folder into `studio-output/<slug>/film/` to start a film.
   - No two adjacent scenes share a backdrop, and use at least 6 per film.
   - Set the per-film map in `K.FILM_BACKDROPS`.
 - `make_timing.py`: writes `timing.js` (scene cuts + segment times + seams) from narration timings, `scenes.json` and `seams.json`.
-- `still.mjs`: `node still.mjs /abs/scene.html /abs/out-prefix 1 4 8` writes stills for review.
+- `still.mjs`: `node still.mjs scene.html out-prefix 1 4 8` writes stills for review. It uses the motion
+  skill's Playwright (`bash .claude/skills/motion/scripts/setup.sh`) or a global one, on any OS.
 - `example-sc01-threads.html`: an approved reference scene.
 - `STYLE.md` / `CRAFT.md`: palette, light, type and craft rules.
 

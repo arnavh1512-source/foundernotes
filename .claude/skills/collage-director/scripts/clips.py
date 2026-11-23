@@ -4,8 +4,8 @@ Clip stage: animate each SHOT's keyframe into a short video clip via MuAPI.
 """
 import json
 import os
-import sys
 
+import paid
 from provider import get_provider, run_jobs
 from styles import resolve_theme, resolve_video_aspect
 
@@ -71,9 +71,16 @@ def collage_prompt(camera, element_motion=None, feel=None, palette=None, amplitu
     )
 
 
-def run(project_dir):
+def keyframe_url(prov, shot):
+    """Upload a local keyframe only when its job is really submitted (never in a dry run)."""
+    if not shot.get("keyframe_url"):
+        shot["keyframe_url"] = prov.upload(shot["keyframe_path"])
+    return shot["keyframe_url"]
+
+
+def run(project_dir, generate=False, max_jobs=paid.DEFAULT_MAX_JOBS):
     bpath = os.path.join(project_dir, "beats.json")
-    with open(bpath) as f:
+    with open(bpath, encoding="utf-8") as f:
         doc = json.load(f)
     model = doc.get("video_model", VIDEO_MODEL)
     target_aspect = doc.get("aspect", "16:9")
@@ -82,7 +89,6 @@ def run(project_dir):
     t_amp = theme.get("motion_style", "punchy")
 
     clip_dir = os.path.join(project_dir, "clips")
-    os.makedirs(clip_dir, exist_ok=True)
 
     prov = get_provider(doc.get("provider"))
     specs, by_key = {}, {}
@@ -91,11 +97,7 @@ def run(project_dir):
         for shot, key in shots_of(beat):
             if shot.get("clip_url") and os.path.exists(shot.get("clip_path", "")):
                 continue
-            kf = shot.get("keyframe_url")
-            if not kf and shot.get("keyframe_path"):
-                kf = prov.upload(shot["keyframe_path"])
-                shot["keyframe_url"] = kf
-            if not kf:
+            if not (shot.get("keyframe_url") or shot.get("keyframe_path")):
                 print(f"[{key}] no keyframe_url, skipping")
                 continue
 
@@ -109,13 +111,18 @@ def run(project_dir):
             shot["clip_prompt"] = prompt
 
             dur = 8 if "veo3" in model else int(shot.get("duration", 5))
-            params = {"image_url": kf, "duration": dur}
+            params = {"duration": dur}
             if resolved_aspect:
                 params["aspect_ratio"] = resolved_aspect
 
-            specs[key] = (lambda p=prompt, par=params: prov.submit_video(model, p, **par))
+            specs[key] = (lambda p=prompt, par=params, s=shot:
+                          prov.submit_video(model, p, image_url=keyframe_url(prov, s), **par))
             by_key[key] = shot
 
+    plan = [(key, model, os.path.join(clip_dir, f"clip_{key}.mp4")) for key in specs]
+    if not paid.approve(plan, generate, max_jobs):
+        return
+    os.makedirs(clip_dir, exist_ok=True)
     done = run_jobs(prov, specs, poll_s=4, stall_s=120, max_retries=2, deadline_s=900)
 
     for key, url in done.items():
@@ -128,12 +135,11 @@ def run(project_dir):
         shot["clip_path"] = dest
         print(f"[{key}] saved {dest}")
 
-    with open(bpath, "w") as f:
+    with open(bpath, "w", encoding="utf-8") as f:
         json.dump(doc, f, ensure_ascii=False, indent=2)
     print("Updated", bpath)
 
 
 if __name__ == "__main__":
-    proj = sys.argv[1] if len(sys.argv) > 1 else os.path.join(
-        os.path.dirname(__file__), "..", "out", "demo")
-    run(os.path.abspath(proj))
+    a = paid.parser(__doc__).parse_args()
+    run(os.path.abspath(a.project_dir), a.generate, a.max_jobs)

@@ -4,8 +4,8 @@ Keyframe stage: generates one styled keyframe poster per SHOT via MuAPI.
 """
 import json
 import os
-import sys
 
+import paid
 from provider import get_provider, run_jobs
 from styles import compose_keyframe_prompt, compose_collage_prompt, resolve_theme, image_params
 
@@ -21,9 +21,9 @@ def shots_of(beat):
         yield beat, f"{beat['id']}"
 
 
-def run(project_dir):
+def run(project_dir, generate=False, max_jobs=paid.DEFAULT_MAX_JOBS):
     bpath = os.path.join(project_dir, "beats.json")
-    with open(bpath) as f:
+    with open(bpath, encoding="utf-8") as f:
         doc = json.load(f)
     aspect = doc.get("aspect", "16:9")
     img_model = doc.get("image_model", IMAGE_MODEL)
@@ -36,7 +36,6 @@ def run(project_dir):
     t_finish = theme.get("finish") or doc.get("finish")
     era = doc.get("era")
     kf_dir = os.path.join(project_dir, "keyframes")
-    os.makedirs(kf_dir, exist_ok=True)
 
     prov = get_provider(doc.get("provider"))
     specs, by_key = {}, {}
@@ -59,6 +58,10 @@ def run(project_dir):
                                                               **image_params(img_model, aspect, img_res)))
             by_key[key] = shot
 
+    plan = [(key, img_model, os.path.join(kf_dir, f"kf_{key}.jpg")) for key in specs]
+    if not paid.approve(plan, generate, max_jobs):
+        return
+    os.makedirs(kf_dir, exist_ok=True)
     done = run_jobs(prov, specs, poll_s=3, stall_s=75, max_retries=2, deadline_s=300)
 
     for key, url in done.items():
@@ -71,12 +74,11 @@ def run(project_dir):
         shot["keyframe_path"] = dest
         print(f"[{key}] saved {dest}")
 
-    with open(bpath, "w") as f:
+    with open(bpath, "w", encoding="utf-8") as f:
         json.dump(doc, f, ensure_ascii=False, indent=2)
     print("Updated", bpath)
 
 
 if __name__ == "__main__":
-    proj = sys.argv[1] if len(sys.argv) > 1 else os.path.join(
-        os.path.dirname(__file__), "..", "out", "demo")
-    run(os.path.abspath(proj))
+    a = paid.parser(__doc__).parse_args()
+    run(os.path.abspath(a.project_dir), a.generate, a.max_jobs)

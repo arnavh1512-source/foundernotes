@@ -5,8 +5,8 @@ the user can pick the visual idiom before generating the full film.
 """
 import json
 import os
-import sys
 
+import paid
 from provider import get_provider, run_jobs
 from styles import compose_collage_prompt, STYLE_LIBRARY, resolve_theme, image_params
 
@@ -18,9 +18,9 @@ def first_shot(beat):
     return beat["shots"][0] if beat.get("shots") else beat
 
 
-def run(project_dir, styles=None, beat_index=0):
+def run(project_dir, styles=None, beat_index=0, generate=False, max_jobs=paid.DEFAULT_MAX_JOBS):
     styles = styles or DEFAULT_CANDIDATES
-    with open(os.path.join(project_dir, "beats.json")) as f:
+    with open(os.path.join(project_dir, "beats.json"), encoding="utf-8") as f:
         doc = json.load(f)
     aspect = doc.get("aspect", "16:9")
     img_model = doc.get("image_model", IMAGE_MODEL)
@@ -30,7 +30,6 @@ def run(project_dir, styles=None, beat_index=0):
     scene, bg = shot["scene"], beat.get("bg", "warm ochre")
     tcn, ten = beat.get("title_cn", ""), beat.get("title_en", "")
     out = os.path.join(project_dir, "style-bakeoff")
-    os.makedirs(out, exist_ok=True)
 
     prov = get_provider(doc.get("provider"))
     specs = {}
@@ -44,6 +43,10 @@ def run(project_dir, styles=None, beat_index=0):
         tag = "library" if name in STYLE_LIBRARY else "custom"
         print(f"[{name}] ({tag}) queued")
 
+    plan = [(name, img_model, os.path.join(out, f"{name}.jpg")) for name in specs]
+    if not paid.approve(plan, generate, max_jobs):
+        return
+    os.makedirs(out, exist_ok=True)
     done = run_jobs(prov, specs, poll_s=3, stall_s=75, max_retries=2, deadline_s=240)
 
     for name, url in done.items():
@@ -53,8 +56,9 @@ def run(project_dir, styles=None, beat_index=0):
 
 
 if __name__ == "__main__":
-    proj = os.path.abspath(sys.argv[1] if len(sys.argv) > 1 else
-                           os.path.join(os.path.dirname(__file__), "..", "out", "demo"))
-    styles = sys.argv[2].split(",") if len(sys.argv) > 2 else None
-    bi = int(sys.argv[3]) if len(sys.argv) > 3 else 0
-    run(proj, styles, bi)
+    ap = paid.parser(__doc__)
+    ap.add_argument("styles", nargs="?", help="comma-separated candidate styles")
+    ap.add_argument("beat_index", nargs="?", type=int, default=0)
+    a = ap.parse_args()
+    run(os.path.abspath(a.project_dir), a.styles.split(",") if a.styles else None, a.beat_index,
+        a.generate, a.max_jobs)

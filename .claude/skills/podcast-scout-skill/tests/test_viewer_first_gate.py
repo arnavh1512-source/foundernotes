@@ -104,7 +104,52 @@ class ViewerFirstGateTests(unittest.TestCase):
             "one_insight_already_delivered": "the deadline comparison was understood",
             "outsider_test": {k: True for k in gate.CHECKS},
         })
-        self.assertEqual(gate.validate(data, stage="full-production"), [])
+        with tempfile.TemporaryDirectory() as td:
+            errors = gate.validate(data, stage="full-production", base_dir=td)
+            self.assertTrue(any("evidence_path must name an existing file" in x for x in errors))
+            report = Path(td) / "local" / "pilot" / "qc-report.json"
+            report.parent.mkdir(parents=True)
+            report.write_text("{}", encoding="utf-8")
+            self.assertEqual(gate.validate(data, stage="full-production", base_dir=td), [])
+
+    def test_all_x_filler_plan_fails_both_stages(self):
+        def fill(value, key=None):
+            if isinstance(value, dict):
+                return {k: fill(v, k) for k, v in value.items()}
+            if isinstance(value, list):
+                return [fill(v, key) for v in value]
+            keep = key in {"id", "evidence_ids", "insufficient_substance_action"}
+            return "x" if isinstance(value, str) and not keep else value
+        data = fill(sample())
+        data["viewer_promise_sentence"] = ("This video is for someone struggling with x; "
+                                           "they'll understand x and leave knowing how to x.")
+        data["pilot"]["actual_review"].update({
+            "status": "approved", "actual_seconds": 75, "evidence_path": "nope",
+            "outsider_test": {k: True for k in gate.CHECKS}})
+        for stage in ("pre-script", "full-production"):
+            errors = gate.validate(data, stage=stage)
+            self.assertTrue(any("real phrase" in x for x in errors), (stage, errors))
+            self.assertTrue(any("repeats another chapter" in x for x in errors))
+        self.assertTrue(any("evidence_path" in x for x in gate.validate(data, stage="full-production")))
+
+    def test_payoffs_differing_only_by_case_or_punctuation_repeat(self):
+        data = sample()
+        data["chapters"][1]["distinct_payoff"] = "Reader can SEPARATE urgency, from ease!"
+        self.assertTrue(any("repeats" in x for x in gate.validate(data)))
+
+    def test_math_prose_is_not_a_placeholder_but_template_tokens_are(self):
+        data = sample()
+        data["evidence_and_angle"]["relevant_limit"] = "the effect was small: p < 0.05 and d > 0.3"
+        self.assertEqual(gate.validate(data), [])
+        for token in ("<your claim>", "<title 1>", "<measurable/useful takeaway>"):
+            data["evidence_and_angle"]["relevant_limit"] = "limit " + token
+            self.assertTrue(any("relevant_limit" in x for x in gate.validate(data)), token)
+
+    def test_insight_time_must_be_a_real_number(self):
+        for value in (True, "15", None):
+            data = sample()
+            data["opening"]["first_insight_at_seconds"] = value
+            self.assertTrue(any("first_insight_at_seconds" in x for x in gate.validate(data)), value)
 
     def test_template_does_not_sneak_through(self):
         p = ROOT / "assets" / "viewer-first-plan.template.json"

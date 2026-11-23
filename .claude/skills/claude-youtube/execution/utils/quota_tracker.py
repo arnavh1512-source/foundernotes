@@ -21,6 +21,7 @@ Usage:
 
 import argparse
 import json
+import os
 import sys
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
@@ -60,16 +61,19 @@ def _load_quota():
     """Load today's quota state."""
     path = _quota_file()
     if path.exists():
-        with open(path) as f:
+        with open(path, encoding="utf-8") as f:
             return json.load(f)
     return {"date": _pacific_date(), "consumed": 0, "operations": {}}
 
 
 def _save_quota(data):
-    """Save quota state."""
+    """Save quota state atomically, so a crash mid-write never leaves a truncated file.
+    ponytail: concurrent runs can still lose an increment (read-modify-write); add a file lock if that matters."""
     path = _quota_file()
-    with open(path, "w") as f:
+    tmp = path.with_name(f"{path.name}.{os.getpid()}.tmp")
+    with open(tmp, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2)
+    os.replace(tmp, path)
 
 
 def get_remaining():

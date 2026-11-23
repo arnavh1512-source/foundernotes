@@ -19,7 +19,7 @@ class AnatomyBackendTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
-        self.root = Path(self.temp.name)
+        self.root = Path(self.temp.name).resolve()  # Windows temp paths can be 8.3 short names
         self.home = self.root / "upstream"
         self.scene = self.root / "owned" / "index.html"
         self.output = self.root / "owned" / "preview.png"

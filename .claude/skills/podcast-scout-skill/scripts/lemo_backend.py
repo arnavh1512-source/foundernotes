@@ -49,8 +49,12 @@ def validated_library(value=None):
 
 def known_styles():
     data = json.loads(CATALOG.read_text(encoding="utf-8"))
-    styles = {s["slug"]: s for s in data["styles"]}
-    if len(styles) != 66 or len(styles) != len(data["styles"]):
+    entries = data.get("styles") if isinstance(data, dict) else None
+    if not isinstance(entries, list) or not all(
+            isinstance(s, dict) and isinstance(s.get("slug"), str) for s in entries):
+        raise ValueError("Lemo style catalog must be an object with a styles list of {slug} objects")
+    styles = {s["slug"]: s for s in entries}
+    if len(styles) != 66 or len(styles) != len(entries):
         raise ValueError("Lemo style catalog must contain 66 unique styles")
     return styles
 
@@ -128,7 +132,11 @@ def execute(action, *, library=None, style=None, project=None, output=None, seco
     if not shutil.which("node") or not shutil.which("ffmpeg") or not shutil.which("ffprobe"):
         return report(action, False, error="MISSING_DEPENDENCIES",
                       message="Node, ffmpeg and ffprobe must be present")
-    if style not in known_styles():
+    try:
+        styles = known_styles()
+    except (OSError, ValueError) as exc:
+        return report(action, False, error="BAD_STYLE_CATALOG", message=str(exc))
+    if style not in styles:
         return report(action, False, error="UNKNOWN_STYLE")
     if not (root / "styles" / style / "STYLE.md").is_file():
         return report(action, False, error="MISSING_STYLE_GUIDE")
