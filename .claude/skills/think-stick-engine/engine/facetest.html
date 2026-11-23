@@ -78,7 +78,8 @@ function talkPose(p,o){ const r=roleOf(o); if(!r||o.noTalk||!window.SPEAK) retur
   const arm=hsh(sp[0],3)%2; const q={...p,head:breathe.head+nod,lean:breathe.lean+.03*lift}; if(arm) q.af1=(p.af1||0)+lift; else q.ab1=(p.ab1||0)+lift; return q }
 function handGlyph(J,e,h,kind,s,col){ if(!kind) return; const dx=J[h][0]-J[e][0], dy=J[h][1]-J[e][1], L=Math.hypot(dx,dy)||1, ux=dx/L, uy=dy/L, nx=-uy, ny=ux, [hx,hy]=J[h];
   x.save(); x.strokeStyle=col; x.fillStyle=col; x.lineCap='round'; x.lineWidth=5*s;
-  if(kind==='fist'){ x.beginPath(); x.arc(hx,hy,8.5*s,0,Math.PI*2); x.fill() }
+  if(kind==='hand'){ x.beginPath(); x.ellipse(hx+ux*3*s,hy+uy*3*s,7.5*s,6.5*s,Math.atan2(uy,ux),0,Math.PI*2); x.fill(); x.lineWidth=4*s; x.beginPath(); x.moveTo(hx+ux*2*s,hy+uy*2*s); x.lineTo(hx+(ux*.4+nx*.9)*9*s,hy+(uy*.4+ny*.9)*9*s); x.stroke() }
+  else if(kind==='fist'){ x.beginPath(); x.arc(hx,hy,8.5*s,0,Math.PI*2); x.fill() }
   else if(kind==='point'){ x.beginPath(); x.arc(hx,hy,7*s,0,Math.PI*2); x.fill(); x.beginPath(); x.moveTo(hx,hy); x.lineTo(hx+ux*16*s,hy+uy*16*s); x.stroke() }
   else if(kind==='thumb'){ x.beginPath(); x.arc(hx,hy,8*s,0,Math.PI*2); x.fill(); x.beginPath(); x.moveTo(hx,hy); x.lineTo(hx,hy-17*s); x.stroke() }
   else { for(let i=-1;i<=1;i++){ const a=i*.42, cx=ux*Math.cos(a)-uy*Math.sin(a), cy=ux*Math.sin(a)+uy*Math.cos(a); x.beginPath(); x.moveTo(hx,hy); x.lineTo(hx+cx*13*s,hy+cy*13*s); x.stroke() } x.beginPath(); x.moveTo(hx,hy); x.lineTo(hx+nx*9*s,hy+ny*9*s); x.stroke() }
@@ -97,7 +98,7 @@ function fig(X,p,s=1.6,o={}){ p=talkPose(p,o); const d=p.dir??o.dir??1; const pt
   const pl=(...ks)=>{ x.beginPath(); ks.forEach((k,i)=>i?x.lineTo(...J[k]):x.moveTo(...J[k])); x.stroke() };
   x.globalAlpha=(o.a??1); if(!o.hideB) pl('sh','eb','hb'); pl('hip','kb','fb'); pl('hip','kf','ff'); pl('hip','neck'); pl('sh','ef','hf');
   if(o.female) drawHairBack(J,d,s,o);
-  x.fillStyle=col; x.beginPath(); x.arc(J.hd[0],J.hd[1],HR*s,0,Math.PI*2); x.fill(); if(o.female){ drawSkirt(J,d,s,o,p); drawHairFront(J,d,s,o) } handGlyph(J,'ef','hf',p.hF,s,col); handGlyph(J,'eb','hb',p.hB,s,col);
+  x.fillStyle=col; x.beginPath(); x.arc(J.hd[0],J.hd[1],HR*s,0,Math.PI*2); x.fill(); if(o.female){ drawSkirt(J,d,s,o,p); drawHairFront(J,d,s,o) } handGlyph(J,'ef','hf',p.hF||'hand',s,col); if(!o.hideB) handGlyph(J,'eb','hb',p.hB||'hand',s,col);
   // accessories (identity without faces)
   const fx=Math.sin(p.lean+p.head+r)*d, fy=-Math.cos(p.lean+p.head+r);
   if(o.scarf) drawScarf(J,d,s,o);

@@ -21,7 +21,7 @@ S.duo=(u,ts,d,a={})=>{ const m=a.mode||'wide';
   if(ya==='point'){ X=lerp(1300,1180,io(ph(ts,.1,.6))); yp=K(ts,[[0,{dir:-1}],[.6,{dir:-1,af1:1.65,af2:.05,lean:.18},'back'],[d,{dir:-1,af1:1.6,af2:.1,lean:.14}]]) }
   else if(ya==='pace'){ const w=ts*1.8; X=1250+170*Math.sin(w); const dirp=Math.cos(w)>0?1:-1; yp=walk(ts,1.4,1,{dir:dirp,af1:2.5,af2:2.2}) }
   else if(ya==='slam'){ const hit=Math.min(d*.45,1.0); X=lerp(1240,1150,io(ph(ts,0,hit))); yp=K(ts,[[0,{dir:-1}],[hit*.8,{dir:-1,af1:2.8,af2:.3,ab1:2.7,ab2:.3,lean:-.1},'out'],[hit,{dir:-1,af1:1.2,af2:.2,ab1:1.1,ab2:.2,lean:.55},'inn'],[d,{dir:-1,af1:1.1,af2:.3,ab1:1.0,ab2:.3,lean:.45}]]); if(ts>hit) SHAKE=Math.max(0,1-(ts-hit)/.35)*26; if(ts>hit&&ts<hit+.15) { cup(930,G-150-30,1.1) } }
-  else if(ya==='shrug'){ yp=K(ts,[[0,{dir:-1}],[.5,{dir:-1,af1:1.0,af2:-1.3,ab1:1.0,ab2:-1.3,head:.18},'back'],[d,{dir:-1,af1:.9,af2:-1.2,ab1:.9,ab2:-1.2,head:.12}]]) }
+  else if(ya==='shrug'){ yp=K(ts,[[0,{dir:-1}],[.5,{dir:-1,af1:.55,af2:1.15,ab1:.5,ab2:1.2,head:.18,hF:'palm',hB:'palm'},'back'],[d,{dir:-1,af1:.5,af2:1.1,ab1:.45,ab2:1.15,head:.12,hF:'palm',hB:'palm'}]]) }
   else if(ya==='headgrab'){ yp=P({dir:-1,af1:2.6,af2:2.4,ab1:2.5,ab2:2.4,lean:.05+.08*Math.sin(ts*5),head:.1*Math.sin(ts*4)}); X=1240+30*Math.sin(ts*3) }
   else if(ya==='stepback'){ X=lerp(1200,1380,out(ph(ts,.1,.6))); yp=K(ts,[[0,{dir:-1}],[.5,{dir:-1,lean:-.25,af1:2.0,af2:1.0,ab1:2.0,ab2:1.0,air:20},'out'],[d,{dir:-1,lean:-.1,af1:1.2,af2:.6,ab1:1.1,ab2:.6}]]) }
   else if(ya==='cross') yp=P({dir:-1,af1:1.05,af2:1.95,ab1:1.0,ab2:1.95,head:-.1+.05*Math.sin(ts*2),lean:-.04});
