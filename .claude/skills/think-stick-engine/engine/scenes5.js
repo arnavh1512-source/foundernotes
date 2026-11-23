@@ -1,7 +1,7 @@
 // scenes5.js: character-led action beats for long explanations (v2). Characters act the idea out; new pictures replace zoom pulses.
 const A=(a,k)=>(a&&a[k]!==undefined)?a[k]:undefined;
 function wash(col,k){ if(k<=0) return; x.save(); x.setTransform(1,0,0,1,0,0); x.globalAlpha=k; x.fillStyle=col; x.fillRect(0,0,W,H); x.restore() }
-function shelf(X=200){ x.save(); x.strokeStyle=LINE; x.lineWidth=6; for(let i=0;i<4;i++) x.strokeRect(X,180+i*90,320,90); for(let i=0;i<4;i++) for(let j=0;j<6;j++){ x.fillStyle=['#c9a46a','#8a5530','#5e5a54','#3d7fa8'][(i+j)%4]; x.fillRect(X+15+j*50,195+i*90,30,75) } x.restore() }
+function shelf(X=200){ if(window.BG==='study') return; x.save(); x.strokeStyle=LINE; x.lineWidth=6; for(let i=0;i<4;i++) x.strokeRect(X,180+i*90,320,90); for(let i=0;i<4;i++) for(let j=0;j<6;j++){ x.fillStyle=['#c9a46a','#8a5530','#5e5a54','#3d7fa8'][(i+j)%4]; x.fillRect(X+15+j*50,195+i*90,30,75) } x.restore() }
 function bigBlock(cx,cy,txt,col=INK,s=1,rot=0){ block(cx,cy,440*s,132*s,txt,rot,{fill:col}) }
 // ---------- dialogue staging in the study: wide two-shot or medium on the speaker, with whole-body actions
 // a.mode: wide|ph|yo ; a.act (youth): point|pace|slam|shrug|headgrab|stepback|cross ; a.pact (philosopher): stand|lean|raise|open|calm
@@ -46,9 +46,9 @@ S.keys=(u,ts,d,a={})=>{ cam(990,540,1); paper(); ground(); const w=a.w||['IDEA']
 S.angerSwitch=(u,ts,d)=>{ cam(980,560,1.05); const off1=d*.35, on2=d*.72; const on=ts<off1||ts>on2; paper(on?'#f6dcd4':PAPER); ground();
   const lv=ts<off1?1:ts<off1+.25?1-(ts-off1)/.25:ts<on2?0:Math.min(1,(ts-on2)/.25);
   x.save(); x.fillStyle=INK; x.fillRect(1380,G-330,140,200); x.strokeStyle=on?RED:'#8a8072'; x.lineWidth=16; x.lineCap='round'; x.beginPath(); x.moveTo(1450,G-230); x.lineTo(1450+Math.sin(lerp(-.7,.7,lv))*110,G-230-Math.cos(lerp(-.7,.7,lv))*110); x.stroke(); x.fillStyle='#fff'; x.font='700 30px Inst'; x.textAlign='center'; x.fillText(on?'ON':'OFF',1450,G-150); x.restore(); quickT(1450,G-370,'ANGER',1,46);
-  const J=fig(820,on?P({dir:1,lean:.3,af1:1.6+.15*Math.sin(ts*10),af2:.1,ab1:-.4}):P({dir:1,lean:.1,head:.12,af1:2.9,af2:2.6,ab1:1.4,ab2:.3}),1.6,{...MOM,dir:1});
+  const J=fig(820,on?P({dir:1,lean:.3,af1:1.6+.15*Math.sin(ts*10),af2:.1,ab1:-.4}):P({dir:1,lean:.1,head:.12,af1:.35,af2:.3,ab1:2.85,ab2:2.55}),1.6,{...MOM,dir:1,expr:on?'shouting':'happy'});
   fig(1120,P({dir:-1,head:on?.45:.05,lean:on?.25:0,af1:on?1.6:.2,af2:on?1.9:.2,ab1:on?1.5:-.2,ab2:on?1.9:.2}),1.15,{...KID,dir:-1});
-  if(on) shout({hd:[J.hd[0]+40,J.hd[1]]},1,.9,1.1); else { phoneAt(J.hd[0]+18,J.hd[1]+6,1.1,1); ring(J.hd[0]+18,J.hd[1]+6,ts,ts<off1+.8?1:0) } };
+  if(on) shout({hd:[J.hd[0]+40,J.hd[1]]},1,.9,1.1); else { phoneAt(J.hd[0]-HR*1.6*1.05,J.hd[1]+4,1.0,1); ring(J.hd[0]-HR*1.6*1.05,J.hd[1]+4,ts,ts<off1+.8?1:0) } };
 S.goalBubble=(u,ts,d)=>{ cam(980,540,1); paper(); ground(); const calm=ph(ts,d*.8,d*.95); fig(560,P({dir:1,af1:lerp(1.2,.2,calm),af2:lerp(2.4,.1,calm),ab1:lerp(1.1,-.1,calm),ab2:lerp(2.4,.1,calm),lean:lerp(.2,.02,calm),head:lerp(-.15,.05,calm)}),1.6,YOU);
   thought(1050,330,760,360,ph(ts,.1,.5)); quickT(1050,230,'What do I want them to do?',ph(ts,.3,.7),42); const W3=['APOLOGISE','BACK DOWN','LISTEN'];
   W3.forEach((t,i)=>{ const k=back(ph(ts,d*(.25+i*.15),d*(.25+i*.15)+.4)); if(k>0){ x.save(); x.translate(820+i*235,360); x.scale(Math.max(.01,k),Math.max(.01,k)); block(0,0,215,70,t,0,{fill:[INK,RED,'#2f6f4f'][i]}); x.restore() } }) };

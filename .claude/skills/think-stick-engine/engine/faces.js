@@ -20,6 +20,7 @@ function face(J,d,s,o,ex,talk=0,blink=0){
   eyes.forEach((ex_,i)=>{ const far=(d>0)===(i===0); const w=.17*r*(far?.85:1), h=Math.max(.03*r,.25*r*E.eye*(1-blink*.9));
     if(E.arc&&!blink){ x.strokeStyle=light; x.lineWidth=.1*r; x.beginPath(); x.arc(ex_,eyeY+.06*r,w*1.1,Math.PI*1.1,Math.PI*1.9); x.stroke(); return }
     x.fillStyle=light; x.beginPath(); x.ellipse(ex_,eyeY,w,h,0,0,Math.PI*2); x.fill();
+    if(o.female&&h>.05*r){ x.strokeStyle=INK; x.lineWidth=.06*r; for(let k=-1;k<=1;k++){ x.beginPath(); x.moveTo(ex_+k*w*.6,eyeY-h*.9); x.lineTo(ex_+k*w*.9+d*.03*r,eyeY-h*1.35); x.stroke() } }
     if(h>.05*r){ const pr=(E.small?.055:.1)*r; x.fillStyle=INK; x.beginPath(); x.arc(ex_+d*.035*r+(E.lookX||0)*.05*r*d,eyeY+(E.lookY||0)*.07*r,pr,0,Math.PI*2); x.fill() }
     if(E.side&&i===(d>0?0:1)&&E.eye<.8){ x.fillStyle=o.col||INK; x.fillRect(ex_-w-2,eyeY-h-2,2*w+4,h*.9) } });
   // brows: inner end down when bA>0 (angry), up when bA<0 (sad/worried); "o" values for the second brow

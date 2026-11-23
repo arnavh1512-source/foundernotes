@@ -96,7 +96,8 @@ function fig(X,p,s=1.6,o={}){ p=talkPose(p,o); const d=p.dir??o.dir??1; const pt
   const col=o.col||INK; x.save(); x.lineCap='round'; x.lineJoin='round'; x.strokeStyle=col; x.lineWidth=11*s*(o.lw||1);
   const pl=(...ks)=>{ x.beginPath(); ks.forEach((k,i)=>i?x.lineTo(...J[k]):x.moveTo(...J[k])); x.stroke() };
   x.globalAlpha=(o.a??1); pl('sh','eb','hb'); pl('hip','kb','fb'); pl('hip','kf','ff'); pl('hip','neck'); pl('sh','ef','hf');
-  x.fillStyle=col; x.beginPath(); x.arc(J.hd[0],J.hd[1],HR*s,0,Math.PI*2); x.fill(); handGlyph(J,'ef','hf',p.hF,s,col); handGlyph(J,'eb','hb',p.hB,s,col);
+  if(o.female) drawHairBack(J,d,s,o);
+  x.fillStyle=col; x.beginPath(); x.arc(J.hd[0],J.hd[1],HR*s,0,Math.PI*2); x.fill(); if(o.female){ drawSkirt(J,d,s,o,p); drawHairFront(J,d,s,o) } handGlyph(J,'ef','hf',p.hF,s,col); handGlyph(J,'eb','hb',p.hB,s,col);
   // accessories (identity without faces)
   const fx=Math.sin(p.lean+p.head+r)*d, fy=-Math.cos(p.lean+p.head+r);
   if(o.scarf) drawScarf(J,d,s,o);
@@ -107,6 +108,22 @@ function fig(X,p,s=1.6,o={}){ p=talkPose(p,o); const d=p.dir??o.dir??1; const pt
 
 
 
+
+// female cast: hair (mother: long hair with a bun; girl: pigtails), skirt over the thighs
+function drawHairBack(J,d,s,o){ const R=HR*s, [hx,hy]=J.hd; x.save(); x.fillStyle=o.hair||'#3a2418';
+  if(o.female==='mom'){ x.beginPath(); x.ellipse(hx-d*.35*R,hy+.35*R,R*.95,R*1.25,d*.15,0,7); x.fill(); x.beginPath(); x.arc(hx-d*1.0*R,hy-.55*R,R*.5,0,7); x.fill() }
+  else { [[-1,0],[1,0]].forEach(([sd])=>{ x.beginPath(); x.ellipse(hx+sd*1.05*R,hy+.35*R,R*.32,R*.62,sd*.3,0,7); x.fill() }) }
+  x.restore() }
+function drawHairFront(J,d,s,o){ const R=HR*s, [hx,hy]=J.hd; x.save(); x.fillStyle=o.hair||'#3a2418';
+  x.beginPath(); x.arc(hx,hy,R*1.04,Math.PI*1.02,Math.PI*1.98); x.quadraticCurveTo(hx+d*.2*R,hy-.25*R,hx-d*.15*R,hy-.38*R); x.quadraticCurveTo(hx-d*.55*R,hy-.2*R,hx-R*1.04,hy-.02*R); x.fill();
+  if(o.female==='girl'){ x.fillStyle=o.dress||'#e0a52b'; [[-1],[1]].forEach(([sd])=>{ x.beginPath(); x.arc(hx+sd*.95*R,hy-.15*R,R*.16,0,7); x.fill() }) }
+  x.restore() }
+function drawSkirt(J,d,s,o,p){ if(Math.abs(p.rot||0)>.35) return; const [hx,hy]=J.hip, sh=J.neck, wy=lerp(hy,sh[1],.18), knee=Math.max(J.kf[1],J.kb[1]), seated=(p.lf1||0)>1.2;
+  const bot=seated?hy+10*s:Math.min(knee+6*s,hy+60*s), spread=seated?30*s:Math.max(26*s,Math.abs(J.kf[0]-J.kb[0])/2+18*s);
+  x.save(); x.fillStyle=o.dress||'#7a3b6a'; x.beginPath(); x.moveTo(lerp(hx,sh[0],.18)-11*s,wy); x.lineTo(lerp(hx,sh[0],.18)+11*s,wy);
+  x.quadraticCurveTo(hx+spread*.9,(wy+bot)/2,hx+spread,bot); x.quadraticCurveTo(hx,bot+7*s,hx-spread,bot); x.quadraticCurveTo(hx-spread*.9,(wy+bot)/2,lerp(hx,sh[0],.18)-11*s,wy); x.fill();
+  // dress top over the torso
+  x.lineCap='round'; x.strokeStyle=o.dress||'#7a3b6a'; x.lineWidth=17*s; x.beginPath(); x.moveTo(lerp(hx,sh[0],.15),lerp(hy,sh[1],.15)); x.lineTo(lerp(hx,sh[0],.85),lerp(hy,sh[1],.85)); x.stroke(); x.restore() }
 // scarf: cloth band around the neck with a knot, a tapered tail that flutters, darker stripes and a fringed end
 function drawScarf(J,d,s,o){ const RD='#d8342b', DK='#a8231d', wind=o.wind||0, [nx,ny]=J.neck;
   const L=(70+wind*30)*s, N=12, pts=[];
@@ -168,7 +185,7 @@ function drawCastFace(J,d,s,o,p){ const r=faceRole(o); if(!r) return;
 function ghost(X,poseAt,ts,s,o,n=3,dt=.035){ for(let i=n;i>=1;i--) fig(X(ts-i*dt),poseAt(ts-i*dt),s,{...o,a:.12*(n-i+1)/n,noShadow:1}) }
 // ---------- world
 let GRAIN=null; function grain(){ if(GRAIN) return GRAIN; GRAIN=document.createElement('canvas'); GRAIN.width=480; GRAIN.height=270; const g=GRAIN.getContext('2d'), im=g.createImageData(480,270); for(let i=0;i<im.data.length;i+=4){ const v=rnd(i+7)*255; im.data[i]=im.data[i+1]=im.data[i+2]=v; im.data[i+3]=14 } g.putImageData(im,0,0); return GRAIN }
-function paper(tone){ x.fillStyle=tone||window.TONE||PAPER; x.fillRect(-4*W,-4*H,9*W,9*H) }
+function paper(tone){ x.fillStyle=tone||PAPER; x.fillRect(-4*W,-4*H,9*W,9*H); if(!tone&&typeof drawBG==='function') drawBG() }
 function ground(a=1){ x.save(); x.globalAlpha=a; x.strokeStyle=LINE; x.lineWidth=5; x.beginPath(); x.moveTo(-3*W,G); x.lineTo(4*W,G); x.stroke(); x.restore() }
 let SHAKE=0, CAMZ=1, CAMX=0; function cam(cx,cy,z){ const sx=SHAKE?(rnd(Math.floor(NOW*30))-.5)*SHAKE:0, sy=SHAKE?(rnd(Math.floor(NOW*30)+99)-.5)*SHAKE:0; x.translate(W/2+sx,H/2+sy); x.scale(z*1.18*CAMZ,z*1.18*CAMZ); x.translate(-cx-CAMX,-cy) }
 function shakeAt(ts,t0,amp=26,dur=.3){ const k=(ts-t0)/dur; if(k>0&&k<1) SHAKE=Math.max(SHAKE,amp*(1-k)) }
@@ -184,7 +201,7 @@ function table(X,w=360,h=150){ x.save(); x.strokeStyle=INK; x.lineWidth=9; x.lin
 function chair(X,s=1.6,d=1){ x.save(); x.strokeStyle=INK; x.lineWidth=8; x.lineCap='round'; const sy=G-56*s; x.beginPath(); x.moveTo(X-34*s,sy); x.lineTo(X+34*s,sy); x.moveTo(X-30*s,sy); x.lineTo(X-30*s,G); x.moveTo(X+30*s,sy); x.lineTo(X+30*s,G); x.moveTo(X-d*34*s,sy); x.lineTo(X-d*38*s,sy-80*s); x.stroke(); x.restore() }
 function logoMark(X,Y,r){ if(!LOGO.complete||!LOGO.naturalWidth) return; x.save(); x.beginPath(); x.arc(X,Y,r,0,Math.PI*2); x.clip(); x.drawImage(LOGO,360,375,560,560,X-r,Y-r,2*r,2*r); x.restore(); x.save(); x.strokeStyle='#f6efdf'; x.lineWidth=3; x.beginPath(); x.arc(X,Y,r,0,Math.PI*2); x.stroke(); x.restore() }
 const S={}; let NOW=0;
-</script><script src="scenes.js"></script><script src="scenes2.js"></script><script src="scenes3.js"></script><script src="scenes4.js"></script><script src="scenes5.js"></script><script src="faces.js"></script><script src="expr.js"></script><script src="env.js"></script><script>
+</script><script src="scenes.js"></script><script src="scenes2.js"></script><script src="scenes3.js"></script><script src="scenes4.js"></script><script src="scenes5.js"></script><script src="faces.js"></script><script src="backgrounds.js"></script><script src="expr.js"></script><script src="env.js"></script><script>
 const SEGS=window.SEG, ORDER=Object.keys(SEGS), SPAN={}; ORDER.forEach((id,i)=>{ SPAN[id]=[i?SEGS[id][0]:0, i<ORDER.length-1?SEGS[ORDER[i+1]][0]:window.DUR] });
 const STUDY=new Set(['duo','study2','lookStudy','phtalk','ymtalk','philCalm','likeSelf','outOfQ','sitdown2']);
 const SH_=[], TURNS=(window.TURNS||[]); window.SHOTS2.forEach(s=>{ const t0=lerp(SPAN[s.seg][0],SPAN[s.seg][1],s.a), t1=lerp(SPAN[s.seg][0],SPAN[s.seg][1],s.b);
@@ -194,7 +211,7 @@ const SH_=[], TURNS=(window.TURNS||[]); window.SHOTS2.forEach(s=>{ const t0=lerp
   for(let i=0;i<cuts.length-1;i++) SH_.push({args:s.args,turn:i>0&&TURNS.some(u=>Math.abs(u-cuts[i])<1e-6),t0:cuts[i],t1:cuts[i+1],s0:t0,s1:t1,n:s.n,z:1,px:s.n==='endcard'?0:[0,0,0][i%3]}) });
 window.seek=async(tt)=>{ if(!LOGO.complete) await LOGO.decode().catch(()=>{}); const t=Math.min(T1-1e-3,T0+tt); NOW=t; const sh=SH_.find(s=>t>=s.t0&&t<s.t1)||SH_[SH_.length-1]; const d=sh.s1-sh.s0, ts=t-sh.s0; CAMZ=sh.z; CAMX=sh.px||0; if(false&&sh.turn){ const q=Math.min(1,(t-sh.t0)/.45); CAMZ=sh.z*(1+.28*Math.pow(1-q,3)) }
   x.setTransform(1,0,0,1,0,0); x.globalAlpha=1; SHAKE=0; x.fillStyle=PAPER; x.fillRect(0,0,W,H);
-  window.SCN=sh.n; window.TONE=STUDY.has(sh.n)?'#ead9bd':null; S[sh.n](ts/d,ts,d,sh.args); if(SHAKE>0){ const sk=SHAKE; x.setTransform(1,0,0,1,0,0); x.globalAlpha=1; x.fillStyle=PAPER; x.fillRect(0,0,W,H); SHAKE=sk; S[sh.n](ts/d,ts,d,sh.args); } // scene sets SHAKE before calling cam via pre-pass
+  window.SCN=sh.n; window.BG=typeof bgFor==='function'?bgFor(sh.n):null; S[sh.n](ts/d,ts,d,sh.args); if(SHAKE>0){ const sk=SHAKE; x.setTransform(1,0,0,1,0,0); x.globalAlpha=1; x.fillStyle=PAPER; x.fillRect(0,0,W,H); SHAKE=sk; S[sh.n](ts/d,ts,d,sh.args); } // scene sets SHAKE before calling cam via pre-pass
   x.setTransform(1,0,0,1,0,0); x.globalAlpha=1; x.drawImage(grain(),0,0,W,H);
   const vg=x.createRadialGradient(W/2,H/2,H*.45,W/2,H/2,H*1.0); vg.addColorStop(0,'rgba(0,0,0,0)'); vg.addColorStop(1,'rgba(40,30,20,.12)'); x.fillStyle=vg; x.fillRect(0,0,W,H);
   logoMark(1838,82,58) };
