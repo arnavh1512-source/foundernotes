@@ -94,22 +94,26 @@ function burden(t){
   }
   taskPaper(...page.center,page.angle);
  }
- if(task.deliveryHand>0){
-  const [x,y]=task.deliveryWrist;
-  // Keep the supporting palm visible with a whole-body silhouette through the release.
-  const chest=[x+139,557],hip=[x+158,660],head=[x+128,478];
-  const travel=x-1109;
-  const stride=progress(t,35.6,1.2)*(1-progress(t,36.62,.18));
-  const step=Math.sin(travel*Math.PI/105)*46*stride;
+ if(t>=35.6&&t<38.5){
+  const exit=progress(t,37.34,1.16);
+  const hipX=task.deliveryX+192+590*exit;
+  const chest=[hipX-19,557],hip=[hipX,662],head=[hipX-30,478];
+  const travel=2012-hipX;
+  const stepping=progress(travel,0,70)*progress(745-travel,0,60);
   const color='#657869';
-  for(const side of [-1,1]){
-   const foot=[hip[0]+side*(36+step),830-Math.max(0,side*step)*.45];
+  for(const offset of [0,70]){
+   // Footprints stay in world coordinates during the stance half of the step.
+   const phase=(travel+offset)/140,cycle=Math.floor(phase);
+   const swing=progress(phase-cycle,.5,.5);
+   const foot=[2012-(140*cycle-offset+70+140*swing),830-23*stepping*Math.sin(Math.PI*swing)];
    const leg=solveArm(hip,foot,93,96,1);
    stroke(s,[hip,leg.elbow,leg.wrist,[leg.wrist[0]-17,leg.wrist[1]]],7,color);
   }
   stroke(s,[hip,chest,[head[0],head[1]+26]],8,color);
-  const arm=solveArm(chest,[x,y],86,82,1);
-  stroke(s,[chest,arm.elbow,arm.wrist,[x-34,y]],8,color);
+  const withdraw=progress(t,37.3,.34);
+  const wrist=[hipX-158+85*withdraw,646+31*withdraw];
+  const arm=solveArm(chest,wrist,86,82,1);
+  stroke(s,[chest,arm.elbow,arm.wrist,[wrist[0]-34+24*withdraw,wrist[1]-8*withdraw]],8,color);
   stroke(s,[[chest[0]+5,chest[1]],[chest[0]+40,624],[chest[0]+30,678]],6,color);
   s.fillStyle='#f5efdf';s.strokeStyle=color;s.lineWidth=5;s.beginPath();s.arc(...head,28,0,Math.PI*2);s.fill();s.stroke();
   s.fillStyle=color;s.beginPath();s.arc(head[0]-12,head[1]+5,3,0,Math.PI*2);s.fill();

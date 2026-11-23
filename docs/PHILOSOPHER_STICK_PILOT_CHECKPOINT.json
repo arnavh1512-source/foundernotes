@@ -194,5 +194,10 @@
     "status": "V26 selected-frame verification complete",
     "evidence": "Exact V25 frames 1098, 1121 and 1125 show a disconnected delivery arm fully in view.",
     "next": "Resolve secondary actor floor contact during entry and withdrawal, then review the support, release and consequence with dialogue. Exact listening, caption boundaries, cup sync and independent comprehension remain pending."
+  },
+  "carrier_footwork_candidate": {
+    "status": "Source candidate. V26 remains latest verified assembly.",
+    "evidence": "V26 frames 1121\u20131127 show the carrier moving across the workroom over the release interval while both feet travel with the wrist.",
+    "next": "Review encoded approach, hand release, and retreat through 38.5 seconds. Check that support feet track the floor, the arm retracts before the catch and the carrier exits without a pop."
   }
 }
