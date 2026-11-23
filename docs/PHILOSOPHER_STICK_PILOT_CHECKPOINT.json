@@ -209,5 +209,10 @@
     "status": "V29 selected-frame verification complete",
     "evidence": "V28 frames 1849 and 1851 show a hard crop during the ongoing exit walk.",
     "next": "Review the planted choice and first-step cut at normal speed alongside the dialogue. Exact listening, caption boundaries, cup sync and independent comprehension remain pending."
+  },
+  "ending_settle_candidate": {
+    "status": "Source candidate. V29 remains exact verified assembly.",
+    "evidence": "V29 decoded frames 1902, 1910, 1920 and 1934 retain a walk cycle through the exit question.",
+    "next": "Inspect exact render through the last stride and final planted hold. Confirm depth, floor relationship and question legibility; review normal-speed dialogue and independent comprehension."
   }
 }

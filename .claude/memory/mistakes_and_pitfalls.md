@@ -423,3 +423,11 @@ The initial entries preserve documented observations from the 2026-11-11 study a
 - Cause / rationale: The cut timestamp is well after the departure begins
 - Correction / recipe: Give the Youth a planted choice beat and cut during the first stride
 - Verification: Nine exact V29 frames show the lookback with the lock still shut, return of attention to the route, and an arch cut earlier in the first movement. Four captioned frames show visual separation from the action. The 27 motion tests pass, including limb reach and grip checks. Full-speed acting, actual listening and independent interpretation remain pending.
+
+### philosopher-stick-pilot — The ending stops on a live stride instead of completing the action
+
+- Recorded (UTC): 2026-11-23T03:47:00+00:00
+- Evidence: V29 encoded samples 1902, 1910, 1920 and 1934
+- Cause / rationale: The walk loop ran to clip end without a settle state
+- Correction / recipe: Align the last swing with a plant and hold the completed arrival under the existing question
+- Verification: V29 baseline inspected. Exact candidate render pending.

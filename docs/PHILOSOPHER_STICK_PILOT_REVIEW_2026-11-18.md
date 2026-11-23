@@ -277,3 +277,7 @@ V28 frames 1849 and 1851 show a framing jump well into the exit walk. The candid
 ### Exact V29 verification
 
 Actions 45102445897 passed, source `734c01053aced5828d6cadf68ca27592caa6865c`, picture artifact 14786560099. Nine exact V29 frames show the lookback with the lock still shut, return of attention to the route, and an arch cut earlier in the first movement. Four captioned frames show visual separation from the action. The 27 motion tests pass, including limb reach and grip checks. Full-speed acting, actual listening and independent interpretation remain pending. Full assembly decode and unchanged decoded audio were verified. Supplied discipline frames at requested 812–818 seconds show a compositional change alongside a change of physical action and whole-body load. This is frame-level contrast only. The named lookups yielded no decoded reference footage. Full-speed comparison and listening remain pending. No new named-reference audiovisual, owner or independent approval.
+
+## Ending arrival candidate
+
+V29 closing samples show the figure continuing the walk cycle up to the last frame. The candidate completes the last half-stride before the cut ends, plants both feet, and lets the hips and upper body rise into a short held arrival. The locked gate, route cut, viewer prompt and dialogue timing remain fixed. Exact encoded review pending.

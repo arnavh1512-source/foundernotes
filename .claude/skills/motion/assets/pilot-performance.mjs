@@ -152,17 +152,19 @@ export function pilotActorAt(time,role,mode='study'){
  return {pose:p,shoulders,arms,legs,toeTargets:legs.map(a=>[a.wrist[0]+p.facing*19,a.wrist[1]]),spineControl:[(p.hip[0]+p.chest[0])/2-16*p.facing,(p.hip[1]+p.chest[1])/2+8]};
 }
 export function pilotExitAt(time){
- const t=Math.max(56,Math.min(PILOT_DURATION,time)),travel=Math.max(0,t-60.2),phase=travel*Math.PI*2/.7;
+ const t=Math.max(56,Math.min(PILOT_DURATION,time));
+ const travelEnd=3.85,travel=Math.max(0,Math.min(travelEnd,t-60.2)),phase=travel*Math.PI*2/.7;
+ const settled=progress(t,64.05,.32);
  const lookback=progress(t,58.6,.4)*(1-progress(t,59.8,.4));
  const source=geometryAt(14.5),p=JSON.parse(JSON.stringify(source.pose));
- p.facing=lookback>.5?1:-1;p.intent=travel>0?'walk':lookback>.2?'consider':'pause';
- p.hip[1]=550+3*Math.sin(phase)**2;
- p.chest[0]+=14*lookback;p.chest[1]+=30-7*lookback;
- p.head[1]+=30-9*lookback;p.head[0]+=35*lookback;
+ p.facing=lookback>.5?1:-1;p.intent=t>=64.05?'arrive':travel>0?'walk':lookback>.2?'consider':'pause';
+ p.hip[1]=550+3*Math.sin(phase)**2-8*settled;
+ p.chest[0]+=14*lookback;p.chest[1]+=30-7*lookback-8*settled;
+ p.head[1]+=30-9*lookback-8*settled;p.head[0]+=35*lookback;
  const chooseRoute=progress(t,59.86,.34)*(1-progress(t,60.28,.48));
  p.chest[0]-=9*chooseRoute;p.head[0]-=10*chooseRoute;
  p.gaze=lookback>.1?[895,537]:[153,360];
- const depthAt=u=>{const d=progress(Math.max(0,Math.min(4.3,u)),0,4.3);return {scale:1-.55*d,anchor:[190+5*d,740-170*d]};};
+ const depthAt=u=>{const d=progress(Math.max(0,Math.min(travelEnd,u)),0,4.3);return {scale:1-.55*d,anchor:[190+5*d,740-170*d]};};
  const depth=depthAt(travel);
  p.feet=[0,1].map(i=>{
   const offset=i*.35,local=travel+offset,cycle=Math.floor(local/.7),fraction=local/.7-cycle;
@@ -172,7 +174,7 @@ export function pilotExitAt(time){
   if(fraction>=.5){const k=progress(fraction,.5,.5);world=pilotBlend(world,ground(start+.7),k);world[1]-=18*depth.scale*Math.sin(Math.PI*k);}
   return [190+(world[0]-depth.anchor[0])/depth.scale,740+(world[1]-depth.anchor[1])/depth.scale];
  });
- p.hands=[[155+6*lookback-5*chooseRoute+15*Math.sin(phase),570-7*lookback],[245+6*lookback-5*chooseRoute-15*Math.sin(phase),570-7*lookback]];
+ p.hands=[[155+6*lookback-5*chooseRoute+15*Math.sin(phase),570-7*lookback-8*settled],[245+6*lookback-5*chooseRoute-15*Math.sin(phase),570-7*lookback-8*settled]];
  const shoulders=[-5,5].map(d=>[p.chest[0]+d,p.chest[1]]);
  const arms=shoulders.map((a,i)=>solveArm(a,p.hands[i],84,90,1));
  const legs=p.feet.map(f=>solveArm(p.hip,f,115,120,1));

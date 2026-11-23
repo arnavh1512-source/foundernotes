@@ -172,7 +172,10 @@ test('the ending shows a planted reconsideration before committed travel',()=>{
  assert.deepEqual(a.pose.feet,b.pose.feet);assert.deepEqual(b.pose.feet,c.pose.feet);
  assert.equal(b.pose.intent,'consider');assert.deepEqual(b.pose.gaze,[895,537]);assert.equal(b.pose.facing,1);
  assert.equal(c.depth.scale,1);assert.ok(walk.depth.scale<1);assert.equal(walk.pose.intent,'walk');
- assert.equal(walk.pose.facing,-1);assert.ok(Math.abs(pilotExitAt(64.5).depth.scale-.45)<1e-9);
+ assert.equal(walk.pose.facing,-1);assert.ok(pilotExitAt(64.5).depth.scale<.48);
+ const arrival=pilotExitAt(64.1),hold=pilotExitAt(64.5);
+ assert.equal(hold.pose.intent,'arrive');assert.deepEqual(arrival.pose.feet,hold.pose.feet);
+ assert.ok(hold.pose.feet.every(foot=>Math.abs(foot[1]-740)<16));
 });
 
 
