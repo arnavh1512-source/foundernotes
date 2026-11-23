@@ -269,3 +269,7 @@ Exact V27 frames 1281, 1302 and 1334 expose the cup at the far edge of the Youth
 ### Exact V28 verification
 
 Actions 45096931371 passed, source `750d6b331873865c37c85f0937ef3168c347b06e`, picture artifact 14783154477. Nine exact V28 frames show the cup leaving the Youth close-up and returning on the established two-shot; the Youth’s head starts the reaction ahead of the hands and torso. Four captioned frames show visual separation from the action. The 27 motion tests pass, including limb reach and grip checks. Full-speed acting, actual listening and independent interpretation remain pending. Full assembly decode and unchanged decoded audio were verified. Supplied discipline frames at requested 145–151 seconds separate an expressive close reaction from a wider room composition. This is a still-level comparison; the named endpoints yielded no decoded footage. Full-speed comparison and listening remain pending. No new named-reference audiovisual, owner or independent approval.
+
+## Departure choice candidate
+
+V28 frames 1849 and 1851 show a framing jump well into the exit walk. The candidate gives the Youth a route-directed glance and small torso shift while the feet are still planted. The existing arch close-up now cuts during the first swing, linking the framing change to the decision. The lock insert, prompt and dialogue timing stay fixed. Exact media review pending.

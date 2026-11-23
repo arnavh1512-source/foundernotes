@@ -415,3 +415,11 @@ The initial entries preserve documented observations from the 2026-11-11 study a
 - Cause / rationale: The reaction camera includes part of the earlier prop at the extreme right
 - Correction / recipe: Exclude the cup in the Youth close-up and use the return two-shot to reestablish it
 - Verification: Nine exact V28 frames show the cup leaving the Youth close-up and returning on the established two-shot; the Youth’s head starts the reaction ahead of the hands and torso. Four captioned frames show visual separation from the action. The 27 motion tests pass, including limb reach and grip checks. Full-speed acting, actual listening and independent interpretation remain pending.
+
+### philosopher-stick-pilot — The arch close-up cuts during established walking
+
+- Recorded (UTC): 2026-11-23T02:50:02+00:00
+- Evidence: V28 encoded frames 1849 and 1851 and the 61.7-second source cut
+- Cause / rationale: The cut timestamp is well after the departure begins
+- Correction / recipe: Give the Youth a planted choice beat and cut during the first stride
+- Verification: V28 baseline inspected. Exact candidate review pending.

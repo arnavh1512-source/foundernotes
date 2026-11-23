@@ -43,7 +43,7 @@ export function pilotRoomCameraAt(time){
 export function pilotEndingViewAt(time){
  if(!Number.isFinite(time))throw new TypeError('time must be finite');
  if(time<57.35)return {mode:'constraint',crop:[932,389,900,421.875]};
- if(time<61.7)return {mode:'context',scale:1,x:960,y:450};
+ if(time<60.4)return {mode:'context',scale:1,x:960,y:450};
  return {mode:'route',scale:1.4,x:465,y:450};
 }
 export function pilotCupAt(time){
@@ -159,7 +159,9 @@ export function pilotExitAt(time){
  p.hip[1]=550+3*Math.sin(phase)**2;
  p.chest[0]+=14*lookback;p.chest[1]+=30-7*lookback;
  p.head[1]+=30-9*lookback;p.head[0]+=35*lookback;
- if(lookback>.1)p.gaze=[895,537];
+ const chooseRoute=progress(t,59.86,.34)*(1-progress(t,60.28,.48));
+ p.chest[0]-=9*chooseRoute;p.head[0]-=10*chooseRoute;
+ p.gaze=lookback>.1?[895,537]:[153,360];
  const depthAt=u=>{const d=progress(Math.max(0,Math.min(4.3,u)),0,4.3);return {scale:1-.55*d,anchor:[190+5*d,740-170*d]};};
  const depth=depthAt(travel);
  p.feet=[0,1].map(i=>{
@@ -170,7 +172,7 @@ export function pilotExitAt(time){
   if(fraction>=.5){const k=progress(fraction,.5,.5);world=pilotBlend(world,ground(start+.7),k);world[1]-=18*depth.scale*Math.sin(Math.PI*k);}
   return [190+(world[0]-depth.anchor[0])/depth.scale,740+(world[1]-depth.anchor[1])/depth.scale];
  });
- p.hands=[[155+6*lookback+15*Math.sin(phase),570-7*lookback],[245+6*lookback-15*Math.sin(phase),570-7*lookback]];
+ p.hands=[[155+6*lookback-5*chooseRoute+15*Math.sin(phase),570-7*lookback],[245+6*lookback-5*chooseRoute-15*Math.sin(phase),570-7*lookback]];
  const shoulders=[-5,5].map(d=>[p.chest[0]+d,p.chest[1]]);
  const arms=shoulders.map((a,i)=>solveArm(a,p.hands[i],84,90,1));
  const legs=p.feet.map(f=>solveArm(p.hip,f,115,120,1));

@@ -204,5 +204,10 @@
     "status": "V28 selected-frame verification complete",
     "evidence": "V27 frames 1281, 1302 and 1334 show the cup clipped against the edge of the Youth reaction shot.",
     "next": "Review the head lead, speaker boundaries and returned two-shot at normal speed with dialogue. Exact listening, caption boundaries, cup sync and independent comprehension remain pending."
+  },
+  "departure_candidate": {
+    "status": "Source candidate; V28 remains latest exact assembly.",
+    "evidence": "V28 frames 1849 and 1851 show a hard crop during the ongoing exit walk.",
+    "next": "Review the exact 59.8\u201364.5 second cut for the planted shift, cut on the first swing, complete arch, excluded gate edge, captions and continuous motion."
   }
 }
