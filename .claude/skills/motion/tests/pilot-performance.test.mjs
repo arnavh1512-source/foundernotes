@@ -130,7 +130,7 @@ test('challenge, rebuttal and attention have distinct supported intentions',()=>
 
 test('room framing and ending separate claim, reaction, unchanged lock and chosen route',()=>{
  assert.equal(pilotRoomCameraAt(18.8).scale,2);assert.equal(pilotRoomCameraAt(21.3).scale,1.7);
- assert.deepEqual(pilotRoomCameraAt(43.8),{scale:2.05,x:760,y:465});
+ assert.deepEqual(pilotRoomCameraAt(43.8),{scale:2.05,x:700,y:465});
  assert.equal(pilotRoomCameraAt(45).scale,1.6);
  assert.equal(pilotEndingViewAt(56).mode,'constraint');assert.equal(pilotEndingViewAt(57.35).mode,'context');
  const route=pilotEndingViewAt(64.4);

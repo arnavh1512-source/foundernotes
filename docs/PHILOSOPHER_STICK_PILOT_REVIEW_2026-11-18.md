@@ -261,3 +261,7 @@ Exact V26 frames 1121 to 1127 show the carrier translating with the departing wr
 ### Exact V27 verification
 
 Actions 45091113516 passed, source `16ac1cfd99ab21851359562bfd99842946207d2d`, picture artifact 14780819646. Nine exact V27 frames show an independent arm withdrawal and a staged carrier retreat, with the Youth and dropped papers still visible. World-space stance intervals are authored in source. Four captioned frames show visual separation from the action. The 27 motion tests pass, including limb reach and grip checks. Full-speed acting, actual listening and independent interpretation remain pending. Full assembly decode and unchanged decoded audio were verified. Supplied discipline samples around 677–683 seconds show a whole-body threshold step and two distinct prop-contact compositions. Only poses and framing were compared. No new decoded footage for the named endpoints. Full-speed comparison and listening remain pending. No new named-reference audiovisual, owner or independent approval.
+
+## Reply focus candidate
+
+Exact V27 frames 1281, 1302 and 1334 expose the cup at the far edge of the Youth reaction close-up. The candidate crops to the Youth once the cup set-down is established and starts the head recoil before the torso and hands. The following two-shot preserves the supported cup and the Philosopher’s response. Original dialogue and cut boundaries remain. Exact revised media and full-speed review are pending.

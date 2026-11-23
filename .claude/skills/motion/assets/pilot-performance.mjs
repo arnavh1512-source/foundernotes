@@ -20,7 +20,7 @@ export function pilotShotAt(time){
 export function pilotRoomCameraAt(time){
  if(!Number.isFinite(time))throw new TypeError('time must be finite');
  if(time>=41&&time<42.7)return {scale:2.6,x:1240,y:550};
- if(time>=42.7&&time<44.5)return {scale:2.05,x:760,y:465};
+ if(time>=42.7&&time<44.5)return {scale:2.05,x:700,y:465};
  if(time>=44.5&&time<46)return {scale:1.6,x:1030,y:530};
  if(time>=32.6&&time<34.5)return {scale:2,x:825,y:525};
  if(time>=34.5&&time<35.55){
@@ -136,7 +136,8 @@ export function pilotActorAt(time,role,mode='study'){
    if(listening>.9)p.intent=withhold>.2?'withhold':ready>.2?'ready':'listen';
   }
   const recoil=progress(time,43.1,.45)*(1-progress(time,45.2,.6));
-  p.hip[0]-=12*recoil;p.chest[0]-=18*recoil;p.head[0]-=28*recoil;
+  const headCheck=progress(time,42.92,.35)*(1-progress(time,45.17,.63));
+  p.hip[0]-=12*recoil;p.chest[0]-=18*recoil;p.head[0]-=28*headCheck;p.head[1]-=9*headCheck;
   p.hands[0]=pilotBlend(p.hands[0],[650,600],recoil);p.hands[1]=pilotBlend(p.hands[1],[770,550],recoil);
   if(time>=42.7&&time<46){
    const check=progress(time,44.2,.8);p.hands[1]=pilotBlend(p.hands[1],[745,590],check);

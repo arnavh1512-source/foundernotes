@@ -199,5 +199,10 @@
     "status": "V27 selected-frame verification complete",
     "evidence": "V26 frames 1121\u20131127 show the carrier moving across the workroom over the release interval while both feet travel with the wrist.",
     "next": "Review normal-speed foot contacts, the arm release, the overlapping missed catch and the carrier exit with dialogue. Exact listening, caption boundaries, cup sync and independent comprehension remain pending."
+  },
+  "reply_focus_candidate": {
+    "status": "Source candidate. V27 remains latest verified assembly.",
+    "evidence": "V27 frames 1281, 1302 and 1334 show the cup clipped against the edge of the Youth reaction shot.",
+    "next": "Inspect exact encoded 42.7\u201346 seconds for clean close-up edges, readable head-led onset, grip and seated silhouette on the return. Preserve dialogue and provisional caption timing."
   }
 }
