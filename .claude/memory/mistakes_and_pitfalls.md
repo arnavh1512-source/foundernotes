@@ -119,3 +119,19 @@ The initial entries preserve documented observations from the 2026-11-11 study a
 - Cause / rationale: One fixed wide composition showed the open arch throughout the failed gate attempt and reassessment.
 - Correction / recipe: Stage the failed tactic more closely, then widen only after the head turns. Reuse the existing camera matrix helper, keep world/contact coordinates fixed, and protect figure bounds and reveal timing with tests.
 - Verification: Eight local Node tests passed. CI run 44120771407 passed and its exact MP4 was downloaded and decoded. Selected encoded frames and all 36 frames of the reveal transition were inspected. Arch visibility timing verified; comprehension, continuous playback, sound and artistic approval remain pending.
+
+### night-1-part-2 — Splitting narrator segments into character lines misaligned pictures: scene spans ran into the next character line (knife line played over the previous scene at 1:35).
+
+- Recorded (UTC): 2026-11-23T04:59:20+00:00
+- Evidence: Frame check of render 2026-11-21: caption 'Then suppose you'd had a knife on you' over whereGoal scene at 95 s.
+- Cause / rationale: timing.js mixed split line ids and grouped scene ids; SPAN used the next key in object order instead of the next scene in original order.
+- Correction / recipe: Write SEG only for original scene ids in original order, each spanning first-to-last of its lines (groups.json + scene_order.json); snap multi-shot boundaries to line starts; check one frame per scene against captions before rendering.
+- Verification: Fixed render 2026-11-22 frame check at 22.5 s, 95 s, 530 s, 860 s matched captions.
+
+### night-1-part-2 — Meeting the anti-slideshow motion gate with zoom pulses; owner rejected constant zoom in/out.
+
+- Recorded (UTC): 2026-11-23T04:59:20+00:00
+- Evidence: Owner message 2026-11-22: 'not zoom in and zoom out all the time'. Estimates: no zooms 1.8%, action beats 3.85%; real QC 4.00%.
+- Cause / rationale: Character gestures barely change frame pixels, so zoom cuts were used to lift qc_video's fast-motion ratio.
+- Correction / recipe: Use character-led action beats and new mini-scenes (S.duo, S.keys, vignettes), fast-moving objects, meaningful background changes and impact jolts; estimate with tools/estall.sh before rendering.
+- Verification: Render 2026-11-22 qc.json fast-motion 0.0400 with no zoom pulsing; owner then asked only for gesture variety.
