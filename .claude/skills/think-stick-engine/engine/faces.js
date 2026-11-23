@@ -27,7 +27,7 @@ function face(J,d,s,o,ex,talk=0,blink=0){
   eyes.forEach((ex_,i)=>{ const other=i===(d>0?1:0), ang=(other&&E.bAo!==undefined)?E.bAo:E.bA, by=(other&&E.bYo!==undefined)?E.bYo:E.bY;
     const y0=eyeY-.42*r-by*.04*r, L=.16*r, sg=Math.sign(cx-ex_)||1; x.beginPath(); x.moveTo(ex_-sg*L,y0-ang*.08*r); x.lineTo(ex_+sg*L,y0+ang*.16*r); x.stroke() });
   // mouth
-  const my=hy+.48*r, mx=cx+(E.side?d*.06*r:0), mw=.26*r, open=Math.min(1,(E.open||0)+talk);
+  const my=hy+(o.beard?.62:.48)*r, mx=cx+(E.side?d*.06*r:0), mw=.26*r, open=Math.min(1,(E.open||0)+talk);
   x.strokeStyle=o.beard?'#2a1f3d':light; x.lineWidth=(o.beard?.14:.1)*r;
   if(open>.08){ x.fillStyle=o.beard?'#2a1f3d':light; x.beginPath(); x.ellipse(mx,my+.02*r,mw*.7,.04*r+.11*r*open,0,0,Math.PI*2); x.fill(); if(!o.beard){ x.fillStyle='#7a2a2a'; x.beginPath(); x.ellipse(mx,my+.03*r,mw*.5,.025*r+.08*r*open,0,0,Math.PI*2); x.fill() } }
   else { const c=E.mouth*.2*r; x.beginPath(); if(E.side){ x.moveTo(mx-mw,my); x.quadraticCurveTo(mx,my+c*.4,mx+mw*d,my-c) } else { x.moveTo(mx-mw,my); x.quadraticCurveTo(mx,my+c*2,mx+mw,my) } x.stroke() }

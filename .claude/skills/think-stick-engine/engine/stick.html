@@ -100,11 +100,29 @@ function fig(X,p,s=1.6,o={}){ p=talkPose(p,o); const d=p.dir??o.dir??1; const pt
   // accessories (identity without faces)
   const fx=Math.sin(p.lean+p.head+r)*d, fy=-Math.cos(p.lean+p.head+r);
   if(o.scarf){ const wv=Math.sin(NOW*9)*.5+(o.wind||0); x.strokeStyle=RED; x.lineWidth=9*s; x.beginPath(); x.moveTo(...J.neck); x.quadraticCurveTo(J.neck[0]-d*40*s,J.neck[1]+(-6+wv*14)*s,J.neck[0]-d*(78+(o.wind||0)*30)*s,J.neck[1]+(10+wv*22-(o.wind||0)*20)*s); x.stroke(); x.beginPath(); x.arc(J.neck[0],J.neck[1]-2*s,9*s,0,Math.PI*2); x.fillStyle=RED; x.fill() }
-  if(o.beard){ x.fillStyle='#f1eee6'; x.strokeStyle=col; x.lineWidth=3*s; const bx=J.hd[0]+fx*8*s, by=J.hd[1]+12*s; x.beginPath(); x.moveTo(bx-d*16*s,by-6*s); x.quadraticCurveTo(bx+d*24*s,by-2*s,bx+d*8*s,by+30*s); x.quadraticCurveTo(bx-d*8*s,by+14*s,bx-d*16*s,by-6*s); x.fill() }
+  if(o.beard) drawBeard(J,d,s,col);
   if(o.glasses){ x.strokeStyle='#f1eee6'; x.lineWidth=3.2*s; const gx=J.hd[0]+d*12*s+fx*2*s, gy=J.hd[1]-4*s; x.beginPath(); x.arc(gx,gy,7*s,0,Math.PI*2); x.stroke(); x.beginPath(); x.arc(gx-d*15*s,gy,6*s,0,Math.PI*2); x.stroke() }
   if(o.stache){ x.strokeStyle='#f1eee6'; x.lineWidth=4*s; x.beginPath(); x.moveTo(J.hd[0]+d*4*s,J.hd[1]+9*s); x.lineTo(J.hd[0]+d*20*s,J.hd[1]+8*s); x.stroke() }
   x.restore(); if(!o.noFace&&Math.abs(p.rot||0)<.35) drawCastFace(J,d,s,o,p); return J }
 
+
+// beard: follows the jaw from sideburn to sideburn, rounded wavy chin, moustache and a few strands
+function drawBeard(J,d,s,col){ const R=HR*s, hx=J.hd[0]+d*.12*R, hy=J.hd[1], B='#f1eee6', S2='#d8d1c3';
+  const P=(a,r=1)=>[J.hd[0]+Math.cos(a)*R*r, hy+Math.sin(a)*R*r];
+  x.save(); x.fillStyle=B; x.strokeStyle=S2; x.lineWidth=.06*R; x.lineJoin='round';
+  const rT=P(.06*Math.PI,1.02), lT=P(.94*Math.PI,1.02), tipY=hy+1.5*R;
+  x.beginPath(); x.moveTo(...rT);
+  x.quadraticCurveTo(J.hd[0]+R*1.08,hy+.75*R,hx+.62*R,hy+1.12*R);                      // right jaw
+  const n=4; for(let i=0;i<n;i++){ const a0=hx+.62*R-i*(1.24*R/n), a1=a0-1.24*R/n, yy=lerp(hy+1.12*R,tipY,1-Math.abs((i+.5)/n-.5)*1.4); // wavy chin
+    x.quadraticCurveTo((a0+a1)/2,yy+.16*R,a1,lerp(hy+1.12*R,tipY,1-Math.abs((i+1)/n-.5)*1.4)) }
+  x.quadraticCurveTo(J.hd[0]-R*1.08,hy+.75*R,...lT);                                     // left jaw
+  x.quadraticCurveTo(hx-.55*R,hy+.62*R,hx,hy+.36*R);                                    // cheek line, dips under the nose
+  x.quadraticCurveTo(hx+.55*R,hy+.62*R,...rT); x.closePath(); x.fill(); x.stroke();
+  x.strokeStyle=S2; x.lineWidth=.045*R; x.lineCap='round';                                // strands
+  [[-.35,.8],[0,.95],[.35,.8]].forEach(([u,v])=>{ x.beginPath(); x.moveTo(hx+u*R,hy+v*R); x.quadraticCurveTo(hx+u*R*1.1,hy+(v+.22)*R,hx+u*R*.8,hy+(v+.38)*R); x.stroke() });
+  x.strokeStyle=B; x.lineWidth=.13*R;                                                     // moustache
+  x.beginPath(); x.moveTo(hx,hy+.36*R); x.quadraticCurveTo(hx+.25*R,hy+.32*R,hx+.42*R,hy+.5*R); x.moveTo(hx,hy+.36*R); x.quadraticCurveTo(hx-.25*R,hy+.32*R,hx-.42*R,hy+.5*R); x.stroke();
+  x.restore() }
 // faces: expression from the scene or the line (speaker / listener), mouth from the voice, blinking
 const SCENE_EXPR={cafe:{youth:'angry'},explode:{youth:'shouting'},blame:{youth:'angry'},hangup:{mother:'angry'},glare:{youth:'angry'},headBurst:{youth:'worried'},
  bookAvalanche:{youth:'shocked'},copyY:{youth:'sad'},mirrorY:{youth:'sad'},mirror:{youth:'sad'},wallRoad:{youth:'worried'},spotNow:{youth:'calm'},goalBubble:{youth:'angry'},

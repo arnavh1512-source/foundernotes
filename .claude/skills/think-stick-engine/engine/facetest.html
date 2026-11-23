@@ -100,10 +100,48 @@ function fig(X,p,s=1.6,o={}){ p=talkPose(p,o); const d=p.dir??o.dir??1; const pt
   // accessories (identity without faces)
   const fx=Math.sin(p.lean+p.head+r)*d, fy=-Math.cos(p.lean+p.head+r);
   if(o.scarf){ const wv=Math.sin(NOW*9)*.5+(o.wind||0); x.strokeStyle=RED; x.lineWidth=9*s; x.beginPath(); x.moveTo(...J.neck); x.quadraticCurveTo(J.neck[0]-d*40*s,J.neck[1]+(-6+wv*14)*s,J.neck[0]-d*(78+(o.wind||0)*30)*s,J.neck[1]+(10+wv*22-(o.wind||0)*20)*s); x.stroke(); x.beginPath(); x.arc(J.neck[0],J.neck[1]-2*s,9*s,0,Math.PI*2); x.fillStyle=RED; x.fill() }
-  if(o.beard){ x.fillStyle='#f1eee6'; x.strokeStyle=col; x.lineWidth=3*s; const bx=J.hd[0]+fx*8*s, by=J.hd[1]+12*s; x.beginPath(); x.moveTo(bx-d*16*s,by-6*s); x.quadraticCurveTo(bx+d*24*s,by-2*s,bx+d*8*s,by+30*s); x.quadraticCurveTo(bx-d*8*s,by+14*s,bx-d*16*s,by-6*s); x.fill() }
+  if(o.beard) drawBeard(J,d,s,col);
   if(o.glasses){ x.strokeStyle='#f1eee6'; x.lineWidth=3.2*s; const gx=J.hd[0]+d*12*s+fx*2*s, gy=J.hd[1]-4*s; x.beginPath(); x.arc(gx,gy,7*s,0,Math.PI*2); x.stroke(); x.beginPath(); x.arc(gx-d*15*s,gy,6*s,0,Math.PI*2); x.stroke() }
   if(o.stache){ x.strokeStyle='#f1eee6'; x.lineWidth=4*s; x.beginPath(); x.moveTo(J.hd[0]+d*4*s,J.hd[1]+9*s); x.lineTo(J.hd[0]+d*20*s,J.hd[1]+8*s); x.stroke() }
-  x.restore(); return J }
+  x.restore(); if(!o.noFace&&Math.abs(p.rot||0)<.35) drawCastFace(J,d,s,o,p); return J }
+
+
+// beard: follows the jaw from sideburn to sideburn, rounded wavy chin, moustache and a few strands
+function drawBeard(J,d,s,col){ const R=HR*s, hx=J.hd[0]+d*.12*R, hy=J.hd[1], B='#f1eee6', S2='#d8d1c3';
+  const P=(a,r=1)=>[J.hd[0]+Math.cos(a)*R*r, hy+Math.sin(a)*R*r];
+  x.save(); x.fillStyle=B; x.strokeStyle=S2; x.lineWidth=.06*R; x.lineJoin='round';
+  const rT=P(.06*Math.PI,1.02), lT=P(.94*Math.PI,1.02), tipY=hy+1.5*R;
+  x.beginPath(); x.moveTo(...rT);
+  x.quadraticCurveTo(J.hd[0]+R*1.08,hy+.75*R,hx+.62*R,hy+1.12*R);                      // right jaw
+  const n=4; for(let i=0;i<n;i++){ const a0=hx+.62*R-i*(1.24*R/n), a1=a0-1.24*R/n, yy=lerp(hy+1.12*R,tipY,1-Math.abs((i+.5)/n-.5)*1.4); // wavy chin
+    x.quadraticCurveTo((a0+a1)/2,yy+.16*R,a1,lerp(hy+1.12*R,tipY,1-Math.abs((i+1)/n-.5)*1.4)) }
+  x.quadraticCurveTo(J.hd[0]-R*1.08,hy+.75*R,...lT);                                     // left jaw
+  x.quadraticCurveTo(hx-.55*R,hy+.62*R,hx,hy+.36*R);                                    // cheek line, dips under the nose
+  x.quadraticCurveTo(hx+.55*R,hy+.62*R,...rT); x.closePath(); x.fill(); x.stroke();
+  x.strokeStyle=S2; x.lineWidth=.045*R; x.lineCap='round';                                // strands
+  [[-.35,.8],[0,.95],[.35,.8]].forEach(([u,v])=>{ x.beginPath(); x.moveTo(hx+u*R,hy+v*R); x.quadraticCurveTo(hx+u*R*1.1,hy+(v+.22)*R,hx+u*R*.8,hy+(v+.38)*R); x.stroke() });
+  x.strokeStyle=B; x.lineWidth=.13*R;                                                     // moustache
+  x.beginPath(); x.moveTo(hx,hy+.36*R); x.quadraticCurveTo(hx+.25*R,hy+.32*R,hx+.42*R,hy+.5*R); x.moveTo(hx,hy+.36*R); x.quadraticCurveTo(hx-.25*R,hy+.32*R,hx-.42*R,hy+.5*R); x.stroke();
+  x.restore() }
+// faces: expression from the scene or the line (speaker / listener), mouth from the voice, blinking
+const SCENE_EXPR={cafe:{youth:'angry'},explode:{youth:'shouting'},blame:{youth:'angry'},hangup:{mother:'angry'},glare:{youth:'angry'},headBurst:{youth:'worried'},
+ bookAvalanche:{youth:'shocked'},copyY:{youth:'sad'},mirrorY:{youth:'sad'},mirror:{youth:'sad'},wallRoad:{youth:'worried'},spotNow:{youth:'calm'},goalBubble:{youth:'angry'},
+ coldMachine:{youth:'worried'},ifOnlyFlood:{youth:'worried'},ifonly2:{youth:'worried'},judged:{youth:'worried'},novelistClock:{youth:'thinking'},repaint:{youth:'happy'},
+ stairsUp:{youth:'happy'},decide:{youth:'angry'},cage:{youth:'sad'},feelings:{youth:'thinking'},kidCross:{youth:'thinking'},forkRoad:{youth:'thinking'},
+ coffeeEnd:{youth:'calm'},comeBack:{youth:'happy',philosopher:'happy'},endask:{philosopher:'happy'},wellSeasons:{youth:'thinking'},meaningDial:{youth:'thinking'},
+ angerSwitch:{mother:'angry'},mom:{mother:'shouting'},phone:{mother:'happy'},momRecap:{mother:'angry'},lookStudy:{youth:'thinking'},ysun:{youth:'sad'},
+ tip1:{youth:'calm'},tip2:{youth:'calm'},tip3:{youth:'calm'},tip4:{youth:'happy'},hereNow:{youth:'calm'},choiceBack:{youth:'happy'},excuses:{youth:'worried'},drawerLock:{youth:'worried'}};
+function faceRole(o){ return roleOf(o)||(o.col==='#3d7fa8'?'kid':o.col==='#e0a52b'?'yfriend':null) }
+function drawCastFace(J,d,s,o,p){ const r=faceRole(o); if(!r) return;
+  let ex=r==='philosopher'?'calm':r==='kid'?'neutral':r==='yfriend'?'happy':'neutral', talk=0;
+  const sp=window.SPEAK&&window.SPEAK.find(q=>NOW>=q[0]&&NOW<q[1]);
+  if(sp&&window.LEXPR){ const L=window.LEXPR[sp[0].toFixed(3)]; if(L){ if(sp[2]===r&&L[0]) ex=L[0]; else if(sp[2]!==r&&L[1]&&(r==='youth'||r==='philosopher')) ex=L[1] } }
+  if(r==='kid') ex=(sp&&sp[2]==='mother'&&sp[0]<16)?'worried':ex;
+  const se=SCENE_EXPR[window.SCN]; if(se&&se[r]&&!(sp&&sp[2]===r)) ex=se[r];
+  if(o.expr) ex=o.expr;
+  if(sp&&sp[2]===r&&window.ENV){ const f=Math.floor(NOW*30); talk=(+(window.ENV[f]||0))/9*.85 }
+  const per=r==='philosopher'?4.7:r==='youth'?3.6:4.2, ph=(NOW+(r.length*.77))%per, blink=ph<.13?1:0;
+  face(J,d,s,o,ex,talk,blink) }
 // smear: ghost poses drawn a few frames behind for fast moves
 function ghost(X,poseAt,ts,s,o,n=3,dt=.035){ for(let i=n;i>=1;i--) fig(X(ts-i*dt),poseAt(ts-i*dt),s,{...o,a:.12*(n-i+1)/n,noShadow:1}) }
 // ---------- world
@@ -124,7 +162,7 @@ function table(X,w=360,h=150){ x.save(); x.strokeStyle=INK; x.lineWidth=9; x.lin
 function chair(X,s=1.6,d=1){ x.save(); x.strokeStyle=INK; x.lineWidth=8; x.lineCap='round'; const sy=G-56*s; x.beginPath(); x.moveTo(X-34*s,sy); x.lineTo(X+34*s,sy); x.moveTo(X-30*s,sy); x.lineTo(X-30*s,G); x.moveTo(X+30*s,sy); x.lineTo(X+30*s,G); x.moveTo(X-d*34*s,sy); x.lineTo(X-d*38*s,sy-80*s); x.stroke(); x.restore() }
 function logoMark(X,Y,r){ if(!LOGO.complete||!LOGO.naturalWidth) return; x.save(); x.beginPath(); x.arc(X,Y,r,0,Math.PI*2); x.clip(); x.drawImage(LOGO,360,375,560,560,X-r,Y-r,2*r,2*r); x.restore(); x.save(); x.strokeStyle='#f6efdf'; x.lineWidth=3; x.beginPath(); x.arc(X,Y,r,0,Math.PI*2); x.stroke(); x.restore() }
 const S={}; let NOW=0;
-</script><script src="scenes.js"></script><script src="scenes2.js"></script><script src="scenes3.js"></script><script src="scenes4.js"></script><script src="scenes5.js"></script><script src="faces.js"></script><script>
+</script><script src="scenes.js"></script><script src="scenes2.js"></script><script src="scenes3.js"></script><script src="scenes4.js"></script><script src="scenes5.js"></script><script src="faces.js"></script><script src="expr.js"></script><script src="env.js"></script><script>
 const SEGS=window.SEG, ORDER=Object.keys(SEGS), SPAN={}; ORDER.forEach((id,i)=>{ SPAN[id]=[i?SEGS[id][0]:0, i<ORDER.length-1?SEGS[ORDER[i+1]][0]:window.DUR] });
 const STUDY=new Set(['duo','study2','lookStudy','phtalk','ymtalk','philCalm','likeSelf','outOfQ','sitdown2']);
 const SH_=[], TURNS=(window.TURNS||[]); window.SHOTS2.forEach(s=>{ const t0=lerp(SPAN[s.seg][0],SPAN[s.seg][1],s.a), t1=lerp(SPAN[s.seg][0],SPAN[s.seg][1],s.b);
@@ -134,7 +172,7 @@ const SH_=[], TURNS=(window.TURNS||[]); window.SHOTS2.forEach(s=>{ const t0=lerp
   for(let i=0;i<cuts.length-1;i++) SH_.push({args:s.args,turn:i>0&&TURNS.some(u=>Math.abs(u-cuts[i])<1e-6),t0:cuts[i],t1:cuts[i+1],s0:t0,s1:t1,n:s.n,z:1,px:s.n==='endcard'?0:[0,0,0][i%3]}) });
 window.seek=async(tt)=>{ if(!LOGO.complete) await LOGO.decode().catch(()=>{}); const t=Math.min(T1-1e-3,T0+tt); NOW=t; const sh=SH_.find(s=>t>=s.t0&&t<s.t1)||SH_[SH_.length-1]; const d=sh.s1-sh.s0, ts=t-sh.s0; CAMZ=sh.z; CAMX=sh.px||0; if(false&&sh.turn){ const q=Math.min(1,(t-sh.t0)/.45); CAMZ=sh.z*(1+.28*Math.pow(1-q,3)) }
   x.setTransform(1,0,0,1,0,0); x.globalAlpha=1; SHAKE=0; x.fillStyle=PAPER; x.fillRect(0,0,W,H);
-  window.TONE=STUDY.has(sh.n)?'#ead9bd':null; S[sh.n](ts/d,ts,d,sh.args); if(SHAKE>0){ const sk=SHAKE; x.setTransform(1,0,0,1,0,0); x.globalAlpha=1; x.fillStyle=PAPER; x.fillRect(0,0,W,H); SHAKE=sk; S[sh.n](ts/d,ts,d,sh.args); } // scene sets SHAKE before calling cam via pre-pass
+  window.SCN=sh.n; window.TONE=STUDY.has(sh.n)?'#ead9bd':null; S[sh.n](ts/d,ts,d,sh.args); if(SHAKE>0){ const sk=SHAKE; x.setTransform(1,0,0,1,0,0); x.globalAlpha=1; x.fillStyle=PAPER; x.fillRect(0,0,W,H); SHAKE=sk; S[sh.n](ts/d,ts,d,sh.args); } // scene sets SHAKE before calling cam via pre-pass
   x.setTransform(1,0,0,1,0,0); x.globalAlpha=1; x.drawImage(grain(),0,0,W,H);
   const vg=x.createRadialGradient(W/2,H/2,H*.45,W/2,H/2,H*1.0); vg.addColorStop(0,'rgba(0,0,0,0)'); vg.addColorStop(1,'rgba(40,30,20,.12)'); x.fillStyle=vg; x.fillRect(0,0,W,H);
   logoMark(1838,82,58) };
