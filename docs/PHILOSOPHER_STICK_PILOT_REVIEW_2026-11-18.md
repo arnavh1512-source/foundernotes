@@ -257,3 +257,7 @@ Actions 45085470792 passed, source `50921fbea8fc230ecb614b9989195e57577eb740`, p
 ## Carrier footwork and release candidate
 
 Exact V26 frames 1121 to 1127 show the carrier translating with the departing wrist. The candidate separates arm withdrawal from body retreat, keeps the supporting palm at the original contact point before release, and uses world-space planted footprints with lifted swing steps. The paper trajectories and dialogue are unchanged. Exact render, motion and sound review remain pending.
+
+### Exact V27 verification
+
+Actions 45091113516 passed, source `16ac1cfd99ab21851359562bfd99842946207d2d`, picture artifact 14780819646. Nine exact V27 frames show an independent arm withdrawal and a staged carrier retreat, with the Youth and dropped papers still visible. World-space stance intervals are authored in source. Four captioned frames show visual separation from the action. The 27 motion tests pass, including limb reach and grip checks. Full-speed acting, actual listening and independent interpretation remain pending. Full assembly decode and unchanged decoded audio were verified. Supplied discipline samples around 677–683 seconds show a whole-body threshold step and two distinct prop-contact compositions. Only poses and framing were compared. No new decoded footage for the named endpoints. Full-speed comparison and listening remain pending. No new named-reference audiovisual, owner or independent approval.

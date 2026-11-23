@@ -406,4 +406,4 @@ The initial entries preserve documented observations from the 2026-11-11 study a
 - Evidence: V26 encoded frames 1121–1127 and the original wrist-relative foot calculation
 - Cause / rationale: Body and both feet shared the short wrist exit path
 - Correction / recipe: Retract the arm independently and use world-space stance footprints for the carrier retreat
-- Verification: Baseline supported by samples and source. Exact candidate render pending.
+- Verification: Nine exact V27 frames show an independent arm withdrawal and a staged carrier retreat, with the Youth and dropped papers still visible. World-space stance intervals are authored in source. Four captioned frames show visual separation from the action. The 27 motion tests pass, including limb reach and grip checks. Full-speed acting, actual listening and independent interpretation remain pending.
