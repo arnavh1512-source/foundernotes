@@ -46,7 +46,7 @@ S.keys=(u,ts,d,a={})=>{ cam(990,540,1); paper(); ground(); const w=a.w||['IDEA']
 S.angerSwitch=(u,ts,d)=>{ cam(980,560,1.05); const off1=d*.35, on2=d*.72; const on=ts<off1||ts>on2; paper(on?'#f6dcd4':PAPER); ground();
   const lv=ts<off1?1:ts<off1+.25?1-(ts-off1)/.25:ts<on2?0:Math.min(1,(ts-on2)/.25);
   x.save(); x.fillStyle=INK; x.fillRect(1380,G-330,140,200); x.strokeStyle=on?RED:'#8a8072'; x.lineWidth=16; x.lineCap='round'; x.beginPath(); x.moveTo(1450,G-230); x.lineTo(1450+Math.sin(lerp(-.7,.7,lv))*110,G-230-Math.cos(lerp(-.7,.7,lv))*110); x.stroke(); x.fillStyle='#fff'; x.font='700 30px Inst'; x.textAlign='center'; x.fillText(on?'ON':'OFF',1450,G-150); x.restore(); quickT(1450,G-370,'ANGER',1,46);
-  const J=fig(820,on?P({dir:1,lean:.3,af1:1.6+.15*Math.sin(ts*10),af2:.1,ab1:-.4}):P({dir:1,lean:.1,head:.12,af1:.35,af2:.3,ab1:2.85,ab2:2.55}),1.6,{...MOM,dir:1,expr:on?'shouting':'happy'});
+  const J=fig(820,on?P({dir:1,lean:.3,af1:1.6+.15*Math.sin(ts*10),af2:.1,ab1:-.4}):P({dir:1,lean:.1,head:.12,af1:.35,af2:.3,ab1:-2.05,ab2:-1.55}),1.6,{...MOM,dir:1,expr:on?'shouting':'happy'});
   fig(1120,P({dir:-1,head:on?.45:.05,lean:on?.25:0,af1:on?1.6:.2,af2:on?1.9:.2,ab1:on?1.5:-.2,ab2:on?1.9:.2}),1.15,{...KID,dir:-1});
   if(on) shout({hd:[J.hd[0]+40,J.hd[1]]},1,.9,1.1); else { phoneAt(J.hd[0]-HR*1.6*1.05,J.hd[1]+4,1.0,1); ring(J.hd[0]-HR*1.6*1.05,J.hd[1]+4,ts,ts<off1+.8?1:0) } };
 S.goalBubble=(u,ts,d)=>{ cam(980,540,1); paper(); ground(); const calm=ph(ts,d*.8,d*.95); fig(560,P({dir:1,af1:lerp(1.2,.2,calm),af2:lerp(2.4,.1,calm),ab1:lerp(1.1,-.1,calm),ab2:lerp(2.4,.1,calm),lean:lerp(.2,.02,calm),head:lerp(-.15,.05,calm)}),1.6,YOU);

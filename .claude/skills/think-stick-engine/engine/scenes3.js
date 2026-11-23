@@ -18,7 +18,7 @@ S.explode=(u,ts,d)=>{ cam(980,520,1.45); paper(); ground(); const w=Math.sin(ts*
 S.blame=(u,ts,d)=>{ cam(960,540,1.3); paper(); ground(); const J=fig(900,K(ts,[[0,{af1:.3}],[.5,{af1:1.6,af2:1.2,ab1:1.6,ab2:1.2,lean:-.05,head:.2},'back'],[d,{af1:1.7,af2:1.1,ab1:1.7,ab2:1.1,head:.15}]]),1.6,YOU); stain(J,1); cloud(J.hd[0]+10,J.hd[1]-150,.6+.05*Math.sin(ts*3),RED); x.save(); x.fillStyle='#fff'; x.font='700 30px Inst'; x.textAlign='center'; x.fillText('ANGER',J.hd[0]+10,J.hd[1]-140); x.restore() };
 function momScene(ts,d,mode){ cam(980,560,1.08); paper(); ground(); if(!window.BG){ x.strokeStyle=LINE; x.lineWidth=6; x.strokeRect(400,240,260,200) } cafeTable(1380);
   const polite=mode==='phone'; const yell=Math.sin(ts*10);
-  const p=polite?P({dir:1,lean:.12,head:.15,af1:.35,af2:.3,ab1:2.85,ab2:2.55}):P({dir:1,lean:.28,af1:1.55+yell*.15,af2:.1,ab1:-.4,head:-.1});
+  const p=polite?P({dir:1,lean:.12,head:.15,af1:.35,af2:.3,ab1:-2.05,ab2:-1.55}):P({dir:1,lean:.28,af1:1.55+yell*.15,af2:.1,ab1:-.4,head:-.1});
   const J=fig(820,p,1.6,{...MOM,dir:1}); fig(1120,P({dir:-1,head:polite?.1:.45,lean:polite?.05:.25,af1:polite?.3:1.6,af2:polite?.2:1.9,ab1:1.5,ab2:1.9}),1.15,{...KID,dir:-1});
   if(!polite){ megaphone(J.hf[0],J.hf[1],1,1.2); shout({hd:[J.hf[0]+80,J.hf[1]]},1,.8+.2*Math.abs(yell),1); } else { megaphone(1330,G-170,1,1); phoneAt(J.hd[0]-HR*1.6*1.05,J.hd[1]+4,1.0,1) } return J }
 S.mom=(u,ts,d)=>{ const rg=d*.62; momScene(ts,d,'yell'); if(ts>rg){ phoneAt(1400,G-165,1.1,1); ring(1400,G-170,ts,1) } else phoneAt(1400,G-165,1.1,0) };
