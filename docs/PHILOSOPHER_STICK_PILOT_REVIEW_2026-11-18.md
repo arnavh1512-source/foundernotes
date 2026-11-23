@@ -281,3 +281,7 @@ Actions 45102445897 passed, source `734c01053aced5828d6cadf68ca27592caa6865c`, p
 ## Ending arrival candidate
 
 V29 closing samples show the figure continuing the walk cycle up to the last frame. The candidate completes the last half-stride before the cut ends, plants both feet, and lets the hips and upper body rise into a short held arrival. The locked gate, route cut, viewer prompt and dialogue timing remain fixed. Exact encoded review pending.
+
+### Exact V30 verification
+
+Actions 45108008311 passed, source `d227829022e69be3bd2cba18df9ffb1d315237d9`, picture artifact 14787594429. Nine exact V30 frames show the arch walk leading to a settled final silhouette under the viewer prompt. Source tests verify the final foot targets remain stable. Four captioned frames show visual separation from the action. The 27 motion tests pass, including limb reach and grip checks. Full-speed acting, actual listening and independent interpretation remain pending. Full assembly decode and unchanged decoded audio were verified. Supplied discipline frames around 793–799 seconds contrast a held, readable standing silhouette with surrounding subject changes. This is still-level comparison only. The named lookups yielded no decoded reference footage. Full-speed comparison and listening remain pending. No new named-reference audiovisual, owner or independent approval.

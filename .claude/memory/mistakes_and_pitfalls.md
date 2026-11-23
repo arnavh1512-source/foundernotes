@@ -430,4 +430,4 @@ The initial entries preserve documented observations from the 2026-11-11 study a
 - Evidence: V29 encoded samples 1902, 1910, 1920 and 1934
 - Cause / rationale: The walk loop ran to clip end without a settle state
 - Correction / recipe: Align the last swing with a plant and hold the completed arrival under the existing question
-- Verification: V29 baseline inspected. Exact candidate render pending.
+- Verification: Nine exact V30 frames show the arch walk leading to a settled final silhouette under the viewer prompt. Source tests verify the final foot targets remain stable. Four captioned frames show visual separation from the action. The 27 motion tests pass, including limb reach and grip checks. Full-speed acting, actual listening and independent interpretation remain pending.
