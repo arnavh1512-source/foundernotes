@@ -54,10 +54,15 @@ class MuapiProvider(Provider):
         res = None
         try:
             res = muapi_client._get(f"/predictions/{job_id}/result")
-        except Exception as e:
+        except Exception:
             try:
                 res = muapi_client._get(f"/predictions/{job_id}")
             except Exception as e2:
+                code = getattr(e2, "code", None)
+                if code and 400 <= code < 500 and code != 429:
+                    # refused (bad key, unknown job): not "still running". The job may still exist and bill,
+                    # so it must not be resubmitted either.
+                    return {"status": "failed", "output": None, "error": str(e2), "retry": False}
                 return {"status": "pending", "output": None, "error": str(e2)}
 
         if not res:
@@ -66,7 +71,7 @@ class MuapiProvider(Provider):
         status = (res.get("status") or (res.get("data") or {}).get("status") or "").lower()
         if status in ("completed", "success", "succeeded"):
             url = muapi_client.extract_url(res)
-            return {"status": "completed", "output": url, "error": None}
+            return {"status": "completed", "output": url, "error": None, "raw": res}
         if status in ("failed", "cancelled"):
             err = res.get("error") or (res.get("data") or {}).get("error") or "Job failed"
             return {"status": "failed", "output": None, "error": str(err)}
@@ -93,7 +98,11 @@ def get_provider(name=None):
 
 
 def run_jobs(prov, specs, *, poll_s=3, stall_s=90, max_retries=2, deadline_s=900):
-    """Submit + poll a batch of jobs with resubmission on failure or stall."""
+    """Submit + poll a batch of jobs, resubmitting only a job the provider reports as failed.
+
+    A job that is still running is never resubmitted: the status carries no progress, so "slow" cannot be told
+    from "stalled", and every resubmission is a new paid job. stall_s is accepted for existing callers and unused;
+    deadline_s bounds the wait."""
     state = {}
     for key, submit_fn in specs.items():
         try:
@@ -102,7 +111,6 @@ def run_jobs(prov, specs, *, poll_s=3, stall_s=90, max_retries=2, deadline_s=900
                 "submit_fn": submit_fn,
                 "id": jid,
                 "tries": 1,
-                "last_change": time.monotonic(),
                 "out": None,
                 "error": None,
                 "done": False,
@@ -114,7 +122,6 @@ def run_jobs(prov, specs, *, poll_s=3, stall_s=90, max_retries=2, deadline_s=900
                 "submit_fn": submit_fn,
                 "id": None,
                 "tries": 1,
-                "last_change": time.monotonic(),
                 "out": None,
                 "error": str(e),
                 "done": True,
@@ -133,15 +140,14 @@ def run_jobs(prov, specs, *, poll_s=3, stall_s=90, max_retries=2, deadline_s=900
                 s["out"] = res["output"]
                 s["done"] = True
                 print(f"  [{key}] completed -> {s['out']}")
-            elif st == "failed" or (time.monotonic() - s["last_change"] > stall_s):
-                reason = res["error"] if st == "failed" else f"stalled >{stall_s}s"
-                if s["tries"] <= max_retries:
+            elif st == "failed":
+                reason = res["error"]
+                if s["tries"] <= max_retries and res.get("retry", True):
                     print(f"  [{key}] {reason}; retry {s['tries']}/{max_retries}...")
                     try:
                         new_id = s["submit_fn"]()
                         s["id"] = new_id
                         s["tries"] += 1
-                        s["last_change"] = time.monotonic()
                         print(f"  [{key}] re-submitted -> {new_id}")
                     except Exception as e:
                         s["error"] = str(e)

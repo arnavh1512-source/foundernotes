@@ -16,6 +16,13 @@ import wave
 
 from voicestudio_narrate import validate_episode, valid_wav, attach_metadata
 
+try:  # only real SDK/API transport failures are reported as "SDK failure"; bugs stay visible
+    from elevenlabs.core.api_error import ApiError
+    import httpx
+    SDK_ERRORS=(ApiError,httpx.HTTPError)
+except ImportError:  # SDK absent: create_client() raises ImportError, reported separately
+    SDK_ERRORS=()
+
 REPO=Path(__file__).resolve().parents[4]
 
 
@@ -75,27 +82,31 @@ def main(argv=None):
             key=hashlib.sha256(json.dumps(request,sort_keys=True).encode()).hexdigest()
             wav=raw/(segment['id']+'.wav');stamp=raw/(segment['id']+'.json')
             if not a.force and wav.is_file() and stamp.is_file():
-                cached=json.loads(stamp.read_text())
+                cached=json.loads(stamp.read_text(encoding='utf-8'))
+                if not isinstance(cached,dict):
+                    raise ValueError('Cached take stamp is not a JSON object; inspect and regenerate with --force')
                 if cached.get('request_sha256')==key:
                     valid_wav(wav.read_bytes())
                     if hashlib.sha256(wav.read_bytes()).hexdigest()!=cached.get('audio_sha256'):
                         raise ValueError('Cached audio changed; inspect and explicitly regenerate with --force')
                     continue
             synthesize_segment(client,request['text'],request['voice_id'],a.model,wav)
-            stamp.write_text(json.dumps({'request_sha256':key,'audio_sha256':hashlib.sha256(wav.read_bytes()).hexdigest()}))
+            stamp.write_text(json.dumps({'request_sha256':key,'audio_sha256':hashlib.sha256(wav.read_bytes()).hexdigest()}),encoding='utf-8')
         clean={'voice':{'engine':'files','speed':1.0,'chain':'none'},'lead':source.get('lead',.3),'tail':source.get('tail',.8),
                'segments':[{k:v for k,v in seg.items() if k in {'id','text','display','pause_after','scene_id'}} for seg in source['segments']]}
-        native_input=a.out.resolve()/'elevenlabs-files-input.json';native_input.write_text(json.dumps(clean,indent=2))
+        native_input=a.out.resolve()/'elevenlabs-files-input.json';native_input.write_text(json.dumps(clean,indent=2),encoding='utf-8')
         subprocess.run([sys.executable,str(Path(__file__).with_name('narrate.py')),str(native_input),'--out',str(a.out.resolve()),'--engine','files','--files-dir',str(raw)],check=True)
         timing_path=a.out.resolve()/'timings.json'
-        timings=attach_metadata(json.loads(timing_path.read_text()),source,engine='elevenlabs')
+        timings=attach_metadata(json.loads(timing_path.read_text(encoding='utf-8')),source,engine='elevenlabs')
         timings['elevenlabs_model']=a.model
-        timing_path.write_text(json.dumps(timings,indent=2)+'\n')
+        timing_path.write_text(json.dumps(timings,indent=2)+'\n',encoding='utf-8')
         print(json.dumps({'status':'generated-not-approved','out':str(a.out.resolve()),'voice_source':'elevenlabs'}))
         return 0
     except (ValueError,OSError,subprocess.SubprocessError) as exc:
         print('elevenlabs_narrate: '+str(exc),file=sys.stderr);return 2
-    except Exception as exc:
+    except ImportError as exc:
+        print('elevenlabs_narrate: ElevenLabs SDK unavailable ('+str(exc)+'); install requirements.txt',file=sys.stderr);return 2
+    except SDK_ERRORS as exc:
         # SDK error bodies may include request details; report only status/type.
         print('elevenlabs_narrate: SDK failure '+type(exc).__name__+' status='+str(getattr(exc,'status_code',None)),file=sys.stderr);return 2
 

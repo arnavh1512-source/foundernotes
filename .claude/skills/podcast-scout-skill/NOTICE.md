@@ -1,7 +1,11 @@
 # Sources and licences
 
-Podcast Scout Studio is original work. It integrates external tools by reference (installed
-separately, never vendored) and adapts ideas and rules from these projects:
+Podcast Scout Studio is original work. Most external tools are integrated by reference and
+installed separately. Some third-party skills and helpers are vendored in this repository with
+their own licence files (for example `.claude/skills/humanizer`, `ponytail`, `motion-design`,
+`huashu-art-motion`, `claude-youtube`, `marketing-growth`, `i-have-adhd`,
+`stickman-video-director`, and `scripts/vendor/youtube-agent`). The studio adapts ideas and rules
+from these projects:
 
 | Project | Licence | How it is used |
 |---|---|---|
@@ -50,3 +54,10 @@ separately, never vendored) and adapts ideas and rules from these projects:
 - Open Generative AI (Anil-matcha/Open-Generative-AI), MIT. `scripts/gen_media.py` follows its MuAPI client's request pattern (submit + poll); no code is copied. Generated assets are subject to MuAPI's and each model's terms.
 - vox-ai-motion-graphics-generator (Anil-matcha), MIT per its package.json/README (no LICENSE file upstream). Vendored as .claude/skills/collage-director with changes: male-voice allowlist, voice-cloning guard, proxy key support, channel rules.
 - pixelfx (patch-gg/pixelfx), MIT: ideas only (acts: wind-up, snap, hit-stop, shake; poses on 12 fps; colour/light buffers; the check tool's idea). K.onTwos/K.act/K.keys in assets/ink-gold-kit/kit-loop.js and scripts/lint_scenes.py are our own code.
+
+## Remotion
+
+`.claude/skills/motion/remotion` uses [Remotion](https://www.remotion.dev/), which is **not** MIT. Its
+licence is free for individuals and small companies and requires a paid company licence above a team-size
+threshold. Check the current terms at https://www.remotion.dev/license and record the decision before
+using it for the channel's production.

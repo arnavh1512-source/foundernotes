@@ -22,6 +22,15 @@ DEFAULT_URL = "http://127.0.0.1:17493"
 MAX_WAV_BYTES = 16 * 1024 * 1024
 
 
+class NoRedirect(urllib.request.HTTPRedirectHandler):
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        return None
+
+
+# Loopback only: ignore http_proxy/HTTP_PROXY and refuse redirects off the validated origin.
+OPENER = urllib.request.build_opener(urllib.request.ProxyHandler({}), NoRedirect())
+
+
 def local_base(url):
     parts = urlsplit(url)
     if parts.scheme != "http" or parts.hostname not in ("127.0.0.1", "localhost", "::1"):
@@ -74,7 +83,7 @@ def verify_reference(entry, path, root):
 
 
 def profiles(base):
-    with urllib.request.urlopen(base + "/profiles", timeout=30) as response:
+    with OPENER.open(base + "/profiles", timeout=30) as response:
         result = json.loads(response.read())
     if not isinstance(result, list):
         raise ValueError("Local Voicebox /profiles returned unexpected data")
@@ -137,7 +146,7 @@ def create_profile(base, entry, sample=None):
     data = json.dumps(profile).encode()
     req = urllib.request.Request(base + "/profiles", data=data,
                                  headers={"Content-Type": "application/json"})
-    with urllib.request.urlopen(req, timeout=30) as response:
+    with OPENER.open(req, timeout=30) as response:
         identity = json.loads(response.read())["id"]
     if mode != "cloned":
         return identity
@@ -151,7 +160,7 @@ def create_profile(base, entry, sample=None):
     body = prefix + sample.read_bytes() + f"\r\n--{boundary}--\r\n".encode()
     req = urllib.request.Request(base + f"/profiles/{identity}/samples", data=body,
                                  headers={"Content-Type": f"multipart/form-data; boundary={boundary}"})
-    with urllib.request.urlopen(req, timeout=60) as response:
+    with OPENER.open(req, timeout=60) as response:
         response.read()
     return identity
 

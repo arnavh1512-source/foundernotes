@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import argparse
 import datetime as dt
+import hashlib
 import json
 import math
 import os
@@ -38,6 +39,7 @@ UPLOADED = (
 ).split()
 STALE_AFTER_DAYS = 30
 DIMENSIONS = ("clarity", "motion", "continuity", "audio", "reliability", "rights")
+VIDEO_SUFFIXES = (".mp4", ".mov", ".mkv", ".webm")
 
 def identifier(family, name):
     return family + "/" + name
@@ -138,7 +140,9 @@ def validate_review(review):
 def verify_evidence(review, root):
     """Verify actual media and passing QC JSON, not merely path strings.
 
-    This is a file/report integrity gate, not an independent creative review.
+    Both files must sit inside ``root``; a video sample must match the QC
+    report's ``video_sha256``. This is a file/report integrity gate, not an
+    independent creative review.
     """
     issues = []
     if not isinstance(review, dict):
@@ -147,25 +151,32 @@ def verify_evidence(review, root):
     if not isinstance(evidence, dict):
         return ["Review evidence must be an object."]
     root = Path(root).resolve()
+    sample_sha256 = None
     for key in ("sample_path", "qa_report_path"):
         raw = evidence.get(key)
         if not isinstance(raw, str) or not raw.strip():
             issues.append(f"evidence.{key} is required.")
             continue
-        candidate = Path(raw).expanduser()
-        if not candidate.is_absolute():
-            candidate = root / candidate
+        candidate = (root / Path(raw).expanduser()).resolve()
+        if not candidate.is_relative_to(root):
+            issues.append(f"evidence.{key}: must be inside the evidence root {root}: {candidate}")
+            continue
         if not candidate.is_file() or candidate.stat().st_size == 0:
             issues.append(f"evidence.{key}: missing or empty file: {candidate}")
             continue
+        if key == "sample_path" and candidate.suffix.lower() in VIDEO_SUFFIXES:
+            with candidate.open("rb") as media:
+                sample_sha256 = hashlib.file_digest(media, "sha256").hexdigest()
         if key == "qa_report_path":
             try:
                 report = json.loads(candidate.read_text(encoding="utf-8"))
                 if not isinstance(report, dict):
                     raise ValueError("not a JSON object")
                 if review.get("outcome") == "pass":
-                    if report.get("status") != "PASS" or report.get("errors"):
-                        issues.append(f"{candidate}: QC must explicitly report PASS with zero errors.")
+                    if report.get("status") not in ("PASS", "WARN") or report.get("errors") != []:
+                        issues.append(f"{candidate}: QC must report PASS or WARN with an empty errors list.")
+                    if sample_sha256 and report.get("video_sha256") != sample_sha256:
+                        issues.append(f"{candidate}: QC video_sha256 does not match the sample video.")
                 elif report.get("status") not in ("PASS", "WARN", "FAIL"):
                     issues.append(f"{candidate}: QC status missing or unknown.")
             except (OSError, ValueError, UnicodeError) as exc:
@@ -223,7 +234,7 @@ def main(argv=None):
             return 0
         if args.command == "record":
             review = json.loads(args.review_file.read_text(encoding="utf-8"))
-            if review.get("outcome") == "pass":
+            if isinstance(review, dict) and review.get("outcome") == "pass":
                 problems = verify_evidence(review, Path.cwd())
                 if problems:
                     raise ValueError("; ".join(problems))

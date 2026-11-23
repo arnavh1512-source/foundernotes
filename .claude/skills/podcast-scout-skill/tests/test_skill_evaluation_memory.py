@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Regression coverage for persistent skill reviews and lesson memory."""
+import hashlib
 import importlib.util
 import json
 import tempfile
@@ -65,17 +66,51 @@ class ContinuousEvaluationTests(unittest.TestCase):
             self.assertTrue(any("missing or empty" in problem for problem in problems))
             (root / "samples").mkdir()
             (root / "reports").mkdir()
-            (root / "samples" / "pilot.mp4").write_bytes(b"synthetic nonempty fixture")
+            media = b"synthetic nonempty fixture"
+            digest = hashlib.sha256(media).hexdigest()
+            (root / "samples" / "pilot.mp4").write_bytes(media)
             report_path = root / "reports" / "qc.json"
-            report_path.write_text(json.dumps({"status": "FAIL", "errors": ["unfixed gap"]}))
+            def qc(**values):
+                report_path.write_text(json.dumps({"video_sha256": digest, **values}), encoding="utf-8")
+            qc(status="FAIL", errors=["unfixed gap"])
             self.assertTrue(reviews.verify_evidence(item, root))
-            report_path.write_text(json.dumps({"status": "PASS", "errors": []}))
+            qc(status="PASS", errors=[])
             self.assertEqual(reviews.verify_evidence(item, root), [])
             data = {"schema_version": 1, "reviews": []}
             reviews.record_review(data, item)
             self.assertEqual(reviews.gate(data, "pilot01", ["native/chalkboard"], evidence_root=root), [])
-            report_path.write_text(json.dumps({"status": "WARN", "errors": []}))
+            qc(status="WARN", errors=[])
+            self.assertEqual(reviews.gate(data, "pilot01", ["native/chalkboard"], evidence_root=root), [])
+            qc(status="WARN", errors=["blank frame"])
             self.assertTrue(reviews.gate(data, "pilot01", ["native/chalkboard"], evidence_root=root))
+
+    def test_qc_report_must_belong_to_the_sample_inside_root(self):
+        with tempfile.TemporaryDirectory() as temp, tempfile.TemporaryDirectory() as elsewhere:
+            root = Path(temp)
+            (root / "samples").mkdir()
+            (root / "reports").mkdir()
+            (root / "samples" / "pilot.mp4").write_bytes(b"real cut")
+            report = root / "reports" / "qc.json"
+            report.write_text(json.dumps({"status": "PASS", "errors": [],
+                                          "video_sha256": hashlib.sha256(b"other cut").hexdigest()}),
+                              encoding="utf-8")
+            self.assertTrue(any("video_sha256" in p for p in reviews.verify_evidence(self.review(), root)))
+            report.write_text(json.dumps({"status": "PASS", "errors": []}), encoding="utf-8")
+            self.assertTrue(any("video_sha256" in p for p in reviews.verify_evidence(self.review(), root)))
+            outside = Path(elsewhere) / "qc.json"
+            outside.write_text("{}", encoding="utf-8")
+            item = self.review()
+            item["evidence"]["qa_report_path"] = str(outside)
+            self.assertTrue(any("inside the evidence root" in p for p in reviews.verify_evidence(item, root)))
+            item["evidence"]["qa_report_path"] = "../" + Path(elsewhere).name + "/qc.json"
+            self.assertTrue(any("inside the evidence root" in p for p in reviews.verify_evidence(item, root)))
+
+    def test_record_rejects_non_object_review_file(self):
+        with tempfile.TemporaryDirectory() as temp:
+            review = Path(temp) / "review.json"
+            review.write_text("[]", encoding="utf-8")
+            code = reviews.main(["--ledger", str(Path(temp) / "ledger.json"), "record", str(review)])
+            self.assertEqual(code, 2)
 
     def test_failing_review_does_not_require_passing_qc(self):
         with tempfile.TemporaryDirectory() as temp:
@@ -109,10 +144,15 @@ class LessonMemoryTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             memory.record(self.lesson(), root)
-            self.assertIn("Align peak", (root / "mistakes_and_pitfalls.md").read_text())
+            self.assertIn("Align peak", (root / "mistakes_and_pitfalls.md").read_text(encoding="utf-8"))
             item = self.lesson("recipe")
             memory.record(item, root)
-            self.assertIn("Pilot second pass", (root / "positive_recipes.md").read_text())
+            self.assertIn("Pilot second pass", (root / "positive_recipes.md").read_text(encoding="utf-8"))
+
+    def test_whitespace_only_fields_are_rejected(self):
+        item = self.lesson()
+        item["cause"] = "   \n"
+        self.assertTrue(any("cause" in e for e in memory.validate(item)))
 
     def test_video_pass_requires_approval(self):
         item = self.lesson("video")

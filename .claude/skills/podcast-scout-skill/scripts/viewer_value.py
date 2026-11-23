@@ -21,8 +21,9 @@ def validate(report, *, competitor_requested=False):
 
     def need(obj, key, location):
         value = obj.get(key) if isinstance(obj, dict) else None
+        # Template-shaped <tokens> only, so prose such as "p < 0.05 and d > 0.3" passes.
         if not isinstance(value, str) or not value.strip() or re.search(
-                r"<[^>\n]+>|\b(TODO|PLACEHOLDER|TBD)\b", value, flags=re.I):
+                r"<[^\W\d_][\w ,./'-]{0,58}>|\b(TODO|PLACEHOLDER|TBD)\b", value, flags=re.I):
             errors.append(f"{location}.{key}: non-placeholder text required")
             return ""
         return value
@@ -60,8 +61,9 @@ def validate(report, *, competitor_requested=False):
         errors.append("source.access must identify substantive reviewed video/audio/transcript")
     if src.get("coverage") not in ("complete", "partial"):
         errors.append("source.coverage must be complete or partial")
-    if not isinstance(src.get("limitations"), list):
-        errors.append("source.limitations must be an array")
+    if not isinstance(src.get("limitations"), list) or not all(
+            isinstance(x, str) for x in src.get("limitations") or []):
+        errors.append("source.limitations must be an array of strings")
     elif src.get("coverage") == "partial" and not src["limitations"]:
         errors.append("source: partial coverage requires a limitation")
 
@@ -96,6 +98,9 @@ def validate(report, *, competitor_requested=False):
         need(audience, k, "audience")
     for i, item in enumerate(items(report, "viewer_interest", "report", 2)):
         loc = f"viewer_interest[{i}]"
+        if not isinstance(item, dict):
+            errors.append(f"{loc}: object required")
+            continue
         for k in ("detail", "interest_mechanism", "why_it_might_interest"):
             need(item, k, loc)
         refs(item, loc)
@@ -120,6 +125,9 @@ def validate(report, *, competitor_requested=False):
     openings = set()
     for i, item in enumerate(hooks):
         loc = f"hooks[{i}]"
+        if not isinstance(item, dict):
+            errors.append(f"{loc}: object required")
+            continue
         for k in ("opening", "curiosity_gap", "payoff", "first_visual", "honesty_risk", "originality_note"):
             need(item, k, loc)
         refs(item, loc, "proof_evidence_ids")

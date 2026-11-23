@@ -18,6 +18,13 @@ test('caption text is escaped for SVG safety',()=>{
   const a=kit.draw({id:'study',duration:2,speaker:'A < B',text:'Hello & <script>alert(1)<\/script>'},0.5,2,1);
   assert.match(a,/A &lt; B/);assert.doesNotMatch(a,/<script>/);assert.match(a,/&amp;/);
 });
+test('long captions wrap into at most two lines that fit the caption box',()=>{
+  const text='An accurate map can still leave something out, and the part it leaves out is usually the one route nobody thought to draw on it at all.';
+  const lines=[...kit.draw({id:'study',duration:2,speaker:'P',text},0.5,2,1).matchAll(/<tspan[^>]*>([^<]*)<\/tspan>/g)].map((m)=>m[1]);
+  assert.equal(lines.length,2);lines.forEach((l)=>assert.ok(l.length<=64,l));
+  assert.ok(lines[0].length>40&&text.startsWith(lines[0]));assert.match(lines[1],/…$/);
+  assert.equal([...kit.draw(kit.DEFAULT_BEATS[0],1,4.2,1).matchAll(/<tspan/g)].length,1);
+});
 test('props are attached to hand-relative coordinate group',()=>{
   const markup=kit.character({x:100,y:200,t:1,prop:'pencil',right:[10,-5]});
   assert.match(markup,/translate\(10 -5\)/);assert.match(markup,/scale\(1\)/);

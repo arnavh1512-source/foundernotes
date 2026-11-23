@@ -1,7 +1,10 @@
 """Default Agent-Reach research gateway tests; no network and no accounts."""
 import importlib.util
 import json
+import os
+import socket
 import subprocess
+import tempfile
 import unittest
 from pathlib import Path
 from unittest.mock import patch
@@ -17,7 +20,43 @@ def completed(payload, code=0):
                                        stdout=json.dumps(payload), stderr="")
 
 
-class ResearchGatewayTests(unittest.TestCase):
+def addresses(*ips):
+    return [(socket.AF_INET, socket.SOCK_STREAM, 6, "", (ip, 443)) for ip in ips]
+
+
+class OfflineDns(unittest.TestCase):
+    """Every test resolves names through a mock; no real DNS lookups."""
+    def setUp(self):
+        dns = patch.object(gateway.socket, "getaddrinfo", return_value=addresses("93.184.216.34"))
+        self.dns = dns.start()
+        self.addCleanup(dns.stop)
+
+
+class ResearchGatewayTests(OfflineDns):
+    def test_numeric_or_privately_resolving_hosts_are_not_public(self):
+        for url in ("http://2130706433/", "http://127.1/", "http://0x7f.0.0.1/",
+                    "http://0x7f000001/", "http://0177.0.0.1/", "http://[::1]/"):
+            with self.subTest(url=url):
+                self.assertFalse(gateway._public_url(url))
+        self.assertTrue(gateway._public_url("https://example.org/paper"))
+        for answer in (addresses("10.0.0.5"), addresses("93.184.216.34", "127.0.0.1"), []):
+            self.dns.return_value = answer
+            with self.subTest(answer=answer), patch.object(gateway, "_execute") as invoke:
+                self.assertEqual(gateway.run("read", "https://rebind.example/")["error"]["code"], "BAD_INPUT")
+                invoke.assert_not_called()
+        self.dns.side_effect = socket.gaierror("no network")
+        self.assertFalse(gateway._public_url("https://example.org/paper"))
+
+    def test_option_like_values_never_reach_agent_reach_as_flags(self):
+        with patch.object(gateway, "_execute") as invoke:
+            self.assertEqual(gateway.run("search", "--help")["error"]["code"], "BAD_INPUT")
+            invoke.assert_not_called()
+        payload = {"ok": True, "channel": "youtube", "items": [{"text": "Words", "url": "u"}]}
+        with patch.object(gateway, "_ytdlp_binary", return_value=None), \
+             patch.object(gateway, "_execute", return_value=(payload, None, None)) as invoke:
+            gateway.run("transcript", "-bcdefghijk")
+        self.assertEqual(invoke.call_args.args[0][2], "https://www.youtube.com/watch?v=-bcdefghijk")
+
     def test_web_search_invokes_agent_reach_first(self):
         response = {"ok": True, "channel": "web", "backend": "exa",
                     "items": [{"title": "Paper", "url": "https://example.org/paper",
@@ -126,7 +165,7 @@ def fake_ytdlp(stdout="", stderr="", code=0, vtt=None):
     return runner
 
 
-class YtDlpFirstTests(unittest.TestCase):
+class YtDlpFirstTests(OfflineDns):
     def test_transcript_uses_ytdlp_first_and_skips_agent_reach(self):
         with patch.object(gateway, "_ytdlp_binary", return_value="yt-dlp"), \
              patch.object(gateway, "_execute") as agent_reach, \
@@ -136,6 +175,7 @@ class YtDlpFirstTests(unittest.TestCase):
         self.assertEqual(result["provider"], "yt-dlp")
         self.assertEqual(result["items"][0]["text"], "All right so here we are")
         args = runner.call_args.args[0]
+        self.assertEqual(args[1], "--ignore-config")
         self.assertIn("--skip-download", args)
         self.assertEqual(args[-2:], ["--", "https://www.youtube.com/watch?v=jNQXAC9IVRw"])
         agent_reach.assert_not_called()
@@ -176,6 +216,32 @@ class YtDlpFirstTests(unittest.TestCase):
             self.assertEqual(result["error"]["code"], code)
             self.assertFalse(result["fallback"]["allowed"])
             agent_reach.assert_not_called()
+
+    def test_429_digits_in_an_id_are_not_a_rate_limit(self):
+        self.assertEqual(gateway._ytdlp_error("ERROR: [youtube] ab429cdefgh: Video unavailable")[0], "NOT_FOUND")
+        self.assertEqual(gateway._ytdlp_error("ERROR: unable to parse 4290 bytes")[0], "UPSTREAM_BROKEN")
+        self.assertEqual(gateway._ytdlp_error("ERROR: HTTP Error 429: Too Many Requests")[0], "RATE_LIMITED")
+
+    def test_ytdlp_crash_is_reported_as_broken_not_missing_subtitles(self):
+        with patch.object(gateway, "_ytdlp_binary", return_value="yt-dlp"), \
+             patch.object(gateway.subprocess, "run",
+                          side_effect=fake_ytdlp(stderr="Traceback\nKeyError: 'formats'", code=1)), \
+             patch.object(gateway, "_execute", return_value=(None, "NOT_INSTALLED", "x")) as agent_reach:
+            result = gateway.run("transcript", "jNQXAC9IVRw")
+        self.assertEqual(result["attempts"][0]["code"], "UPSTREAM_BROKEN")
+        self.assertIn("KeyError", result["attempts"][0]["message"])
+        agent_reach.assert_called_once()
+
+    def test_studio_venv_binary_is_found_for_this_platform(self):
+        with tempfile.TemporaryDirectory() as venv:
+            binary = Path(venv) / ("Scripts/yt-dlp.exe" if os.name == "nt" else "bin/yt-dlp")
+            binary.parent.mkdir()
+            binary.write_text("", encoding="utf-8")
+            binary.chmod(0o755)
+            with patch.dict(os.environ, {"STUDIO_VENV": venv}), \
+                 patch.object(gateway.shutil, "which", return_value=None):
+                os.environ.pop("FOUNDERNOTES_YTDLP_BIN", None)
+                self.assertEqual(gateway._ytdlp_binary(), str(binary))
 
     def test_youtube_search_uses_ytdlp(self):
         listing = {"entries": [{"id": "abcdefghijk", "title": "T", "channel": "C"}]}

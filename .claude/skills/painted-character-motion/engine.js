@@ -122,7 +122,15 @@
   }
   function gateBack(t){return rect(0,0,1920,1080,'#718b8a')+rect(0,500,1920,580,'#967d60')+path('M0 710 L650 465 L1280 480 L1920 800 L1920 1080 L0 1080Z','#ad956f')+rect(85,185,450,570,'#8e6e5a')+rect(1385,190,450,565,'#8e6e5a')+path('M550 795 L550 344 Q960 110 1368 344 L1368 800Z','#46545b')+[...Array(18)].map((_,i)=>rect(605+i*41,328,16,475,'#a7a39a')).join('')+rect(575,795,760,40,'#4b4a49')+circle(1216,586,34,'#d3a367')+circle(1216,586,12,'#6b584b')+path('M1 1040 L1918 1040','#000','stroke="#5e554a" stroke-width="18"');}
   function stairsBack(t){let steps='';for(let j=0;j<12;j++){const y=1000-j*38,w=1200-j*55;steps+=path(`M${num(960-w/2)} ${num(y)} L${num(960+w/2)} ${num(y)} L${num(960+(w-15)/2)} ${num(y-30)} L${num(960-(w-15)/2)} ${num(y-30)}Z`,j%2?'#bca280':'#ccb18a','stroke="#8f7c67" stroke-width="3"');}return rect(0,0,1920,1080,'#809a93')+path('M0 0 L580 0 L650 1080 L0 1080Z','#a47c66')+path('M1920 0 L1330 0 L1280 1080 L1920 1080Z','#be9a79')+steps+rect(485,210,145,290,'#433a3a')+rect(1425,182,140,296,'#4a4d50')+ellipse(960,190,300,180,'#d9bc8c',`opacity="${num(.75+.05*Math.sin(t/3))}"`);}
-  function caption(label,text){return group('translate(0 0)',rect(285,947,1350,108,'#121c29','opacity="0.85" rx="14"')+`<text x="960" y="984" font-family="Georgia,serif" font-size="27" fill="#e2bc87" text-anchor="middle">${esc(label)}</text><text x="960" y="1027" font-family="Georgia,serif" font-size="34" fill="#fcf0dd" text-anchor="middle">${esc(text)}</text>`);}
+  // Caption text wraps by words into at most two lines of CAPTION_CHARS (~1150px of 34px Georgia inside the
+  // 1350px box); the box grows upward for the second line and an overlong second line ends in an ellipsis.
+  const CAPTION_CHARS=64;
+  function wrapCaption(text,max=CAPTION_CHARS){
+    const lines=[''];
+    for(const w of String(text).split(/\s+/).filter(Boolean)){const i=lines.length-1;if(lines[i]&&(lines[i]+' '+w).length>max&&i===0)lines.push(w);else lines[i]=lines[i]?lines[i]+' '+w:w;}
+    return lines.map((l)=>l.length>max?l.slice(0,max-1).trimEnd()+'…':l);
+  }
+  function caption(label,text){const lines=wrapCaption(text),up=(lines.length-1)*40;return group('translate(0 0)',rect(285,947-up,1350,108+up,'#121c29','opacity="0.85" rx="14"')+`<text x="960" y="${984-up}" font-family="Georgia,serif" font-size="27" fill="#e2bc87" text-anchor="middle">${esc(label)}</text><text x="960" y="${1027-up}" font-family="Georgia,serif" font-size="34" fill="#fcf0dd" text-anchor="middle">${lines.map((l,i)=>`<tspan x="960" dy="${i?40:0}">${esc(l)}</tspan>`).join('')}</text>`);}
 
   const DEFAULT_BEATS = [
     {id:'gate',duration:4.2,speaker:'YOUTH',text:'Every road ends at a locked gate.'},

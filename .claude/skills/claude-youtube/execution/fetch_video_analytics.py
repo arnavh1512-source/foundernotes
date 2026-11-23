@@ -5,7 +5,7 @@ Requires OAuth 2.0 authentication. Can ONLY access analytics for channels
 you own or manage. Competitor analytics are NOT accessible via any official API.
 
 Input: video ID(s), optional date range and metric list
-Output: JSON with views, watch time, AVD, CTR, impressions, subs gained, etc.
+Output: JSON with views, watch time, AVD, subs gained, etc. Exits 1 when any query failed.
 
 Usage:
     python execution/fetch_video_analytics.py VIDEO_ID
@@ -20,14 +20,14 @@ from datetime import datetime, timedelta
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from utils.youtube_auth import get_oauth_service
+from utils.youtube_auth import TOKEN_PATH, get_oauth_service
 
+# Thumbnail impressions and their CTR are not reports.query metrics; they come from the Reporting API's
+# channel_reach_basic_a1 report (references/analytics-guide.md), so they are not requested here.
 DEFAULT_METRICS = [
     "views",
     "estimatedMinutesWatched",
     "averageViewDuration",
-    "impressions",
-    "impressionClickThroughRate",
     "subscribersGained",
     "subscribersLost",
     "likes",
@@ -115,20 +115,6 @@ def fetch_daily_metrics(service, channel_id, video_ids, start_date, end_date):
     return [dict(zip(headers, row)) for row in rows]
 
 
-def get_channel_id(oauth_creds):
-    """Get the authenticated user's channel ID."""
-    try:
-        from googleapiclient.discovery import build
-        yt_service = build("youtube", "v3", credentials=oauth_creds)
-        response = yt_service.channels().list(part="id", mine=True).execute()
-        items = response.get("items", [])
-        if items:
-            return items[0]["id"]
-    except Exception:
-        pass
-    return None
-
-
 def main():
     parser = argparse.ArgumentParser(description="Fetch YouTube video analytics")
     parser.add_argument("video_ids", nargs="+", help="One or more video IDs")
@@ -159,9 +145,8 @@ def main():
         from google.oauth2.credentials import Credentials
         from googleapiclient.discovery import build
 
-        token_path = Path.home() / ".claude" / ".tmp" / "youtube_oauth_token.json"
-        if token_path.exists():
-            creds = Credentials.from_authorized_user_file(str(token_path))
+        if TOKEN_PATH.exists():
+            creds = Credentials.from_authorized_user_file(str(TOKEN_PATH))
             yt = build("youtube", "v3", credentials=creds)
             ch_resp = yt.channels().list(part="id", mine=True).execute()
             channel_id = ch_resp["items"][0]["id"]
@@ -200,6 +185,8 @@ def main():
         result["metrics"]["daily"] = daily
 
     print(json.dumps(result, indent=2))
+    if any(isinstance(v, dict) and "error" in v for v in result["metrics"].values()):
+        sys.exit(1)
 
 
 if __name__ == "__main__":

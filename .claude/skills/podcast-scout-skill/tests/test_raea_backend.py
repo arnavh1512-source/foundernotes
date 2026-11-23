@@ -22,7 +22,7 @@ class RaeaBackendTests(unittest.TestCase):
 
     def test_render_requires_source_and_correct_output(self):
         with tempfile.TemporaryDirectory() as folder:
-            root = Path(folder)
+            root = Path(folder).resolve()
             missing = root / "missing.tsx"
             self.assertEqual(raea.render(missing, root / "out.mp4")["error"], "BAD_SOURCE")
             source = root / "scene.tsx"
@@ -34,7 +34,7 @@ class RaeaBackendTests(unittest.TestCase):
 
     def test_render_calls_real_cli_shape_and_defaults_offline(self):
         with tempfile.TemporaryDirectory() as folder:
-            root = Path(folder)
+            root = Path(folder).resolve()
             scene, mp4, manifest = root / "scene.tsx", root / "scene.mp4", root / "manifest.json"
             scene.write_text("export {}")
             def fake_run(args, **kwargs):
@@ -51,7 +51,7 @@ class RaeaBackendTests(unittest.TestCase):
 
     def test_frame_uses_frame_flag_and_png(self):
         with tempfile.TemporaryDirectory() as folder:
-            root = Path(folder)
+            root = Path(folder).resolve()
             scene, image = root / "scene.tsx", root / "frame.png"
             scene.write_text("export {}")
             def fake_run(args, **kwargs):
@@ -65,7 +65,7 @@ class RaeaBackendTests(unittest.TestCase):
 
     def test_failure_on_zero_byte_or_missing_render(self):
         with tempfile.TemporaryDirectory() as folder:
-            root = Path(folder)
+            root = Path(folder).resolve()
             scene, mp4 = root / "scene.tsx", root / "film.mp4"
             scene.write_text("export {}")
             with patch.object(raea.subprocess, "run",
@@ -75,7 +75,7 @@ class RaeaBackendTests(unittest.TestCase):
 
     def test_check_requires_existing_video_and_valid_json_report(self):
         with tempfile.TemporaryDirectory() as folder:
-            root = Path(folder)
+            root = Path(folder).resolve()
             film, report = root / "video.mp4", root / "check.json"
             film.write_bytes(b"fake video")
             self.assertEqual(raea.check(film, report=report, manifest=root/"missing.json")["error"], "MISSING_MANIFEST")
@@ -89,7 +89,7 @@ class RaeaBackendTests(unittest.TestCase):
 
     def test_check_nonzero_exit_does_not_claim_pass(self):
         with tempfile.TemporaryDirectory() as folder:
-            root = Path(folder)
+            root = Path(folder).resolve()
             film, report = root / "video.mp4", root / "check.json"
             film.write_bytes(b"video")
             with patch.object(raea.subprocess, "run",
@@ -99,7 +99,7 @@ class RaeaBackendTests(unittest.TestCase):
 
     def test_no_implicit_install_or_network(self):
         with tempfile.TemporaryDirectory() as folder:
-            root = Path(folder)
+            root = Path(folder).resolve()
             src, out = root / "scene.tsx", root / "out.mp4"
             src.write_text("export {}")
             def fake_run(args, **kwargs):
@@ -114,7 +114,7 @@ class RaeaBackendTests(unittest.TestCase):
 
     def test_timeout_rejected_without_execution(self):
         with tempfile.TemporaryDirectory() as folder:
-            root = Path(folder)
+            root = Path(folder).resolve()
             scene, out = root / "scene.tsx", root / "out.mp4"
             scene.write_text("export {}")
             with patch.object(raea.subprocess, "run") as run:

@@ -4,8 +4,8 @@ C-roll keyframe stage: anchors ONE still photo inside generated collage posters 
 """
 import json
 import os
-import sys
 
+import paid
 from provider import get_provider, run_jobs
 from styles import compose_collage_prompt, resolve_theme, image_params
 
@@ -61,9 +61,9 @@ def shots_of(beat):
         yield beat, f"{beat['id']}"
 
 
-def run(project_dir):
+def run(project_dir, generate=False, max_jobs=paid.DEFAULT_MAX_JOBS):
     bpath = os.path.join(project_dir, "beats.json")
-    with open(bpath) as f:
+    with open(bpath, encoding="utf-8") as f:
         doc = json.load(f)
     photo = doc["anchor_photo"]
     aspect = doc.get("aspect", "9:16")
@@ -79,14 +79,17 @@ def run(project_dir):
     doc["anchor_freeze"] = FREEZE[kind]
 
     prov = get_provider(doc.get("provider"))
-    if not photo.startswith("http://") and not photo.startswith("https://"):
-        photo_url = prov.upload(photo)
-        doc["anchor_photo_url"] = photo_url
-    else:
-        photo_url = photo
-
     kf_dir = os.path.join(project_dir, "keyframes")
-    os.makedirs(kf_dir, exist_ok=True)
+    photo_url = []  # filled once, only when a job is really submitted
+
+    def anchor_url():
+        if not photo_url:
+            if photo.startswith(("http://", "https://")):
+                photo_url.append(photo)
+            else:
+                photo_url.append(prov.upload(photo))
+                doc["anchor_photo_url"] = photo_url[0]
+        return photo_url[0]
 
     specs, by_key = {}, {}
     for beat in doc["beats"]:
@@ -100,10 +103,15 @@ def run(project_dir):
             prompt = f"{lock_text} {base_prompt}{CROLL_GUARDS}"
             shot["keyframe_prompt"] = prompt
 
-            params = {"image_url": photo_url, **image_params(img_model, aspect, img_res)}
-            specs[key] = (lambda p=prompt, par=params: prov.submit_image(img_model, p, **par))
+            params = image_params(img_model, aspect, img_res)
+            specs[key] = (lambda p=prompt, par=params:
+                          prov.submit_image(img_model, p, image_url=anchor_url(), **par))
             by_key[key] = shot
 
+    plan = [(key, img_model, os.path.join(kf_dir, f"kf_{key}.jpg")) for key in specs]
+    if not paid.approve(plan, generate, max_jobs):
+        return
+    os.makedirs(kf_dir, exist_ok=True)
     done = run_jobs(prov, specs, poll_s=3, stall_s=75, max_retries=2, deadline_s=300)
 
     for key, url in done.items():
@@ -116,12 +124,11 @@ def run(project_dir):
         shot["keyframe_path"] = dest
         print(f"[{key}] saved {dest}")
 
-    with open(bpath, "w") as f:
+    with open(bpath, "w", encoding="utf-8") as f:
         json.dump(doc, f, ensure_ascii=False, indent=2)
     print("Updated", bpath)
 
 
 if __name__ == "__main__":
-    proj = sys.argv[1] if len(sys.argv) > 1 else os.path.join(
-        os.path.dirname(__file__), "..", "out", "croll-demo")
-    run(os.path.abspath(proj))
+    a = paid.parser(__doc__, demo="croll-demo").parse_args()
+    run(os.path.abspath(a.project_dir), a.generate, a.max_jobs)

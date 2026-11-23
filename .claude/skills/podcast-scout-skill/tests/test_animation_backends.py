@@ -14,7 +14,7 @@ class BackendTests(unittest.TestCase):
 
     def test_import_requires_real_media_path_and_rights(self):
         with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory)
+            root = Path(directory).resolve()
             (root / "scene.mp4").write_bytes(b"test fixture only")
             recipe = {"backend":"opentoonz","picture":"scene.mp4","picture_provenance":{"rights_verified":True,"creator":"artist","source":"original project","license":"original","export_method":"manual export"}}
             self.assertEqual(backend.validate_import(recipe,root), root / "scene.mp4")

@@ -8,7 +8,7 @@ FounderNotes is the Claude Code workspace behind the YouTube channel **[Think!](
 
 [![Python QC Checks](https://github.com/arnavh1512-source/foundernotes/actions/workflows/python-qc.yml/badge.svg)](https://github.com/arnavh1512-source/foundernotes/actions/workflows/python-qc.yml)
 
-> **Project maturity:** The repository has executable production tools, Claude Code skills and agents, and automated tests. Three full-length episodes (8:34–9:04) and their delivery packages have been produced with these tools in cloud sessions; two passed `qc_video.py`, one finished with a motion-gate warning. Those outputs live in git-ignored `studio-output/` and are not in the repository. No independent reality-check pass or end-to-end human listening review has been recorded for them yet. External rendering engines, Voicebox and Agent-Reach require separate installation and live testing.
+> **Project maturity:** The repository has executable production tools, Claude Code skills and agents, and automated tests. Three full-length episodes (8:34–9:04) and their delivery packages have been produced with these tools in cloud sessions; two passed `qc_video.py`, one finished with a motion-gate warning. Those outputs live in git-ignored `studio-output/` and are not in the repository. No independent reality-check pass or end-to-end human listening review has been recorded for them yet. The studio's own records agree: `.claude/memory/production_ledger.json`, `skill_evaluations.json` and `positive_recipes.md` are still empty. External rendering engines, Voicebox and Agent-Reach require separate installation and live testing.
 
 ## Quick start
 
@@ -128,7 +128,7 @@ See the [integration and licensing guide](.claude/skills/animation-styles/refere
 
 ## Useful commands
 
-Run these from the repository root after ensuring Python and any required dependencies are available.
+Run these from the repository root after ensuring Python and any required dependencies are available. On Windows, type `python` where the examples say `python3`; the `.sh` scripts need Git Bash or WSL.
 
 ```bash
 # Check the configured public research gateway:

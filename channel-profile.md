@@ -9,8 +9,8 @@ Values left as `TBD` fall back to the defaults shown.
 - **What we never do:** clickbait we can't pay off; medical/financial advice; reuse of podcast footage or voices; generic AI slideshow templates
 
 ## Voice (narration)
-- **Narrator:** male (required default: "Founder Notes Narrator" on Voicebox)
-- **Engine / voice:** **voicebox** (`Chatterbox`) profile `"Founder Notes Narrator"` cloned from `.claude/skills/podcast-scout-skill/assets/voice/founder-notes-narrator-ref.wav`, speed `1.0` (~179 wpm), with `--asr --retake 2` (fallbacks: Parler locked to `assets/voice/founder-notes-narrator.wav`, then Kokoro `am_michael`)
+- **Narrator:** male, the owner-supplied narrator on Voicebox (owner rule 2026-11-12; see CLAUDE.md). The synthetic "Founder Notes Narrator" is the fallback only when the owner clip is missing.
+- **Engine / voice:** **voicebox** (`Chatterbox`), script voice `{"engine": "voicebox", "name": "founder-notes", "chain": "none"}`. The alias resolves to the profile `"Owner-Supplied Narrator (consented)"`, cloned from the git-ignored `.claude/skills/podcast-scout-skill/assets/voice/local/owner-narrator-ref.wav`. Speed `1.0` (~179 wpm), with `--asr --retake 2`. Fallback only when that clip is missing: the synthetic `"Founder Notes Narrator"` (`assets/voice/founder-notes-narrator-ref.wav`); `narrate.py` prints a warning and records `narrator_voice` in `timings.json`.
 - **Delivery:** calm, warm, clear, authoritative; ~175–180 wpm at 1.0x speed
 - **Dialogue casting:** Optional unlimited original **male and female Voicebox character voices** for interviews, hypothetical conversations, dramatized scenes and other interactions. Each recurring character retains a distinct approved Voicebox profile; the principal male narrator remains `Founder Notes Narrator`. Cast and segment speaker maps live in `narration/script.json` per `references/voice-casting.md`. No real-person cloning, impersonation or fabricated documentary quotes; the scene doesn't need a second speaker unless it improves the storytelling.
 

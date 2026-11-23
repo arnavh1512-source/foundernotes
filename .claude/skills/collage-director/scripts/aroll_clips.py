@@ -6,8 +6,8 @@ and re-style it as a paper-collage clip via MuAPI video models.
 import json
 import os
 import subprocess
-import sys
 
+import paid
 from provider import get_provider, run_jobs
 from styles import resolve_theme, resolve_video_aspect
 
@@ -46,9 +46,9 @@ def build_prompt(theme, content_beats=""):
     )
 
 
-def run(project_dir, only=None):
+def run(project_dir, only=None, generate=False, max_jobs=paid.DEFAULT_MAX_JOBS):
     bpath = os.path.join(project_dir, "beats.json")
-    with open(bpath) as f:
+    with open(bpath, encoding="utf-8") as f:
         doc = json.load(f)
     if doc.get("mode") != "aroll":
         raise SystemExit(f"{bpath} is not an A-roll project (mode != 'aroll')")
@@ -63,8 +63,15 @@ def run(project_dir, only=None):
 
     seg_dir = os.path.join(project_dir, "_aroll_segs")
     clip_dir = os.path.join(project_dir, "clips")
-    os.makedirs(seg_dir, exist_ok=True)
-    os.makedirs(clip_dir, exist_ok=True)
+    uploaded = {}
+
+    def source_clip_url(beat, seg_file):
+        """Cut + upload the segment only when its job is really submitted (never in a dry run)."""
+        if seg_file not in uploaded:
+            if not os.path.exists(seg_file):
+                cut_segment(src, beat["start"], beat["end"], seg_file)
+            uploaded[seg_file] = beat["source_clip_url"] = prov.upload(seg_file)
+        return uploaded[seg_file]
 
     specs, by_id = {}, {}
     for beat in doc["beats"]:
@@ -75,22 +82,23 @@ def run(project_dir, only=None):
             continue
 
         seg_file = os.path.join(seg_dir, f"seg_{bid}.mp4")
-        if not os.path.exists(seg_file):
-            cut_segment(src, beat["start"], beat["end"], seg_file)
-
-        seg_url = prov.upload(seg_file)
-        beat["source_clip_url"] = seg_url
 
         prompt = build_prompt(theme, beat.get("content_beats", ""))
         beat["clip_prompt"] = prompt
 
-        params = {"image_url": seg_url, "duration": int(beat.get("dur", 5))}
+        params = {"duration": int(beat.get("dur", 5))}
         if resolved_aspect:
             params["aspect_ratio"] = resolved_aspect
 
-        specs[bid] = (lambda p=prompt, par=params: prov.submit_video(model, p, **par))
+        specs[bid] = (lambda p=prompt, par=params, b=beat, seg=seg_file:
+                      prov.submit_video(model, p, image_url=source_clip_url(b, seg), **par))
         by_id[bid] = beat
 
+    plan = [(bid, model, os.path.join(clip_dir, f"clip_{bid}.mp4")) for bid in specs]
+    if not paid.approve(plan, generate, max_jobs):
+        return
+    os.makedirs(seg_dir, exist_ok=True)
+    os.makedirs(clip_dir, exist_ok=True)
     done = run_jobs(prov, specs, poll_s=4, stall_s=120, max_retries=2, deadline_s=900)
 
     for bid, url in done.items():
@@ -103,13 +111,13 @@ def run(project_dir, only=None):
         beat["clip_path"] = dest
         print(f"[{bid}] saved {dest}")
 
-    with open(bpath, "w") as f:
+    with open(bpath, "w", encoding="utf-8") as f:
         json.dump(doc, f, ensure_ascii=False, indent=2)
     print("Updated", bpath)
 
 
 if __name__ == "__main__":
-    proj = sys.argv[1] if len(sys.argv) > 1 else os.path.join(
-        os.path.dirname(__file__), "..", "out", "aroll-demo")
-    only_ids = sys.argv[2].split(",") if len(sys.argv) > 2 else None
-    run(os.path.abspath(proj), only_ids)
+    ap = paid.parser(__doc__, demo="aroll-demo")
+    ap.add_argument("only", nargs="?", help="comma-separated beat ids to run")
+    a = ap.parse_args()
+    run(os.path.abspath(a.project_dir), a.only.split(",") if a.only else None, a.generate, a.max_jobs)

@@ -6,7 +6,7 @@ license: MIT
 
 # Claude YouTube for Founder Notes
 
-Vendored from [AgriciDaniel/claude-youtube](https://github.com/AgriciDaniel/claude-youtube) at commit `84c3fa6` (2026-04-10), MIT licence in `LICENSE`. The upstream files are unchanged; the upstream entry point is kept as [`references/upstream-SKILL.md`](references/upstream-SKILL.md) (its paths such as `sub-skills/…` are relative to this skill folder). Not vendored: the upstream installer/uninstaller scripts and plugin metadata.
+Vendored from [AgriciDaniel/claude-youtube](https://github.com/AgriciDaniel/claude-youtube) at commit `84c3fa6` (2026-04-10), MIT licence in `LICENSE`. The upstream files are unchanged except local safety fixes in `execution/` (API errors print status and reason only, never the request URI that carries the key; OAuth token written owner-only; analytics exit 1 when a query fails and no longer request impressions/CTR, which `reports.query` does not offer; transcript ids and `--lang` validated before they reach a file name; atomic quota file). The upstream entry point is kept as [`references/upstream-SKILL.md`](references/upstream-SKILL.md) (its paths such as `sub-skills/…` are relative to this skill folder). Not vendored: the upstream installer/uninstaller scripts and plugin metadata.
 
 **This page overrides the upstream entry point wherever they differ.** Channel policy in `CLAUDE.md` and `channel-profile.md` overrides both.
 
@@ -45,7 +45,7 @@ The `references/*.md` files contain many unsourced figures (CTR bands, AVD avera
 
 - **Transcripts and public research:** use `.claude/skills/podcast-scout-skill/scripts/research_gateway.py` first (yt-dlp first for YouTube, Agent-Reach as backup). `execution/fetch_transcript.py` (yt-dlp subtitles only, no media download) also works; it needs the studio venv active so `yt-dlp` is on `PATH`. See `.claude/skills/podcast-scout-skill/references/yt-dlp.md`.
 - **YouTube Data API scripts** (`fetch_channel_data.py`, `search_competitor_videos.py`) need `YOUTUBE_API_KEY`. Never ask for a key in chat and never commit one; the owner configures it. `search.list` costs 100 quota units, so prefer `fetch_channel_data.py` (~16 units).
-- **Analytics API** (`fetch_video_analytics.py`) runs a browser OAuth flow for the owner's own channel. Run it only when the owner asks and is present to sign in. Tokens are stored outside the repo in `~/.claude/.tmp/`.
+- **Analytics API** (`fetch_video_analytics.py`) runs a browser OAuth flow for the owner's own channel. Run it only when the owner asks and is present to sign in. Tokens are stored outside the repo in `~/.claude/.tmp/` (file mode 0600 where the OS supports it).
 - **DataForSEO** (paid per call) and **NanoBanana** MCP servers are optional and not configured here. Don't install, configure or call them without the owner's approval; upstream's WebSearch fallback is the default.
 - The scripts are read-only. Nothing in this skill uploads, edits or publishes on YouTube.
 

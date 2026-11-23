@@ -10,7 +10,7 @@ class AsrSkip(unittest.TestCase):
     def test_missing_whisper_skips_and_removes_stale_report(self):
         with tempfile.TemporaryDirectory() as d, mock.patch.dict(sys.modules, {"faster_whisper": None}):
             out = Path(d); (out / "asr.json").write_text("[]")
-            self.assertEqual(narrate.asr_check(out, [], "base.en"), 0)
+            self.assertIsNone(narrate.asr_check(out, [], "base.en"))
             self.assertFalse((out / "asr.json").exists())
 
 

@@ -30,7 +30,7 @@ jobs:
         with:
           node-version: '22'
       - run: node --test ../tests/*.test.mjs
-      - run: npm install --no-audit --no-fund
+      - run: npm ci --no-audit --no-fund
       - run: npm run check
       - run: npx remotion browser ensure
       - run: npm run render:proof -- proof.mp4

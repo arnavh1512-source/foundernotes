@@ -131,8 +131,6 @@ class M8M9RenderScript(unittest.TestCase):
         self.assertIn('shell: process.platform === "win32"', src)
 
 
-if __name__ == "__main__":
-    unittest.main()
 
 
 class RecheckH2Schema(unittest.TestCase):
@@ -213,7 +211,7 @@ class RecheckN1SetupCore(unittest.TestCase):
             td = Path(td); (td / "scripts").mkdir()
             core = td / "node_modules" / "playwright-core"; core.mkdir(parents=True)
             (core / "package.json").write_text('{"name":"playwright-core","main":"index.js"}')
-            (core / "index.js").write_text('module.exports = { chromium: { executablePath: () => "/bin/sh" } };')
+            (core / "index.js").write_text('module.exports = { chromium: { executablePath: () => process.execPath } };')
             src = (ROOT.parent / "motion" / "scripts" / "setup.sh").read_text()
             funcs = src[src.index("pw_node()"):src.index("install_ffmpeg()")]
             script = f'here="{td}"\n' + funcs + '\npw_found && echo MOD\nchromium_found && echo BROWSER\n'
@@ -234,3 +232,7 @@ class CaptionSemanticsTest(unittest.TestCase):
         self.assertTrue(any(c.startswith("They don't") for c in cues), cues)
         cues = n.caption_chunks("Patients of surgeons 60 and older did slightly better.")
         self.assertTrue(all(not c.endswith(" 60") for c in cues), cues)
+
+
+if __name__ == "__main__":
+    unittest.main()

@@ -6,8 +6,8 @@ import base64
 import json
 import os
 import subprocess
-import sys
 
+import paid
 from provider import get_provider, run_jobs
 
 VOICE_MODEL = "minimax-speech-2.6-turbo"
@@ -32,12 +32,11 @@ def probe_dur(path: str) -> float:
         return 0.0
 
 
-def run(project_dir: str):
+def run(project_dir: str, generate=False, max_jobs=paid.DEFAULT_MAX_JOBS, allow_clone_upload=False):
     bpath = os.path.join(project_dir, "beats.json")
-    with open(bpath) as f:
+    with open(bpath, encoding="utf-8") as f:
         doc = json.load(f)
     adir = os.path.join(project_dir, "audio")
-    os.makedirs(adir, exist_ok=True)
 
     prov = get_provider(doc.get("provider"))
     voice = doc.get("voice", {})
@@ -64,6 +63,10 @@ def run(project_dir: str):
 
     specs = {}
     for beat in doc["beats"]:
+        existing = beat.get("audio_path")
+        if existing and os.path.exists(existing):
+            print(f"[narr_{beat['id']}] reuse existing {existing} (delete it to re-voice)")
+            continue
         if clone_ref:
             specs[f"narr_{beat['id']}"] = (lambda t=beat["narration"]: prov.submit_audio(
                 VOICE_MODEL,
@@ -83,6 +86,15 @@ def run(project_dir: str):
     else:
         print(f"[bgm] reuse existing {bgm_path}")
 
+    if clone_ref and not allow_clone_upload and any(k.startswith("narr_") for k in specs):
+        # every cloned narration job carries the reference recording to MuAPI's cloud
+        raise SystemExit("audio: voice.clone_ref sends the reference recording to MuAPI; "
+                         "re-run with --allow-clone-upload to permit that.")
+    plan = [(key, MUSIC_MODEL if key == "bgm" else VOICE_MODEL,
+             bgm_path if key == "bgm" else os.path.join(adir, f"{key}.mp3")) for key in specs]
+    if not paid.approve(plan, generate, max_jobs):
+        return
+    os.makedirs(adir, exist_ok=True)
     done = run_jobs(prov, specs, poll_s=4, stall_s=150, max_retries=2, deadline_s=600)
 
     for key, url in done.items():
@@ -98,12 +110,14 @@ def run(project_dir: str):
                     beat["audio_duration"] = probe_dur(dest)
         print(f"[{key}] saved {dest}")
 
-    with open(bpath, "w") as f:
+    with open(bpath, "w", encoding="utf-8") as f:
         json.dump(doc, f, ensure_ascii=False, indent=2)
     print("Updated", bpath)
 
 
 if __name__ == "__main__":
-    proj = sys.argv[1] if len(sys.argv) > 1 else os.path.join(
-        os.path.dirname(__file__), "..", "out", "demo")
-    run(os.path.abspath(proj))
+    ap = paid.parser(__doc__)
+    ap.add_argument("--allow-clone-upload", action="store_true",
+                    help="permit sending voice.clone_ref (the owner's own recording) to MuAPI for cloning")
+    a = ap.parse_args()
+    run(os.path.abspath(a.project_dir), a.generate, a.max_jobs, a.allow_clone_upload)

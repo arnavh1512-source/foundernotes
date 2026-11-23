@@ -10,9 +10,11 @@ This repository is an **Agent Skill**: a self-contained workflow that turns a to
    - **B-roll (topic → film):** `style_bakeoff.py → keyframes.py → clips.py → audio.py → assemble.py`
    - **A-roll (talking-head → collage):** `asr_beats.py → aroll_clips.py → aroll_assemble.py`
    - **C-roll (photo anchor → collage):** `croll_keyframes.py → clips.py → audio.py → assemble.py`
+   - The paid stages print a plan only (no network) unless given `--generate`; `--max-jobs N` (default 20) caps a real run.
+     See "Spending gate" in `SKILL.md`.
 
 ## Requirements
 
-- `MUAPI_API_KEY` in the environment — https://muapi.ai
+- `MUAPI_API_KEY` in the environment — https://muapi.ai (or `MUAPI_KEY_PROXY=1` when a session proxy injects the key)
 - `ffmpeg` + `ffprobe`
 - Python 3 with `Pillow`

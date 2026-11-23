@@ -1,10 +1,9 @@
 """
-Fetch video transcript/captions via multiple fallback methods.
+Fetch video transcript/captions with yt-dlp.
 
-Cascade:
-  1. YouTube Data API v3 captions (requires OAuth for own videos)
-  2. yt-dlp auto-subtitle extraction (if installed)
-  3. Graceful failure with instructions
+Only one method is implemented: yt-dlp auto-subtitle extraction (VTT, then SRT), no media
+download and no API quota. Without yt-dlp, or when a video has no subtitles, it fails with
+instructions. The YouTube Data API captions endpoint is not used.
 
 Input: video ID or URL
 Output: JSON with transcript text, timestamps, language
@@ -37,19 +36,19 @@ def parse_video_id(raw):
     raw = raw.strip()
 
     # Direct video ID (11 characters)
-    if re.match(r"^[\w-]{11}$", raw):
+    if re.fullmatch(r"[A-Za-z0-9_-]{11}", raw):
         return raw
 
     # URL patterns
     patterns = [
-        r"(?:youtube\.com/watch\?v=|youtu\.be/|youtube\.com/shorts/)([\w-]{11})",
+        r"(?:youtube\.com/watch\?v=|youtu\.be/|youtube\.com/shorts/)([A-Za-z0-9_-]{11})(?![A-Za-z0-9_-])",
     ]
     for pattern in patterns:
         match = re.search(pattern, raw)
         if match:
             return match.group(1)
 
-    return raw  # Return as-is, let the API validate
+    return None  # not a YouTube video id; it is used in a file name and a URL, so never pass it through
 
 
 def fetch_via_ytdlp(video_id, lang="en"):
@@ -94,9 +93,9 @@ def fetch_via_ytdlp(video_id, lang="en"):
             if not srt_files:
                 return None, f"No subtitles found. yt-dlp stderr: {result.stderr[:200]}"
 
-            return parse_srt(srt_files[0].read_text()), None
+            return parse_srt(srt_files[0].read_text(encoding="utf-8", errors="replace")), None
 
-        return parse_vtt(vtt_files[0].read_text()), None
+        return parse_vtt(vtt_files[0].read_text(encoding="utf-8", errors="replace")), None
 
 
 def parse_vtt(content):
@@ -195,13 +194,17 @@ def main():
     args = parser.parse_args()
 
     video_id = parse_video_id(args.video)
+    if not video_id:
+        parser.error(f"not a YouTube video id or URL: {args.video!r}")
+    if not re.fullmatch(r"[A-Za-z][A-Za-z-]{1,9}", args.lang):
+        parser.error(f"--lang must be a language code like en or pt-BR, got {args.lang!r}")
 
     # Check cache
     TMP_DIR.mkdir(parents=True, exist_ok=True)
     cache_path = TMP_DIR / f"transcript_{video_id}_{args.lang}.json"
 
     if cache_path.exists():
-        with open(cache_path) as f:
+        with open(cache_path, encoding="utf-8") as f:
             cached = json.load(f)
         cached["_cached"] = True
         print(json.dumps(cached, indent=2))
@@ -225,7 +228,7 @@ def main():
             result["text"] = segments_to_text(segments)
 
         # Cache
-        with open(cache_path, "w") as f:
+        with open(cache_path, "w", encoding="utf-8") as f:
             json.dump(result, f, indent=2)
 
         print(json.dumps(result, indent=2))
@@ -242,7 +245,6 @@ def main():
             "Install yt-dlp: pip install yt-dlp",
             "Check if the video has captions enabled",
             "Try a different language with --lang",
-            "For private videos, ensure OAuth is configured",
         ],
     }, indent=2), file=sys.stderr)
     sys.exit(1)

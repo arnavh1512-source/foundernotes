@@ -57,7 +57,12 @@ def write(path, data):
 
 def digest(path):
     with Path(path).open("rb") as stream:
-        return hashlib.file_digest(stream, "sha256").hexdigest()
+        if hasattr(hashlib, "file_digest"):          # Python 3.11+
+            return hashlib.file_digest(stream, "sha256").hexdigest()
+        h = hashlib.sha256()
+        for block in iter(lambda: stream.read(1 << 20), b""):
+            h.update(block)
+        return h.hexdigest()
 
 
 def text(value, name):
@@ -250,7 +255,8 @@ class StudioLoop:
             raise ValueError("Every failed category needs an actionable timestamped finding")
         technical = read(self.artifact(render["qc"]))
         passed = all(categories[k]["status"] == "pass" for k in CATEGORIES) and not findings
-        if passed and (technical.get("status") != "PASS" or technical.get("errors")):
+        # qc_video.py exits 0 on WARN (a deliberate hold or pause): only FAIL or recorded errors block.
+        if passed and (technical.get("status") not in ("PASS", "WARN") or technical.get("errors")):
             raise ValueError("Creative pass cannot override failed technical QC")
         self.state["critiques"].append({"revision": self.state["revision"], "report": report, "evidence": evidence})
         self.state["stage"] = ("owner_review" if passed else "stopped" if findings and self.state["revision"] >= self.state["maximum_cuts"]
@@ -296,7 +302,7 @@ class StudioLoop:
             raise ValueError("Current render requires a passing creative review")
         self.verify_evidence(critique["evidence"])
         technical = read(self.artifact(render["qc"]))
-        if technical.get("status") != "PASS" or technical.get("errors"):
+        if technical.get("status") not in ("PASS", "WARN") or technical.get("errors"):
             raise ValueError("Technical QC must pass")
         return render
 
@@ -346,7 +352,9 @@ class StudioLoop:
         for record in records:
             record.update({"video_id": self.state["video_id"], "workflow_stage": self.state["stage"],
                            "source_workflow_sha256": digest(self.root / "workflow.json")})
-            key = hashlib.sha256(json.dumps(record, sort_keys=True).encode()).hexdigest()
+            # Key on the lesson itself, not the stage: exporting again later must not duplicate it.
+            identity = {k: record[k] for k in ("kind", "lesson", "video_id", "render_sha256") if k in record}
+            key = hashlib.sha256(json.dumps(identity, sort_keys=True).encode()).hexdigest()
             path = directory / (key + ".json")
             if not path.exists():
                 write(path, record)
@@ -359,8 +367,9 @@ def produce(run, recipe_path):
     recipe = read(run.artifact(recipe_path))
     mode = recipe.get("mode", "pilot")
     gate_stage, qc_minimum = production_policy(mode)
-    viewer = read(run.artifact(recipe["viewer_plan"]))
-    errors = module("viewer_first_gate").validate(viewer, stage=gate_stage)
+    viewer_path = run.artifact(recipe["viewer_plan"])
+    viewer = read(viewer_path)
+    errors = module("viewer_first_gate").validate(viewer, stage=gate_stage, base_dir=viewer_path.parent)
     plan = read(run.artifact(recipe["shot_plan"]))
     errors += module("creative_router").validate_plan(plan)
     if errors:

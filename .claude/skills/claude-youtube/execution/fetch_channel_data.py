@@ -23,7 +23,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from utils.quota_tracker import check_quota, consume_quota
-from utils.youtube_auth import get_data_api_service
+from utils.youtube_auth import HttpError, api_error, get_data_api_service
 
 TMP_DIR = Path.home() / ".claude" / ".tmp"
 
@@ -200,12 +200,16 @@ def main():
 
     # Check cache
     parsed = parse_channel_input(args.channel)
-    cache_key = parsed["value"].replace("/", "_").replace("@", "")
+    cache_key = parsed["value"].lstrip("@")
+    # the key becomes a file name: one plain component (no separators), and only recognised inputs
+    if parsed["type"] == "unknown" or not re.fullmatch(r"[\w.-]{1,100}", cache_key):
+        print(json.dumps({"error": f"Unrecognised channel input: {args.channel}"}), file=sys.stderr)
+        sys.exit(1)
     today = datetime.now().strftime("%Y-%m-%d")
     cache_path = TMP_DIR / f"channel_{cache_key}_{today}.json"
 
     if cache_path.exists() and not args.no_cache:
-        with open(cache_path) as f:
+        with open(cache_path, encoding="utf-8") as f:
             cached = json.load(f)
         cached["_cached"] = True
         print(json.dumps(cached, indent=2))
@@ -217,25 +221,29 @@ def main():
         print(json.dumps(error), file=sys.stderr)
         sys.exit(1)
 
-    # Resolve channel ID
-    channel_id = resolve_channel_id(service, parsed)
-    if not channel_id:
-        print(json.dumps({"error": f"Could not resolve channel: {args.channel}"}),
-              file=sys.stderr)
-        sys.exit(1)
+    try:
+        # Resolve channel ID
+        channel_id = resolve_channel_id(service, parsed)
+        if not channel_id:
+            print(json.dumps({"error": f"Could not resolve channel: {args.channel}"}),
+                  file=sys.stderr)
+            sys.exit(1)
 
-    # Fetch data
-    channel_info = fetch_channel_info(service, channel_id)
-    if not channel_info:
-        print(json.dumps({"error": f"Channel not found: {channel_id}"}),
-              file=sys.stderr)
-        sys.exit(1)
+        # Fetch data
+        channel_info = fetch_channel_info(service, channel_id)
+        if not channel_info:
+            print(json.dumps({"error": f"Channel not found: {channel_id}"}),
+                  file=sys.stderr)
+            sys.exit(1)
 
-    videos = []
-    if channel_info.get("uploads_playlist"):
-        videos = fetch_recent_videos(
-            service, channel_info["uploads_playlist"], args.videos
-        )
+        videos = []
+        if channel_info.get("uploads_playlist"):
+            videos = fetch_recent_videos(
+                service, channel_info["uploads_playlist"], args.videos
+            )
+    except HttpError as e:
+        print(json.dumps(api_error(e)), file=sys.stderr)
+        sys.exit(1)
 
     result = {
         "channel": channel_info,
@@ -246,7 +254,7 @@ def main():
 
     # Cache result
     TMP_DIR.mkdir(parents=True, exist_ok=True)
-    with open(cache_path, "w") as f:
+    with open(cache_path, "w", encoding="utf-8") as f:
         json.dump(result, f, indent=2)
 
     print(json.dumps(result, indent=2))

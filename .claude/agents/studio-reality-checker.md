@@ -47,10 +47,10 @@ When `.claude/skills/humanizer/SKILL.md` has been used, verify the edited script
    - Run `lint_scenes.py` and `qc_video.py final/video.mp4 --timings narration/timings.json --sheet final/sheet.jpg --json final/qc.json --min-duration 480`.
    - Reject immediately (`NEEDS WORK`) if:
      - Total duration `< 480.0s` (8 minutes)
-     - Fast-motion frame ratio `< 0.035` (static PPT slideshow feel)
-     - Any mid-video blank or frozen dead-air gap `>= 0.3s` (`9 frames @ 30fps`) is detected
+     - Live-motion ratio `< 0.15` (static slideshow feel; cuts and camera moves do not count as motion)
+     - Any mid-video blank or solid-colour gap `>= 0.3s` (`9 frames @ 30fps`) is detected; review every still hold `>= 2.5s` that `qc_video.py` warns about
      - Blue-purple generic AI gradient frames `>= 30%` (unless style is explicitly `glow-sketch`)
-     - Any audio silence gap `> 1.2s` or A/V drift `> 0.3s` exists
+     - Any audio silence gap `> 1.2s` (a `qc_video.py` warning; reject unless intentional) or audible narration-to-picture drift (not measured by `qc_video.py`; check it by watching)
 3. **Gate C — 2-Round 7-Dimension Blind Critic Jury (`rubric.md`):**
    - Open `final/sheet.jpg` and keyframe stills, and score all 7 dimensions from `1.0` to `10.0`:
      1. `style_fidelity` (unmistakable adherence to the chosen style spec on any single frame)

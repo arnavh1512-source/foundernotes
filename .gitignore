@@ -13,3 +13,9 @@ voices-v1.0.bin
 # Private ElevenLabs credentials
 /.env.local
 
+# Any other local credentials (collage-director reads its own .env), cookie exports and OAuth client files
+.env
+.env.*
+cookies*.txt
+*client_secret*.json
+.claude/settings.local.json

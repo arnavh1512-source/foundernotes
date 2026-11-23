@@ -25,7 +25,8 @@ import wave
 
 
 def fail(message: str) -> None:
-    raise SystemExit("voicestudio_narrate: " + message)
+    # Shared with elevenlabs_narrate: raise plain ValueError; each CLI adds its own label.
+    raise ValueError(message)
 
 
 def load_episode(path: Path) -> dict:
@@ -144,6 +145,13 @@ def synthesize(origin: str, fields: dict, timeout: int) -> bytes:
 
 
 def main(argv=None) -> int:
+    try:
+        return run(argv)
+    except ValueError as exc:
+        raise SystemExit("voicestudio_narrate: " + str(exc)) from None
+
+
+def run(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("script", type=Path, help="original dialogue JSON using speakers and segments")
     parser.add_argument("--out", required=True, type=Path, help="episode narration directory")
@@ -188,7 +196,7 @@ def main(argv=None) -> int:
         wav_path = raw / f"{sid}.wav"
         key_path = raw / f"{sid}.key"
         key = signature({"origin": origin, "fields": fields})
-        if not args.force and wav_path.is_file() and key_path.is_file() and key_path.read_text() == key:
+        if not args.force and wav_path.is_file() and key_path.is_file() and key_path.read_text(encoding="utf-8") == key:
             valid_wav(wav_path.read_bytes())
             print(f"[cached] {sid}: {role}")
             continue
