@@ -306,6 +306,13 @@ OWNER_NARRATOR_REF = VOICE_DIR_REPO / "local" / "owner-narrator-ref.wav"
 NARRATOR_KIND = None   # "owner" or "synthetic" once voicebox_channel_profile() has resolved the alias
 
 
+def narrator_cache_key(kind):
+    """Cache identity for solo channel-narrator takes. The owner voice keeps the alias (the key every existing take
+    was stamped with), so re-creating the Voicebox profile (new machine, wiped data dir) does not re-voice approved
+    takes; the synthetic fallback gets its own key, so its takes never stand in for the owner voice."""
+    return CHANNEL_NARRATOR if kind == "owner" else f"{CHANNEL_NARRATOR}:synthetic"
+
+
 def pick_channel_profile(profiles, owner_ref_exists):
     """Choose the channel narrator. Returns (profile_id or None, kind): the owner voice if its profile or local
     reference exists, otherwise the synthetic fallback. None means the profile has to be created from the reference."""
@@ -763,7 +770,7 @@ def main(argv=None):
         except Exception as e:
             die(f"voicebox: server not reachable at {voicebox_url()} ({e}); start it with scripts/voicebox_server.sh")
         vb_engine = CHANNEL_NARRATOR_ENGINE
-        voice_key = voice                    # cache on the resolved profile: fallback takes must not survive the owner voice
+        voice_key = narrator_cache_key(NARRATOR_KIND)   # stable across profile re-creation; fallback takes never match owner takes
     speed = a.speed or vcfg.get("speed", 1.0)
     pv = vcfg.get("perform", False)      # earshot: sentence-split takes read MORE synthetic; opt-in only
     perform = engine == "kokoro" and not a.no_perform and pv not in (False, "flat", "off")

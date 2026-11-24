@@ -26,11 +26,17 @@ class NarrateFixes(unittest.TestCase):
             calls = []
             def synth(text, profile, *a, **k):
                 calls.append(profile); fake_voicebox(text, profile, *a, **k)
+            def resolver(profile, kind):
+                def resolve():
+                    narrate.NARRATOR_KIND = kind
+                    return profile
+                return resolve
             with patch.object(narrate, "synth_voicebox", side_effect=synth):
-                for profile in ("synth-1", "synth-1", "owner-1"):
-                    with patch.object(narrate, "voicebox_channel_profile", return_value=profile):
+                # synthetic fallback cached; owner voice re-voices; a re-created owner profile keeps the owner takes
+                for profile, kind in (("synth-1", "synthetic"), ("synth-1", "synthetic"), ("owner-1", "owner"), ("owner-2", "owner")):
+                    with patch.object(narrate, "voicebox_channel_profile", side_effect=resolver(profile, kind)):
                         narrate.main(args)
-            self.assertEqual(calls, ["synth-1", "owner-1"])   # same profile is cached; a new profile re-voices
+            self.assertEqual(calls, ["synth-1", "owner-1"])
 
     def test_voicebox_url_must_be_local(self):
         with patch.dict("os.environ", {"VOICEBOX_URL": "http://voice.example.com:17493"}):
