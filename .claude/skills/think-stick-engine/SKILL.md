@@ -40,6 +40,10 @@ Rendering a 14-minute video takes about 75 minutes on 6 chunks. Worker restarts 
 
 After `mix/timings.json` exists, write `film/env.js` (per-frame mouth opening from the voice) with the snippet used on Night 1 Part 2: compute the 30 fps mean-absolute envelope of `mix/narration.wav`, normalise it per character line (85th percentile), and quantise it to digits 0–9 in `window.ENV`. See `example/` and the episode notes.
 
+## Check every frame before rendering (mandatory, owner rule 2026-11-24)
+
+A full render takes about 75 minutes, so nothing renders until every frame is checked. Run `bash precheck.sh` (a frame every 3 s, labelled contact sheets in `precheck/`) and review every sheet for missing elements, text or blocks cut off at the frame edge, labels under the bottom 180 px caption band, and hands, faces or props in the wrong place. Fix everything, then render once. If something still needs changing after a render, use `patch.sh`: write `patch_ranges.json` with the changed shots and it re-renders only those and splices them in, in about 15 minutes instead of 75.
+
 ## Motion score before rendering
 
 `qc_video.py` fails a video below 3.5% fast-motion frames. Estimate it in about 5 minutes instead of a 75-minute render:
@@ -57,7 +61,7 @@ The estimator was calibrated on Night 1 Part 2: it predicted 2.83% where the rea
 ## Files
 
 - `engine/`: `stick.html` (renderer, gestures, faces hookup), `scenes*.js` (library and Night 1 scenes), `faces.js`, `sfx.py`, `facetest.html` (expression sheet).
-- `tools/`: `build.sh`, `rerender.sh`, `turns.py`, `emph.py`, `music_cc0.py`, `est.mjs` / `estall.sh` (motion estimate), `grab.mjs` (frame grabs).
+- `tools/`: `build.sh`, `rerender.sh`, `precheck.sh` (frame check before rendering), `patch_splice.py` / `patch.sh` (re-render only changed shots), `turns.py`, `emph.py`, `music_cc0.py`, `est.mjs` / `estall.sh` (motion estimate), `grab.mjs` (frame grabs).
 - `example/`: Night 1 Part 2 `split.py` (narrator → character lines), `beats.py` (long shots → action beats), `exprmap.py`, and its `shots.js`.
 - `tests/test_engine.py`: sound-effect bank and stressed-beat detection.
 

@@ -31,8 +31,8 @@ S.duo=(u,ts,d,a={})=>{ const m=a.mode||'wide';
 // a.w: words ; a.act: slam|kick|push|point|stack ; a.who: yo|ph|mom ; a.col: block colours
 S.keys=(u,ts,d,a={})=>{ cam(990,540,1); paper(); ground(); const w=a.w||['IDEA'], n=w.length, act=a.act||'point', who=a.who||'yo';
   const O=who==='ph'?{...PHI,dir:1}:who==='mom'?{...MOM,dir:1}:{...YOU,dir:1}; const cols=a.col||[INK,RED,'#2f6f4f'];
-  const row=act==='point'?470:G-66, slot=i=>act==='stack'?[1250,G-66-i*138]:[n===1?1250:1230+(i-(n-1)/2)*(n===3?460:480), row];
-  if(act==='slam'){ let flinch=0; for(let i=0;i<n;i++){ const t0=d*(i+.4)/(n+.6), k=ph(ts,t0,t0+.35), [bx,by]=slot(i); if(k>0){ bigBlock(bx,lerp(-120,by,inn(k)),w[i],cols[i%3]); if(k>=1&&ts<t0+.6) dust(bx,ph(ts,t0+.35,t0+.8)); if(ts>t0+.35&&ts<t0+.65) SHAKE=Math.max(SHAKE,22*(1-(ts-t0-.35)/.3)); } if(ts>t0+.35&&ts<t0+.6) flinch=1 } const X=n===3?400:620; fig(X,flinch?P({dir:1,lean:-.3,af1:2.4,af2:1.2,ab1:2.3,ab2:1.2,air:30}):P({dir:1,af1:.9+.3*Math.sin(ts*3),af2:.6,head:.1}),1.6,O); return }
+  const row=act==='point'?470:G-66, sc=n===3?.78:1, slot=i=>act==='stack'?[1250,G-66-i*138]:[n===1?1250:1180+(i-(n-1)/2)*(n===3?380:480), row];
+  if(act==='slam'){ let flinch=0; for(let i=0;i<n;i++){ const t0=d*(i+.4)/(n+.6), k=ph(ts,t0,t0+.35), [bx,by]=slot(i); if(k>0){ bigBlock(bx,lerp(-120,by,inn(k)),w[i],cols[i%3],sc); if(k>=1&&ts<t0+.6) dust(bx,ph(ts,t0+.35,t0+.8)); if(ts>t0+.35&&ts<t0+.65) SHAKE=Math.max(SHAKE,22*(1-(ts-t0-.35)/.3)); } if(ts>t0+.35&&ts<t0+.6) flinch=1 } const X=n===3?400:620; fig(X,flinch?P({dir:1,lean:-.3,af1:2.4,af2:1.2,ab1:2.3,ab2:1.2,air:30}):P({dir:1,af1:.9+.3*Math.sin(ts*3),af2:.6,head:.1}),1.6,O); return }
   if(act==='kick'){ const [bx,by]=slot(0), tk=Math.min(d*.5,1.6); const X=lerp(560,bx-240,io(ph(ts,.2,tk))); const kk=ph(ts,tk,tk+1.1);
     fig(X,ts<tk?run(ts,2.4,{dir:1}):K(ts-tk,[[0,{dir:1,lf1:-.6,lf2:-.1,lb1:.2,af1:-.8,ab1:1.2}],[.15,{dir:1,lf1:1.6,lf2:-.1,lb1:-.3,af1:1.4,ab1:-.6,lean:-.2},'out'],[.6,{dir:1,af1:.4,ab1:.2}]]),1.6,O);
     bigBlock(bx+kk*380,by-Math.sin(kk*Math.PI)*380,w[0],cols[0],1,kk*Math.PI*2); if(kk>=1&&ts<tk+1.5) dust(bx+380,ph(ts,tk+1.1,tk+1.5)); if(kk>0&&kk<.2){ burst(bx-150,by,kk*5,90); SHAKE=20*(1-kk*5) } for(let i=1;i<n;i++){ const [cx,cy]=slot(i); bigBlock(cx,cy,w[i],cols[i%3]) } return }
@@ -40,7 +40,7 @@ S.keys=(u,ts,d,a={})=>{ cam(990,540,1); paper(); ground(); const w=a.w||['IDEA']
   if(act==='stack'){ let X=600; for(let i=0;i<n;i++){ const t0=d*(i+.3)/(n+.4), k=back(ph(ts,t0,t0+.45)); if(k>0){ bigBlock(lerp(2300,1250,k),lerp(-200,G-66-i*138,k),w[i],cols[i%3],1,(1-k)*.5); if(ts>t0+.4&&ts<t0+.65) SHAKE=Math.max(SHAKE,14) } }
     const beat=Math.floor(ts/(d/(n+.4))); fig(X,K(ts%(d/(n+.4)),[[0,{dir:1,af1:.4}],[.2,{dir:1,af1:2.7,af2:.2,air:40,lf1:.5,lb1:-.4},'out'],[.45,{dir:1,af1:1.6,af2:.1}]]),1.6,O); return }
   // point (default): blocks pop in as the character points to each
-  let X=n===3?380:600, idx=-1; for(let i=0;i<n;i++){ const t0=d*(i+.25)/(n+.3), k=back(ph(ts,t0,t0+.4)); if(ts>=t0) idx=i; if(k>0){ const [bx,by]=slot(i); bigBlock(lerp(2300,bx,k),by,w[i],cols[i%3],1,(1-k)*.3) } }
+  let X=n===3?380:600, idx=-1; for(let i=0;i<n;i++){ const t0=d*(i+.25)/(n+.3), k=back(ph(ts,t0,t0+.4)); if(ts>=t0) idx=i; if(k>0){ const [bx,by]=slot(i); bigBlock(lerp(2300,bx,k),by,w[i],cols[i%3],sc,(1-k)*.3) } }
   const ang=idx<0?.3:1.45-.22*idx; fig(X+(idx<0?0:30),P({dir:1,af1:ang,af2:.05,lean:.12+.04*Math.sin(ts*4),head:-.05}),1.6,O) };
 // ---------- vignettes
 S.angerSwitch=(u,ts,d)=>{ cam(980,560,1.05); const off1=d*.35, on2=d*.72; const on=ts<off1||ts>on2; paper(on?'#f6dcd4':PAPER); ground();
@@ -92,7 +92,7 @@ S.glassesTint=(u,ts,d)=>{ cam(980,560,1); const k=ph(ts,d*.38,d*.38+.15), k2=ph(
 S.kidCross=(u,ts,d)=>{ cam(980,560,1); paper(); ground(); x.save(); x.strokeStyle=INK; x.lineWidth=10; x.beginPath(); x.moveTo(980,G); x.lineTo(980,G-320); x.stroke(); x.restore(); block(1120,G-300,240,60,'THIS WAY →',.05,{fill:'#2f6f4f'}); block(840,G-220,240,60,'← THAT WAY',-.05,{fill:'#8a5530'});
   const lab=['FAMILY','CULTURE','HOME']; lab.forEach((t,i)=>{ const k=back(ph(ts,.3+i*.5,.7+i*.5)); if(k>0) block(380+i*120,300+i*70,190,56,t,0,{fill:'#5e5a54'}) }); quickT(980,200,'age ~10',ph(ts,.2,.5),56);
   const go=ph(ts,d*.65,d); fig(lerp(760,1350,go),go>0?walk(ts,1.6,.8,{dir:1}):P({dir:1,head:.2*Math.sin(ts*2),af1:.4+.3*Math.sin(ts*3)}),1.0,{...YOU,dir:1}) };
-S.carDrive=(u,ts,d)=>{ cam(980,560,1); paper(); ground(); const X=lerp(150,1050,io(ph(ts,.2,d*.45))); SHAKE=ts<d*.45?5:0; oldCar(X,ts,1.6,{}); for(let i=0;i<4;i++){ const c=(ts*1.5+i*.25)%1; x.save(); x.globalAlpha=(1-c)*.5; x.fillStyle='#8a8072'; x.beginPath(); x.arc(X-200-c*160,G-50-c*40,18+c*30,0,Math.PI*2); x.fill(); x.restore() } quickT(X,G-380,'FAMILIAR',1,44);
+S.carDrive=(u,ts,d)=>{ cam(980,560,1); paper(); ground(); const X=lerp(380,1050,io(ph(ts,.2,d*.45))); SHAKE=ts<d*.45?5:0; oldCar(X,ts,1.6,{}); for(let i=0;i<4;i++){ const c=(ts*1.5+i*.25)%1; x.save(); x.globalAlpha=(1-c)*.5; x.fillStyle='#8a8072'; x.beginPath(); x.arc(X-200-c*160,G-50-c*40,18+c*30,0,Math.PI*2); x.fill(); x.restore() } quickT(X,G-380,'FAMILIAR',1,44);
   x.save(); x.globalAlpha=.55; x.fillStyle='#d9dee3'; x.fillRect(1340,G-420,460,420); x.restore(); quickT(1570,G-200,'?',1,140); quickT(1570,G-460,'NEW: unknown',ph(ts,.4,.9),44) };
 S.ifOnlyFlood=(u,ts,d)=>{ cam(980,540,1); paper(); ground(); const n=Math.floor(ph(ts,.2,d*.85)*22); for(let i=0;i<n;i++){ const bx=200+((i*397)%1500), by=160+((i*211)%520); thought(bx,by,300,110,1); quickT(bx,by+14,'IF ONLY...',1,34) }
   fig(980,P({af1:2.6,af2:2.4,ab1:2.5,ab2:2.4,lean:.15,head:.3}),1.6,YOU) };
