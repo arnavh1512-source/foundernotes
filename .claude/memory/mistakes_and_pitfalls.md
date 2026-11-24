@@ -135,3 +135,11 @@ The initial entries preserve documented observations from the 2026-11-11 study a
 - Cause / rationale: Character gestures barely change frame pixels, so zoom cuts were used to lift qc_video's fast-motion ratio.
 - Correction / recipe: Use character-led action beats and new mini-scenes (S.duo, S.keys, vignettes), fast-moving objects, meaningful background changes and impact jolts; estimate with tools/estall.sh before rendering.
 - Verification: Render 2026-11-22 qc.json fast-motion 0.0400 with no zoom pulsing; owner then asked only for gesture variety.
+
+### night-1-part-2 — Edge-clipped text and blocks (GIVING UP, FAMILIAR, still driving?) and a label under the caption band were found only after a 75-minute render, forcing another render; the owner lost the time twice.
+
+- Recorded (UTC): 2026-11-24T06:03:03+00:00
+- Evidence: Full-file frame check 2026-11-23 at 5:06, 10:42, 14:24, 7:54; owner message 2026-11-24.
+- Cause / rationale: Frames were spot-checked at a few times before rendering instead of all of them; 3-word block rows and moving props were never checked at their extremes.
+- Correction / recipe: Run tools/precheck.sh (a frame every 3 s) and review every sheet before any full render; for late fixes use tools/patch.sh to re-render only the changed shots.
+- Verification: Fixes confirmed on 25 engine frames across the five affected shots; patch splice render in progress.
