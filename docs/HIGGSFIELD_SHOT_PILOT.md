@@ -42,6 +42,10 @@ Add this entry to `window.SHOTS2` in the episode's `film/shots.js`. Replace `att
 
 The scene uses a locked camera and scales its action to the narration span. The hand pauses before contact, holds the phone joint through the turn, then releases it in the original position. Save a frame near 43% of the shot for the grip and near 56% for the turn if an external comparison is available. Review at playback speed before using the shot.
 
+## Test the prop attachment on a second object
+
+Use `{seg: 'attention', a: 0, b: 1, n: 'cupPause'}` to lift a cup, hold it, and set it back on the table. The scene uses the same hand attachment as `phonePause`. It uses the cup handle as the grip point and switches back to the fixed table position when the character releases it.
+
 ## Make the comparison
 
 Export a 30 fps baseline excerpt with its approved soundtrack and clean picture. Use the same caption track on both versions during review. This example replaces five seconds beginning at frame 180 of the excerpt.
