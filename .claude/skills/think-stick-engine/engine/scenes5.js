@@ -107,3 +107,58 @@ S.forkRoad=(u,ts,d)=>{ cam(980,560,1); paper(); ground(); x.save(); x.strokeStyl
   fig(X,p,1.2,{...YOU,y:(Y??G)-112*1.2}) };
 S.spotNow=(u,ts,d)=>{ cam(980,560,1); const k=ph(ts,.2,.45); paper(); ground(); wash('#14161a',.82*k); x.save(); x.globalCompositeOperation='lighter'; const g=x.createRadialGradient(980,G-200,40,980,G-200,420); g.addColorStop(0,`rgba(255,226,150,${.55*k})`); g.addColorStop(1,'rgba(255,226,150,0)'); x.fillStyle=g; x.fillRect(400,0,1200,1080); x.restore();
   fig(980,K(ts,[[0,{}],[d*.5,{}],[d*.7,{af1:1.0,af2:-.4,ab1:1.0,ab2:-.4,head:-.15,lean:-.05},'back'],[d,{af1:.9,af2:-.3,ab1:.9,ab2:-.3,head:-.1}]]),1.6,YOU); x.save(); x.globalAlpha=ph(ts,d*.4,d*.6); x.fillStyle='#f6f2e9'; x.font='700 56px Inst'; x.textAlign='center'; x.fillText('YOU decide. HERE and NOW.',980,200); x.restore() };
+
+// A locked shot with an explicit reach, hesitation, grip, turn and release.
+S.phonePause=(u,ts,d)=>{
+  cam(950,555,1.18);
+  paper();
+  ground();
+
+  const grip={lean:.22,head:.2,af1:.9,af2:.38};
+  const deskPose={lean:.12,head:.08,af1:.38,af2:.7};
+  const turning=ts>=d*.43&&ts<=d*.7;
+  const pose=K(ts,[
+    [0,deskPose],
+    [d*.29,{...grip,af1:.75,af2:.32}],
+    [d*.39,{...grip,af1:.75,af2:.32}],
+    [d*.43,grip],
+    [d*.56,{...grip,af1:1.06,af2:.55}],
+    [d*.7,grip],
+    [d*.86,deskPose],
+  ]);
+  pose.hF=turning?'fist':'hand';
+
+  const bodyX=820, bodyY=753, scale=1.65;
+  // Derive the parked prop position from the same geometry as the grip pose.
+  const restX=bodyX+scale*(.9*TL*Math.sin(grip.lean)+UA*Math.sin(grip.af1)+FA*Math.sin(grip.af1+grip.af2))+27;
+  const restY=bodyY+scale*(-.88*TL*Math.cos(grip.lean)+UA*Math.cos(grip.af1)+FA*Math.cos(grip.af1+grip.af2));
+  table(935,390,G-restY-13);
+
+  x.save();
+  x.fillStyle='#faf5e8';
+  x.fillRect(restX+82,restY-15,110,26);
+  x.strokeStyle=LINE;
+  x.beginPath();
+  x.moveTo(restX+135,restY-15);
+  x.lineTo(restX+135,restY+11);
+  x.stroke();
+  x.restore();
+
+  const joints=fig(bodyX,pose,scale,{...YOU,dir:1,y:bodyY,noTalk:true,expr:ts<d*.7?'thinking':'calm'});
+  const progress=io(ph(ts,d*.43,d*.7));
+  const flip=Math.cos(Math.PI*progress);
+  const buzz=ts>d*.08&&ts<d*.17?3*Math.sin(ts*85):0;
+  const phoneX=turning?joints.hf[0]+27:restX+buzz;
+  const phoneY=turning?joints.hf[1]:restY;
+
+  x.save();
+  x.translate(phoneX,phoneY);
+  x.scale(1,Math.max(.14,Math.abs(flip)));
+  x.fillStyle=INK;
+  x.fillRect(-27,-11,54,22);
+  if(flip>0){
+    x.fillStyle='#86aebc';
+    x.fillRect(-22,-7,44,14);
+  }
+  x.restore();
+};
