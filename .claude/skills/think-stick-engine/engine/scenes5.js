@@ -181,8 +181,11 @@ function heldPropPosition(rest, hand, offset) {
 }
 
 // The student lifts a cup, waits a beat, and sets it down in the same place.
-S.cupPause=(u,ts,d)=>{
-  cam(950,555,1.18);
+S.cupPause=(u,ts,d,a={})=>{
+  // Cut on the approach and the return while keeping the same action clock.
+  if(a.coverage&&u>=.6) cam(905,495,1.85);
+  else if(a.coverage&&u>=.23) cam(995,575,2.65);
+  else cam(950,555,1.18);
   paper();
   ground();
 
