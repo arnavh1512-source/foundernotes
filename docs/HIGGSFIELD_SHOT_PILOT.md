@@ -46,6 +46,10 @@ The scene uses a locked camera and scales its action to the narration span. The 
 
 Use `{seg: 'attention', a: 0, b: 1, n: 'cupPause'}` to lift a cup, hold it, and set it back on the table. The scene uses the same hand attachment as `phonePause`. It uses the cup handle as the grip point and switches back to the fixed table position when the character releases it.
 
+## Use three camera setups for the same action
+
+Add `args: {coverage: true}` to the `cupPause` shot entry for a wide setup, a tighter view of the grip and lift, and a medium frame for the set-down and reaction. The cuts occur at 23% and 60% of the shot. Both versions use the same poses and prop attachment. In a five-second test, the cuts land at about 1.17 and 3.00 seconds at 30 fps.
+
 ## Make the comparison
 
 Export a 30 fps baseline excerpt with its approved soundtrack and clean picture. Use the same caption track on both versions during review. This example replaces five seconds beginning at frame 180 of the excerpt.
