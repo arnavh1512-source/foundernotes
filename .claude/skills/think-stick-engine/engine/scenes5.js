@@ -148,8 +148,7 @@ S.phonePause=(u,ts,d)=>{
   const progress=io(ph(ts,d*.43,d*.7));
   const flip=Math.cos(Math.PI*progress);
   const buzz=ts>d*.08&&ts<d*.17?3*Math.sin(ts*85):0;
-  const phoneX=turning?joints.hf[0]+27:restX+buzz;
-  const phoneY=turning?joints.hf[1]:restY;
+  const [phoneX,phoneY]=heldPropPosition([restX+buzz,restY],turning?joints.hf:null,[27,0]);
 
   if(buzz){
     x.save();
@@ -173,5 +172,49 @@ S.phonePause=(u,ts,d)=>{
     x.fillStyle='#86aebc';
     x.fillRect(-22,-7,44,14);
   }
+  x.restore();
+};
+
+// Props use a world-space rest position and an offset from the drawn grip.
+function heldPropPosition(rest, hand, offset) {
+  return hand ? [hand[0]+offset[0], hand[1]+offset[1]] : rest;
+}
+
+// The student lifts a cup, waits a beat, and sets it down in the same place.
+S.cupPause=(u,ts,d)=>{
+  cam(950,555,1.18);
+  paper();
+  ground();
+
+  const restPose={lean:.12,head:.08,af1:.38,af2:.7};
+  const grip={lean:.22,head:.14,af1:.9,af2:.38};
+  const raised={lean:.1,head:-.12,af1:1.05,af2:.88};
+  const holding=ts>=d*.26&&ts<=d*.73;
+  const pose=K(ts,[
+    [0,restPose],
+    [d*.26,grip],
+    [d*.43,raised],
+    [d*.58,raised],
+    [d*.73,grip],
+    [d*.92,restPose],
+  ]);
+  pose.hF=holding?'fist':'hand';
+
+  const bodyX=820, bodyY=636, scale=1.65;
+  const cupScale=1.4;
+  const cupOffset=[27*cupScale,15*cupScale];
+  const gripAtRest=[
+    bodyX+scale*(.9*TL*Math.sin(grip.lean)+UA*Math.sin(grip.af1)+FA*Math.sin(grip.af1+grip.af2)),
+    bodyY+scale*(-.88*TL*Math.cos(grip.lean)+UA*Math.cos(grip.af1)+FA*Math.cos(grip.af1+grip.af2)),
+  ];
+  const cupRest=heldPropPosition(null,gripAtRest,cupOffset);
+  table(935,390,G-cupRest[1]);
+
+  const joints=fig(bodyX,pose,scale,{...YOU,dir:1,y:bodyY,noTalk:true,expr:holding?'thinking':'calm'});
+  const [cx,cy]=heldPropPosition(cupRest,holding?joints.hf:null,cupOffset);
+  x.save();
+  x.translate(cx,cy);
+  x.scale(-1,1);
+  cup(0,0,cupScale,0);
   x.restore();
 };
