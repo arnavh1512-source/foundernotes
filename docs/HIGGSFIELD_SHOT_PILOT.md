@@ -8,6 +8,13 @@ Use the existing 20–40 second narrated treatment comparison. Test one characte
 - Higgsfield's public guides describe locking a storyboard and using reusable character and location references, then choosing the framing and one camera move per shot. [Storyboard workflow](https://higgsfield.ai/blog/script-to-ai-storyboard-shot-list) · [Cinema Studio controls](https://higgsfield.ai/blog/cinema-studio-4-0-complete-guide)
 - Its documented Kling image-to-video workflow requires an opening image and accepts ordered intermediate keyframes and an optional ending frame. [API reference](https://open.higgsfield.ai/models/kling-video/v4.0/image-to-video/api-reference)
 
+## Live public workspace check
+
+- The public Cinema Studio video workspace exposes separate references, elements, film setup, camera, palette, lighting, and camera movement controls. Output defaults observed were 1080p, 16:9, five seconds and one variant. The Generate button displayed 80 next to its credit icon. These are observed settings, which can change. [Cinema Studio](https://higgsfield.ai/generate)
+- Opening camera movement required sign-in. The sign-in screen requires users to confirm they are at least 18. The live check ended there, without submitting a generation.
+- A targeted REA retry on the 321,326-byte public runtime module parsed its syntax but reached the member-mutation analysis limit and produced zero findings. Evidence ID `ev_d24cef3e154c7361dd3d33e33bfe77228230c707f56ce05cec1971a3d81f6ebc`.
+- For the Think! pilot, save references and visual defaults at episode level, then record framing, camera intent and the physical contact pose on the individual shot. Keep the generated-video comparison optional and use the same shot brief for a local engine treatment.
+
 ## Copy into the storyboard for the candidate shot
 
 | Field | Example |
