@@ -32,6 +32,16 @@ Use the existing 20–40 second narrated treatment comparison. Test one characte
 
 Compare two generations with the same model, prompt, duration and framing. Use the original opening and ending frames in both. Add the intermediate contact pose in the second generation to test whether it improves the grip and turn. Cue each downloaded clip to the first usable frame before comparison. Keep each clip's source and settings in the production ledger.
 
+## Run the local stick-engine scene
+
+Add this entry to `window.SHOTS2` in the episode's `film/shots.js`. Replace `attention` with the measured segment ID from `timing.js`.
+
+```js
+{seg: 'attention', a: 0, b: 1, n: 'phonePause'}
+```
+
+The scene uses a locked camera and scales its action to the narration span. The hand pauses before contact, holds the phone joint through the turn, then releases it in the original position. Save a frame near 43% of the shot for the grip and near 56% for the turn if an external comparison is available. Review at playback speed before using the shot.
+
 ## Make the comparison
 
 Export a 30 fps baseline excerpt with its approved soundtrack and clean picture. Use the same caption track on both versions during review. This example replaces five seconds beginning at frame 180 of the excerpt.
