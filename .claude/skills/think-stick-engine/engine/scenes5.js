@@ -128,7 +128,7 @@ S.phonePause=(u,ts,d)=>{
   ]);
   pose.hF=turning?'fist':'hand';
 
-  const bodyX=820, bodyY=753, scale=1.65;
+  const bodyX=820, bodyY=636, scale=1.65;
   // Derive the parked prop position from the same geometry as the grip pose.
   const restX=bodyX+scale*(.9*TL*Math.sin(grip.lean)+UA*Math.sin(grip.af1)+FA*Math.sin(grip.af1+grip.af2))+27;
   const restY=bodyY+scale*(-.88*TL*Math.cos(grip.lean)+UA*Math.cos(grip.af1)+FA*Math.cos(grip.af1+grip.af2));
@@ -150,6 +150,19 @@ S.phonePause=(u,ts,d)=>{
   const buzz=ts>d*.08&&ts<d*.17?3*Math.sin(ts*85):0;
   const phoneX=turning?joints.hf[0]+27:restX+buzz;
   const phoneY=turning?joints.hf[1]:restY;
+
+  if(buzz){
+    x.save();
+    x.strokeStyle=RED;
+    x.lineWidth=3;
+    x.beginPath();
+    x.arc(restX-29,restY,9,Math.PI*.72,Math.PI*1.28);
+    x.stroke();
+    x.beginPath();
+    x.arc(restX+29,restY,9,-Math.PI*.28,Math.PI*.28);
+    x.stroke();
+    x.restore();
+  }
 
   x.save();
   x.translate(phoneX,phoneY);
