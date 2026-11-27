@@ -1,7 +1,7 @@
 // backgrounds.js: locations that follow the script. Drawn in world coordinates by paper() (scenes that pass their own tone keep it).
 // study = the philosopher's library at night; cafe; home (the mother's living room); street; greek; mind = idea space, tinted per chapter.
 const BGMAP={};
-['duo','study2','lookStudy','phtalk','ymtalk','philCalm','likeSelf','outOfQ','sitdown2','coffeeAgain','knife','extreme','impulse','accuse','resolved','aha','gotcha',
+['duo','study2','lookStudy','phtalk','ymtalk','philCalm','likeSelf','outOfQ','sitdown2','phonePause','cupPause','coffeeAgain','knife','extreme','impulse','accuse','resolved','aha','gotcha',
  'fairness','youChose','cantAccept','onSpot','shattered','tooTough','medicine','allMyFault','glare','decide','headBurst','comeBack'].forEach(k=>BGMAP[k]='study');
 ['cafe','explode','blame','cafeVienna','coffeeEnd'].forEach(k=>BGMAP[k]='cafe');
 ['mom','phone','hangup','bookpile','bookAvalanche','mirror','mirrorY','novelist','novelistClock','drawerLock'].forEach(k=>BGMAP[k]='home');
