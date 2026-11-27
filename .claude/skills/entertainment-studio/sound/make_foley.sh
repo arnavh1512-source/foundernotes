@@ -28,8 +28,14 @@ g crunch "0.6*(random(5)*2-1)*(exp(-22*t)+0.6*gt(t,0.07)*exp(-25*(t-0.07))+0.4*g
 g spring "0.6*sin(2*PI*(420+260*sin(2*PI*22*t))*t)*exp(-9*t)+0.3*(random(6)*2-1)*exp(-70*t)" 0.35 "highpass=f=200"
 # a phone vibrating on a hard counter: pulsed 170 Hz with harmonics (phone-audible), plus the rattle of the surface
 g buzz "(0.5*sin(2*PI*170*t)+0.35*sin(2*PI*340*t)+0.2*sin(2*PI*510*t)+0.08*(random(8)*2-1))*gt(mod(t,0.3),0)*lt(mod(t,0.3),0.19)" 0.6 "lowpass=f=2400"
+# a kettle whistle: breathy, warbling (A05)
+g whistle "(0.5*sin(2*PI*(2050+45*sin(2*PI*6*t))*t)*(0.75+0.25*sin(2*PI*11*t))+0.18*(random(9)*2-1))*(1-exp(-25*t))" 1.6 "bandpass=f=2100:width_type=h:w=1400"
+# mic feedback from the sound check: a purer, harsher tone that slowly rises and beats (A05)
+g squeal "(0.45*sin(2*PI*(2950+60*t+12*sin(2*PI*3*t))*t)+0.18*sin(2*PI*(5900+120*t)*t))*(1-exp(-5*t))*(0.85+0.15*sin(2*PI*7*t))" 5.0 "lowpass=f=7000"
+# a knuckle knock on metal: two quick taps, bright partials that ring briefly (A05)
+g knock "(0.6*sin(2*PI*1750*t)+0.4*sin(2*PI*3100*t)+0.25*sin(2*PI*420*t)+0.3*(random(4)*2-1)*exp(-300*t))*(exp(-38*t)+0.7*gt(t,0.11)*exp(-38*(t-0.11)))" 0.35 "highpass=f=200"
 # peak-normalise every sound to -3 dB so the cue gains in workspace.json are the only level control
-for f in boom bass rattle squelch splat creak snap boing plop beep crunch spring buzz; do
+for f in boom bass rattle squelch splat creak snap boing plop beep crunch spring buzz whistle squeal knock; do
   mx=$(ffmpeg -nostats -i "$f.wav" -af volumedetect -f null - 2>&1 | sed -n 's/.*max_volume: \([-0-9.]*\) dB/\1/p')
   ffmpeg -v error -y -i "$f.wav" -af "volume=$(python3 -c "print(-3-($mx))")dB" $S "$f.tmp.wav" && mv "$f.tmp.wav" "$f.wav"
 done

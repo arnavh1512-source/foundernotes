@@ -12,7 +12,7 @@ from pathlib import Path
 import numpy as np
 from PIL import Image, ImageDraw
 
-SHARP_KINDS = {"boom", "bass", "thunk", "splat", "snap", "plop", "ting", "pop", "ding", "boing", "squelch", "crunch", "spring", "beep", "buzz"}
+SHARP_KINDS = {"boom", "bass", "thunk", "splat", "snap", "plop", "ting", "pop", "ding", "boing", "squelch", "crunch", "spring", "beep", "buzz", "knock"}
 
 
 def onsets(samples, sr, rise_db=9.0, floor_db=-40.0, gap=0.08):
