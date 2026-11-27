@@ -64,3 +64,36 @@ Measured on `choking-under-pressure`, 62 s, QC status WARN.
 - Visual notes come from sampled frames, not a full viewing.
 - The look and characters are theirs. Borrow structure and pacing only; all artwork stays original (see `explanation-first-visual-direction.md`).
 - Burned-in subtitles and on-screen citations remain channel rules even though the references use neither.
+
+## 2026-11-27: four owner-supplied clips vs Night 1 Part 2
+
+Files supplied by the owner (`studio-output/_references/clips/`, not committed): ref1 "DISCIPLINE" (2.6 min, dark short film, DayOne-like), ref2 "Psychology of Verbal…" (14.4 min) and ref3 "Psychology of Discipline" (14.7 min, no audio in the file) in a PsychToons/PsychDoodle-like hand-drawn style, ref4 "Trial Chamber" (31 s vertical, no audio, Alan Becker-like action). Measured with ffmpeg scene detection (threshold 0.30) and a frame-difference count at 4 fps, 160x90 px; visuals from sampled contact sheets.
+
+| Clip | Cuts/min | Avg shot | Median moving area | Near-still frame pairs |
+|---|---|---|---|---|
+| ref1 | 1.9 | 32 s | 2.5% | 4% |
+| ref2 | 21.0 | 2.9 s | 0% | 90% |
+| ref3 | 15.1 | 4.0 s | 0% | 91% |
+| ref4 | 0 (one moving camera) | 31 s | 54% | 0% |
+| Night 1 Part 2 | 7.4 | 8.2 s | 1.3% | 10% |
+
+What the frames show:
+1. **ref2/ref3: one new drawing per idea, every 3–4 s.** The drawings barely move; the change of picture carries the attention. Each sentence gets its own visual metaphor (tangled yarn for a thought, a FIXABLE/BROKEN signpost, a tiny figure beside a giant bookshelf, a numbered checklist card, a name banner for a cited author, an A report card, a trophy).
+2. **Framing varies on purpose:** wide shots with a tiny figure, mid shots, big head close-ups with the brain shown, object-only inserts (a sheet of paper, a pencil erasing words).
+3. **Backgrounds are simple flat colour bands that change every shot**, not one detailed room reused. Faces are minimal and readable.
+4. **Very little on-screen text:** one or two big words at the top (TRANSLATION, VERBAL INTELLIGENCE, a number). No visible burned captions in the sampled frames.
+5. **ref1** builds a story arc with a day counter (DAY 1 … DAY 340), the inner critic drawn as a red shadow figure, a mirror as a recurring image, sparse lowercase red text for the critic's voice, and a closing title card. Long takes work because each frame is a staged moment with mood lighting.
+6. **ref4** is one continuous camera move down a tall level with the whole frame active: action, particles, enemies. The lesson for our Shorts is to fill the vertical frame with motion.
+
+Night 1 Part 2 by contrast: the same wide study shot recurs often, characters are small in frame, and abstract ideas mostly appear as gears and labelled blocks beside a standing figure.
+
+Candidates to test on Night 2 (pilot first; not proof of what drives views):
+- Aim for 15–20 shot changes a minute: one new picture per sentence or idea, average shot 3–4 s.
+- Give each idea its own visual metaphor drawn for it, instead of reusing the room.
+- Mix wide / mid / close-up / object-insert framings, and cut back to the room only for dialogue.
+- For abstract beats, swap the detailed room for flat colour-band backgrounds that change per shot.
+- Keep on-screen words to one or two big words per idea. Captions stay (channel rule).
+- Give recurring images a story job (a day counter, an inner critic figure, a mirror) where the topic suits it.
+- Shorts: action or camera movement across the whole vertical frame.
+
+Limits: four clips from at most three channels; ref3 and ref4 files have no audio, so sound was not compared for them. Visual notes come from sampled frames, not full viewings. The rea-video breakdowns were still running at the time of writing. Borrow structure and pacing only; all artwork stays original.
