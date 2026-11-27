@@ -72,6 +72,8 @@ def check(ws):
             d = next(s["dur"] for s in resolve(m, vid) if s["id"] == c["shot"])
             if not 0 <= c.get("t", -1) < d:
                 err.append(f"cue {c['id']} at {c.get('t')}s falls outside {c['shot']} ({d}s) in variant {vid}")
+        if "dur" in c and not (isinstance(c["dur"], (int, float)) and c["dur"] > 0):
+            err.append(f"cue {c['id']}: dur must be a positive number of seconds")
         if c.get("temporary") and not c.get("note"):
             err.append(f"cue {c['id']} is temporary but has no note saying why")
     if err:

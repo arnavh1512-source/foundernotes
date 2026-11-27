@@ -108,6 +108,20 @@ def duration(p):
     return float(subprocess.check_output(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", str(p)]).decode())
 
 
+def cue_file(ws, cue):
+    """A cue's sound: the episode's own sound/ folder first (its foley), then the shared CC0 bank."""
+    files = sorted((Path(ws) / "sound").glob(f"{cue['kind']}*.wav")) or sorted(SFX.glob(f"{cue['kind']}*.wav"))
+    if not files:
+        raise SystemExit(f"cue {cue.get('id')}: no sound named {cue['kind']}* in sound/ or the shared bank")
+    return files[cue.get("pick", 0) % len(files)]
+
+
+def cue_filter(i, cue, ms):
+    """One cue's chain: optional cut to cue['dur'] (with a 30 ms fade, so a sound can stop on an action), delay, gain."""
+    cut = f"atrim=0:{cue['dur']},afade=t=out:st={max(0, cue['dur'] - 0.03):.3f}:d=0.03," if cue.get("dur") else ""
+    return f"[{i}]{cut}adelay={ms}|{ms},volume={cue.get('gain', 1.0)}[a{i}]"
+
+
 def build_audio(ws, m, shots, clips, out):
     """Cues at shot start + local time; a quiet room tone keeps holds from being dead air."""
     starts, t = {}, 0.0
@@ -116,10 +130,10 @@ def build_audio(ws, m, shots, clips, out):
         t += duration(c)
     total, ins, flt = t, [], []
     for i, c in enumerate(m["audio_cues"]):
-        f = sorted(SFX.glob(f"{c['kind']}*.wav"))[c.get("pick", 0)]
+        f = cue_file(ws, c)
         ins += ["-i", str(f)]
         ms = int(round((starts[c["shot"]] + c["t"]) * 1000))
-        flt.append(f"[{i}]adelay={ms}|{ms},volume={c.get('gain', 1.0)}[a{i}]")
+        flt.append(cue_filter(i, c, ms))
     n = len(m["audio_cues"])
     flt.append(f"anoisesrc=d={total:.3f}:c=brown:a=0.03,lowpass=f=700,highpass=f=60[rt]")
     flt.append("".join(f"[a{i}]" for i in range(n)) + f"[rt]amix=inputs={n + 1}:normalize=0,atrim=0:{total:.3f},"

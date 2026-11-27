@@ -114,5 +114,28 @@ class EpCheck(unittest.TestCase):
             self.assertTrue(any("timestamps" in e for e in errs))
 
 
+
+class CueFiles(unittest.TestCase):
+    def test_episode_foley_comes_before_the_shared_bank(self):
+        with tempfile.TemporaryDirectory() as td:
+            ws = Path(td); (ws / "sound").mkdir()
+            (ws / "sound/thunk-own.wav").write_bytes(b"x")
+            self.assertEqual(ep_build.cue_file(ws, {"kind": "thunk"}).name, "thunk-own.wav")
+            self.assertTrue(ep_build.cue_file(ws, {"kind": "whoosh"}).is_relative_to(ep_build.SFX))
+            with self.assertRaises(SystemExit):
+                ep_build.cue_file(ws, {"id": "C9", "kind": "nosuchsound"})
+
+    def test_a_cue_can_stop_on_an_action(self):
+        self.assertNotIn("atrim", ep_build.cue_filter(0, {"kind": "creak"}, 500))
+        f = ep_build.cue_filter(2, {"kind": "creak", "dur": 0.5, "gain": 0.6}, 6750)
+        self.assertTrue(f.startswith("[2]atrim=0:0.5,afade=t=out:st=0.470"))
+        self.assertIn("adelay=6750|6750,volume=0.6[a2]", f)
+
+    def test_cue_length_must_be_positive(self):
+        with tempfile.TemporaryDirectory() as td:
+            ws, m = workspace(td)
+            m["audio_cues"][0]["dur"] = 0; save(ws, m)
+            self.assertTrue(any("dur must be" in e for e in check(ws)))
+
 if __name__ == "__main__":
     unittest.main()
