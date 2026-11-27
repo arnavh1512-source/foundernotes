@@ -37,6 +37,7 @@ jobs:
       - name: Run studio preflight, evaluation, and audio download regression tests
         run: |
           python -m unittest discover -s .claude/skills/think-stick-engine/tests -p "test_engine.py" -v
+          python -m unittest discover -s .claude/skills/podcast-scout-skill/tests -p "test_narrator_cache_key.py" -v
           python -m unittest discover -s .claude/skills/podcast-scout-skill/tests -p "test_creative_router.py" -v
           python -m unittest discover -s .claude/skills/podcast-scout-skill/tests -p "test_lint_scenes.py" -v
           python -m unittest discover -s .claude/skills/podcast-scout-skill/tests -p "test_skill_evaluation_memory.py" -v
