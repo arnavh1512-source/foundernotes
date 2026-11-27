@@ -121,10 +121,23 @@ def build_audio(ws, m, shots, clips, out):
         ms = int(round((starts[c["shot"]] + c["t"]) * 1000))
         flt.append(f"[{i}]adelay={ms}|{ms},volume={c.get('gain', 1.0)}[a{i}]")
     n = len(m["audio_cues"])
-    flt.append(f"anoisesrc=d={total:.3f}:c=pink:a=0.004,lowpass=f=900[rt]")
-    flt.append("".join(f"[a{i}]" for i in range(n)) + f"[rt]amix=inputs={n + 1}:normalize=0,atrim=0:{total:.3f}[o]")
-    subprocess.run(["ffmpeg", "-v", "error", "-y", *ins, "-filter_complex", ";".join(flt), "-map", "[o]", "-ar", "48000", "-ac", "2", str(out)], check=True)
+    flt.append(f"anoisesrc=d={total:.3f}:c=brown:a=0.03,lowpass=f=700,highpass=f=60[rt]")
+    flt.append("".join(f"[a{i}]" for i in range(n)) + f"[rt]amix=inputs={n + 1}:normalize=0,atrim=0:{total:.3f},"
+               "acompressor=threshold=0.1:ratio=4:attack=3:release=150:makeup=2,alimiter=limit=0.7[o]")  # tame transients so assembly can reach -14 LUFS
+    raw = out.with_name(out.stem + "-raw.wav")
+    subprocess.run(["ffmpeg", "-v", "error", "-y", *ins, "-filter_complex", ";".join(flt), "-map", "[o]", "-ar", "48000", "-ac", "2", str(raw)], check=True)
+    normalize(raw, out)
     return starts, total
+
+
+def normalize(src, dst, lufs=-14.0, tp=-1.5):
+    """Measured two-pass loudnorm. assemble.py's single pass undershoots on short clips with sparse cues."""
+    r = subprocess.run(["ffmpeg", "-hide_banner", "-nostats", "-i", str(src), "-af", f"loudnorm=I={lufs}:TP={tp}:LRA=11:print_format=json", "-f", "null", "-"],
+                       capture_output=True, text=True, check=True)
+    j = json.loads(r.stderr[r.stderr.rindex("{"):r.stderr.rindex("}") + 1])
+    af = (f"loudnorm=I={lufs}:TP={tp}:LRA=11:linear=true:measured_I={j['input_i']}:measured_TP={j['input_tp']}"
+          f":measured_LRA={j['input_lra']}:measured_thresh={j['input_thresh']}:offset={j['target_offset']}")
+    subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(src), "-af", af, "-ar", "48000", str(dst)], check=True)
 
 
 def build(ws):
