@@ -53,6 +53,16 @@ def low_share(path, cutoff=150.0):
     return round(float(100 * p[f < cutoff].sum() / max(p.sum(), 1e-12)), 1)
 
 
+def still_share(video, thresh=10, moved=0.05, step=1):
+    """Percent of frame-to-frame steps where (almost) nothing in the picture changes. The 2026-11-27 reference moved on
+    769 of 779 steps: even its holds keep something alive."""
+    raw = subprocess.run(["ffmpeg", "-v", "error", "-i", str(video), "-vf", "scale=180:320,format=gray", "-f", "rawvideo", "-"],
+                         check=True, capture_output=True).stdout
+    v = np.frombuffer(raw, np.uint8).reshape(-1, 320, 180).astype(np.int16)
+    d = (np.abs(v[step:] - v[:-step]) > thresh).mean(axis=(1, 2)) * 100   # step 2 for work animated on twos
+    return round(float((d < moved).mean() * 100), 1) if len(d) else 0.0
+
+
 def frame_at(video, t, out):
     subprocess.run(["ffmpeg", "-v", "error", "-y", "-ss", f"{max(0, t):.3f}", "-i", str(video), "-frames:v", "1", str(out)], check=True)
     return Image.open(out).convert("RGB")
@@ -92,13 +102,14 @@ def review(ws, take_id=None):
         f = ep_build.cue_file(ws, c)
         phone.setdefault(f.name, low_share(f))
     phone_flags = sorted(k for k, v in phone.items() if v > 85)
-    report = {"take": take["id"], "phone_low_share_pct": phone, "phone_flags": phone_flags, "duration": dur, "loop": m.get("loop", False), "loop_seam_pct": loop,
+    still = still_share(video, step=2 if m.get("twos") else 1)
+    report = {"take": take["id"], "still_steps_pct": still, "phone_low_share_pct": phone, "phone_flags": phone_flags, "duration": dur, "loop": m.get("loop", False), "loop_seam_pct": loop,
               "loop_ok": (loop < 1.0) if m.get("loop") else None,
               "sync_ok": sum(r["ok"] for r in sync), "sync_total": len(sync), "sync": sync,
               "note": "measured, not watched: misses can be soft swells or cues that start inside a louder sound"}
     (ws / "review/auto-review.json").write_text(json.dumps(report, indent=1) + "\n")
     print(f"{take['id']}: {dur}s  loop seam {loop}%{' (ok)' if report['loop_ok'] else '' if report['loop_ok'] is None else ' (CHECK)'}"
-          f"  sync {report['sync_ok']}/{report['sync_total']} within 50 ms  -> review/auto-review.json, review/safezones.jpg")
+          f"  sync {report['sync_ok']}/{report['sync_total']} within 50 ms  still {still}%  -> review/auto-review.json, review/safezones.jpg")
     for k in phone_flags:
         print(f"  phone: {k} has {phone[k]}% of its energy below 150 Hz: near-silent on phone speakers")
     for r in sync:

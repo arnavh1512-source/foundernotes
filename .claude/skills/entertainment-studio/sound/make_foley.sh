@@ -34,8 +34,12 @@ g whistle "(0.5*sin(2*PI*(2050+45*sin(2*PI*6*t))*t)*(0.75+0.25*sin(2*PI*11*t))+0
 g squeal "(0.45*sin(2*PI*(2950+60*t+12*sin(2*PI*3*t))*t)+0.18*sin(2*PI*(5900+120*t)*t))*(1-exp(-5*t))*(0.85+0.15*sin(2*PI*7*t))" 5.0 "lowpass=f=7000"
 # a knuckle knock on metal: two quick taps, bright partials that ring briefly (A05)
 g knock "(0.6*sin(2*PI*1750*t)+0.4*sin(2*PI*3100*t)+0.25*sin(2*PI*420*t)+0.3*(random(4)*2-1)*exp(-300*t))*(exp(-38*t)+0.7*gt(t,0.11)*exp(-38*(t-0.11)))" 0.35 "highpass=f=200"
+# a soft bell for a label appearing (reference study 2026-11-27: a ding on each new label)
+g ding "(0.6*sin(2*PI*1320*t)+0.3*sin(2*PI*2640*t)+0.12*sin(2*PI*3960*t))*exp(-9*t)*(1-exp(-400*t))" 0.6 "highpass=f=300"
+# a tape-rewind whir: fast chattering, pitch sweeping up
+g rewind "(0.45*sin(2*PI*(700+900*t)*t)*(0.6+0.4*sin(2*PI*38*t))+0.25*(random(5)*2-1)*(0.5+0.5*sin(2*PI*38*t)))*(1-exp(-30*t))" 1.4 "bandpass=f=1600:width_type=h:w=2200"
 # peak-normalise every sound to -3 dB so the cue gains in workspace.json are the only level control
-for f in boom bass rattle squelch splat creak snap boing plop beep crunch spring buzz whistle squeal knock; do
+for f in boom bass rattle squelch splat creak snap boing plop beep crunch spring buzz whistle squeal knock ding rewind; do
   mx=$(ffmpeg -nostats -i "$f.wav" -af volumedetect -f null - 2>&1 | sed -n 's/.*max_volume: \([-0-9.]*\) dB/\1/p')
   ffmpeg -v error -y -i "$f.wav" -af "volume=$(python3 -c "print(-3-($mx))")dB" $S "$f.tmp.wav" && mv "$f.tmp.wav" "$f.wav"
 done

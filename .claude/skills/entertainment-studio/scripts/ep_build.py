@@ -17,6 +17,8 @@ ENGINE = REPO / ".claude/skills/think-stick-engine/engine"
 RENDER = REPO / ".claude/skills/motion/scripts/render.mjs"
 SCRIPTS = REPO / ".claude/skills/podcast-scout-skill/scripts"
 FONTS = REPO / ".claude/skills/podcast-scout-skill/assets/ink-gold-kit/fonts"
+OVERLAY = Path(__file__).resolve().parents[1] / "engine/overlay.js"   # playback chip, labels, rewind effect
+OVERLAY_KEYS = ("time", "ui", "labels", "fx", "hits", "light", "counter", "twos")
 SFX = REPO / ".claude/skills/think-stick-engine/assets/sfx"
 FPS = 30
 PAGE_VERSION = "1"  # bump when shot_page() changes, so cached clips re-render
@@ -50,7 +52,8 @@ def asset_file(ws, m, aid, v):
 def resolve(m, variant):
     """Shot list for one variant: the base shots with that variant's overrides applied."""
     ov = next(v for v in m["variants"] if v["id"] == variant).get("overrides", {})
-    return [{**s, **ov.get(s["id"], {})} for s in m["shots"]]
+    base = {"twos": True} if m.get("twos") else {}   # "twos": true on the manifest runs every shot on twos
+    return [{**base, **s, **ov.get(s["id"], {})} for s in m["shots"]]
 
 
 def render_key(ws, m, shot):
@@ -58,6 +61,9 @@ def render_key(ws, m, shot):
     for p in (ENGINE / "stick.html", ENGINE / "faces.js", Path(ws) / "scenes/_common.js", Path(ws) / f"scenes/{shot['scene']}.js"):
         h.update(p.read_bytes())
     h.update(json.dumps({k: shot.get(k) for k in ("id", "scene", "dur", "args", "uses")}, sort_keys=True).encode())
+    extra = {k: shot[k] for k in OVERLAY_KEYS if k in shot}
+    if extra:  # only shots that use time remaps or overlays depend on overlay.js, so older episodes keep their cached clips
+        h.update(OVERLAY.read_bytes()); h.update(json.dumps(extra, sort_keys=True).encode())
     if vertical(m) or not m.get("overlay_tag", True):
         h.update(json.dumps({"format": m.get("format"), "overlay_tag": m.get("overlay_tag", True)}, sort_keys=True).encode())
     for u in shot.get("uses", []):
@@ -72,6 +78,7 @@ def shot_page(ws, m, shot, key):
     for f in FONTS.glob("InstrumentSans-*.ttf"):
         shutil.copy(f, film / "fonts" / f.name)
     shutil.copy(ENGINE / "faces.js", film / "faces.js")
+    shutil.copy(OVERLAY, film / "overlay.js")
     assets = {u["asset"]: json.loads(asset_file(ws, m, u["asset"], u["v"]).read_text()) for u in shot.get("uses", [])}
     tag = (f"{m['series'].upper()} · {m['episode']} · {shot['id']} · ANIMATIC" + (" · TEMP AUDIO" if any(c.get("temporary") for c in m["audio_cues"]) else "")) if m.get("overlay_tag", True) else ""
     (film / f"shot_{key}.js").write_text(f"window.SHOT={json.dumps({**shot, 'tag': tag})};window.ASSETS={json.dumps(assets)};")
@@ -88,12 +95,18 @@ def shot_page(ws, m, shot, key):
         html = html.replace(dims, "const W=1080,H=1920").replace(canvas, 'width="1080" height="1920"')
     html = html.replace(head, f'<script src="shot_{key}.js"></script>').replace(t01, "const T0=0, T1=window.SHOT.dur;").replace(logo, "")
     html = re.sub(r'<script src="scenes\.js"></script>.*?<script src="env\.js"></script>',
-                  f'<script src="faces.js"></script><script src="../scenes/_common.js"></script><script src="../scenes/{shot["scene"]}.js"></script>', html, flags=re.S)
+                  f'<script src="faces.js"></script><script src="overlay.js"></script><script src="../scenes/_common.js"></script><script src="../scenes/{shot["scene"]}.js"></script>', html, flags=re.S)
     i = html.index("const SEGS=window.SEG")
-    html = html[:i] + """window.seek=async(tt)=>{ const d=window.SHOT.dur, ts=Math.min(d-1e-3,+tt); NOW=ts; CAMZ=1; CAMX=0;
-  const draw=()=>{ x.setTransform(1,0,0,1,0,0); x.globalAlpha=1; x.fillStyle=PAPER; x.fillRect(0,0,W,H); S[window.SHOT.scene](ts/d,ts,d,window.SHOT.args||{}) };
+    html = html[:i] + """window.seek=async(tt)=>{ const SH=window.SHOT, d=SH.dur, tm=SH.time;
+  // ON TWOS: hold each drawing for two frames (the overlays still move on ones)
+  const t=Math.min(d-1e-3,SH.twos?Math.floor(+tt*15+1e-6)/15:+tt), tOv=Math.min(d-1e-3,+tt);
+  // time remap: "time": {"from": a, "to": b, "scene_dur": D} plays the scene from a to b over the shot (b < a rewinds, a stretch is slow motion)
+  // or "keys": [[shot_t, scene_t], ...] for a speed ramp (e.g. a near-freeze on the key moment of a slow replay)
+  const ramp=k=>{ let i=1; while(i<k.length-1&&t>k[i][0]) i++; const [a,b]=[k[i-1],k[i]]; return a[1]+(b[1]-a[1])*Math.max(0,Math.min(1,(t-a[0])/((b[0]-a[0])||1))) };
+  const sd=tm&&tm.scene_dur||d, ts=tm?Math.max(0,Math.min(sd-1e-3,tm.keys?ramp(tm.keys):tm.from+(tm.to-tm.from)*t/d)):t; NOW=ts; CAMZ=1; CAMX=0;
+  const draw=()=>{ x.setTransform(1,0,0,1,0,0); x.globalAlpha=1; x.fillStyle=PAPER; x.fillRect(0,0,W,H); S[SH.scene](ts/sd,ts,sd,SH.args||{}) };
   SHAKE=0; draw(); if(SHAKE>0){ const sk=SHAKE; SHAKE=sk; draw() }
-  x.setTransform(1,0,0,1,0,0); x.globalAlpha=1; x.drawImage(grain(),0,0,W,H);
+  x.setTransform(1,0,0,1,0,0); x.globalAlpha=1; x.drawImage(grain(),0,0,W,H); ovDraw(SH,tOv);
   if(!window.SHOT.tag) return; x.font='700 24px Inst'; const tw=x.measureText(window.SHOT.tag).width; x.fillStyle='rgba(20,20,24,.62)'; x.fillRect(28,26,tw+28,40); x.fillStyle='#f6f2e9'; x.textBaseline='middle'; x.fillText(window.SHOT.tag,42,47) };
 document.fonts.ready.then(()=>seek(0));
 </script></body></html>
