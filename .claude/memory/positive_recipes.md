@@ -21,3 +21,11 @@ _No tested recipes recorded yet._
 - Cause / rationale: Faceless figures could not show emotion; owner flagged the philosopher's smile as invisible in purple.
 - Correction / recipe: engine/faces.js + LEXPR per line (speaker and listener) + SCENE_EXPR for narrator moments + ENV mouth envelope.
 - Verification: Frame check of 16 times showed correct expressions; full render in progress.
+
+### half-landing-a03-reel — Seamless Reel loop: end on the first frame and hide the reset inside the story
+
+- Recorded (UTC): 2026-11-27T15:41:01+00:00
+- Evidence: A03 Reel: last frame vs first frame 0.00% of pixels differ; A04/A06/A08 0.43-0.46%
+- Cause / rationale: a loop shows a jump when the end state differs from the start (e.g. a fresh stain that wasn't there at frame 0)
+- Correction / recipe: design the last shot to land on frame 0's exact pose and props; give the wardrobe an old stain where the new one appears (asset v2: it happens every sound check), so the fresh mark fades into it
+- Verification: measured by ep_review.seam on all four Reels

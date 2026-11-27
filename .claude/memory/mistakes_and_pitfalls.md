@@ -143,3 +143,27 @@ The initial entries preserve documented observations from the 2026-11-11 study a
 - Cause / rationale: Frames were spot-checked at a few times before rendering instead of all of them; 3-word block rows and moving props were never checked at their extremes.
 - Correction / recipe: Run tools/precheck.sh (a frame every 3 s) and review every sheet before any full render; for late fixes use tools/patch.sh to re-render only the changed shots.
 - Verification: Fixes confirmed on 25 engine frames across the five affected shots; patch splice render in progress.
+
+### half-landing-a03-reel,a04-reel — Foley built mostly from sub-bass is near-silent on phone speakers, where most Reels are heard
+
+- Recorded (UTC): 2026-11-27T15:41:01+00:00
+- Evidence: ep_review.low_share: boom 99.7%, splat 94.5%, A04 bass 100% of energy below 150 Hz; A04 sync 5/13 because loudness normalisation boosted the sub-bass into a flat -12 dB bed
+- Cause / rationale: the sound-check boom was a 46 Hz kick low-passed at 260 Hz; the bass a 41 Hz note; the splat low-passed
+- Correction / recipe: canonical .claude/skills/entertainment-studio/sound/make_foley.sh: harmonics, a mid knock and a click on every low sound; ep_review.py flags any cue sound >85% below 150 Hz
+- Verification: re-measured: boom 68%, splat 0%, bass 61% below 150 Hz; ep_review phone_flags empty on A03/A04/A06/A08; A04 sync rose to 11/13
+
+### half-landing-a03,a04-reel,a06-reel,a08-reel — A long sound tail masks the next key sound, so a story beat goes unheard
+
+- Recorded (UTC): 2026-11-27T15:41:01+00:00
+- Evidence: onset rise over the previous moment: A03 snap +2.6 dB, A04 splat +1.2 dB; ep_review flagged A06 C02 and A08 C02 as not detected
+- Cause / rationale: cues ran their full length: stretch sounds through the A03 snap, the A04 launch layers over the off-screen ceiling splat, the A06 lever spring into thump 1, the A08 buzz pulses over thump 1
+- Correction / recipe: cut the masking cues with the cue 'dur' option so each key sound has a breath of quiet before it; review every take with ep_review.py
+- Verification: A03 snap +11.9 dB, A04 ceiling splat +24.6 dB; A06 sync 11/11; A08 thump 1 in sync (only the frame-0 buzz flagged, a measurement artifact)
+
+### half-landing-a03,a06-reel — Stick-engine scenes: a partial pose makes the figure vanish, and a pose defined in one shot file is missing in the others
+
+- Recorded (UTC): 2026-11-27T15:41:01+00:00
+- Evidence: A03 precheck: Dev absent from S01, S02 and the start of S03; A06 precheck: page error 'GROOVE is not defined' in K04
+- Cause / rationale: pose objects built without P() lack leg angles (NaN joints); each shot page loads only _common.js and its own scene file
+- Correction / recipe: build every pose with P(); put anything two shots use in scenes/_common.js; run ep_build.py --precheck before every render
+- Verification: re-ran the prechecks: Dev drawn in every frame; all A06 shots render
