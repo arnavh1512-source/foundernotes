@@ -26,8 +26,10 @@ g plop "0.5*sin(2*PI*(180-120*t)*t)*exp(-18*t)+0.25*(random(4)*2-1)*exp(-40*t)" 
 g beep "0.5*sin(2*PI*2200*t)*gt(mod(t,0.24),0)*lt(mod(t,0.24),0.09)" 0.5 "highpass=f=600"
 g crunch "0.6*(random(5)*2-1)*(exp(-22*t)+0.6*gt(t,0.07)*exp(-25*(t-0.07))+0.4*gt(t,0.15)*exp(-30*(t-0.15)))" 0.3 "bandpass=f=2500:width_type=h:w=3000"
 g spring "0.6*sin(2*PI*(420+260*sin(2*PI*22*t))*t)*exp(-9*t)+0.3*(random(6)*2-1)*exp(-70*t)" 0.35 "highpass=f=200"
+# a phone vibrating on a hard counter: pulsed 170 Hz with harmonics (phone-audible), plus the rattle of the surface
+g buzz "(0.5*sin(2*PI*170*t)+0.35*sin(2*PI*340*t)+0.2*sin(2*PI*510*t)+0.08*(random(8)*2-1))*gt(mod(t,0.3),0)*lt(mod(t,0.3),0.19)" 0.6 "lowpass=f=2400"
 # peak-normalise every sound to -3 dB so the cue gains in workspace.json are the only level control
-for f in boom bass rattle squelch splat creak snap boing plop beep crunch spring; do
+for f in boom bass rattle squelch splat creak snap boing plop beep crunch spring buzz; do
   mx=$(ffmpeg -nostats -i "$f.wav" -af volumedetect -f null - 2>&1 | sed -n 's/.*max_volume: \([-0-9.]*\) dB/\1/p')
   ffmpeg -v error -y -i "$f.wav" -af "volume=$(python3 -c "print(-3-($mx))")dB" $S "$f.tmp.wav" && mv "$f.tmp.wav" "$f.wav"
 done
