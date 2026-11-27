@@ -43,6 +43,16 @@ def seam(first, last, thresh=12):
     return round(float((np.abs(a - b) > thresh).mean() * 100), 2)
 
 
+def low_share(path, cutoff=150.0):
+    """Percent of a sound's energy below cutoff Hz. Phone speakers reproduce little below ~150 Hz."""
+    w = wave.open(str(path)); ch = w.getnchannels()
+    b = np.frombuffer(w.readframes(w.getnframes()), np.int16).astype(float)
+    if ch > 1:
+        b = b.reshape(-1, ch).mean(axis=1)
+    f = np.fft.rfftfreq(len(b), 1 / w.getframerate()); p = np.abs(np.fft.rfft(b)) ** 2
+    return round(float(100 * p[f < cutoff].sum() / max(p.sum(), 1e-12)), 1)
+
+
 def frame_at(video, t, out):
     subprocess.run(["ffmpeg", "-v", "error", "-y", "-ss", f"{max(0, t):.3f}", "-i", str(video), "-frames:v", "1", str(out)], check=True)
     return Image.open(out).convert("RGB")
@@ -76,13 +86,21 @@ def review(ws, take_id=None):
         for i, im in enumerate(tiles):
             sheet.paste(im, (i * 216, 0))
         sheet.save(ws / "review/safezones.jpg", quality=88)
-    report = {"take": take["id"], "duration": dur, "loop": m.get("loop", False), "loop_seam_pct": loop,
+    sys.path.insert(0, str(Path(__file__).resolve().parent)); import ep_build
+    phone = {}
+    for c in m["audio_cues"]:
+        f = ep_build.cue_file(ws, c)
+        phone.setdefault(f.name, low_share(f))
+    phone_flags = sorted(k for k, v in phone.items() if v > 85)
+    report = {"take": take["id"], "phone_low_share_pct": phone, "phone_flags": phone_flags, "duration": dur, "loop": m.get("loop", False), "loop_seam_pct": loop,
               "loop_ok": (loop < 1.0) if m.get("loop") else None,
               "sync_ok": sum(r["ok"] for r in sync), "sync_total": len(sync), "sync": sync,
               "note": "measured, not watched: misses can be soft swells or cues that start inside a louder sound"}
     (ws / "review/auto-review.json").write_text(json.dumps(report, indent=1) + "\n")
     print(f"{take['id']}: {dur}s  loop seam {loop}%{' (ok)' if report['loop_ok'] else '' if report['loop_ok'] is None else ' (CHECK)'}"
           f"  sync {report['sync_ok']}/{report['sync_total']} within 50 ms  -> review/auto-review.json, review/safezones.jpg")
+    for k in phone_flags:
+        print(f"  phone: {k} has {phone[k]}% of its energy below 150 Hz: near-silent on phone speakers")
     for r in sync:
         if not r["ok"]:
             print(f"  check {r['cue']} at {r['t']}s: nearest onset {r['onset']} ({r['error_ms']} ms)")

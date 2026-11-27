@@ -166,6 +166,15 @@ class ReviewMeasures(unittest.TestCase):
         rows = ep_review.match([("C1", 0.5), ("C2", 1.23), ("C3", 1.9)], found)
         self.assertEqual([r["ok"] for r in rows], [True, True, False])
 
+    def test_phone_low_share(self):
+        import numpy as np, wave, ep_review
+        with tempfile.TemporaryDirectory() as td:
+            for name, hz in (("sub", 45), ("mid", 900)):
+                sr = 16000; a = (0.5 * np.sin(2 * np.pi * hz * np.arange(sr) / sr) * 32767).astype(np.int16)
+                w = wave.open(f"{td}/{name}.wav", "wb"); w.setnchannels(1); w.setsampwidth(2); w.setframerate(sr); w.writeframes(a.tobytes()); w.close()
+            self.assertGreater(ep_review.low_share(f"{td}/sub.wav"), 95)
+            self.assertLess(ep_review.low_share(f"{td}/mid.wav"), 5)
+
     def test_loop_seam(self):
         from PIL import Image
         import ep_review
