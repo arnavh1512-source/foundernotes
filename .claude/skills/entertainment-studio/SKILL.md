@@ -49,6 +49,10 @@ Audio is rebuilt every time (cheap): cues are placed at shot start plus local ti
 
 Lessons from A03 (first use): build every pose with `P()` (a partial pose has no legs and the figure silently vanishes); IK picks the lower elbow so arms never swing up across the face; per-frame motion measurement catches a "moving hold" that is actually frozen. When a character pulls a prop, pull it toward the character's own shoulder: pulling it away from the body runs out of arm reach, the IK clamps and the hand leaves the prop. Give every gag beat a visible cause and plant what the payoff depends on (A03: the sound-check thump knocks the spoon off; the caramel string shows it is sticky before it sticks), and keep the physics consistent (a spoon glued caramel side down shows its clean back).
 
+## Vertical Reels and Shorts
+
+Set `"format": "vertical"` in the manifest for a 1080x1920 canvas (Instagram Reels, Shorts): the same rig and scenes, vertical assembly and QC. `"overlay_tag": false` drops the on-screen ANIMATIC label for a post-ready cut (the export filename still says TEMP-AUDIO while sound is temporary). A vertical render never reuses a landscape clip. Frame for the phone: keep the key action out of the bottom ~20% and the right edge, where Instagram's buttons and caption sit. First Reel: `studio-output/half-landing-a03-reel/` (A03 re-cut with a hook at 0 s, close-ups, a third-thump ending and a seamless loop).
+
 ## Checks (`ep_check.py`)
 
 Fails when the links break: missing or changed script, duplicate or malformed asset IDs, a shot using an asset version that does not exist or whose file changed, a cue pointing at a missing shot, temporary sound without a note, a take built from an outdated shot render, a selected take without a recorded reason, or an export that is not the selected take. Temporary sound must also show in the export filename.

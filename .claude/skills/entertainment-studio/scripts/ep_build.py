@@ -34,6 +34,10 @@ def save(ws, m):
     (Path(ws) / "workspace.json").write_text(json.dumps(m, indent=1) + "\n")
 
 
+def vertical(m):
+    return m.get("format") == "vertical"
+
+
 def asset_file(ws, m, aid, v):
     for a in m["assets"]:
         if a["id"] == aid:
@@ -54,6 +58,8 @@ def render_key(ws, m, shot):
     for p in (ENGINE / "stick.html", ENGINE / "faces.js", Path(ws) / "scenes/_common.js", Path(ws) / f"scenes/{shot['scene']}.js"):
         h.update(p.read_bytes())
     h.update(json.dumps({k: shot.get(k) for k in ("id", "scene", "dur", "args", "uses")}, sort_keys=True).encode())
+    if vertical(m) or not m.get("overlay_tag", True):
+        h.update(json.dumps({"format": m.get("format"), "overlay_tag": m.get("overlay_tag", True)}, sort_keys=True).encode())
     for u in shot.get("uses", []):
         h.update(asset_file(ws, m, u["asset"], u["v"]).read_bytes())
     return h.hexdigest()[:12]
@@ -67,7 +73,7 @@ def shot_page(ws, m, shot, key):
         shutil.copy(f, film / "fonts" / f.name)
     shutil.copy(ENGINE / "faces.js", film / "faces.js")
     assets = {u["asset"]: json.loads(asset_file(ws, m, u["asset"], u["v"]).read_text()) for u in shot.get("uses", [])}
-    tag = f"{m['series'].upper()} · {m['episode']} · {shot['id']} · ANIMATIC" + (" · TEMP AUDIO" if any(c.get("temporary") for c in m["audio_cues"]) else "")
+    tag = (f"{m['series'].upper()} · {m['episode']} · {shot['id']} · ANIMATIC" + (" · TEMP AUDIO" if any(c.get("temporary") for c in m["audio_cues"]) else "")) if m.get("overlay_tag", True) else ""
     (film / f"shot_{key}.js").write_text(f"window.SHOT={json.dumps({**shot, 'tag': tag})};window.ASSETS={json.dumps(assets)};")
     html = (ENGINE / "stick.html").read_text()
     head = '<script src="timing.js"></script><script src="turns.js"></script><script src="shots.js"></script>'
@@ -76,6 +82,10 @@ def shot_page(ws, m, shot, key):
     logo = "LOGO.src='logo.png';"
     assert logo in html, "engine stick.html changed: update shot_page()"
     # Entertainment IP carries its own series brand: never load the Think! logo
+    if vertical(m):  # Reels/Shorts: same rig, a 1080x1920 canvas
+        dims, canvas = "const W=1920,H=1080", 'width="1920" height="1080"'
+        assert dims in html and canvas in html, "engine stick.html changed: update shot_page()"
+        html = html.replace(dims, "const W=1080,H=1920").replace(canvas, 'width="1080" height="1920"')
     html = html.replace(head, f'<script src="shot_{key}.js"></script>').replace(t01, "const T0=0, T1=window.SHOT.dur;").replace(logo, "")
     html = re.sub(r'<script src="scenes\.js"></script>.*?<script src="env\.js"></script>',
                   f'<script src="faces.js"></script><script src="../scenes/_common.js"></script><script src="../scenes/{shot["scene"]}.js"></script>', html, flags=re.S)
@@ -84,7 +94,7 @@ def shot_page(ws, m, shot, key):
   const draw=()=>{ x.setTransform(1,0,0,1,0,0); x.globalAlpha=1; x.fillStyle=PAPER; x.fillRect(0,0,W,H); S[window.SHOT.scene](ts/d,ts,d,window.SHOT.args||{}) };
   SHAKE=0; draw(); if(SHAKE>0){ const sk=SHAKE; SHAKE=sk; draw() }
   x.setTransform(1,0,0,1,0,0); x.globalAlpha=1; x.drawImage(grain(),0,0,W,H);
-  x.font='700 24px Inst'; const tw=x.measureText(window.SHOT.tag).width; x.fillStyle='rgba(20,20,24,.62)'; x.fillRect(28,26,tw+28,40); x.fillStyle='#f6f2e9'; x.textBaseline='middle'; x.fillText(window.SHOT.tag,42,47) };
+  if(!window.SHOT.tag) return; x.font='700 24px Inst'; const tw=x.measureText(window.SHOT.tag).width; x.fillStyle='rgba(20,20,24,.62)'; x.fillRect(28,26,tw+28,40); x.fillStyle='#f6f2e9'; x.textBaseline='middle'; x.fillText(window.SHOT.tag,42,47) };
 document.fonts.ready.then(()=>seek(0));
 </script></body></html>
 """
@@ -171,10 +181,11 @@ def build(ws):
         audio = ws / f"takes/{var['id']}-audio.wav"
         starts, total = build_audio(ws, m, shots, clips, audio)
         take = ws / f"takes/{var['id']}.mp4"
-        subprocess.run([py, str(SCRIPTS / "assemble.py"), "--scenes", *map(str, clips), "--narration", str(audio), "--out", str(take)],
+        subprocess.run([py, str(SCRIPTS / "assemble.py"), "--scenes", *map(str, clips), "--narration", str(audio), "--out", str(take),
+                        "--format", "vertical" if vertical(m) else "landscape"],
                        check=True, stdout=subprocess.DEVNULL)
         qc = ws / f"takes/{var['id']}-qc.json"
-        subprocess.run([py, str(SCRIPTS / "qc_video.py"), str(take), "--min-duration", "5", "--json", str(qc), "--sheet", str(ws / f"takes/{var['id']}-sheet.jpg")],
+        subprocess.run([py, str(SCRIPTS / "qc_video.py"), str(take), "--min-duration", "5", "--format", "vertical" if vertical(m) else "horizontal", "--json", str(qc), "--sheet", str(ws / f"takes/{var['id']}-sheet.jpg")],
                        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         for r in rows:
             r["start"] = round(starts[r["id"]], 3)

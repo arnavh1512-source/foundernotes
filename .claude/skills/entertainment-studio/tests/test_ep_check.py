@@ -137,5 +137,22 @@ class CueFiles(unittest.TestCase):
             m["audio_cues"][0]["dur"] = 0; save(ws, m)
             self.assertTrue(any("dur must be" in e for e in check(ws)))
 
+
+class VerticalPages(unittest.TestCase):
+    def test_vertical_reel_page_and_key(self):
+        with tempfile.TemporaryDirectory() as td:
+            ws, m = workspace(td)
+            shot = m["shots"][0]
+            land = ep_build.render_key(ws, m, shot)
+            html = ep_build.shot_page(ws, m, shot, "k1").read_text()
+            self.assertIn('width="1920" height="1080"', html)
+            m.update(format="vertical", overlay_tag=False)
+            self.assertNotEqual(ep_build.render_key(ws, m, shot), land)   # a vertical render never reuses a landscape clip
+            html = ep_build.shot_page(ws, m, shot, "k2").read_text()
+            self.assertIn('width="1080" height="1920"', html)
+            self.assertIn("const W=1080,H=1920", html)
+            self.assertNotIn("logo.png", html)
+            self.assertIn('"tag": ""', (ws / "film/shot_k2.js").read_text())
+
 if __name__ == "__main__":
     unittest.main()
