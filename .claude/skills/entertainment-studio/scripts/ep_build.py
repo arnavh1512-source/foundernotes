@@ -1,0 +1,208 @@
+#!/usr/bin/env python3
+"""Build an Entertainment IP episode workspace: render each shot into a cache, assemble one take per variant.
+
+A shot's render key hashes the engine rig, scenes/_common.js, its own scene file, its definition and the
+asset version files it uses. Unchanged shots are reused, so variants share identical renders and a revised
+shot re-renders alone.
+
+    python3 ep_build.py <workspace> --precheck  frames from every shot first (nothing renders until checked)
+    python3 ep_build.py <workspace>             render missing shots, assemble takes, run QC
+    python3 ep_build.py <workspace> --export    copy the selected take to export/
+"""
+import argparse, hashlib, json, re, shutil, subprocess, sys
+from pathlib import Path
+
+REPO = Path(__file__).resolve().parents[4]
+ENGINE = REPO / ".claude/skills/think-stick-engine/engine"
+RENDER = REPO / ".claude/skills/motion/scripts/render.mjs"
+SCRIPTS = REPO / ".claude/skills/podcast-scout-skill/scripts"
+FONTS = REPO / ".claude/skills/podcast-scout-skill/assets/ink-gold-kit/fonts"
+SFX = REPO / ".claude/skills/think-stick-engine/assets/sfx"
+FPS = 30
+PAGE_VERSION = "1"  # bump when shot_page() changes, so cached clips re-render
+
+
+def sha(p):
+    return hashlib.sha256(Path(p).read_bytes()).hexdigest()
+
+
+def load(ws):
+    return json.loads((Path(ws) / "workspace.json").read_text())
+
+
+def save(ws, m):
+    (Path(ws) / "workspace.json").write_text(json.dumps(m, indent=1) + "\n")
+
+
+def asset_file(ws, m, aid, v):
+    for a in m["assets"]:
+        if a["id"] == aid:
+            for ver in a["versions"]:
+                if ver["v"] == v:
+                    return Path(ws) / ver["file"]
+    raise KeyError(f"{aid} v{v}")
+
+
+def resolve(m, variant):
+    """Shot list for one variant: the base shots with that variant's overrides applied."""
+    ov = next(v for v in m["variants"] if v["id"] == variant).get("overrides", {})
+    return [{**s, **ov.get(s["id"], {})} for s in m["shots"]]
+
+
+def render_key(ws, m, shot):
+    h = hashlib.sha256(PAGE_VERSION.encode())
+    for p in (ENGINE / "stick.html", ENGINE / "faces.js", Path(ws) / "scenes/_common.js", Path(ws) / f"scenes/{shot['scene']}.js"):
+        h.update(p.read_bytes())
+    h.update(json.dumps({k: shot.get(k) for k in ("id", "scene", "dur", "args", "uses")}, sort_keys=True).encode())
+    for u in shot.get("uses", []):
+        h.update(asset_file(ws, m, u["asset"], u["v"]).read_bytes())
+    return h.hexdigest()[:12]
+
+
+def shot_page(ws, m, shot, key):
+    """Engine rig with the timeline replaced by one shot (local time), its scene and its asset versions."""
+    film = Path(ws) / "film"
+    (film / "fonts").mkdir(parents=True, exist_ok=True)
+    for f in FONTS.glob("InstrumentSans-*.ttf"):
+        shutil.copy(f, film / "fonts" / f.name)
+    shutil.copy(ENGINE / "faces.js", film / "faces.js")
+    assets = {u["asset"]: json.loads(asset_file(ws, m, u["asset"], u["v"]).read_text()) for u in shot.get("uses", [])}
+    tag = f"{m['series'].upper()} · {m['episode']} · {shot['id']} · ANIMATIC" + (" · TEMP AUDIO" if any(c.get("temporary") for c in m["audio_cues"]) else "")
+    (film / f"shot_{key}.js").write_text(f"window.SHOT={json.dumps({**shot, 'tag': tag})};window.ASSETS={json.dumps(assets)};")
+    html = (ENGINE / "stick.html").read_text()
+    head = '<script src="timing.js"></script><script src="turns.js"></script><script src="shots.js"></script>'
+    t01 = "const T0=+(Q.get('from')||0), T1=+(Q.get('to')||window.DUR);"
+    assert head in html and t01 in html and "const SEGS=window.SEG" in html, "engine stick.html changed: update shot_page()"
+    logo = "LOGO.src='logo.png';"
+    assert logo in html, "engine stick.html changed: update shot_page()"
+    # Entertainment IP carries its own series brand: never load the Think! logo
+    html = html.replace(head, f'<script src="shot_{key}.js"></script>').replace(t01, "const T0=0, T1=window.SHOT.dur;").replace(logo, "")
+    html = re.sub(r'<script src="scenes\.js"></script>.*?<script src="env\.js"></script>',
+                  f'<script src="faces.js"></script><script src="../scenes/_common.js"></script><script src="../scenes/{shot["scene"]}.js"></script>', html, flags=re.S)
+    i = html.index("const SEGS=window.SEG")
+    html = html[:i] + """window.seek=async(tt)=>{ const d=window.SHOT.dur, ts=Math.min(d-1e-3,+tt); NOW=ts; CAMZ=1; CAMX=0;
+  const draw=()=>{ x.setTransform(1,0,0,1,0,0); x.globalAlpha=1; x.fillStyle=PAPER; x.fillRect(0,0,W,H); S[window.SHOT.scene](ts/d,ts,d,window.SHOT.args||{}) };
+  SHAKE=0; draw(); if(SHAKE>0){ const sk=SHAKE; SHAKE=sk; draw() }
+  x.setTransform(1,0,0,1,0,0); x.globalAlpha=1; x.drawImage(grain(),0,0,W,H);
+  x.font='700 24px Inst'; const tw=x.measureText(window.SHOT.tag).width; x.fillStyle='rgba(20,20,24,.62)'; x.fillRect(28,26,tw+28,40); x.fillStyle='#f6f2e9'; x.textBaseline='middle'; x.fillText(window.SHOT.tag,42,47) };
+document.fonts.ready.then(()=>seek(0));
+</script></body></html>
+"""
+    page = film / f"shot_{key}.html"
+    page.write_text(html)
+    return page
+
+
+def render_shot(ws, m, shot):
+    key = render_key(ws, m, shot)
+    clip = Path(ws) / f"takes/clips/{shot['id']}-{key}.mp4"
+    if clip.exists():
+        return key, clip, False
+    clip.parent.mkdir(parents=True, exist_ok=True)
+    page = shot_page(ws, m, shot, key)
+    subprocess.run(["node", str(RENDER), str(page), "--out", str(clip)], cwd=REPO, check=True, stdout=subprocess.DEVNULL)
+    return key, clip, True
+
+
+def duration(p):
+    return float(subprocess.check_output(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", str(p)]).decode())
+
+
+def build_audio(ws, m, shots, clips, out):
+    """Cues at shot start + local time; a quiet room tone keeps holds from being dead air."""
+    starts, t = {}, 0.0
+    for s, c in zip(shots, clips):
+        starts[s["id"]] = t
+        t += duration(c)
+    total, ins, flt = t, [], []
+    for i, c in enumerate(m["audio_cues"]):
+        f = sorted(SFX.glob(f"{c['kind']}*.wav"))[c.get("pick", 0)]
+        ins += ["-i", str(f)]
+        ms = int(round((starts[c["shot"]] + c["t"]) * 1000))
+        flt.append(f"[{i}]adelay={ms}|{ms},volume={c.get('gain', 1.0)}[a{i}]")
+    n = len(m["audio_cues"])
+    flt.append(f"anoisesrc=d={total:.3f}:c=pink:a=0.004,lowpass=f=900[rt]")
+    flt.append("".join(f"[a{i}]" for i in range(n)) + f"[rt]amix=inputs={n + 1}:normalize=0,atrim=0:{total:.3f}[o]")
+    subprocess.run(["ffmpeg", "-v", "error", "-y", *ins, "-filter_complex", ";".join(flt), "-map", "[o]", "-ar", "48000", "-ac", "2", str(out)], check=True)
+    return starts, total
+
+
+def build(ws):
+    ws = Path(ws).resolve()
+    m = load(ws)
+    m["takes"], log = [], []
+    py = sys.executable
+    for var in m["variants"]:
+        shots = resolve(m, var["id"])
+        rows = []
+        for s in shots:
+            key, clip, fresh = render_shot(ws, m, s)
+            log.append(f"{var['id']:>12} {s['id']}: {'RENDERED' if fresh else 'reused  '} {clip.name}")
+            rows.append({"id": s["id"], "dur": s["dur"], "render_key": key, "clip": str(clip.relative_to(ws)), "clip_sha256": sha(clip),
+                         "uses": [{**u, "sha256": sha(asset_file(ws, m, u["asset"], u["v"]))} for u in s.get("uses", [])]})
+        clips = [ws / r["clip"] for r in rows]
+        audio = ws / f"takes/{var['id']}-audio.wav"
+        starts, total = build_audio(ws, m, shots, clips, audio)
+        take = ws / f"takes/{var['id']}.mp4"
+        subprocess.run([py, str(SCRIPTS / "assemble.py"), "--scenes", *map(str, clips), "--narration", str(audio), "--out", str(take)],
+                       check=True, stdout=subprocess.DEVNULL)
+        qc = ws / f"takes/{var['id']}-qc.json"
+        subprocess.run([py, str(SCRIPTS / "qc_video.py"), str(take), "--min-duration", "5", "--json", str(qc), "--sheet", str(ws / f"takes/{var['id']}-sheet.jpg")],
+                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        for r in rows:
+            r["start"] = round(starts[r["id"]], 3)
+        m["takes"].append({"id": f"T-{var['id']}", "variant": var["id"], "file": str(take.relative_to(ws)), "sha256": sha(take),
+                           "duration": round(duration(take), 3), "qc": json.loads(qc.read_text())["status"] if qc.exists() else "NOT RUN", "shots": rows})
+    save(ws, m)
+    print("\n".join(log))
+    for t in m["takes"]:
+        print(f"{t['id']}: {t['duration']}s  QC {t['qc']}  {t['file']}")
+
+
+def precheck(ws, step=0.25):
+    """Frames from every shot of every variant, without rendering video: review/precheck/<variant>.jpg."""
+    ws = Path(ws).resolve()
+    m = load(ws)
+    grab = REPO / ".claude/skills/think-stick-engine/tools/grab.mjs"
+    for var in m["variants"]:
+        frames = []
+        for s in resolve(m, var["id"]):
+            key = render_key(ws, m, s)
+            out = ws / f"review/precheck/{var['id']}/{s['id']}"
+            out.mkdir(parents=True, exist_ok=True)
+            ts = [round(min(s["dur"] - 1 / FPS, i * step), 3) for i in range(int(s["dur"] / step) + 1)]
+            r = subprocess.run(["node", str(grab), str(shot_page(ws, m, s, key).resolve()), str(out.resolve()), *map(str, ts)], capture_output=True, text=True)
+            if r.returncode or "ERR" in r.stdout:
+                sys.exit(f"{s['id']}: page error\n{r.stdout}{r.stderr}")
+            frames += [(s["id"], t, out / f"t{t:06.2f}.png") for t in ts]
+        sheet = ws / f"review/precheck/{var['id']}.jpg"
+        tile = ",".join(f"{sid} {t:.2f}" for sid, t, _ in frames)
+        lst = ws / f"review/precheck/{var['id']}.txt"
+        lst.write_text("".join(f"file '{p.resolve()}'\nduration 1\n" for _, _, p in frames))
+        cols = 6
+        subprocess.run(["ffmpeg", "-v", "error", "-y", "-f", "concat", "-safe", "0", "-i", str(lst),
+                        "-vf", f"scale=400:-2,tile={cols}x{-(-len(frames) // cols)}", "-frames:v", "1", str(sheet)], check=True)
+        print(f"{var['id']}: {len(frames)} frames -> {sheet}  ({tile})")
+
+
+def export(ws):
+    ws = Path(ws).resolve()
+    m = load(ws)
+    sel = m.get("selected") or sys.exit("no selected take: review the takes and record selected.take and selected.reason first")
+    take = next(t for t in m["takes"] if t["id"] == sel["take"])
+    label = "_TEMP-AUDIO" if any(c.get("temporary") for c in m["audio_cues"]) else ""
+    out = ws / "export" / f"{m['series_slug']}-{m['episode'].lower()}-animatic{label}.mp4"
+    out.parent.mkdir(exist_ok=True)
+    shutil.copy(ws / take["file"], out)
+    m["export"] = {"file": str(out.relative_to(ws)), "from_take": take["id"], "sha256": sha(out)}
+    save(ws, m)
+    print("exported", out)
+
+
+if __name__ == "__main__":
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("workspace")
+    ap.add_argument("--export", action="store_true", help="copy the selected take to export/")
+    ap.add_argument("--precheck", action="store_true", help="frames from every shot before rendering (owner rule)")
+    a = ap.parse_args()
+    precheck(a.workspace) if a.precheck else export(a.workspace) if a.export else build(a.workspace)
