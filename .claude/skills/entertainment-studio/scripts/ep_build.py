@@ -145,7 +145,7 @@ def build_audio(ws, m, shots, clips, out):
         ms = int(round((starts[c["shot"]] + c["t"]) * 1000))
         flt.append(cue_filter(i, c, ms))
     n = len(m["audio_cues"])
-    flt.append(f"anoisesrc=d={total:.3f}:c=brown:a=0.03,lowpass=f=700,highpass=f=60[rt]")
+    flt.append(f"anoisesrc=d={total:.3f}:c=brown:a=0.03:seed=7,lowpass=f=700,highpass=f=60[rt]")
     flt.append("".join(f"[a{i}]" for i in range(n)) + f"[rt]amix=inputs={n + 1}:normalize=0,atrim=0:{total:.3f},"
                "acompressor=threshold=0.1:ratio=4:attack=3:release=150:makeup=2,alimiter=limit=0.7[o]")  # tame transients so assembly can reach -14 LUFS
     raw = out.with_name(out.stem + "-raw.wav")
