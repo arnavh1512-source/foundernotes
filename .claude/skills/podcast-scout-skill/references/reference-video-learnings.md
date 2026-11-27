@@ -97,3 +97,42 @@ Candidates to test on Night 2 (pilot first; not proof of what drives views):
 - Shorts: action or camera movement across the whole vertical frame.
 
 Limits: four clips from at most three channels; ref3 and ref4 files have no audio, so sound was not compared for them. Visual notes come from sampled frames, not full viewings. The rea-video breakdowns were still running at the time of writing. Borrow structure and pacing only; all artwork stays original.
+
+## 2026-11-27: owner-supplied vertical clip, "inside a bump on the head" (pixel-art cross-section)
+
+File: `studio-output/reference-ig-01/ref.mp4` (720x1280, 30 fps, 26.1 s, -14.1 LUFS, LRA 5 LU). Studied from frame sheets at
+1 s and 0.25 s, full-size crops of the labels, scene-cut detection and per-second audio bands. Not a full watched viewing; speech
+could not be checked (no transcription installed), so whether it has narration is unknown.
+
+Structure (timestamps from the file):
+- **0–2.0 s, the result first:** an object hits a head in profile; impact rings; the bump swells under a fast-forward timer
+  (1 MIN, 6 MIN, 13 MIN); framing brackets lock onto the bump; a push-in carries the camera into it.
+- **2.0–2.6 s, inside:** the push-in becomes a skin cross-section with the swelling already there. The only hard cut (2.57 s).
+- **2.6–4 s, rewind and replay:** a rewind icon, then **SLOW** play: the impact again, seen inside (the object presses the layers
+  against the bone). Labels: SKIN, SKULL, VESSELS TEAR.
+- **4–21 s, one fixed set, time does the cutting:** a fast-forward counter ticks steadily (4 MIN, 11 MIN, 23 MIN, DAY 1 … DAY 14).
+  Each new label is one actor and its job: PLATELETS …, FIBRIN / LOCKS THE CLOT, HEMATOMA / ABOVE THE SKULL, MACROPHAGE / EATS RED
+  CELLS, LYMPH VESSEL / DRAINS FLUID, REPAIRED. The camera pushes in on the actor (the macrophage, day 1) and pulls back for the
+  result. The pooled blood changes colour over the days (red, dark, olive), so the colour itself shows time passing.
+- **21–26 s, back out:** a burst of speed lines, a pull back to the head in profile, now flat, then a scanline wipe. The last frame
+  matches the opening framing, so it loops.
+
+What makes it work:
+1. **Payoff, then explanation:** it shows what you can see (a bump) before what you can't (the inside), so the question asks itself.
+2. **A playback interface as the storyteller:** rewind / slow / fast-forward icons and a ticking clock tell the viewer where they
+   are in time without a word. One set holds for 17 s and still moves forward, because time is the thing being cut.
+3. **Labels in two parts:** white noun + yellow verb, at most 4 words, typed on letter by letter, with a leader line drawn to the
+   actor. Each label is the next step of the story, not a glossary.
+4. **The camera has a job:** push in to meet a new actor, pull back to show the effect.
+5. **Vertical composition:** the clock and empty space at the top, the action in the middle band, the static bone layer at the
+   bottom (where captions and UI sit).
+6. **Sound:** heavy low-frequency hits on the impacts (0 s, 3 s: 84% of the energy below 150 Hz) and steady mid-range sound
+   throughout. Per our phone rule, those hits would carry little on a phone speaker unless they have content above 150 Hz.
+
+Candidates to test (pilot first; not proof of what drives views; borrow structure only, all artwork original):
+- Think! Shorts: open on the visible result, rewind, replay slowly from inside, then fast-forward through the stages with a clock.
+- A playback UI (rewind / slow / fast-forward + counter) as a recurring device in place of narration-heavy time jumps.
+- Labels as white noun + yellow verb, typed on, at most 4 words, one per step.
+- Half Landing: the rewind-and-slow-replay of the gag's cause (e.g. replay the thump that knocked the spoon), and the clock for
+  time-skip episodes.
+- One fixed set where time moves forward, instead of many cuts.
