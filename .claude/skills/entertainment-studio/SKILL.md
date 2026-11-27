@@ -41,6 +41,7 @@ python3 .claude/skills/entertainment-studio/scripts/ep_build.py studio-output/<w
 python3 .claude/skills/entertainment-studio/scripts/ep_build.py studio-output/<ws>          # render missing shots, assemble takes
 python3 .claude/skills/entertainment-studio/scripts/ep_build.py studio-output/<ws> --export # copy the selected take to export/
 python3 .claude/skills/entertainment-studio/scripts/ep_check.py studio-output/<ws>          # entertainment checks
+python3 .claude/skills/entertainment-studio/scripts/ep_review.py studio-output/<ws>         # measured review: loop seam, sound sync, phone safe zones
 ```
 
 `ep_build.py` reuses the studio's tools: the Think! stick-engine rig (`think-stick-engine/engine/stick.html`, `faces.js`) for drawing, `motion/scripts/render.mjs` for frame-accurate rendering, `assemble.py` for concatenation and loudness, and `qc_video.py` (with `--min-duration`) for technical QC. Each shot's render key is a hash of the rig, `_common.js`, its own scene file, its shot definition and the asset version files it uses. A shot re-renders only when one of those changes; the build reports which shots rendered and which were reused. An episode's own sounds go in `sound/` (e.g. foley synthesised by a local script) and are used before the shared CC0 bank; a cue's optional `dur` cuts a sound so it can stop on an action. Measure sync rather than assume it: the A03 snap was buried until the stretch sounds were cut to end just before it.

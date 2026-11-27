@@ -154,5 +154,24 @@ class VerticalPages(unittest.TestCase):
             self.assertNotIn("logo.png", html)
             self.assertIn('"tag": ""', (ws / "film/shot_k2.js").read_text())
 
+
+class ReviewMeasures(unittest.TestCase):
+    def test_onsets_and_matching(self):
+        import numpy as np, ep_review
+        sr = 16000; a = np.zeros(sr * 2)
+        for t in (0.5, 1.2):
+            i = int(t * sr); a[i:i + 1600] = 0.5 * np.sin(np.arange(1600) * 0.3)
+        found = ep_review.onsets(a, sr)
+        self.assertEqual(found, [0.5, 1.2])
+        rows = ep_review.match([("C1", 0.5), ("C2", 1.23), ("C3", 1.9)], found)
+        self.assertEqual([r["ok"] for r in rows], [True, True, False])
+
+    def test_loop_seam(self):
+        from PIL import Image
+        import ep_review
+        a = Image.new("RGB", (100, 200), "white"); b = a.copy(); c = Image.new("RGB", (100, 200), "black")
+        self.assertEqual(ep_review.seam(a, b), 0.0)
+        self.assertEqual(ep_review.seam(a, c), 100.0)
+
 if __name__ == "__main__":
     unittest.main()
