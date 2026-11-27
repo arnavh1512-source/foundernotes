@@ -45,7 +45,7 @@ python3 .claude/skills/entertainment-studio/scripts/ep_check.py studio-output/<w
 
 `ep_build.py` reuses the studio's tools: the Think! stick-engine rig (`think-stick-engine/engine/stick.html`, `faces.js`) for drawing, `motion/scripts/render.mjs` for frame-accurate rendering, `assemble.py` for concatenation and loudness, and `qc_video.py` (with `--min-duration`) for technical QC. Each shot's render key is a hash of the rig, `_common.js`, its own scene file, its shot definition and the asset version files it uses. A shot re-renders only when one of those changes; the build reports which shots rendered and which were reused. Audio is rebuilt every time (cheap): cues are placed at shot start plus local time over a quiet room tone, compressed, and normalised with a measured two-pass `loudnorm` before assembly, because `assemble.py`'s single pass undershoots on short clips with sparse cues.
 
-Lessons from A03 (first use): build every pose with `P()` (a partial pose has no legs and the figure silently vanishes); IK picks the lower elbow so arms never swing up across the face; per-frame motion measurement catches a "moving hold" that is actually frozen.
+Lessons from A03 (first use): build every pose with `P()` (a partial pose has no legs and the figure silently vanishes); IK picks the lower elbow so arms never swing up across the face; per-frame motion measurement catches a "moving hold" that is actually frozen. When a character pulls a prop, pull it toward the character's own shoulder: pulling it away from the body runs out of arm reach, the IK clamps and the hand leaves the prop.
 
 ## Checks (`ep_check.py`)
 
