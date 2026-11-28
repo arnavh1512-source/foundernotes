@@ -166,6 +166,7 @@ To use the optional character cast, first copy the [sample JSON](.claude/skills/
 | [`.claude/memory/`](.claude/memory/) | Verified lessons, production history and evaluations |
 | [`entertainment-studio/`](.claude/skills/entertainment-studio/) | Entertainment IP workflow (Half Landing), overlays, review and reference-study tools |
 | [`animation-craft-playbook.md`](.claude/skills/entertainment-studio/references/animation-craft-playbook.md) | What the studio has learned about directing and animation, with a benchmark scoreboard |
+| [`animation-learning-engine/`](.claude/skills/animation-learning-engine/) | Skill tree, drills, measured comparison, NEEDS-WORK critic and spaced reviews for learning animation craft |
 | [`docs/`](docs/) | Extended architecture and engineering reports |
 | [`NOTICE.md`](.claude/skills/podcast-scout-skill/NOTICE.md) | Third-party references, license limitations and attribution |
 
@@ -191,6 +192,18 @@ to keep that learning in this repository. The loop:
    clinches), dialogue film grammar, series templates and a scoreboard of every benchmark.
 4. **Apply** it to the series and re-measure ([`ep_review.py`](.claude/skills/entertainment-studio/scripts/ep_review.py)
    warns when held poses freeze).
+
+The [animation learning engine](.claude/skills/animation-learning-engine/SKILL.md) runs this loop as a system.
+
+- **The skill tree:** 20 craft skills, each with prerequisites, a mastery level from 0 to 4, its evidence, pass criteria, example references and spaced review dates.
+- **The commands:** `learn.py next` picks the drill (reviews due first, then the weakest unlocked skill). `start`, `measure` (ref_motion on the reference window and on our take), `critique` and `close` run the drill.
+- **The roles:** four agents in `.claude/agents/learn-*.md`:
+  - a curriculum coach;
+  - a reference analyst;
+  - a drill animator;
+  - a craft critic that defaults to NEEDS WORK and needs a timestamped finding for every criterion.
+- **The limits:** three attempts, then the drill escalates with its gaps recorded. Only `close` changes mastery, and level 4 needs an episode the owner has reviewed.
+- **The credit:** the role structure is adapted from [msitarzewski/agency-agents](https://github.com/msitarzewski/agency-agents) (MIT).
 
 References are studied for craft only; characters, scenes and assets stay original.
 

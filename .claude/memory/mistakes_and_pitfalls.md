@@ -271,3 +271,11 @@ The initial entries preserve documented observations from the 2026-11-11 study a
 - Cause / rationale: marks planned for one character; helper files copied forward from older episodes instead of the latest
 - Correction / recipe: for two characters keep about a body width of clear space between silhouettes at rest and let only hands meet; reaction 3 frames after action; ep_review now warns when still frames exceed 15%; copy helpers from the newest episode
 - Verification: A11 take: silhouettes separate, sync 13/13, still 12.0%, QC PASS; exported
+
+### learn/effect-mass-01 — A drill window that spans two shots inflates the measured gap; and effects must stay alive until the shot ends
+
+- Recorded (UTC): 2026-11-28T14:22:36+00:00
+- Evidence: studio-output/learn/effect-mass-01: 0-5 s window local motion ref 12.1% vs take 4.2% (-65%); same take over the single shot 0-3 s: 9.15% vs 5.21% (-43%). review/win3/edge.jpg: ref rolls ~30 deg and pushes into the elbow at 2.8-3.4 s, then cuts inside the arm at ~3.6 s. compare_a2 t=2.5: our zap had faded while the ref's still ran the whole forearm
+- Cause / rationale: Window chosen by duration, not by shot; ref_motion found no cut because the change is a roll-zoom then a wipe. Our zap faded at 2 s, so the picture went still while the label was up (repeated frames 14.1%, 3 holds of 3+ frames).
+- Correction / recipe: Pick drill windows inside one shot: look at frames every 0.25 s and end the window before any roll-zoom, wipe or cut. Keep the effect alive until the shot ends: chaotic zap -> sustained chain -> settles into a clean double-outlined diamond zigzag along the nerve (chaos to clarity) -> camera roll-push into the subject leads into the next shot. Add background speed lines that flick on twos during the hold.
+- Verification: Attempt 3: repeated frames 14.1% -> 0.0%, holds 3+ 3 -> 0, camera moves 2 -> 11 (ref 12), local motion 1.7% -> 4.2%. Single-shot gap still -43%: not closed (escalated after 3 attempts).

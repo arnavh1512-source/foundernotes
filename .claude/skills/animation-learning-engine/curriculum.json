@@ -1,0 +1,405 @@
+{
+ "schema_version": 1,
+ "levels": {
+  "0": "not tried",
+  "1": "attempted, clear gaps",
+  "2": "timing matches the reference",
+  "3": "matches by measurement and critic",
+  "4": "used in an episode and held up on review"
+ },
+ "review_days": [
+  1,
+  1,
+  3,
+  7,
+  21
+ ],
+ "skills": [
+  {
+   "id": "timing-spacing",
+   "name": "Timing and spacing",
+   "prereqs": [],
+   "mastery": 2,
+   "refs": [
+    "reference-ig-01"
+   ],
+   "evidence": [
+    "bench-bump v4: 10 camera moves vs 12, holds 3+ = 0"
+   ],
+   "next_review": "2026-11-29",
+   "criteria": [
+    "key poses land on the same frames as the reference (within 1 frame)",
+    "no unintended holds of 3+ frames",
+    "spacing eases where the reference eases"
+   ]
+  },
+  {
+   "id": "breath-idle",
+   "name": "Breath on held poses",
+   "prereqs": [],
+   "mastery": 4,
+   "refs": [
+    "reference-ig-03"
+   ],
+   "evidence": [
+    "retrofitted in all 13 Reels; still frames 1-9%"
+   ],
+   "next_review": "2026-12-19",
+   "criteria": [
+    "every held pose moves slightly (head and lean)",
+    "still steps under 10%"
+   ]
+  },
+  {
+   "id": "boil-on-twos",
+   "name": "Line boil on twos",
+   "prereqs": [
+    "breath-idle"
+   ],
+   "mastery": 4,
+   "refs": [
+    "reference-ig-01"
+   ],
+   "evidence": [
+    "bench-bump v7, A04 rewind"
+   ],
+   "next_review": "2026-12-19",
+   "criteria": [
+    "outlines shift every 2 frames",
+    "boil never makes shapes unreadable"
+   ]
+  },
+  {
+   "id": "anticipation-follow",
+   "name": "Anticipation and follow-through",
+   "prereqs": [
+    "timing-spacing"
+   ],
+   "mastery": 2,
+   "refs": [
+    "reference-ig-03"
+   ],
+   "evidence": [
+    "bench-stick take 2"
+   ],
+   "next_review": "2026-11-29",
+   "criteria": [
+    "a readable wind-up before every main action",
+    "parts settle after the action (overshoot, then rest)",
+    "the reaction lands about 3 frames after the action"
+   ]
+  },
+  {
+   "id": "impact-anatomy",
+   "name": "Impact anatomy",
+   "prereqs": [
+    "anticipation-follow"
+   ],
+   "mastery": 4,
+   "refs": [
+    "reference-ig-03",
+    "reference-ig-04"
+   ],
+   "evidence": [
+    "bench-stick take 2-6; punch-in and 3-frame hold in A04, A09, A12"
+   ],
+   "next_review": "2026-12-19",
+   "criteria": [
+    "creep-in, smear frame, 3-frame contact hold",
+    "sparks or burst on contact",
+    "camera punch-in on the hit"
+   ]
+  },
+  {
+   "id": "smears-ghosts",
+   "name": "Smears and ghost trails",
+   "prereqs": [
+    "impact-anatomy"
+   ],
+   "mastery": 2,
+   "refs": [
+    "reference-ig-03"
+   ],
+   "evidence": [
+    "afterimages() in overlay.js"
+   ],
+   "next_review": "2026-11-29",
+   "criteria": [
+    "fast moves (more than a body width per frame) get a smear or ghosts",
+    "ghosts fade within 3 frames"
+   ]
+  },
+  {
+   "id": "effect-mass",
+   "name": "Effect mass (zaps, bursts, dust)",
+   "prereqs": [
+    "impact-anatomy"
+   ],
+   "mastery": 2,
+   "refs": [
+    "reference-ig-04"
+   ],
+   "evidence": [
+    "bench-zap v3: timing matched, effect too thin and small",
+    "effect-mass-01: escalated after 3 tries"
+   ],
+   "next_review": "2026-12-01",
+   "criteria": [
+    "the effect covers about the same share of the frame as the reference",
+    "effect strands cluster at the source and the target",
+    "the effect is redrawn every frame",
+    "burst blocks are as large as the reference's"
+   ]
+  },
+  {
+   "id": "strike",
+   "name": "Stick strike",
+   "prereqs": [
+    "impact-anatomy"
+   ],
+   "mastery": 2,
+   "refs": [
+    "reference-ig-03"
+   ],
+   "evidence": [
+    "bench-stick take 2"
+   ],
+   "next_review": "2026-11-30",
+   "criteria": [
+    "coil, wind-up, smear, contact hold, fold",
+    "the hit victim's head snaps back first"
+   ]
+  },
+  {
+   "id": "flight-landing",
+   "name": "Flight and landing",
+   "prereqs": [
+    "strike"
+   ],
+   "mastery": 3,
+   "refs": [
+    "reference-ig-03"
+   ],
+   "evidence": [
+    "bench-stick take 3; A07 hang time"
+   ],
+   "next_review": "2026-12-01",
+   "criteria": [
+    "hang time at the top of the arc",
+    "flat landing, then bounce and dust",
+    "arms lag the body"
+   ]
+  },
+  {
+   "id": "run-cycle",
+   "name": "Run cycle",
+   "prereqs": [
+    "timing-spacing"
+   ],
+   "mastery": 4,
+   "refs": [
+    "reference-ig-03"
+   ],
+   "evidence": [
+    "bench-stick take 6; Dev in A13"
+   ],
+   "next_review": "2026-12-19",
+   "criteria": [
+    "per-leg phase, on twos",
+    "about 45 degrees of lean",
+    "arms counter-swing"
+   ]
+  },
+  {
+   "id": "clinch",
+   "name": "Clinch and contact",
+   "prereqs": [
+    "strike"
+   ],
+   "mastery": 2,
+   "refs": [
+    "reference-ig-03"
+   ],
+   "evidence": [
+    "bench-stick take 6"
+   ],
+   "next_review": "2026-11-30",
+   "criteria": [
+    "arms aim at the contact point",
+    "silhouettes never tangle"
+   ]
+  },
+  {
+   "id": "camera-grammar",
+   "name": "Camera grammar",
+   "prereqs": [
+    "timing-spacing"
+   ],
+   "mastery": 2,
+   "refs": [
+    "reference-ig-01",
+    "reference-ig-02"
+   ],
+   "evidence": [
+    "bench-bump v4: measured moves copied"
+   ],
+   "next_review": "2026-11-29",
+   "criteria": [
+    "push and pull alternate",
+    "accelerate into a transition, decelerate out",
+    "camera move count within 20% of the reference"
+   ]
+  },
+  {
+   "id": "motion-in-picture",
+   "name": "Motion inside the picture",
+   "prereqs": [
+    "boil-on-twos"
+   ],
+   "mastery": 1,
+   "refs": [
+    "reference-ig-01"
+   ],
+   "evidence": [
+    "bench-bump v7: local motion 4.6% vs reference 7.6%"
+   ],
+   "next_review": "2026-11-29",
+   "criteria": [
+    "local motion within 25% of the reference",
+    "many small independent movers, not one big one"
+   ]
+  },
+  {
+   "id": "face-forms",
+   "name": "Faces built from forms",
+   "prereqs": [],
+   "mastery": 1,
+   "refs": [
+    "reference-ig-01",
+    "reference-ig-03"
+   ],
+   "evidence": [
+    "owner: face too generic; bench-bump v3 forms and tone planes"
+   ],
+   "next_review": "2026-11-29",
+   "criteria": [
+    "face reads at full size with forms (brow, nose, cheek, jaw)",
+    "2-4 flat tone planes",
+    "compared at full size, never from thumbnails"
+   ]
+  },
+  {
+   "id": "cel-planes",
+   "name": "Hard cel tone planes",
+   "prereqs": [
+    "face-forms"
+   ],
+   "mastery": 1,
+   "refs": [
+    "reference-ig-01"
+   ],
+   "evidence": [
+    "bench-bump v5-v6: flat planes partly"
+   ],
+   "next_review": "2026-11-29",
+   "criteria": [
+    "2-4 hard-edged tones per form",
+    "no soft gradients on characters"
+   ]
+  },
+  {
+   "id": "environment-richness",
+   "name": "Lived-in environment",
+   "prereqs": [],
+   "mastery": 0,
+   "refs": [
+    "reference-ig-04"
+   ],
+   "evidence": [
+    "bench-zap: room sparse vs reference picture, dresser, rug, curtains, motes"
+   ],
+   "next_review": "2026-11-28",
+   "criteria": [
+    "3+ props that say where we are",
+    "a moving trace in the background (motes, light)",
+    "background never competes with the subject"
+   ]
+  },
+  {
+   "id": "two-character-staging",
+   "name": "Two-character staging",
+   "prereqs": [
+    "clinch"
+   ],
+   "mastery": 3,
+   "refs": [
+    "reference-ig-03",
+    "reference-ig-05"
+   ],
+   "evidence": [
+    "A11: separate silhouettes, reaction 3 frames after action"
+   ],
+   "next_review": "2026-12-01",
+   "criteria": [
+    "about a body width between characters",
+    "one character acts while the other reacts"
+   ]
+  },
+  {
+   "id": "dialogue-grammar",
+   "name": "Dialogue comedy grammar",
+   "prereqs": [
+    "two-character-staging"
+   ],
+   "mastery": 0,
+   "refs": [
+    "reference-ig-05"
+   ],
+   "evidence": [
+    "studied ig-05 only"
+   ],
+   "next_review": "2026-11-28",
+   "criteria": [
+    "establishing shot, then over-the-shoulder cuts",
+    "close-up on the punchline, then a reaction shot",
+    "a callback at the end",
+    "cuts land on the line, not after it"
+   ]
+  },
+  {
+   "id": "acting-expression",
+   "name": "Acting through expression",
+   "prereqs": [
+    "face-forms"
+   ],
+   "mastery": 0,
+   "refs": [
+    "reference-ig-05"
+   ],
+   "evidence": [],
+   "next_review": "2026-11-28",
+   "criteria": [
+    "the expression changes before the line, not on it",
+    "brows and mouth disagree when the character lies or hides",
+    "eye direction tells us who they are thinking about"
+   ]
+  },
+  {
+   "id": "secondary-overlap",
+   "name": "Secondary action and overlap",
+   "prereqs": [
+    "anticipation-follow"
+   ],
+   "mastery": 0,
+   "refs": [
+    "reference-ig-03"
+   ],
+   "evidence": [],
+   "next_review": "2026-11-28",
+   "criteria": [
+    "loose parts (hair, cloth, props) drag 2-4 frames behind",
+    "a secondary action supports the main one without competing"
+   ]
+  }
+ ]
+}
