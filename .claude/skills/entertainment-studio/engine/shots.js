@@ -17,7 +17,10 @@ function frameShot(kind,Js,bx=.5){ const sp=SHOT_SPAN[kind], top=Math.min(...Js.
   let k=sp[2]*H/(bot-top);
   // two-shots frame on the heads (outer arms may crop): in 9:16 a side-by-side pair is width-bound, so hips would shrink them to dots
   const xs=kind==='TWO'?Js.flatMap(J=>[J.hd[0]-J.R*2.6,J.hd[0]+J.R*2.6]):Js.flatMap(J=>[J.hd[0]-J.R*2,J.hd[0]+J.R*2,J.hip[0]-J.R*2.2,J.hip[0]+J.R*2.2]), wid=Math.max(...xs)-Math.min(...xs);
-  if(kind==='TWO'||kind==='WS') k=Math.min(k,.94*W/wid); const tx=(Math.max(...xs)+Math.min(...xs))/2;
+  if(kind==='TWO'||kind==='WS') k=Math.min(k,.94*W/wid);
+  // keep both hands inside the frame width
+  if(kind==='MCU'||kind==='MS'||kind==='WS'){ const hx=Js.flatMap(J=>[J.hf[0],J.hb[0],J.hd[0]]), hw=Math.max(...hx)-Math.min(...hx)+Js[0].R*5; k=Math.min(k,.92*W/hw) }
+  const tx=(Math.max(...xs)+Math.min(...xs))/2;
   const cy=top-(sp[3]-.5)*H/k, cx=tx-(bx-.5)*W/k; return [cx,cy,k/1.18] }
 // share of frame height the subject's head-to-hip span covers after cam(cx,cy,z): for checks
 function subjectShare(J,z){ return (J.hip[1]-(J.hd[1]-J.R))*z*1.18/H }
@@ -27,7 +30,7 @@ function ovShoulder(side,col){ x.save(); x.setTransform(1,0,0,1,0,0); const r=Ma
 // Full hands for close shots (owner note 2026-11-28: "the hands are not proper"). The engine's hand is a blob barely wider
 // than the arm, so at MCU/CU the arm just ends. A real hand: palm wider than the wrist, four separate fingers, a thumb.
 // Opt in per episode with useFullHands(); kinds: hand/open, relaxed, fist, point, thumb, palmup, wave
-function fullHand(J,e,h,kind,s,col){ if(!kind) return; const dx=J[h][0]-J[e][0], dy=J[h][1]-J[e][1], L=Math.hypot(dx,dy)||1, u=[dx/L,dy/L], side=h==='hf'?-1:1, n=[-u[1]*side,u[0]*side], [hx,hy]=J[h]; // the two hands are mirror images, so both thumbs point inward
+function fullHand(J,e,h,kind,s,col,mid){ if(!kind) return; const dx=J[h][0]-J[e][0], dy=J[h][1]-J[e][1], L=Math.hypot(dx,dy)||1, u=[dx/L,dy/L], side=h==='hf'?-1:1, n=[-u[1]*side,u[0]*side], [hx,hy]=J[h]; // the two hands are mirror images, so both thumbs point inward
   const P=(a,b)=>[hx+u[0]*a*s+n[0]*b*s, hy+u[1]*a*s+n[1]*b*s], rot=(v,a)=>{ a*=side; return [v[0]*Math.cos(a)-v[1]*Math.sin(a),v[0]*Math.sin(a)+v[1]*Math.cos(a)] };
   // drawn twice: first a thin gap line in the background colour (HAND_GAP), then the hand, so a hand over a same-coloured
   // body (a black hand on a black thigh, one hand over the other) still separates; the classic animation 'line gap'
@@ -42,14 +45,17 @@ function fullHand(J,e,h,kind,s,col){ if(!kind) return; const dx=J[h][0]-J[e][0],
   const fistBlock=()=>{ const c=P(5,0); x.save(); x.translate(...c); x.rotate(Math.atan2(u[1],u[0])); x.beginPath(); x.roundRect(-8*s-pad,-8.5*s-pad,16*s+2*pad,17*s+2*pad,7*s+pad); x.fill(); if(detail){ x.strokeStyle='rgba(0,0,0,.22)'; x.lineWidth=1.6*s; for(const k of [-3,1,5]){ x.beginPath(); x.moveTo(5*s,k*s); x.lineTo(8*s,k*s); x.stroke() } } x.restore() };
   if(kind==='hand'||kind==='open'){ palm(); fingers(.1,9.5,0); thumb(-.7) }
   else if(kind==='wave'){ palm(); fingers(.15,10,0); thumb(-.8) }
-  else if(kind==='relaxed'){ palm(10,11); fingers(.04,8.5,.45); thumb(-.4,6.5,.35) }
+  else if(kind==='relaxed'){ palm(10,11); fingers(.04,8.5,.45); thumb(-.95,7.5,.25) }
   else if(kind==='palmup'){ palm(11,13); fingers(.05,8.5,-.25); thumb(-.55,6.5,-.1) }
-  else if(kind==='fist'||kind==='grip'){ fistBlock(); thumb(-.5,5.2,.9) }
+  else if(kind==='grip'){ palm(9,10.5); for(let i=0;i<4;i++){ const off=(i-1.5)*4.1; finger([8.5,off],0,6.5,4.2,2.3) } if(mid&&detail){ x.save(); mid(); x.restore() } thumb(-.25,8.5,0) } // fingers curl behind the handle (mid draws it), thumb over the top
+  else if(kind==='fist'){ fistBlock(); thumb(-.5,5.2,.9) }
   else if(kind==='point'){ fistBlock(); finger([8,-2.6],-.04,11,4.2,0); thumb(-.5,5,.9) }
   else if(kind==='thumb'){ fistBlock(); const b=P(3,-6); x.lineWidth=4.8*s+2*pad; x.beginPath(); x.moveTo(...b); x.lineTo(b[0],b[1]-11*s); x.stroke() } // thumbs-up always points up
   else { palm(); fingers(.1,9.5,0); thumb(-.7) }
   x.restore() };
-  paint(1.4*s,typeof HAND_GAP!=='undefined'?HAND_GAP:'rgba(255,248,235,.38)',0); paint(0,col,1) } // faint: shows over a same-coloured body, barely on the wall
+  const lum=(()=>{ const m=/^#?([0-9a-f]{6})$/i.exec(col||''); if(!m) return .5; const v=parseInt(m[1],16); return (.3*(v>>16)+.59*((v>>8)&255)+.11*(v&255))/255 })();
+  // gap line: a faint contour, dark on light-coloured characters and barely-light on dark ones (critic: a pale halo reads as a sticker)
+  paint(1.0*s,typeof HAND_GAP!=='undefined'?HAND_GAP:(lum<.3?'rgba(255,248,235,.2)':'rgba(0,0,0,.22)'),0); paint(0,col,1) }
 function useFullHands(){ handGlyph=fullHand }
 
 // a foreground table edge across the bottom of the frame (screen space): in 9:16 a seated two-shot otherwise leaves a dead
