@@ -18,6 +18,7 @@ RENDER = REPO / ".claude/skills/motion/scripts/render.mjs"
 SCRIPTS = REPO / ".claude/skills/podcast-scout-skill/scripts"
 FONTS = REPO / ".claude/skills/podcast-scout-skill/assets/ink-gold-kit/fonts"
 OVERLAY = Path(__file__).resolve().parents[1] / "engine/overlay.js"   # playback chip, labels, rewind effect
+SHOTS_JS = Path(__file__).resolve().parents[1] / "engine/shots.js"   # real shot sizes (frameShot, ovShoulder)
 OVERLAY_KEYS = ("time", "ui", "labels", "fx", "hits", "light", "counter", "twos", "special", "subs")
 SFX = REPO / ".claude/skills/think-stick-engine/assets/sfx"
 FPS = 30
@@ -60,11 +61,18 @@ def resolve(m, variant):
     return [{**base, **s, **ov.get(s["id"], {})} for s in m["shots"]]
 
 
+def uses_shots_js(ws, shot):
+    src = (Path(ws) / "scenes/_common.js").read_text() + (Path(ws) / f"scenes/{shot['scene']}.js").read_text()
+    return any(f in src for f in ("frameShot(", "jointsOf(", "ovShoulder(", "useFullHands("))
+
+
 def render_key(ws, m, shot):
     h = hashlib.sha256(PAGE_VERSION.encode())
     for p in (ENGINE / "stick.html", ENGINE / "faces.js", Path(ws) / "scenes/_common.js", Path(ws) / f"scenes/{shot['scene']}.js"):
         h.update(p.read_bytes())
     h.update(json.dumps({k: shot.get(k) for k in ("id", "scene", "dur", "args", "uses")}, sort_keys=True).encode())
+    if uses_shots_js(ws, shot):  # only scenes that call the shot helpers depend on shots.js
+        h.update(SHOTS_JS.read_bytes())
     extra = {k: shot[k] for k in OVERLAY_KEYS if k in shot}
     if extra:  # only shots that use time remaps or overlays depend on overlay.js, so older episodes keep their cached clips
         h.update(OVERLAY.read_bytes()); h.update(json.dumps(extra, sort_keys=True).encode())
@@ -83,6 +91,7 @@ def shot_page(ws, m, shot, key):
         shutil.copy(f, film / "fonts" / f.name)
     shutil.copy(ENGINE / "faces.js", film / "faces.js")
     shutil.copy(OVERLAY, film / "overlay.js")
+    shutil.copy(SHOTS_JS, film / "shots.js")
     assets = {u["asset"]: json.loads(asset_file(ws, m, u["asset"], u["v"]).read_text()) for u in shot.get("uses", [])}
     tag = (f"{m['series'].upper()} · {m['episode']} · {shot['id']} · ANIMATIC" + (" · TEMP AUDIO" if any(c.get("temporary") for c in m["audio_cues"]) else "")) if m.get("overlay_tag", True) else ""
     (film / f"shot_{key}.js").write_text(f"window.SHOT={json.dumps({**shot, 'tag': tag})};window.ASSETS={json.dumps(assets)};")
@@ -103,7 +112,7 @@ def shot_page(ws, m, shot, key):
         html = html.replace(dims, "const W=1080,H=1080").replace(canvas, 'width="1080" height="1080"')
     html = html.replace(head, f'<script src="shot_{key}.js"></script>').replace(t01, "const T0=0, T1=window.SHOT.dur;").replace(logo, "")
     html = re.sub(r'<script src="scenes\.js"></script>.*?<script src="env\.js"></script>',
-                  f'<script src="faces.js"></script><script src="overlay.js"></script><script src="../scenes/_common.js"></script><script src="../scenes/{shot["scene"]}.js"></script>', html, flags=re.S)
+                  f'<script src="faces.js"></script><script src="overlay.js"></script><script src="shots.js"></script><script src="../scenes/_common.js"></script><script src="../scenes/{shot["scene"]}.js"></script>', html, flags=re.S)
     i = html.index("const SEGS=window.SEG")
     html = html[:i] + """window.seek=async(tt)=>{ const SH=window.SHOT, d=SH.dur, tm=SH.time;
   // ON TWOS: hold each drawing for two frames (the overlays still move on ones)
@@ -127,12 +136,23 @@ document.fonts.ready.then(()=>seek(0));
 def render_shot(ws, m, shot):
     key = render_key(ws, m, shot)
     clip = Path(ws) / f"takes/clips/{shot['id']}-{key}.mp4"
-    if clip.exists():
+    if clip.exists() and playable(clip):
         return key, clip, False
+    clip.unlink(missing_ok=True)  # a render cut off mid-write leaves a broken clip; never reuse it
     clip.parent.mkdir(parents=True, exist_ok=True)
     page = shot_page(ws, m, shot, key)
-    subprocess.run(["node", str(RENDER), str(page), "--out", str(clip)], cwd=REPO, check=True, stdout=subprocess.DEVNULL)
+    tmp = clip.with_name(clip.stem + ".part.mp4")
+    subprocess.run(["node", str(RENDER), str(page), "--out", str(tmp)], cwd=REPO, check=True, stdout=subprocess.DEVNULL)
+    tmp.replace(clip)  # only a finished render takes the cache name
     return key, clip, True
+
+
+def playable(p):
+    r = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", str(p)], capture_output=True, text=True)
+    try:
+        return r.returncode == 0 and float(r.stdout.strip()) > 0
+    except ValueError:
+        return False
 
 
 def duration(p):

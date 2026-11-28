@@ -198,3 +198,13 @@ class RefCompare(unittest.TestCase):
     def test_time_pairs(self):
         import ref_compare
         self.assertEqual(ref_compare.pairs(["1.3", "22.5:22.0"]), [(1.3, 1.3), (22.5, 22.0)])
+
+
+class ClipCache(unittest.TestCase):
+    def test_broken_clip_is_not_playable(self):
+        import tempfile, importlib.util, pathlib
+        spec = importlib.util.spec_from_file_location("ep_build", pathlib.Path(__file__).resolve().parents[1] / "scripts/ep_build.py")
+        eb = importlib.util.module_from_spec(spec); spec.loader.exec_module(eb)
+        with tempfile.TemporaryDirectory() as d:
+            bad = pathlib.Path(d) / "x.mp4"; bad.write_bytes(b"not a video")
+            self.assertFalse(eb.playable(bad))
