@@ -7,6 +7,7 @@
 // From a second reference (a studio's "five directing moves" promo, 2026-11-27):
 //   "hits":   [0.5]            THE HIT: a white impact frame at each local time, fading over the next frame or two
 //   "light":  {"tint": "#ff9a3c", "alpha": 0.12, "vignette": 0.35}               LIGHT: a colour grade and vignette
+//   "subs":   [[t0, t1, "line"], ...]  burned subtitles, bottom centre (dialogue)
 //   "counter":{"n": 2, "of": 3, "text": "THUMP"}  a progress row (filled boxes, "2 / 3 THUMP"); "n": "?" withholds the last
 //   "special":[t0, t1]  a "special moment" grade (reference-ig-03 44-47 s): the world turns cool teal and desaturated for
 //              the peak, then snaps back. Scenes can add afterimages(draw, ...) for coloured trailing ghosts of black line art.
@@ -45,5 +46,8 @@ function ovCounter(c){ if(!c) return; const of=c.of||3, n=c.n==='?'?of-1:c.n, bs
 function afterimages(draw,n=3,step=.04,hues=[290,170,240]){ for(let i=n;i>=1;i--){ x.save(); x.filter=`invert(1) sepia(1) saturate(7) hue-rotate(${hues[(i-1)%hues.length]}deg) opacity(${.22+.12*(n-i)})`; draw(-i*step); x.restore() } }
 function ovSpecial(sp,t){ if(!sp) return; const [a,b]=sp; if(t<a||t>=b) return; x.save(); x.globalCompositeOperation='saturation'; x.globalAlpha=.65; x.fillStyle='#808080'; x.fillRect(0,0,W,H);
   x.globalCompositeOperation='multiply'; x.globalAlpha=.35; x.fillStyle='#7fb7b0'; x.fillRect(0,0,W,H); x.restore() }
+function ovSubs(subs,t){ const L=(subs||[]).find(e=>t>=e[0]&&t<e[1]); if(!L) return; const fs=W<H?58:48, maxw=W*.84; x.font=`800 ${fs}px Inst`; x.textAlign='center'; x.textBaseline='middle';
+  const words=String(L[2]).split(' '), lines=[]; let cur=''; for(const w of words){ const tr=cur?cur+' '+w:w; if(x.measureText(tr).width>maxw&&cur){ lines.push(cur); cur=w } else cur=tr } if(cur) lines.push(cur);
+  const y0=(W<H?H-430:H-150)-(lines.length-1)*fs*1.15; lines.forEach((ln,i)=>{ const y=y0+i*fs*1.15; x.lineJoin='round'; x.lineWidth=12; x.strokeStyle='#111'; x.strokeText(ln,W/2,y); x.fillStyle='#ffe45c'; x.fillText(ln,W/2,y) }); x.textAlign='left' }
 function ovDraw(shot,t){ x.setTransform(1,0,0,1,0,0); x.globalAlpha=1;
-  ovLight(shot.light); ovSpecial(shot.special,t); if(shot.fx==='rewind') ovRewindFX(t); ovHits(shot.hits,t); ovCounter(shot.counter); ovUI(shot.ui,t); for(const L of shot.labels||[]) ovLabel(L,t) }
+  ovLight(shot.light); ovSpecial(shot.special,t); if(shot.fx==='rewind') ovRewindFX(t); ovHits(shot.hits,t); ovCounter(shot.counter); ovUI(shot.ui,t); for(const L of shot.labels||[]) ovLabel(L,t); ovSubs(shot.subs,t) }

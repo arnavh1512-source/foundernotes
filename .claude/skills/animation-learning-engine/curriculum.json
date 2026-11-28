@@ -352,14 +352,15 @@
    "prereqs": [
     "two-character-staging"
    ],
-   "mastery": 0,
+   "mastery": 1,
    "refs": [
     "reference-ig-05"
    ],
    "evidence": [
-    "studied ig-05 only"
+    "studied ig-05 only",
+    "dialogue-grammar-01: escalated after 3 tries"
    ],
-   "next_review": "2026-11-28",
+   "next_review": "2026-11-29",
    "criteria": [
     "establishing shot, then over-the-shoulder cuts",
     "close-up on the punchline, then a reaction shot",
@@ -400,6 +401,406 @@
    "criteria": [
     "loose parts (hair, cloth, props) drag 2-4 frames behind",
     "a secondary action supports the main one without competing"
+   ]
+  },
+  {
+   "id": "logline",
+   "name": "Logline and premise",
+   "kind": "story",
+   "prereqs": [],
+   "mastery": 3,
+   "refs": [
+    "references/story-craft.md"
+   ],
+   "evidence": [
+    "logline-01: passed after 3 tries"
+   ],
+   "next_review": "2026-12-05",
+   "criteria": [
+    "one sentence: who, wants what, what stands in the way, why it's funny or matters",
+    "the premise has an engine that can make more than one scene",
+    "an outsider can retell it after one read"
+   ]
+  },
+  {
+   "id": "want-need",
+   "name": "Character want, need and flaw",
+   "kind": "story",
+   "prereqs": [
+    "logline"
+   ],
+   "mastery": 0,
+   "refs": [
+    "references/story-craft.md"
+   ],
+   "evidence": [],
+   "next_review": "2026-11-28",
+   "criteria": [
+    "each lead wants something concrete on screen",
+    "the flaw causes the trouble",
+    "the want is visible in action, not stated"
+   ]
+  },
+  {
+   "id": "setup-payoff",
+   "name": "Setup and payoff",
+   "kind": "story",
+   "prereqs": [
+    "logline"
+   ],
+   "mastery": 0,
+   "refs": [
+    "references/story-craft.md"
+   ],
+   "evidence": [],
+   "next_review": "2026-11-28",
+   "criteria": [
+    "every payoff was planted earlier and visible on screen",
+    "every plant pays off",
+    "the plant is disguised as something else when it appears"
+   ]
+  },
+  {
+   "id": "rule-of-three",
+   "name": "Rule of three (pattern, pattern, break)",
+   "kind": "story",
+   "prereqs": [
+    "setup-payoff"
+   ],
+   "mastery": 0,
+   "refs": [
+    "references/story-craft.md"
+   ],
+   "evidence": [],
+   "next_review": "2026-11-28",
+   "criteria": [
+    "two beats set a pattern",
+    "the third breaks it in a surprising but fair way",
+    "the break is the shortest beat"
+   ]
+  },
+  {
+   "id": "escalation",
+   "name": "Escalation",
+   "kind": "story",
+   "prereqs": [
+    "setup-payoff"
+   ],
+   "mastery": 0,
+   "refs": [
+    "references/story-craft.md"
+   ],
+   "evidence": [],
+   "next_review": "2026-11-28",
+   "criteria": [
+    "each beat raises the stakes or absurdity over the last",
+    "no beat repeats the same level",
+    "the top is reached just before the end"
+   ]
+  },
+  {
+   "id": "reversal-twist",
+   "name": "Reversal and twist",
+   "kind": "story",
+   "prereqs": [
+    "setup-payoff"
+   ],
+   "mastery": 0,
+   "refs": [
+    "references/story-craft.md"
+   ],
+   "evidence": [],
+   "next_review": "2026-11-28",
+   "criteria": [
+    "the twist recontextualises earlier beats",
+    "rewatching shows it was planted",
+    "the twist comes from character, not coincidence"
+   ]
+  },
+  {
+   "id": "comic-misdirection",
+   "name": "Joke craft: misdirection and the turn",
+   "kind": "story",
+   "prereqs": [
+    "rule-of-three"
+   ],
+   "mastery": 0,
+   "refs": [
+    "references/story-craft.md"
+   ],
+   "evidence": [],
+   "next_review": "2026-11-28",
+   "criteria": [
+    "the setup leads to an expected meaning",
+    "the punch word/image arrives last",
+    "the turn is understood in under a second"
+   ]
+  },
+  {
+   "id": "running-gag-callback",
+   "name": "Running gag and callback",
+   "kind": "story",
+   "prereqs": [
+    "setup-payoff"
+   ],
+   "mastery": 0,
+   "refs": [
+    "references/story-craft.md"
+   ],
+   "evidence": [],
+   "next_review": "2026-11-28",
+   "criteria": [
+    "the gag appears at least three times, changed each time",
+    "the final callback tops the earlier ones",
+    "a newcomer still gets the last one"
+   ]
+  },
+  {
+   "id": "irony-deadpan",
+   "name": "Irony, deadpan and contradiction",
+   "kind": "story",
+   "prereqs": [
+    "want-need"
+   ],
+   "mastery": 0,
+   "refs": [
+    "references/story-craft.md"
+   ],
+   "evidence": [],
+   "next_review": "2026-11-28",
+   "criteria": [
+    "words and action contradict on screen",
+    "the deadpan character never signals the joke",
+    "another character or the chorus voices the reaction"
+   ]
+  },
+  {
+   "id": "subtext-dialogue",
+   "name": "Dialogue with subtext",
+   "kind": "story",
+   "prereqs": [
+    "want-need"
+   ],
+   "mastery": 0,
+   "refs": [
+    "references/story-craft.md"
+   ],
+   "evidence": [],
+   "next_review": "2026-11-28",
+   "criteria": [
+    "no line states the character's feeling directly",
+    "each line is something a real person would say",
+    "the scene works with the sound off (action carries meaning)"
+   ]
+  },
+  {
+   "id": "three-act",
+   "name": "Three-act structure (micro)",
+   "kind": "story",
+   "prereqs": [
+    "want-need"
+   ],
+   "mastery": 0,
+   "refs": [
+    "references/story-craft.md"
+   ],
+   "evidence": [],
+   "next_review": "2026-11-28",
+   "criteria": [
+    "setup, confrontation, resolution are each visible",
+    "the turn into act 2 is a choice by the lead",
+    "the resolution answers the opening question"
+   ]
+  },
+  {
+   "id": "kishotenketsu",
+   "name": "Kishotenketsu (intro, development, twist, reconcile)",
+   "kind": "story",
+   "prereqs": [
+    "logline"
+   ],
+   "mastery": 0,
+   "refs": [
+    "references/story-craft.md"
+   ],
+   "evidence": [],
+   "next_review": "2026-11-28",
+   "criteria": [
+    "four beats: introduce, develop, an unrelated-seeming turn, reconciliation",
+    "the story works without a villain or conflict",
+    "the reconcile links beat 3 back to beats 1-2"
+   ]
+  },
+  {
+   "id": "hook-cold-open",
+   "name": "Hook and cold open (first second)",
+   "kind": "story",
+   "prereqs": [
+    "logline"
+   ],
+   "mastery": 0,
+   "refs": [
+    "references/story-craft.md"
+   ],
+   "evidence": [],
+   "next_review": "2026-11-28",
+   "criteria": [
+    "something changes or is wrong in the first second",
+    "the question it raises is answered only at the end",
+    "no title, logo or setup before the hook"
+   ]
+  },
+  {
+   "id": "curiosity-mystery",
+   "name": "Curiosity gap and mystery",
+   "kind": "story",
+   "prereqs": [
+    "setup-payoff"
+   ],
+   "mastery": 0,
+   "refs": [
+    "references/story-craft.md"
+   ],
+   "evidence": [],
+   "next_review": "2026-11-28",
+   "criteria": [
+    "an open question is planted early",
+    "clues are fair and visible",
+    "the answer is surprising yet inevitable"
+   ]
+  },
+  {
+   "id": "suspense",
+   "name": "Suspense (the audience knows more)",
+   "kind": "story",
+   "prereqs": [
+    "setup-payoff"
+   ],
+   "mastery": 0,
+   "refs": [
+    "references/story-craft.md"
+   ],
+   "evidence": [],
+   "next_review": "2026-11-28",
+   "criteria": [
+    "the audience sees the danger the character doesn't",
+    "time pressure is visible",
+    "release comes from character action"
+   ]
+  },
+  {
+   "id": "emotional-arc",
+   "name": "Heartfelt emotional arc",
+   "kind": "story",
+   "prereqs": [
+    "want-need"
+   ],
+   "mastery": 0,
+   "refs": [
+    "references/story-craft.md"
+   ],
+   "evidence": [],
+   "next_review": "2026-11-28",
+   "criteria": [
+    "the lead ends in a different emotional state",
+    "the change is shown in one concrete action",
+    "no music or narration tells us how to feel"
+   ]
+  },
+  {
+   "id": "horror-tension",
+   "name": "Horror-lite tension and release",
+   "kind": "story",
+   "prereqs": [
+    "suspense"
+   ],
+   "mastery": 0,
+   "refs": [
+    "references/story-craft.md"
+   ],
+   "evidence": [],
+   "next_review": "2026-11-28",
+   "criteria": [
+    "a normal space becomes wrong in small steps",
+    "the scare is set up by silence or stillness",
+    "comedy release follows the peak (for our tone)"
+   ]
+  },
+  {
+   "id": "heros-journey",
+   "name": "Hero's journey (compressed)",
+   "kind": "story",
+   "prereqs": [
+    "three-act"
+   ],
+   "mastery": 0,
+   "refs": [
+    "references/story-craft.md"
+   ],
+   "evidence": [],
+   "next_review": "2026-11-28",
+   "criteria": [
+    "call, refusal or doubt, threshold, ordeal, return each present",
+    "the return brings something back",
+    "fits the target length without rushing a beat"
+   ]
+  },
+  {
+   "id": "explainer-story",
+   "name": "Explainer story (Think!)",
+   "kind": "story",
+   "prereqs": [
+    "want-need",
+    "curiosity-mystery"
+   ],
+   "mastery": 0,
+   "refs": [
+    "references/story-craft.md"
+   ],
+   "evidence": [],
+   "next_review": "2026-11-28",
+   "criteria": [
+    "opens on the viewer's problem",
+    "one mechanism explained through a concrete scene",
+    "the viewer leaves knowing what to do"
+   ]
+  },
+  {
+   "id": "series-format",
+   "name": "Series format (story on rails)",
+   "kind": "story",
+   "prereqs": [
+    "running-gag-callback"
+   ],
+   "mastery": 0,
+   "refs": [
+    "references/story-craft.md"
+   ],
+   "evidence": [],
+   "next_review": "2026-11-28",
+   "criteria": [
+    "the same beat grammar works for three different premises",
+    "what changes per episode is named",
+    "the format is recognisable within 2 seconds"
+   ]
+  },
+  {
+   "id": "endings-button-loop",
+   "name": "Endings: button, topper and loop",
+   "kind": "story",
+   "prereqs": [
+    "escalation"
+   ],
+   "mastery": 0,
+   "refs": [
+    "references/story-craft.md"
+   ],
+   "evidence": [],
+   "next_review": "2026-11-28",
+   "criteria": [
+    "the last beat is the strongest or a quiet button after it",
+    "a loop ending flows into the first frame",
+    "nothing happens after the payoff"
    ]
   }
  ]

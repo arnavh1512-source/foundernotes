@@ -53,6 +53,9 @@ class Measure(unittest.TestCase):
         self.assertEqual(learn.sheet_grid(0, 5.0), (20, 8, 3))
         self.assertEqual(learn.sheet_grid(1.0, 1.1), (1, 8, 1))
 
+    def test_text_attempts(self):
+        self.assertTrue(learn.is_text("d/draft.MD")); self.assertFalse(learn.is_text("t.mp4"))
+
     def test_levels(self):
         self.assertEqual(learn.new_level(1, "passed", []), 3)
         self.assertEqual(learn.new_level(1, "escalated", [{"timing_ok": True}]), 2)

@@ -17,6 +17,9 @@ You are the **craft critic** of the animation learning engine. Adapted from the 
 3. Write `verdicts.json` with one entry per criterion: `{"pass": bool, "finding": "what you saw at t=…", "fix": "…"}`. Add `"_timing_ok": true` only if key poses land within one frame of the reference.
 4. Run `learn.py critique <drill> verdicts.json`.
 
+## Story drills
+For a `kind: story` drill, read `draft.md` as an outsider who has never seen the series. Quote the beat that proves or fails each criterion and give one fix per failure. Use `references/story-craft.md` for the checks.
+
 ## Automatic fail
 - A criterion judged without looking at a full-size frame.
 - A measured number marked OUT.

@@ -3,9 +3,10 @@
 
     learn.py status                         skill tree, mastery and reviews due
     learn.py next                           the drill to do now (reviews due first, then the weakest unlocked skill)
-    learn.py start <skill> <ref.mp4> <t0> <t1> [--name NAME]
+    learn.py start <skill> <ref.mp4|ref.md> [<t0> <t1>] [--name NAME]   (story skills take a text reference, no window)
                                             new drill folder under studio-output/learn/ with the brief and criteria
-    learn.py measure <drill_dir> <take.mp4> measure reference window and take with ref_motion; adds an attempt
+    learn.py measure <drill_dir> <take.mp4|draft.md>
+                                            video: measure reference window and take with ref_motion; draft: log it; adds an attempt
     learn.py critique <drill_dir> <verdicts.json>
                                             the critic's per-criterion verdicts for the latest attempt
     learn.py close <drill_dir> [--lesson lesson.json]
@@ -136,7 +137,10 @@ def cmd_start(a):
     d = DRILLS / (a.name or f"{s['id']}-{n:02d}"); (d / "review").mkdir(parents=True, exist_ok=True)
     drill = {"skill": s["id"], "created": today().isoformat(), "reference": {"video": str(Path(a.ref).resolve()), "start": a.t0, "end": a.t1},
              "criteria": s["criteria"], "attempts": [], "status": "open", "max_attempts": MAX_ATTEMPTS}
+    drill["kind"] = s.get("kind", "animation")
     drill_file(d).write_text(json.dumps(drill, indent=1))
+    if is_text(a.ref) or a.t0 is None:
+        print(f"drill {d}\nstory drill: read the reference, write the piece to a .md file, then run: learn.py measure {d} <draft.md>"); return
     sheet = window_sheet(a.ref, a.t0, a.t1, d / "review" / "window_sheet.jpg")
     print(f"window sheet {sheet}: check the window is ONE shot (no roll-zoom, wipe or cut); if not, start again with a shorter window")
     print(f"drill {d}\nstudy the reference window at full size first (ref_compare.py), then build a take and run: learn.py measure {d} <take.mp4>")
@@ -163,12 +167,21 @@ def ref_motion(video, out, t0=None, t1=None):
     return json.loads((out / "motion.json").read_text())
 
 
+def is_text(path):
+    return Path(path).suffix.lower() in (".md", ".txt")
+
+
 def cmd_measure(a):
     d = Path(a.drill); drill = json.loads(drill_file(d).read_text())
     if drill["status"] != "open":
         raise SystemExit(f"drill is {drill['status']}")
     if len(drill["attempts"]) >= drill["max_attempts"]:
         raise SystemExit("attempt limit reached: close the drill and record the gaps")
+    if is_text(a.take):  # story drills: a written draft, judged by reading; nothing to measure
+        n = len(drill["attempts"]) + 1
+        drill["attempts"].append({"n": n, "take": str(Path(a.take).resolve()), "measured": {}, "verdicts": None, "verdict": "NEEDS WORK"})
+        drill_file(d).write_text(json.dumps(drill, indent=1))
+        print(f"attempt {n} (draft): now read it as an outsider, then: learn.py critique {d} verdicts.json"); return
     r = drill["reference"]; rm = d / "review" / "ref_motion"
     ref = json.loads((rm / "motion.json").read_text()) if (rm / "motion.json").exists() else ref_motion(r["video"], rm, r["start"], r["end"])
     n = len(drill["attempts"]) + 1
@@ -239,7 +252,7 @@ def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = p.add_subparsers(dest="cmd", required=True)
     sub.add_parser("status"); sub.add_parser("next")
-    s = sub.add_parser("start"); s.add_argument("skill"); s.add_argument("ref"); s.add_argument("t0", type=float); s.add_argument("t1", type=float); s.add_argument("--name")
+    s = sub.add_parser("start"); s.add_argument("skill"); s.add_argument("ref"); s.add_argument("t0", type=float, nargs="?"); s.add_argument("t1", type=float, nargs="?"); s.add_argument("--name")
     s = sub.add_parser("measure"); s.add_argument("drill"); s.add_argument("take")
     s = sub.add_parser("critique"); s.add_argument("drill"); s.add_argument("verdicts")
     s = sub.add_parser("close"); s.add_argument("drill"); s.add_argument("--lesson")

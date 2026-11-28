@@ -231,6 +231,8 @@ colours across many bins.
 
 | Date | Benchmark | Still steps (ref) | What improved | Biggest gap now |
 |---|---|---|---|---|
+| 2026-11-28 | learn: logline (passed, 3 tries, level 3) | - | one sentence: who, wants what, what stands in the way, why it's funny or matters; the premise has an engine that can make more than one scene; an outsider can retell it after one read | - |
+| 2026-11-28 | learn: dialogue-grammar (escalated, 3 tries, level 1) | 1.57% local (4.21%) | establishing shot, then over-the-shoulder cuts; close-up on the punchline, then a reaction shot; a callback at the end; cuts land on the line, not after it | - |
 | 2026-11-28 | learn: environment-richness (escalated, 3 tries, level 2) | 5.28% local (9.04%) | 3+ props that say where we are; a moving trace in the background (motes, light); background never competes with the subject | - |
 | 2026-11-28 | learn: effect-mass (escalated, 3 tries, level 2) | 4.23% local (12.12%) | the effect covers about the same share of the frame as the reference; effect strands cluster at the source and the target; the effect is redrawn every frame; burst blocks are as large as the reference's | - |
 | 2026-11-28 | bench-zap v3 (funny-bone zap, ig-04) | - | timing matched: smear frame, 1-frame hit, 2-frame block burst, 1-frame travel, per-frame zap redraw, delayed label; real open hand | effect mass: zap clusters at elbow and hand, subject scale in frame, bigger burst blocks, room props + motes |

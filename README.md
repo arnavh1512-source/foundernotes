@@ -195,7 +195,7 @@ to keep that learning in this repository. The loop:
 
 The [animation learning engine](.claude/skills/animation-learning-engine/SKILL.md) runs this loop as a system.
 
-- **The skill tree:** 20 craft skills, each with prerequisites, a mastery level from 0 to 4, its evidence, pass criteria, example references and spaced review dates.
+- **The skill tree:** 20 animation skills and 21 story-writing skills (from logline and setup/payoff through comedy structures, three-act, kishōtenketsu, mystery, suspense, horror-lite, heartfelt, explainer and series formats), each with prerequisites, a mastery level from 0 to 4, its evidence, pass criteria, example references and spaced review dates.
 - **The commands:** `learn.py next` picks the drill (reviews due first, then the weakest unlocked skill). `start`, `measure` (ref_motion on the reference window and on our take), `critique` and `close` run the drill.
 - **The roles:** four agents in `.claude/agents/learn-*.md`:
   - a curriculum coach;

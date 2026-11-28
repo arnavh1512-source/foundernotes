@@ -13,11 +13,13 @@ The owner's goal is to learn animation from references and from our own mistakes
 ## Parts
 | Part | What it does |
 |---|---|
-| `curriculum.json` | Skill tree: 20 craft skills with prerequisites, mastery 0–4, evidence, criteria, the references that show each skill, and the next review date |
+| `curriculum.json` | Skill tree: 20 animation skills and 21 story skills (`kind: story`) with prerequisites, mastery 0–4, evidence, criteria, the references that show each skill, and the next review date |
 | `scripts/learn.py` | `status`, `next`, `start`, `measure`, `critique`, `close` |
 | `.claude/agents/learn-curriculum-coach.md` | Picks the skill and runs the loop (Opus) |
 | `.claude/agents/learn-reference-analyst.md` | Full-size frame study and measured targets (Opus) |
 | `.claude/agents/learn-drill-animator.md` | Builds the take in entertainment-studio (Sonnet) |
+| `references/story-craft.md` | Story track: logline, want/need, setup/payoff, rule of three, escalation, twist, misdirection, running gag, deadpan, subtext, three-act, kishōtenketsu, hook, mystery, suspense, horror-lite, heartfelt arc, hero's journey, explainer story, series format, endings |
+| `.claude/agents/learn-story-writer.md` | Writes the story drill's draft (Opus) |
 | `.claude/agents/learn-craft-critic.md` | Per-criterion verdicts with timestamps and fixes; defaults to NEEDS WORK (Opus) |
 
 Mastery levels:
@@ -58,6 +60,8 @@ python3 .claude/skills/animation-learning-engine/scripts/learn.py close studio-o
 - marks the drill closed.
 
 Commit and push the curriculum, the playbook and `.claude/memory/`. Drill media stays in `studio-output/learn/` (gitignored).
+
+Story drills take a text reference and no time window (`learn.py start logline references/story-craft.md`). Their attempts are `draft.md` files logged with `measure`. There is nothing to measure, so the critic's reading decides the verdict.
 
 ## Verdict rules
 - The reference window must be one shot. `start` writes `review/window_sheet.jpg` (a frame every 0.25 s) so you can check it.
