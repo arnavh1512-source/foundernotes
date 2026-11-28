@@ -279,3 +279,11 @@ The initial entries preserve documented observations from the 2026-11-11 study a
 - Cause / rationale: Window chosen by duration, not by shot; ref_motion found no cut because the change is a roll-zoom then a wipe. Our zap faded at 2 s, so the picture went still while the label was up (repeated frames 14.1%, 3 holds of 3+ frames).
 - Correction / recipe: Pick drill windows inside one shot: look at frames every 0.25 s and end the window before any roll-zoom, wipe or cut. Keep the effect alive until the shot ends: chaotic zap -> sustained chain -> settles into a clean double-outlined diamond zigzag along the nerve (chaos to clarity) -> camera roll-push into the subject leads into the next shot. Add background speed lines that flick on twos during the hold.
 - Verification: Attempt 3: repeated frames 14.1% -> 0.0%, holds 3+ 3 -> 0, camera moves 2 -> 11 (ref 12), local motion 1.7% -> 4.2%. Single-shot gap still -43%: not closed (escalated after 3 attempts).
+
+### learn/cross-drill-pattern — Recurring: our frames are 2-7x less alive than every reference, because subjects are small and big areas of the frame never move
+
+- Recorded (UTC): 2026-11-28T15:04:49+00:00
+- Evidence: learn.py measurements, local motion ours vs ref: effect-mass-01 5.2 vs 9.2 (one shot), environment-richness-01 5.3 vs 9.0, dialogue-grammar-01 1.6 vs 4.2, secondary-overlap-01 1.0 vs 7.4
+- Cause / rationale: In four different drills the critic passed the craft criteria while the measured motion stayed far below the reference. The same cause each time: a small subject in a wide, flat, static frame (plain walls and floors), with motion only on the subject.
+- Correction / recipe: Before animating, frame the subject to fill the shot (about 40-60% of frame height for action), and give every large area a slow mover (light shift, background people, particles, cloth, steam). Check local motion on the first rough take, not only at the end.
+- Verification: Pattern seen in 4 of 4 animation drills on 2026-11-28. Fix not yet verified.

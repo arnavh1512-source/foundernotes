@@ -205,3 +205,27 @@ _No tested recipes recorded yet._
 - Cause / rationale: Draft 1 described a setting ('a noisy kitchen'): no want, a vague obstacle ('chaos'), episode ideas that were situations without stakes. Draft 2 had all parts but ran 48 words, and one episode was an event plus a reveal with no want.
 - Correction / recipe: Shape: [flawed character] wants [concrete thing], but [specific obstacle], and [ironic turn]. Keep it under 30 words. The engine is the part that changes per episode (a new sound + a new dish) plus a fixed arc (wrecked -> fight -> rhythm). Test each episode line separately for want + obstacle + turn.
 - Verification: Draft 3 passed all three checks (self-review by the same agent, not an independent critic). Series line: 'A perfectionist cook wants one flawless service, but the concert hall next door keeps wrecking his dishes, and fighting the noise turns him into part of the band.'
+
+### learn/kishotenketsu-01 — Kishotenketsu: the turn must look unrelated on the surface, and the reconcile needs a plant
+
+- Recorded (UTC): 2026-11-28T15:00:04+00:00
+- Evidence: studio-output/learn/kishotenketsu-01 draft1-2, verdicts1-2
+- Cause / rationale: Draft 1's turn mirrored the development beat for beat (same tilt, same nod), so the link was obvious at once, and the ending depended on a crack in the wall never shown before.
+- Correction / recipe: Beat 3 shows a different action in a different place (a light sweeping an empty hall), with the connection hidden. Plant the linking object in beat 1, inside an action with another purpose (Dev wipes around a seam). Save any echoed gesture (the shared nod) for the last beat as the button.
+- Verification: Draft 2 passed all three checks (self-review).
+
+### learn/setup-payoff-01 — Setup/payoff: the real fix must be planted, the obvious plant can pay off as the failed attempt, one plant per action
+
+- Recorded (UTC): 2026-11-28T15:00:05+00:00
+- Evidence: studio-output/learn/setup-payoff-01 draft1-2, verdicts1-2
+- Cause / rationale: Draft 1 planted a tea light and a lighter together in one beat (the eye flags them) and then saved the soup with nothing planted (a cheat).
+- Correction / recipe: Plant the real solution first, disguised as an annoyance (a pyro blast through the hatch that he shuts out). Let the obvious props pay off as the fix that fails (misdirection). Spread plants across beats, each inside an action with another purpose (reaching for salt, a favour for a roadie). Small echoes (singed eyebrows -> smoking eyebrows) add a button.
+- Verification: Draft 2 passed all three checks (self-review).
+
+### learn/secondary-overlap-01 — Overlap: stagger the settles (head +2 f, arms +3 f, cloth +4 f and more), keep loose parts in contrast, and give secondary actions a visible cause
+
+- Recorded (UTC): 2026-11-28T15:04:49+00:00
+- Evidence: studio-output/learn/secondary-overlap-01 ours_strip1-3 vs reference-ig-03 51.6-52.8 s (the broken beam keeps tipping after the slam)
+- Cause / rationale: Attempt 1: a white towel on a cream wall (its drag was invisible) and a plank out of frame. Attempt 2: the plank stood away from the counter he hit, so its fall had no readable cause.
+- Correction / recipe: After a hard stop: the body stops on the hit frame; head +2 frames, arms +3, cloth +4 and more, each a damped overshoot (amp*e^-kt*sin wt). Loose parts get a saturated colour and a dark outline. Secondary reactions sit on or next to the thing that was hit (the mill on the counter): wobble at once, topple about 0.3 s later. Skid dust and panting keep the hold alive.
+- Verification: Critic passed both criteria on attempt 3. Still open: local motion 1.0% vs ref 7.4% (escalated after 3 attempts).

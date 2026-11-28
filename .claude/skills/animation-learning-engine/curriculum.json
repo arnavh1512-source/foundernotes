@@ -392,12 +392,14 @@
    "prereqs": [
     "anticipation-follow"
    ],
-   "mastery": 0,
+   "mastery": 2,
    "refs": [
     "reference-ig-03"
    ],
-   "evidence": [],
-   "next_review": "2026-11-28",
+   "evidence": [
+    "secondary-overlap-01: escalated after 3 tries"
+   ],
+   "next_review": "2026-12-01",
    "criteria": [
     "loose parts (hair, cloth, props) drag 2-4 frames behind",
     "a secondary action supports the main one without competing"
@@ -448,12 +450,14 @@
    "prereqs": [
     "logline"
    ],
-   "mastery": 0,
+   "mastery": 3,
    "refs": [
     "references/story-craft.md"
    ],
-   "evidence": [],
-   "next_review": "2026-11-28",
+   "evidence": [
+    "setup-payoff-01: passed after 2 tries"
+   ],
+   "next_review": "2026-12-05",
    "criteria": [
     "every payoff was planted earlier and visible on screen",
     "every plant pays off",
@@ -619,12 +623,14 @@
    "prereqs": [
     "logline"
    ],
-   "mastery": 0,
+   "mastery": 3,
    "refs": [
     "references/story-craft.md"
    ],
-   "evidence": [],
-   "next_review": "2026-11-28",
+   "evidence": [
+    "kishotenketsu-01: passed after 2 tries"
+   ],
+   "next_review": "2026-12-05",
    "criteria": [
     "four beats: introduce, develop, an unrelated-seeming turn, reconciliation",
     "the story works without a villain or conflict",

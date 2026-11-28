@@ -231,6 +231,9 @@ colours across many bins.
 
 | Date | Benchmark | Still steps (ref) | What improved | Biggest gap now |
 |---|---|---|---|---|
+| 2026-11-28 | learn: secondary-overlap (escalated, 3 tries, level 2) | 0.96% local (7.35%) | loose parts (hair, cloth, props) drag 2-4 frames behind; a secondary action supports the main one without competing | - |
+| 2026-11-28 | learn: setup-payoff (passed, 2 tries, level 3) | - | every payoff was planted earlier and visible on screen; every plant pays off; the plant is disguised as something else when it appears | - |
+| 2026-11-28 | learn: kishotenketsu (passed, 2 tries, level 3) | - | four beats: introduce, develop, an unrelated-seeming turn, reconciliation; the story works without a villain or conflict; the reconcile links beat 3 back to beats 1-2 | - |
 | 2026-11-28 | learn: logline (passed, 3 tries, level 3) | - | one sentence: who, wants what, what stands in the way, why it's funny or matters; the premise has an engine that can make more than one scene; an outsider can retell it after one read | - |
 | 2026-11-28 | learn: dialogue-grammar (escalated, 3 tries, level 1) | 1.57% local (4.21%) | establishing shot, then over-the-shoulder cuts; close-up on the punchline, then a reaction shot; a callback at the end; cuts land on the line, not after it | - |
 | 2026-11-28 | learn: environment-richness (escalated, 3 tries, level 2) | 5.28% local (9.04%) | 3+ props that say where we are; a moving trace in the background (motes, light); background never competes with the subject | - |
