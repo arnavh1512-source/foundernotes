@@ -101,3 +101,11 @@ _No tested recipes recorded yet._
 - Cause / rationale: take 1 the lunge pushed Dev's head into the counter; take 2 the falling cup crossed his chest and read as already held; take 3 the step back pushed him out of frame
 - Correction / recipe: before a catch or reach, place the character so the prop's path is clear of the body silhouette, keep heads clear of set pieces at full lean, then reframe the camera for both
 - Verification: take 4: the cup falls through clear space, Dev lunges into it, both in frame; exported and ep_check PASS
+
+### half-landing-a12-reel — Second episode from director's sheets: the world reacts in small comic beats (a foam blob lands on his head and stays, a stain moves by itself) before the payoff; payoff = tremble -> impact frame -> 3-frame snap -> hold -> chime; sparse foley needs a rhythm bed (scrub strokes, drips) to reach -14 LUFS
+
+- Recorded (UTC): 2026-11-28T08:52:17+00:00
+- Evidence: A12 precheck and render frames; QC fail at -16.2 LUFS before the scrub/drip cues, PASS after; sync 24/26
+- Cause / rationale: the first precheck hid the scrubbing arm behind foam, put the smiley on the pocket and left his raised arm holding nothing
+- Correction / recipe: check every shot against its sheet's eye target before rendering; give action sounds their full rhythm
+- Verification: A12 exported, ep_check PASS, QC PASS

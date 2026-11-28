@@ -239,3 +239,11 @@ The initial entries preserve documented observations from the 2026-11-11 study a
 - Cause / rationale: both knees were driven by the same sin term; thigh swing 1.0 rad with a straight forward knee
 - Correction / recipe: per leg: thigh .22 + .78*sin(phase), knee bends while that leg swings forward (cos>0) and keeps a bend when forward; lean ~45 deg, arms opposite the legs, poses on twos
 - Verification: take 6 frames: driving stride, heel kicked up behind, never two straight legs together; QC PASS
+
+### half-landing-a09-reel,half-landing-a12-reel — The loop check failed loops that move all the time: it demanded the last frame equal the first, which only holds for loops that end on a hold
+
+- Recorded (UTC): 2026-11-28T08:52:17+00:00
+- Evidence: A09 seam 3.15% and A12 1.44% after adding boil/hum and on-twos scrubbing; difference images showed a 1-px tremble and one twos-step of the scrub arm; typical frame steps 17.3% and 16.0%
+- Cause / rationale: seam < 1% was calibrated on Reels that end on a still pose
+- Correction / recipe: ep_review now also measures the 95th percentile frame step; a loop is ok when the seam is under 1% or no bigger than an ordinary step; drive looping motion from (t - shot duration) in the last shot so it lands on the first frame's phase
+- Verification: tests pass; A09 and A12 loop_ok with seams 3.15% vs 17.26% and 1.44% vs 15.98%

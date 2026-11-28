@@ -186,6 +186,14 @@ if __name__ == "__main__":
     unittest.main()
 
 
+class LoopSeam(unittest.TestCase):
+    def test_a_moving_loop_is_seamless_when_the_jump_looks_like_any_step(self):
+        import ep_review
+        self.assertTrue(ep_review.loop_ok(0.4, 0.0))      # a hold loop: frames match
+        self.assertTrue(ep_review.loop_ok(2.7, 3.5))      # constant motion: the jump is an ordinary step
+        self.assertFalse(ep_review.loop_ok(12.0, 3.5))    # a real cut at the seam
+
+
 class RefCompare(unittest.TestCase):
     def test_time_pairs(self):
         import ref_compare

@@ -63,6 +63,20 @@ def still_share(video, thresh=10, moved=0.05, step=1):
     return round(float((d < moved).mean() * 100), 1) if len(d) else 0.0
 
 
+def step_p95(video, thresh=12):
+    """95th percentile of the frame-to-frame change (same measure as seam()). A loop that moves all the time is seamless
+    when its last-to-first jump looks like any other frame step, not only when the two frames are identical."""
+    raw = subprocess.run(["ffmpeg", "-v", "error", "-i", str(video), "-vf", "scale=270:480,format=gray", "-f", "rawvideo", "-"],
+                         check=True, capture_output=True).stdout
+    v = np.frombuffer(raw, np.uint8).reshape(-1, 480, 270).astype(np.int16)
+    d = (np.abs(np.diff(v, axis=0)) > thresh).mean(axis=(1, 2)) * 100
+    return round(float(np.percentile(d, 95)), 2) if len(d) else 0.0
+
+
+def loop_ok(seam_pct, p95):
+    return seam_pct < 1.0 or seam_pct <= p95
+
+
 def frame_at(video, t, out):
     subprocess.run(["ffmpeg", "-v", "error", "-y", "-ss", f"{max(0, t):.3f}", "-i", str(video), "-frames:v", "1", str(out)], check=True)
     return Image.open(out).convert("RGB")
@@ -84,6 +98,7 @@ def review(ws, take_id=None):
         sync = match(sharp, found)
         first, last = frame_at(video, 0, td / "f.png"), frame_at(video, dur - 1 / 30 - 0.001, td / "l.png")
         loop = seam(first, last)
+        p95 = step_p95(video)
         # safe-zone sheet: the middle of every shot, with Instagram's caption band and button column shaded
         tiles = []
         for r in take["shots"]:
@@ -104,7 +119,7 @@ def review(ws, take_id=None):
     phone_flags = sorted(k for k, v in phone.items() if v > 85)
     still = still_share(video, step=2 if m.get("twos") else 1)
     report = {"take": take["id"], "still_steps_pct": still, "phone_low_share_pct": phone, "phone_flags": phone_flags, "duration": dur, "loop": m.get("loop", False), "loop_seam_pct": loop,
-              "loop_ok": (loop < 1.0) if m.get("loop") else None,
+              "loop_ok": loop_ok(loop, p95) if m.get("loop") else None, "frame_step_p95_pct": p95,
               "sync_ok": sum(r["ok"] for r in sync), "sync_total": len(sync), "sync": sync,
               "note": "measured, not watched: misses can be soft swells or cues that start inside a louder sound"}
     (ws / "review/auto-review.json").write_text(json.dumps(report, indent=1) + "\n")
