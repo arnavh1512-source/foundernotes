@@ -269,3 +269,11 @@ _No tested recipes recorded yet._
 - Cause / rationale: Draft 1 spent 2 s on an exterior and a walk-up before anything was wrong, and answered the mystery with a spoken explanation.
 - Correction / recipe: Cut every establishing shot before the anomaly; open on it. Keep the answer for the last quarter and show it as an image (the subwoofer on its back), then land the payoff after it.
 - Verification: Draft 2 passed (self-review).
+
+### learn/dialogue-grammar-03 — Real shot sizes land with frameShot/ovShoulder; open problems are depth staging in 9:16, small gag beats in wide frames, and same-colour hand overlaps
+
+- Recorded (UTC): 2026-11-28T17:05:59+00:00
+- Evidence: independent learn-craft-critic verdicts1.json and verdicts2.json in studio-output/learn/dialogue-grammar-03; review/critic_*.jpg and critic2_*.jpg
+- Cause / rationale: Attempt 1: all-wide habit fixed by frameShot, but the bob was 1-2 px and the waiter was too small. Attempt 2: depth staging too timid (Pip's head only 1.15x Moss's, at the same height, limbs tangling); S6 hands overlapped into one cluster; Moss's black grip vanished on his black thigh; the waiter's copied bob was ~2% of the frame. An un-critiqued re-measure used one attempt slot (engine bug, now fixed).
+- Correction / recipe: 9:16 two-shot: near character's head ~1.6x the far one's, lower in frame, a body width apart, the table filling the bottom. A gag beat must be framed waist-up at least, the same size as the original beat. Never overlap two same-coloured hands; separate same-colour overlaps with a thin background-coloured gap line. The OTS shoulder and real CU/MCU framing now pass on sight.
+- Verification: Critic passed cuts-on-the-line on both attempts; OTS shapes, readable S5 bob, S6 hands in frame and S7/S8 split landed in attempt 2. Escalated (one slot lost to the re-measure bug).

@@ -56,6 +56,11 @@ class Measure(unittest.TestCase):
     def test_text_attempts(self):
         self.assertTrue(learn.is_text("d/draft.MD")); self.assertFalse(learn.is_text("t.mp4"))
 
+    def test_remeasure_replaces_unjudged_attempt(self):
+        d = {"attempts": [{"n": 1, "verdicts": {"x": {}}}, {"n": 2, "verdicts": None}]}
+        learn.drop_uncritiqued(d); self.assertEqual(len(d["attempts"]), 1)
+        learn.drop_uncritiqued(d); self.assertEqual(len(d["attempts"]), 1)
+
     def test_levels(self):
         self.assertEqual(learn.new_level(1, "passed", []), 3)
         self.assertEqual(learn.new_level(1, "escalated", [{"timing_ok": True}]), 2)

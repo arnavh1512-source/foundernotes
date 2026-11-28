@@ -171,10 +171,17 @@ def is_text(path):
     return Path(path).suffix.lower() in (".md", ".txt")
 
 
+def drop_uncritiqued(drill):
+    """An attempt only counts once the critic has judged it; a newer take replaces an unjudged one."""
+    if drill["attempts"] and not drill["attempts"][-1].get("verdicts"):
+        drill["attempts"].pop()
+
+
 def cmd_measure(a):
     d = Path(a.drill); drill = json.loads(drill_file(d).read_text())
     if drill["status"] != "open":
         raise SystemExit(f"drill is {drill['status']}")
+    drop_uncritiqued(drill)  # re-measuring before a critique replaces that attempt instead of using up a slot
     if len(drill["attempts"]) >= drill["max_attempts"]:
         raise SystemExit("attempt limit reached: close the drill and record the gaps")
     if is_text(a.take):  # story drills: a written draft, judged by reading; nothing to measure
