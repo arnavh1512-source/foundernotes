@@ -175,6 +175,29 @@ def normalize(src, dst, lufs=-14.0, tp=-1.5):
     af = (f"loudnorm=I={lufs}:TP={tp}:LRA=11:linear=true:measured_I={j['input_i']}:measured_TP={j['input_tp']}"
           f":measured_LRA={j['input_lra']}:measured_thresh={j['input_thresh']}:offset={j['target_offset']}")
     subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(src), "-af", af, "-ar", "48000", str(dst)], check=True)
+    # sparse, sharp foley: linear gain is capped by the true-peak limit and lands short (A12, A13 measured -16.2 LUFS).
+    # When it lands more than 1 LU short, raise it through a limiter and normalise once more.
+    got = integrated(dst)
+    if got is not None and got < lufs - 1.0:
+        lifted = Path(str(dst) + ".lift.wav")
+        subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(dst), "-af", f"volume={lufs - got + 1.0:.2f}dB,alimiter=limit=0.8:level=false",
+                        "-ar", "48000", str(lifted)], check=True)
+        normalize_once(lifted, dst, lufs, tp); lifted.unlink(missing_ok=True)
+
+
+def integrated(path):
+    r = subprocess.run(["ffmpeg", "-hide_banner", "-nostats", "-i", str(path), "-af", "ebur128", "-f", "null", "-"], capture_output=True, text=True)
+    m = re.findall(r"I:\s+(-?[0-9.]+) LUFS", r.stderr)
+    return float(m[-1]) if m else None
+
+
+def normalize_once(src, dst, lufs, tp):
+    r = subprocess.run(["ffmpeg", "-hide_banner", "-nostats", "-i", str(src), "-af", f"loudnorm=I={lufs}:TP={tp}:LRA=11:print_format=json", "-f", "null", "-"],
+                       capture_output=True, text=True, check=True)
+    j = json.loads(r.stderr[r.stderr.rindex("{"):r.stderr.rindex("}") + 1])
+    af = (f"loudnorm=I={lufs}:TP={tp}:LRA=11:linear=true:measured_I={j['input_i']}:measured_TP={j['input_tp']}"
+          f":measured_LRA={j['input_lra']}:measured_thresh={j['input_thresh']}:offset={j['target_offset']}")
+    subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(src), "-af", af, "-ar", "48000", str(dst)], check=True)
 
 
 def build(ws):
@@ -197,6 +220,12 @@ def build(ws):
         subprocess.run([py, str(SCRIPTS / "assemble.py"), "--scenes", *map(str, clips), "--narration", str(audio), "--out", str(take),
                         "--format", "vertical" if vertical(m) else "landscape"],
                        check=True, stdout=subprocess.DEVNULL)
+        # assemble.py runs its own single-pass loudnorm, which pulls sparse foley back down (A13: -14.0 -> -16.2 LUFS);
+        # put our measured two-pass audio back into the take (picture copied untouched)
+        fixed = take.with_suffix(".mux.mp4")
+        subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(take), "-i", str(audio), "-map", "0:v", "-map", "1:a", "-c:v", "copy",
+                        "-c:a", "aac", "-b:a", "192k", "-ar", "48000", "-t", f"{total:.3f}", str(fixed)], check=True)
+        fixed.replace(take)
         qc = ws / f"takes/{var['id']}-qc.json"
         subprocess.run([py, str(SCRIPTS / "qc_video.py"), str(take), "--min-duration", "5", "--format", "vertical" if vertical(m) else "horizontal", "--json", str(qc), "--sheet", str(ws / f"takes/{var['id']}-sheet.jpg")],
                        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)

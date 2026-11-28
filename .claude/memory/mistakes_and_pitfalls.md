@@ -255,3 +255,11 @@ The initial entries preserve documented observations from the 2026-11-11 study a
 - Cause / rationale: stick.html defines short global names; in the rig a positive limb angle points the way the character faces
 - Correction / recipe: prefix episode constants (GLW, CAM7...) and read the precheck's ERR lines first; for limbs that go behind the body use negative angles
 - Verification: precheck clean; G03 shows the back arm out behind and the back leg lifted (balance reads)
+
+### half-landing-a12-reel,half-landing-a13-reel — Sparse foley kept failing loudness: our measured two-pass audio was -14.0 LUFS, but assemble.py's own single-pass loudnorm pulled the finished take down to -16.2
+
+- Recorded (UTC): 2026-11-28T09:33:33+00:00
+- Evidence: A13 takes/reel-audio.wav measured -14.0 LUFS (ebur128) while the assembled reel.mp4 failed QC at -16.2; A12 failed the same way
+- Cause / rationale: two loudness stages in a row; the second (single pass, dynamic) undershoots on short clips with sparse transients
+- Correction / recipe: ep_build now remuxes the measured audio into the take after assembly (picture copied), and lifts audio through a limiter when two-pass loudnorm still lands >1 LU short
+- Verification: A13 QC PASS without extra cues; sync 18/18

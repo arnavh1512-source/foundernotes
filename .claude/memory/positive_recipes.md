@@ -133,3 +133,11 @@ _No tested recipes recorded yet._
 - Cause / rationale: our payoffs used only camera punches and impact frames; nothing told the viewer 'this is the special moment' at a glance
 - Correction / recipe: shot key "special": [t0, t1] in workspace.json grades the stretch; afterimages(draw, n, step) in overlay.js tints earlier poses of black line art with a CSS filter (invert, sepia, saturate, hue-rotate); keep it short (0.2-0.5 s) and snap back
 - Verification: A09 re-rendered E04 only (cache), QC PASS, ep_check PASS; frames show grade, ghosts and snap back
+
+### half-landing-a13-reel — A chase reads only when pursuer and pursued share the frame: keep the gap small (about a body length), have the camera follow the runner and widen while he runs, and remember cam() scales zoom by 1.18 (visible width = 1080/(z*1.18)); an empty-frame beat before an entrance from the other side sells a loop-around
+
+- Recorded (UTC): 2026-11-28T09:33:33+00:00
+- Evidence: A13 O04 takes 1-3: the onion trailed 250 px behind and Dev's head clipped the right edge; take 4 with the gap at the heels, pan to 1150 and a 14% widening reads
+- Cause / rationale: positions were planned in world units without the camera's real visible width; a lean of 0.7 puts the head ~166 px ahead of the hips
+- Correction / recipe: compute the frame's world bounds from cam() before staging a chase; budget the head lead for running leans
+- Verification: A13 exported; frames 4.2-5.1 s show both in frame and the stop at his feet

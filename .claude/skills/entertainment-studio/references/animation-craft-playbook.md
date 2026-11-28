@@ -192,6 +192,7 @@ colours across many bins.
 | 2026-11-27 | bench-bump v1 | 7.3% (1.3%) | structure, clock, labels, loop | plain head; bump nearly invisible |
 | 2026-11-28 | bench-bump v2 | 8.1% | bump grows from the outline; match-cut roll in/out | face still generic (owner) |
 | 2026-11-28 | bench-bump v3 | 7.7% | face built from forms and tone planes; open/shut eye | soft gradients vs the reference's hard cel planes; section texture; upbeat music |
+| 2026-11-28 | A13 Runaway | still 21.9% (incl. a deliberate empty beat); sync 18/18 | run cycle on Dev; loop-around surprise; reversal kept in one frame; loudness fixed at the build | phone review |
 | 2026-11-28 | A10 Rhythm | still 11.9%; sync 45/46 | action locked to a beat list; tempo escalation to a smear; silence before the payoff | phone review |
 | 2026-11-28 | A07 Line Check | still 11.2%; sync 20/20 | new landing set; counterbalance, one-leg balance, hang time, staggered landings | phone review |
 | 2026-11-28 | A12 Wash Day | still 10.8%; sync 24/26 | world reacts in small beats; payoff tremble -> impact -> 3-frame snap; loop check fixed for moving loops | phone review |
