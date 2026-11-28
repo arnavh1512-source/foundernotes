@@ -263,3 +263,11 @@ The initial entries preserve documented observations from the 2026-11-11 study a
 - Cause / rationale: two loudness stages in a row; the second (single pass, dynamic) undershoots on short clips with sparse transients
 - Correction / recipe: ep_build now remuxes the measured audio into the take after assembly (picture copied), and lifts audio through a limiter when two-pass loudnorm still lands >1 LU short
 - Verification: A13 QC PASS without extra cues; sync 18/18
+
+### half-landing-a11-reel — First two-character staging tangled: the rider stopped so close to Dev that the bodies overlapped in most shots (juggle and double look unreadable); and the breath was missing because the helpers were copied from an episode made before it existed (also true of A05, A07, A09, A10, A12, A13)
+
+- Recorded (UTC): 2026-11-28T12:12:48+00:00
+- Evidence: A11 precheck: silhouettes overlapping in D01-D07; still 27.8% with no breath vs 12.0% after the breath, the rider's breath and a settling, steaming bag
+- Cause / rationale: marks planned for one character; helper files copied forward from older episodes instead of the latest
+- Correction / recipe: for two characters keep about a body width of clear space between silhouettes at rest and let only hands meet; reaction 3 frames after action; ep_review now warns when still frames exceed 15%; copy helpers from the newest episode
+- Verification: A11 take: silhouettes separate, sync 13/13, still 12.0%, QC PASS; exported

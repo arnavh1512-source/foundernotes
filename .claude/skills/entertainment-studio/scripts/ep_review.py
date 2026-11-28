@@ -125,6 +125,8 @@ def review(ws, take_id=None):
     (ws / "review/auto-review.json").write_text(json.dumps(report, indent=1) + "\n")
     print(f"{take['id']}: {dur}s  loop seam {loop}%{' (ok)' if report['loop_ok'] else '' if report['loop_ok'] is None else ' (CHECK)'}"
           f"  sync {report['sync_ok']}/{report['sync_total']} within 50 ms  still {still}%  -> review/auto-review.json, review/safezones.jpg")
+    if still > 15:
+        print(f"  frozen: {still}% of frame steps have nothing moving (references 1-8%); give every held pose a breath and every hold some life")
     for k in phone_flags:
         print(f"  phone: {k} has {phone[k]}% of its energy below 150 Hz: near-silent on phone speakers")
     for r in sync:
