@@ -58,6 +58,9 @@ Set `"format": "vertical"` in the manifest for a 1080x1920 canvas (Instagram Ree
 
 ## Learning loop (owner goal, 2026-11-28)
 
+What we are learning is directing and details. Before drawing an episode, fill the playbook's **director's sheet** for
+every shot (example: `studio-output/half-landing-a09-reel/script/a09-directing.md`, kept local).
+
 Get better with every video: read `references/animation-craft-playbook.md` before planning or reviewing, study every
 reference the owner shares at full size, recreate a short same-brief benchmark when it helps, compare with
 `scripts/ref_compare.py <ref.mp4> <ours.mp4> <out.jpg> <times...>` at full size and measure both with

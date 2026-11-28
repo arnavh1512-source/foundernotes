@@ -20,6 +20,9 @@ animation, together with `.claude/memory/mistakes_and_pitfalls.md` and `positive
 
 ## Self-review before the owner sees anything
 
+- **Directing first:** does every shot have a filled director's sheet (purpose, eye target, change, anticipation, key
+  moment, camera motive, life, world memory, hand-over)? Does the shot still do its job if you mute it?
+
 - Did I open the reference and our frames **at full size, side by side,** at the opening, every transition and the ending?
 - Does the subject **stay continuous** across every cut (match cut, same silhouette, gradual state changes)?
 - Is anything **frozen**? `ep_review.py` still_steps_pct (refs: 1.3%, ~1% over two frames). Every hold breathes.
@@ -54,6 +57,51 @@ animation, together with `.claude/memory/mistakes_and_pitfalls.md` and `positive
 - Long continuous takes with the camera panning across a line-art set; colour shifts (a teal grade) mark special moments;
   speech bubbles and small labels for jokes.
 
+
+
+## Directing: the decisions behind the shots (owner focus, 2026-11-28)
+
+What we are learning is **directing and details**. The measurements above are only a way to check them. For every shot, a
+director decides: what the viewer should feel or ask, where their eye goes, what changes, why the camera moves, and how
+the shot hands over to the next one.
+
+### Shot-by-shot directing breakdown: reference-ig-01 ("inside a bump")
+| Time | Shot | Director's decision | Why it works |
+|---|---|---|---|
+| 0-0.2 | Mallet looming top-left, eye open | Show the threat before the hit; the open eye is innocent | Anticipation: we know what will happen, so we lean in |
+| 0.2-0.5 | Hit: smear, 3-frame contact, sparks, punch-in, eye shuts | Make one moment *hurt* with every tool at once | A single strong beat is remembered; the punch-in says "this matters" |
+| 0.5-1.6 | Bump swells, throbs, clock ticks | Show the result the viewer recognises from life | The relatable payoff comes first, so the question "what's happening inside?" asks itself |
+| 1.6-2.6 | Brackets lock on, camera rolls into the bump | Point at the subject, then go *into* it | Brackets tell the eye where to look; the roll turns outside into inside without a cut |
+| 2.6-4.0 | REWIND, then SLOW replay inside | Answer "why" by replaying the cause | The same moment twice: first felt, then understood |
+| 4-21 | One set, clock runs, one new actor at a time | Never two new things at once; each label is the next step of the story | The viewer is never lost; the clock gives a sense of progress |
+| 7-17 | Push in to the actor, pull back to the result | The camera moves only to meet someone or to show consequences | Every camera move has a reason, so it never feels decorative |
+| 21-23 | Back out to the face, small bump fading | Close the circle on the thing we first saw | Ending where we started makes the loop and the story feel complete |
+| 23-24 | Scan band over the healed forehead | Prove the ending (inside is fixed too) | A last reveal rewards people who watched to the end |
+
+### Directing principles drawn from the three references
+1. **Show the result first, then explain it** (ref 1). A question beats a statement.
+2. **One new thing at a time.** One actor, one label, one beat (ref 1, ref 2's 1/5...5/5).
+3. **Every camera move has a motive:** meet someone, show a consequence, or punch a hit. No drifting for its own sake.
+4. **Carry the subject across every transition** (the bump becomes the dome): the eye never has to search after a cut.
+5. **Anticipation before every big action** (looming mallet; the rocket's rumbling squat; a fighter's wind-up).
+6. **Make the key moment land with several tools at once:** smear, contact hold, sparks or dust, punch-in, sound, silence.
+7. **Withhold the payoff** and make people wait for it (ref 2's "4/5 ?"; narration drops out for the launch).
+8. **The world keeps its history** (ref 3): bodies, debris, stains stay where they land.
+9. **Nothing is ever dead still**, but calm shots keep the motion small (ref 2's rocket breathes).
+10. **End where you began,** changed: that is both the loop and the story.
+
+### Director's sheet: fill in for every shot before drawing it
+| Field | Question |
+|---|---|
+| Purpose | What should the viewer feel, ask or learn here? (one line) |
+| Eye target | Where must the eye be, and what leads it there (contrast, motion, framing, brackets, a look)? |
+| Change | What is different at the end of the shot from the start? |
+| Anticipation | What warns us before the main action? |
+| Key moment | Which frame must land, and which tools make it land (smear, hold, impact frame, punch-in, sound, silence)? |
+| Camera motive | Why does the camera move (meet, reveal, punch) or why does it stay? |
+| Life | What keeps moving in the background (steam, breath, cells, drips)? |
+| World memory | What stays changed afterwards (stain, splat, debris)? |
+| Hand-over | How does the shot pass the eye and the subject to the next one? |
 
 ## Frame-level details (measured 2026-11-28 with `ref_motion.py` and full-frame close-ups)
 
