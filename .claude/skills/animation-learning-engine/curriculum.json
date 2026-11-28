@@ -256,14 +256,15 @@
    "prereqs": [
     "boil-on-twos"
    ],
-   "mastery": 1,
+   "mastery": 2,
    "refs": [
     "reference-ig-01"
    ],
    "evidence": [
-    "bench-bump v7: local motion 4.6% vs reference 7.6%"
+    "bench-bump v7: local motion 4.6% vs reference 7.6%",
+    "motion-in-picture-01: escalated after 3 tries"
    ],
-   "next_review": "2026-11-29",
+   "next_review": "2026-12-01",
    "criteria": [
     "local motion within 25% of the reference",
     "many small independent movers, not one big one"
@@ -431,12 +432,14 @@
    "prereqs": [
     "logline"
    ],
-   "mastery": 0,
+   "mastery": 3,
    "refs": [
     "references/story-craft.md"
    ],
-   "evidence": [],
-   "next_review": "2026-11-28",
+   "evidence": [
+    "want-need-01: passed after 2 tries"
+   ],
+   "next_review": "2026-12-05",
    "criteria": [
     "each lead wants something concrete on screen",
     "the flaw causes the trouble",

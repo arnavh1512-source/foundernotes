@@ -229,3 +229,19 @@ _No tested recipes recorded yet._
 - Cause / rationale: Attempt 1: a white towel on a cream wall (its drag was invisible) and a plank out of frame. Attempt 2: the plank stood away from the counter he hit, so its fall had no readable cause.
 - Correction / recipe: After a hard stop: the body stops on the hit frame; head +2 frames, arms +3, cloth +4 and more, each a damped overshoot (amp*e^-kt*sin wt). Loose parts get a saturated colour and a dark outline. Secondary reactions sit on or next to the thing that was hit (the mill on the counter): wobble at once, topple about 0.3 s later. Skid dust and panting keep the hold alive.
 - Verification: Critic passed both criteria on attempt 3. Still open: local motion 1.0% vs ref 7.4% (escalated after 3 attempts).
+
+### learn/want-need-01 — The flaw must create the predicament, not just sit beside a chance event
+
+- Recorded (UTC): 2026-11-28T15:05:57+00:00
+- Evidence: studio-output/learn/want-need-01 draft1-2, verdicts1-2
+- Cause / rationale: Draft 1's crisis was a chance bass drop; Dev's controlling flaw had no part in causing it, and the two re-doing beats were at the same level.
+- Correction / recipe: Make the flaw put the character where the trouble hits. Dev undoes Ollie's safety fix to keep his tubs flush with the edge, so the bass drop throws exactly those tubs. Escalate the flaw beats (correct the work -> undo a safety fix). Show the change in one small action (he leaves the crooked tub).
+- Verification: Draft 2 passed all three checks (self-review).
+
+### learn/motion-in-picture-01 — Frame-filling subject + movers everywhere closes most of the motion gap; dense fields jostle in place (about a particle width per 2 frames), and a camera move should reveal something
+
+- Recorded (UTC): 2026-11-28T15:11:40+00:00
+- Evidence: studio-output/learn/motion-in-picture-01 take1-3 vs reference-ig-01 12.2-15.8 s; compare1/compare3.jpg; take*_motion/motion.json
+- Cause / rationale: Earlier drills were 63-87% below the reference. Here: take 1 had all 150 bubbles rising one way (read by the tool as camera pans while our camera was locked) and a push-in where the ref pulls out and tilts up; I misread the ref's zoom direction from a contact sheet.
+- Correction / recipe: Fill the frame with the subject; give every band its own movers (steam, surface, particles, hero chunks, flames). Dense fields: most particles jostle in place with slow drift (about a particle width per 2 frames), only some travel. Copy measured camera moves, not the contact-sheet impression; a pull-out/tilt should reveal a new subject (the ladle). Uniform one-direction particle flow fools the camera estimate.
+- Verification: Local motion -23% / -19% / -34% vs earlier drills' -63% to -87%; false pans gone in take 3; camera now matches ref timing. Escalated: take 3 jostle too small (-34%).
