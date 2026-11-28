@@ -93,3 +93,11 @@ _No tested recipes recorded yet._
 - Cause / rationale: the first heave overlapped the lifted body with the thrower's head and the silhouettes tangled
 - Correction / recipe: aimFront() in bench-stick/_common.js for contacts; keep lifted bodies 200+ px above or clear of the other figure; slam where the floor is empty
 - Verification: take 6: clinch contact reads, the lifted body is separate above the thrower, slam with dust; QC PASS
+
+### half-landing-a09-reel — First episode built from director's sheets with the stick lessons on Dev: visible cause (eyes closed while the cup creeps), eyes pop -> crouch -> lunge with a smear frame -> low catch held -> punch-in -> a drop that becomes a new stain; a falling prop must travel through clear space, never across the character's body
+
+- Recorded (UTC): 2026-11-28T08:35:04+00:00
+- Evidence: A09 frames 3.1-3.9 s at 30 fps (three takes); ep_review: sync 7/7, loop seam 0.14%; QC PASS
+- Cause / rationale: take 1 the lunge pushed Dev's head into the counter; take 2 the falling cup crossed his chest and read as already held; take 3 the step back pushed him out of frame
+- Correction / recipe: before a catch or reach, place the character so the prop's path is clear of the body silhouette, keep heads clear of set pieces at full lean, then reframe the camera for both
+- Verification: take 4: the cup falls through clear space, Dev lunges into it, both in frame; exported and ep_check PASS

@@ -141,7 +141,10 @@ Lift the body at full stride: a runner is airborne there.
 momentum shoves both bodies back together; the lift goes clearly above and forward of the thrower so the silhouettes
 separate; the slam lands where the floor is empty, with burst, bounce and dust.
 
-**Next:** bring all of this into Dev's acting in Half Landing (the A09 dive catch is the first test).
+**Carried into Dev (A09 Espresso, 2026-11-28):** eyes pop -> crouch -> lunge with a smear frame -> low catch held ->
+punch-in -> a drop that becomes a new apron stain. Staging rule learned: a falling or thrown prop travels through clear
+space, never across the character's body, and heads stay clear of set pieces at full lean; place the character first,
+then reframe.
 
 ## Frame-level details (measured 2026-11-28 with `ref_motion.py` and full-frame close-ups)
 
@@ -184,6 +187,7 @@ colours across many bins.
 | 2026-11-27 | bench-bump v1 | 7.3% (1.3%) | structure, clock, labels, loop | plain head; bump nearly invisible |
 | 2026-11-28 | bench-bump v2 | 8.1% | bump grows from the outline; match-cut roll in/out | face still generic (owner) |
 | 2026-11-28 | bench-bump v3 | 7.7% | face built from forms and tone planes; open/shut eye | soft gradients vs the reference's hard cel planes; section texture; upbeat music |
+| 2026-11-28 | A09 Espresso | still 13.4%; loop 0.14%; sync 7/7 | first episode from director's sheets; stick lessons on Dev (dive catch) | phone review; top-down shots could breathe more |
 | 2026-11-28 | bench-stick take 6 | - | run cycle on twos with per-leg phase; clinch with an aimed arm; heave and slam with clear silhouettes | carry into Dev (A09) |
 | 2026-11-28 | bench-stick take 3 | - | flight with hang time, flat landing + bounce + dust column, head snap, arm lag, light follow camera | clinch; run cycle; carry into Dev |
 | 2026-11-28 | bench-stick take 2 | - | strike grammar: coil, wind-up, smear, 3-frame holds, fold, blur launch | tumbling in flight; clinch; head snap; camera nudges |
