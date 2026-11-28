@@ -117,3 +117,11 @@ _No tested recipes recorded yet._
 - Cause / rationale: each snap rang into the next and the onsets merged
 - Correction / recipe: space rapid impacts >= 0.1 s apart and cut each to a short tick; cut thump tails before clinks
 - Verification: A07 ep_review 20/20 within 50 ms
+
+### half-landing-a10-reel — Action timed to music: drive every contact from one beat list (knife lift = ease-in down into the beat, 2-frame contact hold, ease-out up), escalate tempo to a smear on ones, then a silence before the payoff; sounds that happen together share one timestamp
+
+- Recorded (UTC): 2026-11-28T09:15:36+00:00
+- Evidence: A10 sync 36/46 with chop cues 20 ms after the kicks and long kick tails at 0.25 s spacing -> 45/46 with chops on the kick timestamp and shorter kicks; frames show contact holds and the smear
+- Cause / rationale: two sounds 20 ms apart merge into one onset (to the detector and to the ear); kick tails rang into the next beat
+- Correction / recipe: one beat list per shot feeds both picture (lift()) and cues; same-moment sounds share t; kick dur <= beat interval minus ~0.1 s
+- Verification: A10 ep_review 45/46 (the miss is a soft bowl plop under the groove); QC PASS; exported

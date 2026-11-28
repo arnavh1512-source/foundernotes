@@ -38,8 +38,12 @@ g knock "(0.6*sin(2*PI*1750*t)+0.4*sin(2*PI*3100*t)+0.25*sin(2*PI*420*t)+0.3*(ra
 g ding "(0.6*sin(2*PI*1320*t)+0.3*sin(2*PI*2640*t)+0.12*sin(2*PI*3960*t))*exp(-9*t)*(1-exp(-400*t))" 0.6 "highpass=f=300"
 # a tape-rewind whir: fast chattering, pitch sweeping up
 g rewind "(0.45*sin(2*PI*(700+900*t)*t)*(0.6+0.4*sin(2*PI*38*t))+0.25*(random(5)*2-1)*(0.5+0.5*sin(2*PI*38*t)))*(1-exp(-30*t))" 1.4 "bandpass=f=1600:width_type=h:w=2200"
+# a cymbal crash: bright noise with a long shimmering decay (A10)
+g crash "(random(11)*2-1)*(exp(-2.6*t)*0.9+0.3*exp(-12*t))*(1+0.25*sin(2*PI*7*t))" 2.0 "highpass=f=2500,lowpass=f=12000"
+# a wooden chop on a board (A10)
+g chop "(0.7*sin(2*PI*620*t)+0.4*sin(2*PI*1240*t)+0.5*(random(13)*2-1)*exp(-120*t))*exp(-45*t)" 0.18 "highpass=f=180"
 # peak-normalise every sound to -3 dB so the cue gains in workspace.json are the only level control
-for f in boom bass rattle squelch splat creak snap boing plop beep crunch spring buzz whistle squeal knock ding rewind; do
+for f in boom bass rattle squelch splat creak snap boing plop beep crunch spring buzz whistle squeal knock ding rewind crash chop; do
   mx=$(ffmpeg -nostats -i "$f.wav" -af volumedetect -f null - 2>&1 | sed -n 's/.*max_volume: \([-0-9.]*\) dB/\1/p')
   ffmpeg -v error -y -i "$f.wav" -af "volume=$(python3 -c "print(-3-($mx))")dB" $S "$f.tmp.wav" && mv "$f.tmp.wav" "$f.wav"
 done
