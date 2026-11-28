@@ -85,3 +85,11 @@ _No tested recipes recorded yet._
 - Cause / rationale: take 2 flew in a stiff upright pose and landed straight into a crouch with no impact; a follow camera weighted at 0.55 pushed the other fighter off the frame edge
 - Correction / recipe: author flight as keys with 'air' height: arch -> tuck (two near-identical keys for hang time) -> flat with 'inn' ease into the floor -> bounce key -> rest; add head snap and arm lag as offsets; camera follows the midpoint at ~0.3 weight with a lag and pulls back while a body is airborne
 - Verification: take 3: hang time visible frames 9-16, impact burst + bounce + dust column, both fighters stay in frame; QC PASS
+
+### bench-stick — Stick clinch and throw: the attacking arm is aimed at the opponent's neck every frame (two-bone aim), momentum shoves both bodies back together, the lift goes clearly above and forward of the thrower so the silhouettes separate, slam in front with burst, bounce and dust
+
+- Recorded (UTC): 2026-11-28T08:24:43+00:00
+- Evidence: reference-ig-03 12.6-12.9 s; bench-stick X02 (review/run-clinch-compare.mp4)
+- Cause / rationale: the first heave overlapped the lifted body with the thrower's head and the silhouettes tangled
+- Correction / recipe: aimFront() in bench-stick/_common.js for contacts; keep lifted bodies 200+ px above or clear of the other figure; slam where the floor is empty
+- Verification: take 6: clinch contact reads, the lifted body is separate above the thrower, slam with dust; QC PASS

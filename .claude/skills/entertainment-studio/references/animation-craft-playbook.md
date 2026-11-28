@@ -132,8 +132,16 @@ column** rises and fades over ~15 frames. **Secondary motion:** the hit head sna
 by 1-2 frames. **Camera:** follow the fighters' midpoint lightly (~0.3) with a lag, and pull back while someone is
 airborne, so nobody is pushed off the frame.
 
-**Still to learn:** clinch overlap (two bodies locked together), a run cycle with a strong lean, and bringing all of this
-into Dev's acting in Half Landing.
+**Run (reference-ig-03 12.3-12.9 s):** ~45 deg lean, head low and forward, the back leg thrown straight out behind,
+the front knee driving high, arms pumping opposite the legs, **on twos**. Each leg has its own phase: the knee bends
+while that leg swings forward, so the legs never line up; never swing a straight leg up high (it reads as a slide).
+Lift the body at full stride: a runner is airborne there.
+
+**Clinch and throw:** the attacking arm stays on the opponent's neck every frame (aim the arm at the contact point);
+momentum shoves both bodies back together; the lift goes clearly above and forward of the thrower so the silhouettes
+separate; the slam lands where the floor is empty, with burst, bounce and dust.
+
+**Next:** bring all of this into Dev's acting in Half Landing (the A09 dive catch is the first test).
 
 ## Frame-level details (measured 2026-11-28 with `ref_motion.py` and full-frame close-ups)
 
@@ -176,6 +184,7 @@ colours across many bins.
 | 2026-11-27 | bench-bump v1 | 7.3% (1.3%) | structure, clock, labels, loop | plain head; bump nearly invisible |
 | 2026-11-28 | bench-bump v2 | 8.1% | bump grows from the outline; match-cut roll in/out | face still generic (owner) |
 | 2026-11-28 | bench-bump v3 | 7.7% | face built from forms and tone planes; open/shut eye | soft gradients vs the reference's hard cel planes; section texture; upbeat music |
+| 2026-11-28 | bench-stick take 6 | - | run cycle on twos with per-leg phase; clinch with an aimed arm; heave and slam with clear silhouettes | carry into Dev (A09) |
 | 2026-11-28 | bench-stick take 3 | - | flight with hang time, flat landing + bounce + dust column, head snap, arm lag, light follow camera | clinch; run cycle; carry into Dev |
 | 2026-11-28 | bench-stick take 2 | - | strike grammar: coil, wind-up, smear, 3-frame holds, fold, blur launch | tumbling in flight; clinch; head snap; camera nudges |
 | 2026-11-28 | bench-bump v7 + A04 rewind | bench 4.6% local motion (ref 7.6%); A04R 5.9%, holds 3+: 0 | boil on twos; impact grammar carried into Half Landing (punch-in, smear, landing kick) | full-frame drift; music; owner phone review |

@@ -231,3 +231,11 @@ The initial entries preserve documented observations from the 2026-11-11 study a
 - Cause / rationale: poses were chosen as angles without checking the silhouette; spacing set from body positions, not from where the reaction would land; ghosts drawn sharp and widely spaced
 - Correction / recipe: check every key pose as a silhouette (no limb across the head or torso unless it is the point); space fighters about a fist's reach apart so the reaction reads clear; blur = 12 close ghosts under a canvas blur filter for 2 frames
 - Verification: take 2: guards and jab/block read, the fold reads in silhouette for frames 17-20, the launch is a 2-frame streak; QC PASS after adding a quiet bed (sparse hits undershot loudness)
+
+### bench-stick — Run cycle read as a hunched shuffle, then as a slide: both legs lined up under the body on the passing frames, and the forward leg swung up nearly horizontal and straight
+
+- Recorded (UTC): 2026-11-28T08:24:43+00:00
+- Evidence: bench-stick X02 frames 5.0-5.5 s (three takes) vs reference-ig-03 12.3-12.9 s at full crop
+- Cause / rationale: both knees were driven by the same sin term; thigh swing 1.0 rad with a straight forward knee
+- Correction / recipe: per leg: thigh .22 + .78*sin(phase), knee bends while that leg swings forward (cos>0) and keeps a bend when forward; lean ~45 deg, arms opposite the legs, poses on twos
+- Verification: take 6 frames: driving stride, heel kicked up behind, never two straight legs together; QC PASS
