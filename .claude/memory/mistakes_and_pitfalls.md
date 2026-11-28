@@ -311,3 +311,11 @@ The initial entries preserve documented observations from the 2026-11-11 study a
 - Cause / rationale: Each attempt changed frameShot kinds (CU/MCU/MS) and pose numbers, but the hands-in-width rule then widened those very shots back to wides, and I reported the intent rather than measuring the render. Foreground covers (a table band) hid the moving floor without reading as an object.
 - Correction / recipe: After every reframe, measure the rendered frame: subject height share and empty-floor share at the key time, against the reference shot, before calling it fixed. Choose poses that fit the shot (hands near the face for a close-up reaction) instead of widening the frame to fit the pose. Props sit on a visible surface and hands wrap them. Keep ambient movers in frame when covering areas; never trade motion for cover.
 - Verification: Critic confirmed what did land: OTS silhouettes without duplicates, readable bobs, the waiter walk-in and copied bob, hands at 14.3 s and 9.0 s. Escalated after 3 attempts.
+
+### learn/dialogue-grammar-04 — Stick hands stay plain stick; elbows only fold forward and knees only back
+
+- Recorded (UTC): 2026-11-28T19:51:16+00:00
+- Evidence: owner notes 2026-11-28: 'No need for palms' -> 'simpler stick hands' -> 'Only stick hands no fingers also the hands are bending on wrong side'; review/moss_hands.jpg (grape-bunch grip, grey contours); review/stick_sheet.jpg (after)
+- Cause / rationale: I kept adding hand detail (blob -> palm and fingers -> finger strokes) when the owner wanted the plain stick look; and our seated pose used negative forearm angles (af2 -.75), which bends the elbow backwards.
+- Correction / recipe: useFullHands() now draws no hand at all (the arm ends in its round cap) and wraps fig with stickRules(): for a hanging or forward arm (|upper| <= 1.3 rad) the forearm angle is made positive (elbow folds forward); knees always fold back. Raised arms may fold either way (frontal hands-up). Pose seated hands with af1 ~.35, af2 ~1.0. A prop is held by putting the arm end at its handle.
+- Verification: Rendered dialogue-grammar-04 frames at 1.5, 5.5, 14.3, 16.9 s: plain stick arms, forward-folding elbows, symmetric hands-up. Unit test StickRules passes. Awaiting owner review.

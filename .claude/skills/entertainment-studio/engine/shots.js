@@ -3,7 +3,7 @@
 //   const J=jointsOf(X,pose,s,{dir});   cam(...frameShot('CU',[J]))   then draw as usual.
 //   kinds: CU (head+neck), MCU (head to mid-chest), MS (head to hips), WS (whole body), TWO (both, waist up)
 //   ovShoulder(side,col) after drawing: the listener's own head+shoulder in the near corner (screen space, OTS)
-function jointsOf(X,p,s=1.6,o={}){ p={...STAND,...p}; const d=p.dir??o.dir??1, pt=(a,l)=>[Math.sin(a)*d*l,Math.cos(a)*l], add=(a,b)=>[a[0]+b[0],a[1]+b[1]];
+function jointsOf(X,p,s=1.6,o={}){ p={...STAND,...stickRules(p)}; const d=p.dir??o.dir??1, pt=(a,l)=>[Math.sin(a)*d*l,Math.cos(a)*l], add=(a,b)=>[a[0]+b[0],a[1]+b[1]];
   const hip=[0,0], neck=[Math.sin(p.lean)*d*TL,-Math.cos(p.lean)*TL], hd=add(neck,[Math.sin(p.lean+p.head)*d*(HR+5),-Math.cos(p.lean+p.head)*(HR+5)]), sh=[neck[0]*.9,neck[1]*.88];
   const kf=add(hip,pt(p.lf1,TH)), ff=add(kf,pt(p.lf1+p.lf2,SH)), kb=add(hip,pt(p.lb1,TH)), fb=add(kb,pt(p.lb1+p.lb2,SH));
   const low=Math.max(ff[1],fb[1],kf[1],kb[1],hd[1]+HR); const Y=o.y??(p.gy!=null?G-p.gy*s:G-low*s-(p.air||0)*s);
@@ -27,36 +27,17 @@ function subjectShare(J,z){ return (J.hip[1]-(J.hd[1]-J.R))*z*1.18/H }
 // over-the-shoulder foreground: the listener's head and shoulder, big, dark, soft, in the near lower corner (screen space)
 function ovShoulder(side,col){ x.save(); x.setTransform(1,0,0,1,0,0); const r=Math.min(W,H)*.2, X=side<0?r*.55:W-r*.55, Y=H*.62;
   x.filter='blur(4px) brightness(.5)'; x.fillStyle=col; x.beginPath(); x.arc(X,Y,r,0,7); x.fill(); x.beginPath(); x.moveTo(X-side*r*.3,Y+r*.6); x.quadraticCurveTo(X-side*r*1.9,Y+r*1.1,X-side*r*2.3,H+40); x.lineTo(X+side*r*1.6,H+40); x.closePath(); x.fill(); x.restore() }
-// Full hands for close shots (owner note 2026-11-28: "the hands are not proper"). The engine's hand is a blob barely wider
-// than the arm, so at MCU/CU the arm just ends. A real hand: palm wider than the wrist, four separate fingers, a thumb.
-// Opt in per episode with useFullHands(); kinds: hand/open, relaxed, fist, point, thumb, palmup, wave
-function fullHand(J,e,h,kind,s,col,mid){ if(!kind) return; const dx=J[h][0]-J[e][0], dy=J[h][1]-J[e][1], L=Math.hypot(dx,dy)||1, u=[dx/L,dy/L], side=h==='hf'?-1:1, n=[-u[1]*side,u[0]*side], [hx,hy]=J[h]; // the two hands are mirror images, so both thumbs point inward
-  const P=(a,b)=>[hx+u[0]*a*s+n[0]*b*s, hy+u[1]*a*s+n[1]*b*s], rot=(v,a)=>{ a*=side; return [v[0]*Math.cos(a)-v[1]*Math.sin(a),v[0]*Math.sin(a)+v[1]*Math.cos(a)] };
-  // drawn twice: first a thin gap line in the background colour (HAND_GAP), then the hand, so a hand over a same-coloured
-  // body (a black hand on a black thigh, one hand over the other) still separates; the classic animation 'line gap'
-  const paint=(pad,c,detail)=>{ x.save(); x.fillStyle=c; x.strokeStyle=c; x.lineCap='round'; x.lineJoin='round';
-  // cartoon-hand proportions (owner: "fix the hands"): a broad round palm wider than the wrist, short thick fingers held
-  // close together, and a short thick thumb set low on the side at about 40 degrees, never a peg sticking straight out
-  const palm=(len=11,wid=12.5)=>{ const c=P(len*.5,0), a=Math.atan2(u[1],u[0]); x.beginPath(); x.ellipse(c[0],c[1],len*s*.6+pad,wid*s*.62+pad,a,0,7); x.fill(); const w=P(-1,0); x.beginPath(); x.ellipse(w[0],w[1],5*s+pad,6*s+pad,a,0,7); x.fill() };
-  const finger=(base,dirA,len,w=4.4,curl=0)=>{ const b=P(...base); let d=rot(u,dirA); const m=[b[0]+d[0]*len*.55*s,b[1]+d[1]*len*.55*s]; d=rot(d,curl); const t=[m[0]+d[0]*len*.45*s,m[1]+d[1]*len*.45*s];
-    x.lineWidth=w*s+2*pad; x.beginPath(); x.moveTo(...b); x.lineTo(...m); x.lineTo(...t); x.stroke() };
-  const fingers=(spread,len,curl)=>{ for(let i=0;i<4;i++){ const off=(i-1.5)*4.3; finger([9,off],(i-1.5)*spread,len*[.9,1,.96,.8][i],3.7,curl) } };
-  const thumb=(a,len=7,curl=0)=>finger([3.5,-6.6],a,len,4.4,curl);
-  const fistBlock=()=>{ const c=P(5,0); x.save(); x.translate(...c); x.rotate(Math.atan2(u[1],u[0])); x.beginPath(); x.roundRect(-8*s-pad,-8.5*s-pad,16*s+2*pad,17*s+2*pad,7*s+pad); x.fill(); if(detail){ x.strokeStyle='rgba(0,0,0,.22)'; x.lineWidth=1.6*s; for(const k of [-3,1,5]){ x.beginPath(); x.moveTo(5*s,k*s); x.lineTo(8*s,k*s); x.stroke() } } x.restore() };
-  if(kind==='hand'||kind==='open'){ palm(); fingers(.1,9.5,0); thumb(-.7) }
-  else if(kind==='wave'){ palm(); fingers(.15,10,0); thumb(-.8) }
-  else if(kind==='relaxed'){ palm(10,11); fingers(.04,8.5,.45); thumb(-.95,7.5,.25) }
-  else if(kind==='palmup'){ palm(11,13); fingers(.05,8.5,-.25); thumb(-.55,6.5,-.1) }
-  else if(kind==='grip'){ palm(9,10.5); for(let i=0;i<4;i++){ const off=(i-1.5)*4.1; finger([8.5,off],0,6.5,4.2,2.3) } if(mid&&detail){ x.save(); mid(); x.restore() } thumb(-.25,8.5,0) } // fingers curl behind the handle (mid draws it), thumb over the top
-  else if(kind==='fist'){ fistBlock(); thumb(-.5,5.2,.9) }
-  else if(kind==='point'){ fistBlock(); finger([8,-2.6],-.04,11,4.2,0); thumb(-.5,5,.9) }
-  else if(kind==='thumb'){ fistBlock(); const b=P(3,-6); x.lineWidth=4.8*s+2*pad; x.beginPath(); x.moveTo(...b); x.lineTo(b[0],b[1]-11*s); x.stroke() } // thumbs-up always points up
-  else { palm(); fingers(.1,9.5,0); thumb(-.7) }
-  x.restore() };
-  const lum=(()=>{ const m=/^#?([0-9a-f]{6})$/i.exec(col||''); if(!m) return .5; const v=parseInt(m[1],16); return (.3*(v>>16)+.59*((v>>8)&255)+.11*(v&255))/255 })();
-  // gap line: a faint contour, dark on light-coloured characters and barely-light on dark ones (critic: a pale halo reads as a sticker)
-  paint(1.0*s,typeof HAND_GAP!=='undefined'?HAND_GAP:(lum<.3?'rgba(255,248,235,.2)':'rgba(0,0,0,.22)'),0); paint(0,col,1) }
-function useFullHands(){ handGlyph=fullHand }
+// Hands: plain stick arms (owner, 2026-11-28: "only stick hands no fingers"). History: blob hand -> palm-and-fingers cartoon
+// hand -> finger strokes; the owner wants none of them. The arm simply ends in its round cap.
+// Joints bend one way only (owner: "the hands are bending on wrong side"): an elbow folds the forearm toward the front of the
+// body, so the forearm angle relative to the upper arm is never negative; a knee folds the shin backward, so its relative
+// angle is never positive. stickRules() mirrors any pose that breaks this, keeping the amount of bend.
+// (an arm raised above shoulder height can fold either way in our flat rig, e.g. a frontal 'hands up', so only hanging and
+// forward arms are corrected)
+function stickRules(p){ if(!p) return p; const q={...p}; for(const [u1,k] of [['af1','af2'],['ab1','ab2']]) if(typeof q[k]==='number'&&Math.abs(q[u1]??0)<=1.3) q[k]=Math.abs(q[k]);
+  for(const k of ['lf2','lb2']) if(typeof q[k]==='number') q[k]=-Math.abs(q[k]); return q }
+function fullHand(){}
+function useFullHands(){ handGlyph=fullHand; if(!fig.__stick){ const f=fig; fig=(X,p,sc,o)=>f(X,stickRules(p),sc,o); fig.__stick=1 } } // plain stick hands + one-way joints
 
 // a foreground table edge across the bottom of the frame (screen space): in 9:16 a seated two-shot otherwise leaves a dead
 // floor band (critic, learn/dialogue-grammar-03). Draw after the scene, before subtitles; top = share of frame height

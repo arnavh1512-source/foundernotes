@@ -208,3 +208,16 @@ class ClipCache(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d:
             bad = pathlib.Path(d) / "x.mp4"; bad.write_bytes(b"not a video")
             self.assertFalse(eb.playable(bad))
+
+
+class StickRules(unittest.TestCase):
+    def test_elbows_fold_forward_knees_back(self):
+        import subprocess, pathlib
+        js = (pathlib.Path(__file__).resolve().parents[1] / "engine/shots.js").read_text()
+        code = js + ";const r=stickRules({af1:.9,af2:-.7,ab1:-1.6,ab2:-1.3,lf2:.4,lb2:-.2});console.log(JSON.stringify(r))"
+        out = subprocess.run(["node", "-e", code], capture_output=True, text=True, check=True).stdout
+        r = json.loads(out)
+        self.assertEqual(r["af2"], .7)      # a hanging/forward arm never bends backwards
+        self.assertEqual(r["ab2"], -1.3)    # a raised arm may fold either way
+        self.assertEqual(r["lf2"], -.4)     # knees bend backwards
+        self.assertEqual(r["lb2"], -.2)
