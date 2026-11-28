@@ -141,3 +141,11 @@ _No tested recipes recorded yet._
 - Cause / rationale: positions were planned in world units without the camera's real visible width; a lean of 0.7 puts the head ~166 px ahead of the hips
 - Correction / recipe: compute the frame's world bounds from cam() before staging a chase; budget the head lead for running leans
 - Verification: A13 exported; frames 4.2-5.1 s show both in frame and the stop at his feet
+
+### half-landing-a03-reel,half-landing-a04-reel,half-landing-a06-reel,half-landing-a08-reel — Retrofit lessons into finished episodes cheaply: one shared-helper change (the breath in dev()) re-renders every shot once; an overlay key (hits) on one shot re-renders only that shot
+
+- Recorded (UTC): 2026-11-28T09:47:54+00:00
+- Evidence: still frames A03 21.2% -> 6.2%, A04 29.9% -> 6.8%, A08 15.2% -> 6.3% after the breath; impact frames on each key hit re-rendered 1 shot per Reel; all QC PASS, loops ok, ep_check PASS
+- Cause / rationale: the first batch was made before the breath and impact lessons
+- Correction / recipe: when a lesson lands, list the finished episodes it improves, apply it through _common.js or an overlay key, re-measure with ep_review and re-export
+- Verification: four Reels re-exported 2026-11-28
