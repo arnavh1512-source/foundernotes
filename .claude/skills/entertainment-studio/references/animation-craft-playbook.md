@@ -231,6 +231,7 @@ colours across many bins.
 
 | Date | Benchmark | Still steps (ref) | What improved | Biggest gap now |
 |---|---|---|---|---|
+| 2026-11-28 | bench-zap v3 (funny-bone zap, ig-04) | - | timing matched: smear frame, 1-frame hit, 2-frame block burst, 1-frame travel, per-frame zap redraw, delayed label; real open hand | effect mass: zap clusters at elbow and hand, subject scale in frame, bigger burst blocks, room props + motes |
 | 2026-11-27 | bench-bump v1 | 7.3% (1.3%) | structure, clock, labels, loop | plain head; bump nearly invisible |
 | 2026-11-28 | bench-bump v2 | 8.1% | bump grows from the outline; match-cut roll in/out | face still generic (owner) |
 | 2026-11-28 | bench-bump v3 | 7.7% | face built from forms and tone planes; open/shut eye | soft gradients vs the reference's hard cel planes; section texture; upbeat music |

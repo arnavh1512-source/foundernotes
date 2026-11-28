@@ -173,3 +173,11 @@ _No tested recipes recorded yet._
 - Cause / rationale: each cut answers who speaks and who reacts; the chorus and the reaction shots tell the viewer where the laugh is
 - Correction / recipe: for any dialogue scene (Think! or a future talking episode) plan shots by line: establish once, then OTS pairs, a close-up for each punchline, a reaction after it; give the straight character a repeated verbal tic; end on a callback that tops the earlier beats
 - Verification: study only; to be tested in a drill
+
+### bench-zap — Effect frames: copy the timing exactly, then match the effect's mass, not just its shape
+
+- Recorded (UTC): 2026-11-28T14:14:11+00:00
+- Evidence: studio-output/bench-zap/review/compare.jpg, compare2.jpg, compare3.jpg vs reference-ig-04 at 0.5 s and 0.9 s (full-size ref_compare)
+- Cause / rationale: v1 copied the idea (bat hits elbow, zap runs to the fingers) but every element was undersized: spike-fan hand, thin bat, small burst, two thin strands. Timing was right; mass was wrong.
+- Correction / recipe: Impact on one frame with a smear the frame before; burst of flat blocks for 2 frames; one-frame travel; redraw the zap every frame (4 strands, mixed widths 8-16 px, spikes, branches at the fingers); label 0.7 s after the hit. Then judge mass: the effect should cover about a third of the frame, the subject should fill the frame, and the room needs props plus motes.
+- Verification: v3 render QC PASS; compare3 shows matched timing, block burst and denser zap. Still open (not verified): zap clustering at elbow and hand, larger arm in frame, bigger burst blocks, richer room.
