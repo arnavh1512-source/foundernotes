@@ -173,6 +173,12 @@ one frame; contact = two frames of white starburst rays with yellow/teal shards;
 ONE frame; then ~1 s of two zigzag lines (teal + yellow) redrawn with new random kinks every frame (a boil on ones),
 branching into the splayed fingers; dashed multicoloured rings expand slowly; the label types on ~0.7 s after the hit.
 
+## Series template confirmed (reference-ig-06, nosebleed, 27.7 s)
+Third episode on the same rails (ig-01 26.1 s, ig-04 26.1 s, ig-06 27.7 s). Measured: dives in accelerate (7.75x, half at 79%),
+pull-outs decelerate (16x, half at 28%). New tools: a schematic cut-away that bookends the inside story (in at 2.35 s, out at
+25.3 s); volume shown as a crowd of hundreds of cells; fibrin goes from sparkling dotted threads to a clean net (chaos ->
+clarity); the clock ticks on a log scale (seconds -> minutes -> days).
+
 ## A series template (reference-ig-04, 2026-11-28: same creator as reference-ig-01)
 
 The "funny bone" video runs **exactly 26.1 s with the same beat grammar** as the bump video: hit in a real setting ->

@@ -161,3 +161,15 @@ Candidates for Think! Shorts: a fixed series template; show the mechanism on the
 chorus of side characters who voice the joke, close-up punchlines followed by short reaction shots, a straight man's
 verbal tic as a running gag, words contradicting actions, and an escalating callback ending. rea-video infers TTS voices
 and a stock music bed (unconfirmed). Full notes: entertainment-studio playbook. Useful for Think! dialogue scenes.
+
+## 2026-11-28: owner-supplied clip reference-ig-06 (nosebleed explainer, pixel art, 9:16, 27.7 s; same creator and template as ig-01 and ig-04)
+
+Third episode on the same rails: hit -> sign on the surface -> crash zoom inside -> fast clock repair -> back out. Measured
+(ref_motion): 28 camera moves; zooms **in** accelerate (7.75x dive at 2.1-2.57 s, half done at 79% of its time; 3.2x into
+the vessel at 8.2 s), zooms **out** decelerate (16x pull-out at 24.1-24.7 s, half done at 28%). New in this episode:
+- **A bookend cut-away layer:** a schematic x-ray of the nose flashes in mid-dive (2.35 s) and returns on the way out (25.3 s), so face -> diagram -> tissue -> diagram -> face nests three scales.
+- **Volume as a crowd:** the bleed is hundreds of individual cells pouring through the tear in a funnel, plus debris.
+- **Chaos to clarity again:** fibrin starts as dotted, sparkling node strings and resolves into a clean net (as the ig-04 zap resolved into a clean zigzag).
+- **Log-spaced clock:** 10 SEC, 20, 35, 55, 1 MIN, 4, 6, 9, DAY 1, 2, 4, 6, 7.
+- **Surface sign:** a trickle from the nostril with one drop falling through the air.
+Candidates to test in drills, not proof of what drives views.
