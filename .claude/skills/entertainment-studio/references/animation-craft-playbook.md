@@ -103,6 +103,31 @@ the shot hands over to the next one.
 | World memory | What stays changed afterwards (stain, splat, debris)? |
 | Hand-over | How does the shot pass the eye and the subject to the next one? |
 
+
+## Stick animation craft (studied 2026-11-28 from reference-ig-03, rebuilt in `studio-output/bench-stick`)
+
+**What the frames show (9.6-10.4 s, every frame, full-size crop):**
+- **Silhouette first.** Thick strokes, round heads, no faces: every pose reads as a shape. Limbs never cross the head or
+  torso unless that is the point (a block, a clutch).
+- **Knees always bent, weight low** in a fight; extremes go to full extension (straight punching arm, straight back leg).
+- **A strike:** coil -> spring up in 3 frames -> wind-up (fist pulled back, torso back) -> **one** translucent arc-smear frame
+  along the limb's path -> the extended contact pose **held 3 frames** -> follow-through.
+- **A reaction:** the hit body **folds around the impact point** (90 deg at the waist, hips pushed back) and holds 3 frames,
+  then leaves as a **2-frame motion-blur streak**, tumbles, and lands crumpled with dust that lingers.
+- **Spacing tells speed:** fast moves jump a body-width between frames; holds cluster. The camera nudges with the action.
+- **Overlap in a clinch:** bodies cross, read apart by colour.
+
+**What our first attempt got wrong (and the fix):** tangled guard arms over the heads (fix: check each key pose as a
+silhouette); fighters overlapping so the fold hid behind the puncher (fix: about a fist's reach apart); a "blur" of sharp
+clones (fix: 12 close ghosts under a canvas blur for 2 frames); too small in frame.
+
+**How to author it in our rig:** poses are angles from straight down (positive = facing direction); write pose keys with
+holds at the extremes and interpolate between them (`track()` in `bench-stick/scenes/_common.js`), add a breath to every
+held pose, and review every frame of the action at full size, not the 0.25 s precheck.
+
+**Still to learn:** a tumbling body that reads in flight (ours lands upright too soon), clinch overlap, camera nudges that
+follow the action, and secondary motion (a head snapping back after the hit).
+
 ## Frame-level details (measured 2026-11-28 with `ref_motion.py` and full-frame close-ups)
 
 **Camera grammar (reference-ig-01, 12 zoom/roll moves in 26 s; ours v3 had 9):**
@@ -144,6 +169,7 @@ colours across many bins.
 | 2026-11-27 | bench-bump v1 | 7.3% (1.3%) | structure, clock, labels, loop | plain head; bump nearly invisible |
 | 2026-11-28 | bench-bump v2 | 8.1% | bump grows from the outline; match-cut roll in/out | face still generic (owner) |
 | 2026-11-28 | bench-bump v3 | 7.7% | face built from forms and tone planes; open/shut eye | soft gradients vs the reference's hard cel planes; section texture; upbeat music |
+| 2026-11-28 | bench-stick take 2 | - | strike grammar: coil, wind-up, smear, 3-frame holds, fold, blur launch | tumbling in flight; clinch; head snap; camera nudges |
 | 2026-11-28 | bench-bump v7 + A04 rewind | bench 4.6% local motion (ref 7.6%); A04R 5.9%, holds 3+: 0 | boil on twos; impact grammar carried into Half Landing (punch-in, smear, landing kick) | full-frame drift; music; owner phone review |
 | 2026-11-28 | bench-bump v5-v6 | 5.6%; holds 3+: 0 | every element moves (cells tumble, fat shimmers, marrow jiggles, blood flows in vessels); flat tone planes; bump colour clipped to the swelling | local motion 3.7% vs 7.6%: reference cells 'boil' a whole cell-width per 2 frames and the frame drifts |
 | 2026-11-28 | bench-bump v4 | 5.0%; holds 3+ frames: 0 (ref max 9) | measured camera grammar (10 moves vs 12) and impact anatomy copied in timing | motion inside the picture 2.8% vs 7.6%; hard cel planes; music |

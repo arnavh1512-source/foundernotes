@@ -223,3 +223,11 @@ The initial entries preserve documented observations from the 2026-11-11 study a
 - Cause / rationale: grain noise spreads every flat colour across many bins; resized tiles can mislead
 - Correction / recipe: read shading measures only on grain-free frames (or with the grain removed) and confirm every visual finding on the full-size frame
 - Verification: full-size B06 2.0 s frame checked: no band; tone measure marked unreliable in the playbook
+
+### bench-stick — First stick fight take: guard arms tangled over the heads, fighters overlapped (the fold reaction hid behind the puncher), and the launch 'blur' was a row of sharp clones
+
+- Recorded (UTC): 2026-11-28T08:07:28+00:00
+- Evidence: bench-stick take 1, frames 12-23 (0.4-0.8 s) vs reference-ig-03 9.6-10.4 s at full crop
+- Cause / rationale: poses were chosen as angles without checking the silhouette; spacing set from body positions, not from where the reaction would land; ghosts drawn sharp and widely spaced
+- Correction / recipe: check every key pose as a silhouette (no limb across the head or torso unless it is the point); space fighters about a fist's reach apart so the reaction reads clear; blur = 12 close ghosts under a canvas blur filter for 2 frames
+- Verification: take 2: guards and jab/block read, the fold reads in silhouette for frames 17-20, the launch is a 2-frame streak; QC PASS after adding a quiet bed (sparse hits undershot loudness)

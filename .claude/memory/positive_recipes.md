@@ -69,3 +69,11 @@ _No tested recipes recorded yet._
 - Cause / rationale: smooth sine motion reads as floating; the series had no punch-in or smear on its key beats
 - Correction / recipe: boil = offset from rnd(id, floor(NOW*15)); on every gag hit: camera punch ~1.1x easing out then relax, smear ghosts on the fastest frames, a small camera kick on landing that settles back to the loop framing
 - Verification: measured as above; A04 rewind exported and passes ep_check; owner phone review pending
+
+### bench-stick — Stick strike grammar from reference-ig-03: coil -> spring (3 frames) -> wind-up -> one arc-smear frame -> extended contact pose held 3 frames -> hit body folds at the waist and holds 3 frames -> 2-frame blur launch -> land in a crouch with dust
+
+- Recorded (UTC): 2026-11-28T08:07:28+00:00
+- Evidence: reference-ig-03 9.6-10.4 s frame by frame at full crop; rebuilt in bench-stick (review/exchange-compare.mp4)
+- Cause / rationale: a strike reads through holds at the extremes and clean silhouettes, not through many in-betweens
+- Correction / recipe: author strikes as pose keys with holds at the extremes (track() keys in bench-stick/_common.js), knees bent in every fight pose, one smear frame, a reaction that folds around the impact point
+- Verification: take 2 frames match the beat order and hold lengths of the reference exchange
