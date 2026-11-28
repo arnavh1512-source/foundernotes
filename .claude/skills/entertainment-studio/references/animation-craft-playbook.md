@@ -237,6 +237,7 @@ colours across many bins.
 
 | Date | Benchmark | Still steps (ref) | What improved | Biggest gap now |
 |---|---|---|---|---|
+| 2026-11-28 | learn: camera-grammar (escalated, 3 tries, level 2) | 9.13% local (22.47%) | push and pull alternate; accelerate into a transition, decelerate out | camera move count within 20% of the reference |
 | 2026-11-28 | learn: dialogue-grammar (escalated, 3 tries, level 1) | 1.91% local (4.21%) | cuts land on the line, not after it | establishing shot, then over-the-shoulder cuts; close-up on the punchline, then a reaction shot; a callback at the end |
 | 2026-11-28 | learn: dialogue-grammar (escalated, 3 tries, level 1) | 2.94% local (4.21%) | cuts land on the line, not after it | establishing shot, then over-the-shoulder cuts; close-up on the punchline, then a reaction shot; a callback at the end |
 | 2026-11-28 | learn: dialogue-grammar (escalated, 3 tries, level 1) | 2.84% local (4.21%) | cuts land on the line, not after it | establishing shot, then over-the-shoulder cuts; close-up on the punchline, then a reaction shot; a callback at the end |

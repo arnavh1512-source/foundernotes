@@ -241,9 +241,10 @@
     "reference-ig-02"
    ],
    "evidence": [
-    "bench-bump v4: measured moves copied"
+    "bench-bump v4: measured moves copied",
+    "camera-grammar-01: escalated after 3 tries"
    ],
-   "next_review": "2026-11-29",
+   "next_review": "2026-12-01",
    "criteria": [
     "push and pull alternate",
     "accelerate into a transition, decelerate out",
