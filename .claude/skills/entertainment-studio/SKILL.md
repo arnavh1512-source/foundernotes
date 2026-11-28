@@ -60,7 +60,8 @@ Set `"format": "vertical"` in the manifest for a 1080x1920 canvas (Instagram Ree
 
 Get better with every video: read `references/animation-craft-playbook.md` before planning or reviewing, study every
 reference the owner shares at full size, recreate a short same-brief benchmark when it helps, compare with
-`scripts/ref_compare.py <ref.mp4> <ours.mp4> <out.jpg> <times...>` at full size, fix the biggest gap, and record every
+`scripts/ref_compare.py <ref.mp4> <ours.mp4> <out.jpg> <times...>` at full size and measure both with
+`~/.cache/venv-rea/bin/python scripts/ref_motion.py <video> <out_dir>` (camera moves and easing, holds, motion inside the picture), fix the biggest gap, and record every
 verified mistake and recipe with `record_lesson.py`. Update the playbook's scoreboard and push.
 
 ## Checks (`ep_check.py`)

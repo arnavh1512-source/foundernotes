@@ -7,7 +7,9 @@ animation, together with `.claude/memory/mistakes_and_pitfalls.md` and `positive
 ## The learning loop (every reference the owner shares)
 
 1. **Study at full size.** Frame sheets for the structure, then single frames at full resolution for the drawing:
-   `ref_compare.py` (side by side at matched moments) and `rea-video` offline for cuts, sound and rhythm.
+   `ref_compare.py` (side by side at matched moments), `ref_motion.py` (camera zoom/pan/roll with easing, holds, motion
+   inside the picture, cuts; run it on ours too) and `rea-video` offline for cuts, sound and rhythm. Zoom into key actions
+   at 30 fps (every frame) to see spacing, smears, contact holds and follow-through.
    Write down the *forms and tone planes*, not just the story beats.
 2. **Recreate a short same-brief benchmark** (internal, never posted): same beats and timing, our own drawings.
 3. **Compare at full size** with `ref_compare.py` at the key moments (opening, transitions, payoff, ending).
@@ -52,6 +54,36 @@ animation, together with `.claude/memory/mistakes_and_pitfalls.md` and `positive
 - Long continuous takes with the camera panning across a line-art set; colour shifts (a teal grade) mark special moments;
   speech bubbles and small labels for jokes.
 
+
+## Frame-level details (measured 2026-11-28 with `ref_motion.py` and full-frame close-ups)
+
+**Camera grammar (reference-ig-01, 12 zoom/roll moves in 26 s; ours v3 had 9):**
+- The camera never rests: slow push-ins and pull-backs alternate every 1.5-2.5 s during "holds" (1.27x in over 1.9 s while
+  the clot forms; out to 0.6x over 1.4 s to reveal the pool; 2.9x in over 0.8 s to meet the macrophage; a slow 0.83x drift
+  out; 0.37x pull-back over 1.2 s). Slow moves are ease in-out (half done at ~0.5).
+- **Punch-in on impact:** 1.23x in 0.23 s right on the hit, easing out (slow end).
+- **Into a transition, accelerate; out of it, decelerate:** the roll into the section turns 89 deg in 0.27 s while the zoom
+  (3.9x) speeds up into the cut (half done at 77%); the roll back out decelerates (half done at 29%).
+- A last small settle (0.89x over 0.7 s) before the loop.
+
+**Impact anatomy (reference-ig-01, 0.0-0.6 s at 30 fps):** creep-in with small spacing (0-0.13 s) -> acceleration with a
+hatched smear along the leading edge on the 2 fastest frames -> contact held for 3 frames with white and yellow spark rays
+-> rebound -> two dotted rings expanding slowly over ~0.25 s -> visible dent -> the result (bump) starts ~0.3 s after contact,
+with small tick marks pulsing around it.
+
+**Fight anatomy (reference-ig-03, 26.1-27.0 s):** lunge in 4 frames -> contact -> grapple that is never still (bodies shift
+every frame) -> a throw along an arc over ~6 frames -> **one translucent crescent smear** in the team colour on the fastest
+frame -> dust puffs at the floor on landing that linger and fade over ~5 frames. Entrances arrive as a motion-blurred smear
+for 3 frames, then snap sharp. Speech bubbles fade out over ~4 frames, never pop off. The camera nudges 60-130 px in
+0.15-0.25 s bursts to follow the action and kicks back (zooms out ~0.86x) on big hits. No hold of 3+ frames in 76 s;
+4.5% of frames repeat once (mostly on ones).
+
+**The breath and on twos (reference-ig-02, rocket):** the rocket squats and rumbles with drifting smoke puffs for ~1 s, then
+stretches up taller and settles; on the "on twos" step 11% of frames repeat (33 single repeats): each drawing held two frames.
+Picture-wide local motion is only 1.7%: small, constant life is enough when the composition is calm.
+
+**Ours vs reference (same tool):** v3 local motion 2.3% vs 7.6%; v3 froze for up to 16 frames at the end vs a 9-frame max.
+
 ## Scoreboard (update after every benchmark)
 
 | Date | Benchmark | Still steps (ref) | What improved | Biggest gap now |
@@ -59,8 +91,10 @@ animation, together with `.claude/memory/mistakes_and_pitfalls.md` and `positive
 | 2026-11-27 | bench-bump v1 | 7.3% (1.3%) | structure, clock, labels, loop | plain head; bump nearly invisible |
 | 2026-11-28 | bench-bump v2 | 8.1% | bump grows from the outline; match-cut roll in/out | face still generic (owner) |
 | 2026-11-28 | bench-bump v3 | 7.7% | face built from forms and tone planes; open/shut eye | soft gradients vs the reference's hard cel planes; section texture; upbeat music |
+| 2026-11-28 | bench-bump v4 | 5.0%; holds 3+ frames: 0 (ref max 9) | measured camera grammar (10 moves vs 12) and impact anatomy copied in timing | motion inside the picture 2.8% vs 7.6%; hard cel planes; music |
 
 ## Next practice items
+0. Raise motion inside the picture toward the reference (2.8% -> ~7%): more independent small movers (cells, particles, dust).
 1. Hard-edged cel planes (2-4 flat tones per form) for faces, the bump and the section layers.
 2. Smears and ghost trails on fast Half Landing actions (from reference-ig-03).
 3. Persistent world state: stains, debris and props stay where they land.
