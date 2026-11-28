@@ -96,6 +96,7 @@ colours across many bins.
 | 2026-11-27 | bench-bump v1 | 7.3% (1.3%) | structure, clock, labels, loop | plain head; bump nearly invisible |
 | 2026-11-28 | bench-bump v2 | 8.1% | bump grows from the outline; match-cut roll in/out | face still generic (owner) |
 | 2026-11-28 | bench-bump v3 | 7.7% | face built from forms and tone planes; open/shut eye | soft gradients vs the reference's hard cel planes; section texture; upbeat music |
+| 2026-11-28 | bench-bump v7 + A04 rewind | bench 4.6% local motion (ref 7.6%); A04R 5.9%, holds 3+: 0 | boil on twos; impact grammar carried into Half Landing (punch-in, smear, landing kick) | full-frame drift; music; owner phone review |
 | 2026-11-28 | bench-bump v5-v6 | 5.6%; holds 3+: 0 | every element moves (cells tumble, fat shimmers, marrow jiggles, blood flows in vessels); flat tone planes; bump colour clipped to the swelling | local motion 3.7% vs 7.6%: reference cells 'boil' a whole cell-width per 2 frames and the frame drifts |
 | 2026-11-28 | bench-bump v4 | 5.0%; holds 3+ frames: 0 (ref max 9) | measured camera grammar (10 moves vs 12) and impact anatomy copied in timing | motion inside the picture 2.8% vs 7.6%; hard cel planes; music |
 

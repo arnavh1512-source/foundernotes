@@ -61,3 +61,11 @@ _No tested recipes recorded yet._
 - Cause / rationale: only the pool cells moved; bone, fat and vessels were static drawings
 - Correction / recipe: give every repeated element its own phase-shifted motion (position, rotation, outline wobble) and flow inside tubes; check with a difference map before rendering
 - Verification: local motion 2.8% (v4) -> 3.7% (v5); reference 7.6%, gap still open
+
+### bench-bump,half-landing-a04-rewind — Boil and transfer: re-pick small offsets every 2 frames so repeated elements jump like hand-drawn ones; carry the impact grammar (punch-in on the hit, smear trail, camera kick on landing) into the series
+
+- Recorded (UTC): 2026-11-28T07:58:21+00:00
+- Evidence: ref_motion local motion: bench-bump 3.7% -> 4.6% with boil (ref 7.6%); A04 rewind 5.9%, no holds of 3+ frames, sync 9/9; launch frames show the smear trail
+- Cause / rationale: smooth sine motion reads as floating; the series had no punch-in or smear on its key beats
+- Correction / recipe: boil = offset from rnd(id, floor(NOW*15)); on every gag hit: camera punch ~1.1x easing out then relax, smear ghosts on the fastest frames, a small camera kick on landing that settles back to the loop framing
+- Verification: measured as above; A04 rewind exported and passes ep_check; owner phone review pending
