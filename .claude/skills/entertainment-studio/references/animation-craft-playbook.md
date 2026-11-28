@@ -82,6 +82,11 @@ for 3 frames, then snap sharp. Speech bubbles fade out over ~4 frames, never pop
 stretches up taller and settles; on the "on twos" step 11% of frames repeat (33 single repeats): each drawing held two frames.
 Picture-wide local motion is only 1.7%: small, constant life is enough when the composition is calm.
 
+**Where life lives (difference maps, `ref_compare.py --diff`):** in the reference every layer lights up between
+frames t and t+2: each red cell moves a whole cell-width (a fast boil), fat outlines shimmer, marrow moves and the whole
+section drifts. Shading measures (tone counts) are only valid on grain-free frames: our engine's film grain spreads flat
+colours across many bins.
+
 **Ours vs reference (same tool):** v3 local motion 2.3% vs 7.6%; v3 froze for up to 16 frames at the end vs a 9-frame max.
 
 ## Scoreboard (update after every benchmark)
@@ -91,6 +96,7 @@ Picture-wide local motion is only 1.7%: small, constant life is enough when the 
 | 2026-11-27 | bench-bump v1 | 7.3% (1.3%) | structure, clock, labels, loop | plain head; bump nearly invisible |
 | 2026-11-28 | bench-bump v2 | 8.1% | bump grows from the outline; match-cut roll in/out | face still generic (owner) |
 | 2026-11-28 | bench-bump v3 | 7.7% | face built from forms and tone planes; open/shut eye | soft gradients vs the reference's hard cel planes; section texture; upbeat music |
+| 2026-11-28 | bench-bump v5-v6 | 5.6%; holds 3+: 0 | every element moves (cells tumble, fat shimmers, marrow jiggles, blood flows in vessels); flat tone planes; bump colour clipped to the swelling | local motion 3.7% vs 7.6%: reference cells 'boil' a whole cell-width per 2 frames and the frame drifts |
 | 2026-11-28 | bench-bump v4 | 5.0%; holds 3+ frames: 0 (ref max 9) | measured camera grammar (10 moves vs 12) and impact anatomy copied in timing | motion inside the picture 2.8% vs 7.6%; hard cel planes; music |
 
 ## Next practice items

@@ -207,3 +207,19 @@ The initial entries preserve documented observations from the 2026-11-11 study a
 - Cause / rationale: holds drew the exact same pose each frame
 - Correction / recipe: add 'the breath' to every character (slow head bob and a hair of lean), keep something alive in every hold; ep_review reports still_steps_pct
 - Verification: A04 rewind 28.5% -> 15.2% with the breath; bench-bump 7.7%
+
+### bench-bump — The bump's colour spread into the forehead, so it read as a ball stuck on rather than a swelling
+
+- Recorded (UTC): 2026-11-28T07:40:57+00:00
+- Evidence: full-size side by side 2026-11-28 (reference 1.3 s vs ours 1.25 s): the reference keeps the red only inside the swollen part
+- Cause / rationale: bump shading was drawn as ellipses inside the head clip, overlapping the unswollen forehead
+- Correction / recipe: clip a swelling's shading to the region between the swollen outline and the original outline (plus a small margin); shade it in 3 flat tones with a highlight
+- Verification: precheck frame 1.25 s: the red stays inside the swelling and blends into the forehead edge
+
+### bench-bump — A tone-count measure of 'flat shading' was confounded by the engine's film grain, and a thumbnail tile showed a dark band that the full frame did not have
+
+- Recorded (UTC): 2026-11-28T07:40:57+00:00
+- Evidence: tone count (colours covering 90% of the face, 8-level bins): ref 7, ours 18 with gradients and still 19 after switching to flat planes; the B06 2.0 s tile showed a band absent from the full-size PNG
+- Cause / rationale: grain noise spreads every flat colour across many bins; resized tiles can mislead
+- Correction / recipe: read shading measures only on grain-free frames (or with the grain removed) and confirm every visual finding on the full-size frame
+- Verification: full-size B06 2.0 s frame checked: no band; tone measure marked unreliable in the playbook
