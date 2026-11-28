@@ -184,3 +184,9 @@ class ReviewMeasures(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class RefCompare(unittest.TestCase):
+    def test_time_pairs(self):
+        import ref_compare
+        self.assertEqual(ref_compare.pairs(["1.3", "22.5:22.0"]), [(1.3, 1.3), (22.5, 22.0)])

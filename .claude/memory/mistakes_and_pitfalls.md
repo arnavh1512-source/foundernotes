@@ -167,3 +167,43 @@ The initial entries preserve documented observations from the 2026-11-11 study a
 - Cause / rationale: pose objects built without P() lack leg angles (NaN joints); each shot page loads only _common.js and its own scene file
 - Correction / recipe: build every pose with P(); put anything two shots use in scenes/_common.js; run ep_build.py --precheck before every render
 - Verification: re-ran the prechecks: Dev drawn in every frame; all A06 shots render
+
+### bench-bump — Judged a reference match from thumbnails, so the face came out generic twice (owner: 'not a monkey face, look at it literally')
+
+- Recorded (UTC): 2026-11-28T05:09:52+00:00
+- Evidence: owner messages 2026-11-28; v1/v2 heads compared only on 144-216 px contact tiles; full-size reference frame (0.1 s, 1.3 s) shows brow ridge ledge, eye in socket with lashes, speckled brow, rim/front/terminator/side tone bands, specular streaks
+- Cause / rationale: compared at thumbnail size and listed only story beats, never the forms and shading of the reference drawing
+- Correction / recipe: before drawing, open matched reference frames at full size (ref_compare.py) and write down the forms and tone planes; review our frames the same way before showing the owner
+- Verification: v3 head rebuilt from full-size frames; compare-v3.jpg shows matched forms and framing; owner review pending
+
+### bench-bump — The subject vanished at transitions: a crossfade swapped the bump for the section, and healing went to zero before cutting back
+
+- Recorded (UTC): 2026-11-28T05:09:53+00:00
+- Evidence: owner message 2026-11-28 ('the bump just vanished suddenly'); reference 1.6-2.1 s rolls the camera so the bump dome becomes the section dome, and day 14 keeps a small dome that fades on the face 22.6-23.3 s
+- Cause / rationale: transitions were built as dissolves between two drawings instead of carrying one shape across the cut
+- Correction / recipe: carry the subject's shape across every transition (match cut, camera roll, same silhouette on both sides); change states gradually and never to zero on a cut
+- Verification: v2/v3 frames 0-2.6 s and 21-23.3 s: bump continuous through the roll in and out, leftover dome fades over 1 s
+
+### bench-bump,half-landing-a06-reel — An inline // comment inside a one-line function swallowed the rest of the line, the whole _common.js failed and every shot errored
+
+- Recorded (UTC): 2026-11-28T05:09:53+00:00
+- Evidence: precheck 2026-11-28: 'gridBg is not defined' (B01); node parse: SyntaxError Unexpected token ')' at _common.js:104; same failure on A06 ('up is not defined')
+- Cause / rationale: a sed edit appended '// ...' to a line that continues after it
+- Correction / recipe: never put // comments on code lines; comments go on their own line; run a node parse check after every scripted edit
+- Verification: comment removed; _common.js parses; precheck 0 page errors
+
+### bench-bump — Reviewed stale precheck frames after a page error and judged a change that had not been drawn
+
+- Recorded (UTC): 2026-11-28T05:09:53+00:00
+- Evidence: 2026-11-28: the mallet-handle fix looked unchanged on the sheet; precheck had exited on a page error, old frames stayed on disk
+- Cause / rationale: precheck kept the previous run's frames and the error was hidden by tail in the command
+- Correction / recipe: ep_build.py --precheck now deletes the previous frames and sheet first; read the full precheck output before looking at the sheet
+- Verification: code change in ep_build.precheck; tests pass
+
+### half-landing-a04-reel — Held poses were frozen: 28-30% of frame steps had nothing moving, against 1.3% in the bump reference and ~1% (over two frames) in the stick-fight reference
+
+- Recorded (UTC): 2026-11-28T05:09:53+00:00
+- Evidence: ep_review still_steps_pct: A04 29.9%, A04 rewind 28.5%; reference-ig-01 1.3%; reference-ig-03 1.0% still over 2 frames
+- Cause / rationale: holds drew the exact same pose each frame
+- Correction / recipe: add 'the breath' to every character (slow head bob and a hair of lean), keep something alive in every hold; ep_review reports still_steps_pct
+- Verification: A04 rewind 28.5% -> 15.2% with the breath; bench-bump 7.7%

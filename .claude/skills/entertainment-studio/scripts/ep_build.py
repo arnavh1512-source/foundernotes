@@ -217,6 +217,9 @@ def precheck(ws, step=0.25):
     grab = REPO / ".claude/skills/think-stick-engine/tools/grab.mjs"
     for var in m["variants"]:
         frames = []
+        # clear the last run first: after a page error, old frames left on disk look like a fresh precheck
+        shutil.rmtree(ws / f"review/precheck/{var['id']}", ignore_errors=True)
+        (ws / f"review/precheck/{var['id']}.jpg").unlink(missing_ok=True)
         for s in resolve(m, var["id"]):
             key = render_key(ws, m, s)
             out = ws / f"review/precheck/{var['id']}/{s['id']}"

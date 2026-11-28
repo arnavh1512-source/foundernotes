@@ -136,3 +136,13 @@ Candidates to test (pilot first; not proof of what drives views; borrow structur
 - Half Landing: the rewind-and-slow-replay of the gag's cause (e.g. replay the thump that knocked the spoon), and the clock for
   time-skip episodes.
 - One fixed set where time moves forward, instead of many cuts.
+
+## 2026-11-28: two more owner-supplied clips (directing promo; stick-fight scene)
+
+Full notes and measurements: `.claude/skills/entertainment-studio/references/animation-craft-playbook.md`.
+- reference-ig-02 (39 s): the five directing moves (light, camera, the breath, on twos, the hit), a 0/5 progress row with
+  the last item withheld, narration that stops for the payoff, music changing section on the hit. All five are now options
+  in `entertainment-studio/engine/overlay.js` and the stick scenes.
+- reference-ig-03 (76 s): frame-by-frame stick fight with almost no holds (~1% still over two frames), smears on fast moves,
+  persistent bodies and debris, long panning takes and colour grades for special moments.
+Limits: frames and measurements only; no transcription; inferences from rea-video are unconfirmed.

@@ -56,6 +56,13 @@ Lessons from A03 (first use): build every pose with `P()` (a partial pose has no
 
 Set `"format": "vertical"` in the manifest for a 1080x1920 canvas (Instagram Reels, Shorts): the same rig and scenes, vertical assembly and QC. `"overlay_tag": false` drops the on-screen ANIMATIC label for a post-ready cut (the export filename still says TEMP-AUDIO while sound is temporary). A vertical render never reuses a landscape clip. Frame for the phone: keep the key action out of the bottom ~20% and the right edge, where Instagram's buttons and caption sit. First Reel: `studio-output/half-landing-a03-reel/` (A03 re-cut with a hook at 0 s, close-ups, a third-thump ending and a seamless loop).
 
+## Learning loop (owner goal, 2026-11-28)
+
+Get better with every video: read `references/animation-craft-playbook.md` before planning or reviewing, study every
+reference the owner shares at full size, recreate a short same-brief benchmark when it helps, compare with
+`scripts/ref_compare.py <ref.mp4> <ours.mp4> <out.jpg> <times...>` at full size, fix the biggest gap, and record every
+verified mistake and recipe with `record_lesson.py`. Update the playbook's scoreboard and push.
+
 ## Checks (`ep_check.py`)
 
 Fails when the links break: missing or changed script, duplicate or malformed asset IDs, a shot using an asset version that does not exist or whose file changed, a cue pointing at a missing shot, temporary sound without a note, a take built from an outdated shot render, a selected take without a recorded reason, or an export that is not the selected take. Temporary sound must also show in the export filename.

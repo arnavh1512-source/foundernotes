@@ -29,3 +29,19 @@ _No tested recipes recorded yet._
 - Cause / rationale: a loop shows a jump when the end state differs from the start (e.g. a fresh stain that wasn't there at frame 0)
 - Correction / recipe: design the last shot to land on frame 0's exact pose and props; give the wardrobe an old stain where the new one appears (asset v2: it happens every sound check), so the fresh mark fades into it
 - Verification: measured by ep_review.seam on all four Reels
+
+### bench-bump — Detailed close-up faces: build forms first (ridge, socket, lids, bridge), then shade in tone planes from the outline inward
+
+- Recorded (UTC): 2026-11-28T05:09:53+00:00
+- Evidence: reference-ig-01 full-size frames; compare-v3.jpg
+- Cause / rationale: the reference reads as detailed because of anatomy and planes, not line detail
+- Correction / recipe: outline from a spline; bands offset from the profile: rim highlight, lit front, mid, terminator shadow, side plane; specular streaks on the domes; ledge light and under-shadow on ridges; domes shaded with round shapes, never horizontal strips. Next step: crisper plane edges (the reference uses hard cel edges, ours are soft)
+- Verification: v3 frames vs reference at 0.1, 1.3, 22.7 s
+
+### half-landing-a04-rewind,bench-bump — Payoff first, then rewind, slow replay and fast-forward, told by a playback chip, a ticking clock and two-part typed labels
+
+- Recorded (UTC): 2026-11-28T05:09:53+00:00
+- Evidence: reference-ig-01 study; built into engine/overlay.js and the shot 'time' remap; A04 rewind sync 9/9, loop seam 2.57%
+- Cause / rationale: the result first makes the viewer ask how; the playback device tells time without words
+- Correction / recipe: use shot time remaps (from/to or keys speed ramps), ui chips, labels (noun white, verb yellow, at most 4 words), impact frames (hits), light grade, counters
+- Verification: A04 rewind and bench-bump renders pass QC; frames checked
