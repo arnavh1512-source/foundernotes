@@ -192,6 +192,7 @@ colours across many bins.
 | 2026-11-27 | bench-bump v1 | 7.3% (1.3%) | structure, clock, labels, loop | plain head; bump nearly invisible |
 | 2026-11-28 | bench-bump v2 | 8.1% | bump grows from the outline; match-cut roll in/out | face still generic (owner) |
 | 2026-11-28 | bench-bump v3 | 7.7% | face built from forms and tone planes; open/shut eye | soft gradients vs the reference's hard cel planes; section texture; upbeat music |
+| 2026-11-28 | breath retrofit (A05/A07/A09/A10/A12/A13) | still now 0.8-9.0% | breath everywhere; empty frames keep a moving trace | phone review |
 | 2026-11-28 | A11 Delivery | still 12.0%; sync 13/13 | first two-character episode: separate silhouettes, reaction 3 frames after action, contact points | phone review |
 | 2026-11-28 | first batch upgrade (A03/A04/A06/A08) | still 21-30% -> ~6% | breath retrofitted; one impact frame per key hit | phone review |
 | 2026-11-28 | A13 Runaway | still 21.9% (incl. a deliberate empty beat); sync 18/18 | run cycle on Dev; loop-around surprise; reversal kept in one frame; loudness fixed at the build | phone review |

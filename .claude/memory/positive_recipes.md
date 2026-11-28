@@ -149,3 +149,11 @@ _No tested recipes recorded yet._
 - Cause / rationale: the first batch was made before the breath and impact lessons
 - Correction / recipe: when a lesson lands, list the finished episodes it improves, apply it through _common.js or an overlay key, re-measure with ep_review and re-export
 - Verification: four Reels re-exported 2026-11-28
+
+### half-landing-a13-reel — An empty frame is not a dead frame: when a character leaves, the world remembers him (his dust hangs and settles); particles need on-twos boil and enough contrast to read as motion
+
+- Recorded (UTC): 2026-11-28T12:37:45+00:00
+- Evidence: A13 still 18.3% (empty-kitchen beat 44%, after-exit 33%) -> 17.9% with slow faint motes -> 4.9% with boiled, darker motes
+- Cause / rationale: the deliberate pause had nothing moving; smooth, faint drift is below what reads frame to frame
+- Correction / recipe: keep deliberate pauses but leave a trace of the last action moving through them (dust, steam, a swinging door); give particles a 2-frame boil
+- Verification: A13 re-exported; still 4.9%, sync 18/18, QC PASS
