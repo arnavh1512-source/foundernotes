@@ -152,6 +152,27 @@ space, never across the character's body, and heads stay clear of set pieces at 
 then reframe.
 
 
+
+## Dialogue comedy grammar (reference-ig-05, 2026-11-28: AI-generated 3D characters, square, 73 s, 29 shots)
+
+Measured: 29 shots, mean 2.5 s (1.4-4.4 s); one spoken line per shot; reaction shots shorter (~1.5 s); TTS-style voices
+over a 112 BPM music bed (rea-video inference, unconfirmed); subtitles on every line.
+- **Establish, then cut in:** an establishing two-shot shows both characters and the place (a beach bar) before any
+  close shot.
+- **Shot / reverse shot over the shoulder:** the listener's shoulder in the foreground, the speaker facing camera.
+- **A chorus inside the scene:** side characters comment and film; they say what is funny ("His face didn't move once!"),
+  doing the job of a laugh track.
+- **Close-up for the punchline, then a short reaction shot** of the other character.
+- **The straight man's verbal tic** ("Mm." opening every line) becomes a running gag by repetition.
+- **Words contradict action:** "The jacket stays on" -> he takes it off and dances with a face that never moves.
+- **End on an escalating callback** ("Your grandma said the same thing" -> "You know my grandma too?" -> a group shot ->
+  "She says you never call") so the last beat tops the ones before.
+
+**Funny-bone hit, frame by frame (reference-ig-04 0.0-1.6 s at 15 fps):** the arm is still for ~0.35 s; the bat enters on
+one frame; contact = two frames of white starburst rays with yellow/teal shards; the nerve line travels elbow -> wrist in
+ONE frame; then ~1 s of two zigzag lines (teal + yellow) redrawn with new random kinks every frame (a boil on ones),
+branching into the splayed fingers; dashed multicoloured rings expand slowly; the label types on ~0.7 s after the hit.
+
 ## A series template (reference-ig-04, 2026-11-28: same creator as reference-ig-01)
 
 The "funny bone" video runs **exactly 26.1 s with the same beat grammar** as the bump video: hit in a real setting ->

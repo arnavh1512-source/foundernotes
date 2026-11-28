@@ -154,3 +154,10 @@ invisible shown on the surface first (a glowing zigzag nerve up the arm, fingers
 a story-telling room, a target ring and brackets on the impact point. Measured with ref_motion.py: local motion 6.2%,
 1.8% repeated frames; camera rolls at 2.5 s (in), 13.6 s and 21.3 s (out). Full notes: entertainment-studio playbook.
 Candidates for Think! Shorts: a fixed series template; show the mechanism on the surface before going inside.
+
+## 2026-11-28: owner-supplied clip reference-ig-05 (dialogue comedy, AI-generated 3D characters, square, 73 s)
+
+29 shots averaging 2.5 s, one line per shot; establishing two-shot, over-the-shoulder shot/reverse shot, an in-scene
+chorus of side characters who voice the joke, close-up punchlines followed by short reaction shots, a straight man's
+verbal tic as a running gag, words contradicting actions, and an escalating callback ending. rea-video infers TTS voices
+and a stock music bed (unconfirmed). Full notes: entertainment-studio playbook. Useful for Think! dialogue scenes.

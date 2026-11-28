@@ -165,3 +165,11 @@ _No tested recipes recorded yet._
 - Cause / rationale: a fixed format lets a channel publish consistently and lets viewers enjoy the variation instead of relearning the structure
 - Correction / recipe: Half Landing keeps its own template (written in the playbook): hook in frame one, three thumps, visible cause, multi-tool key moment, look to camera, +1 apron stain, seamless loop; vary prop, gag and set only
 - Verification: template written into the playbook; existing episodes A03-A13 already follow it
+
+### reference-ig-05 — Dialogue comedy grammar: establishing two-shot -> over-the-shoulder shot/reverse shot, one line per ~2.5 s shot -> in-scene chorus that voices the joke -> close-up punchline + short reaction shot -> running verbal tic -> words contradicting action -> escalating callback ending
+
+- Recorded (UTC): 2026-11-28T13:31:25+00:00
+- Evidence: reference-ig-05: 29 shots, mean 2.5 s (1.4-4.4 s), shot-by-shot midframes reviewed at 240 px plus rea-video breakdown
+- Cause / rationale: each cut answers who speaks and who reacts; the chorus and the reaction shots tell the viewer where the laugh is
+- Correction / recipe: for any dialogue scene (Think! or a future talking episode) plan shots by line: establish once, then OTS pairs, a close-up for each punchline, a reaction after it; give the straight character a repeated verbal tic; end on a callback that tops the earlier beats
+- Verification: study only; to be tested in a drill
