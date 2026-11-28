@@ -19,3 +19,6 @@ voices-v1.0.bin
 cookies*.txt
 *client_secret*.json
 .claude/settings.local.json
+
+# qc_video.py default output when run by hand from the repo root (scratch, never committed)
+/final/
