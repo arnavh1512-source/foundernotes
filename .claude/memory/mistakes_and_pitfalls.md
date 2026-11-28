@@ -287,3 +287,11 @@ The initial entries preserve documented observations from the 2026-11-11 study a
 - Cause / rationale: In four different drills the critic passed the craft criteria while the measured motion stayed far below the reference. The same cause each time: a small subject in a wide, flat, static frame (plain walls and floors), with motion only on the subject.
 - Correction / recipe: Before animating, frame the subject to fill the shot (about 40-60% of frame height for action), and give every large area a slow mover (light shift, background people, particles, cloth, steam). Check local motion on the first rough take, not only at the end.
 - Verification: Pattern seen in 4 of 4 animation drills on 2026-11-28. Fix tested in learn/motion-in-picture-01: frame-filling subject + movers in every band brought the gap to -19% to -34% (from -63% to -87%). Partly verified; not yet tried on a character shot.
+
+### learn/dialogue-grammar-02 — Shot scale was a label, not a framing: our 'close-ups' and over-the-shoulder shots were full-body wides (independent critic)
+
+- Recorded (UTC): 2026-11-28T15:37:36+00:00
+- Evidence: studio-output/learn/dialogue-grammar-02/review/critic_a-d.jpg (independent learn-craft-critic): ours 14.3 s = Pip head to floor vs ref 14.0 s head and shoulders filling the frame; our figures ~30% of frame height vs ref ~90%; OTS shoulder a flat blob vs the listener's own head and shoulder filling a third of the frame
+- Cause / rationale: I framed every shot from the same full-body habit and judged it myself; my own critic passed shot grammar that an outside critic failed on sight. Movers added to fill the frame (window walkers) out-moved the gag beat.
+- Correction / recipe: Frame by real scale: close-up = head and shoulders filling ~60-90% of frame height; OTS = the listener's own head/shoulder as a third of the frame. The gag beat must be the biggest motion in its frame (calm the background during it). Use the independent critic agent for verdicts, not self-review.
+- Verification: Attempt 3 measured 2.84% vs 4.21% (up from 1.79%); critic failed 3 of 4 criteria. Escalated. Fix to be tested in a shot-for-shot structure study of ig-05.

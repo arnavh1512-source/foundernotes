@@ -40,6 +40,10 @@ def vertical(m):
     return m.get("format") == "vertical"
 
 
+def square(m):
+    return m.get("format") == "square"
+
+
 def asset_file(ws, m, aid, v):
     for a in m["assets"]:
         if a["id"] == aid:
@@ -64,7 +68,7 @@ def render_key(ws, m, shot):
     extra = {k: shot[k] for k in OVERLAY_KEYS if k in shot}
     if extra:  # only shots that use time remaps or overlays depend on overlay.js, so older episodes keep their cached clips
         h.update(OVERLAY.read_bytes()); h.update(json.dumps(extra, sort_keys=True).encode())
-    if vertical(m) or not m.get("overlay_tag", True):
+    if vertical(m) or square(m) or not m.get("overlay_tag", True):
         h.update(json.dumps({"format": m.get("format"), "overlay_tag": m.get("overlay_tag", True)}, sort_keys=True).encode())
     for u in shot.get("uses", []):
         h.update(asset_file(ws, m, u["asset"], u["v"]).read_bytes())
@@ -93,6 +97,10 @@ def shot_page(ws, m, shot, key):
         dims, canvas = "const W=1920,H=1080", 'width="1920" height="1080"'
         assert dims in html and canvas in html, "engine stick.html changed: update shot_page()"
         html = html.replace(dims, "const W=1080,H=1920").replace(canvas, 'width="1080" height="1920"')
+    elif square(m):  # 1:1 feed posts and structure studies of square references
+        dims, canvas = "const W=1920,H=1080", 'width="1920" height="1080"'
+        assert dims in html and canvas in html, "engine stick.html changed: update shot_page()"
+        html = html.replace(dims, "const W=1080,H=1080").replace(canvas, 'width="1080" height="1080"')
     html = html.replace(head, f'<script src="shot_{key}.js"></script>').replace(t01, "const T0=0, T1=window.SHOT.dur;").replace(logo, "")
     html = re.sub(r'<script src="scenes\.js"></script>.*?<script src="env\.js"></script>',
                   f'<script src="faces.js"></script><script src="overlay.js"></script><script src="../scenes/_common.js"></script><script src="../scenes/{shot["scene"]}.js"></script>', html, flags=re.S)
@@ -218,7 +226,7 @@ def build(ws):
         starts, total = build_audio(ws, m, shots, clips, audio)
         take = ws / f"takes/{var['id']}.mp4"
         subprocess.run([py, str(SCRIPTS / "assemble.py"), "--scenes", *map(str, clips), "--narration", str(audio), "--out", str(take),
-                        "--format", "vertical" if vertical(m) else "landscape"],
+                        "--format", "vertical" if vertical(m) else "square" if square(m) else "landscape"],
                        check=True, stdout=subprocess.DEVNULL)
         # assemble.py runs its own single-pass loudnorm, which pulls sparse foley back down (A13: -14.0 -> -16.2 LUFS);
         # put our measured two-pass audio back into the take (picture copied untouched)
@@ -227,7 +235,7 @@ def build(ws):
                         "-c:a", "aac", "-b:a", "192k", "-ar", "48000", "-t", f"{total:.3f}", str(fixed)], check=True)
         fixed.replace(take)
         qc = ws / f"takes/{var['id']}-qc.json"
-        subprocess.run([py, str(SCRIPTS / "qc_video.py"), str(take), "--min-duration", "5", "--format", "vertical" if vertical(m) else "horizontal", "--json", str(qc), "--sheet", str(ws / f"takes/{var['id']}-sheet.jpg")],
+        subprocess.run([py, str(SCRIPTS / "qc_video.py"), str(take), "--min-duration", "5", "--format", "vertical" if vertical(m) else "square" if square(m) else "horizontal", "--json", str(qc), "--sheet", str(ws / f"takes/{var['id']}-sheet.jpg")],
                        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         for r in rows:
             r["start"] = round(starts[r["id"]], 3)

@@ -699,7 +699,7 @@ def main(argv=None):
 
     parser.add_argument(
         "--format",
-        choices=["horizontal", "vertical"],
+        choices=["horizontal", "vertical", "square"],
         default="horizontal",
     )
 
@@ -803,6 +803,9 @@ def main(argv=None):
 
         if args.format == "horizontal":
             target_width = 1920
+            target_height = 1080
+        elif args.format == "square":
+            target_width = 1080
             target_height = 1080
         else:
             target_width = 1080

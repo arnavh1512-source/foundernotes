@@ -231,6 +231,7 @@ colours across many bins.
 
 | Date | Benchmark | Still steps (ref) | What improved | Biggest gap now |
 |---|---|---|---|---|
+| 2026-11-28 | learn: dialogue-grammar (escalated, 3 tries, level 1) | 2.84% local (4.21%) | cuts land on the line, not after it | establishing shot, then over-the-shoulder cuts; close-up on the punchline, then a reaction shot; a callback at the end |
 | 2026-11-28 | learn: hook-cold-open (passed, 2 tries, level 3) | - | something changes or is wrong in the first second; the question it raises is answered only at the end; no title, logo or setup before the hook | - |
 | 2026-11-28 | learn: escalation (passed, 2 tries, level 3) | - | each beat raises the stakes or absurdity over the last; no beat repeats the same level; the top is reached just before the end | - |
 | 2026-11-28 | learn: rule-of-three (passed, 2 tries, level 3) | - | two beats set a pattern; the third breaks it in a surprising but fair way; the break is the shortest beat | - |

@@ -359,7 +359,8 @@
    ],
    "evidence": [
     "studied ig-05 only",
-    "dialogue-grammar-01: escalated after 3 tries"
+    "dialogue-grammar-01: escalated after 3 tries",
+    "dialogue-grammar-02: escalated after 3 tries"
    ],
    "next_review": "2026-11-29",
    "criteria": [
@@ -816,6 +817,24 @@
     "the last beat is the strongest or a quiet button after it",
     "a loop ending flows into the first frame",
     "nothing happens after the payoff"
+   ]
+  },
+  {
+   "id": "style-3d-dialogue",
+   "name": "3D style: dialogue scene in browser 3D (three.js)",
+   "prereqs": [],
+   "mastery": 0,
+   "refs": [
+    "reference-ig-05"
+   ],
+   "evidence": [],
+   "next_review": "2026-11-28",
+   "criteria": [
+    "each shot's framing scale matches the reference shot (two-shot waist-up, over-the-shoulder with the listener's head as a third of the frame, close-up head and shoulders)",
+    "daylight lighting reads as the reference's: warm key sun, soft fill, soft contact shadows",
+    "characters read as 3D people at a glance: proportions, silhouettes, faces that show expression and talk",
+    "cuts and lines land where the reference's do (within 0.2 s)",
+    "the background is alive but quieter than the speakers"
    ]
   }
  ]
