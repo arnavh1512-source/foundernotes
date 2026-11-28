@@ -8,7 +8,7 @@ FounderNotes is the Claude Code workspace behind the YouTube channel **[Think!](
 
 [![Python QC Checks](https://github.com/arnavh1512-source/foundernotes/actions/workflows/python-qc.yml/badge.svg)](https://github.com/arnavh1512-source/foundernotes/actions/workflows/python-qc.yml)
 
-> **Project maturity:** The repository has executable production tools, Claude Code skills and agents, and automated tests. Three full-length episodes (8:34–9:04) and their delivery packages have been produced with these tools in cloud sessions; two passed `qc_video.py`, one finished with a motion-gate warning. Those outputs live in git-ignored `studio-output/` and are not in the repository. No independent reality-check pass or end-to-end human listening review has been recorded for them yet. The studio's own records agree: `.claude/memory/production_ledger.json`, `skill_evaluations.json` and `positive_recipes.md` are still empty. External rendering engines, Voicebox and Agent-Reach require separate installation and live testing.
+> **Project maturity:** The repository has executable production tools, Claude Code skills and agents, and automated tests. Three full-length Think! episodes (8:34–9:04) and their delivery packages have been produced with these tools in cloud sessions; two passed `qc_video.py`, one finished with a motion-gate warning. Since 2026-11-27 the [Entertainment IP studio](.claude/skills/entertainment-studio/SKILL.md) has also produced **13 short vertical comedy Reels** for the series *Half Landing* (8–10 s, looping), each passing technical QC, the entertainment check and a measured review (loop, sound sync, phone audibility, still frames). All of these outputs live in git-ignored `studio-output/` and are not in the repository; the Reels use temporary synthesised sound and none has yet been watched at playback speed by a person. Verified lessons and techniques are now recorded in `.claude/memory/mistakes_and_pitfalls.md` and `positive_recipes.md`; `production_ledger.json` and `skill_evaluations.json` are still empty. External rendering engines, Voicebox and Agent-Reach require separate installation and live testing.
 
 ## Quick start
 
@@ -164,8 +164,35 @@ To use the optional character cast, first copy the [sample JSON](.claude/skills/
 | [`animation-styles/SKILL.md`](.claude/skills/animation-styles/SKILL.md) | Original animation skill with 592-entry catalog |
 | [`community-animation-integration.md`](.claude/skills/animation-styles/references/community-animation-integration.md) | Upstream libraries, Lemo renderer bridge and source-rights gates |
 | [`.claude/memory/`](.claude/memory/) | Verified lessons, production history and evaluations |
+| [`entertainment-studio/`](.claude/skills/entertainment-studio/) | Entertainment IP workflow (Half Landing), overlays, review and reference-study tools |
+| [`animation-craft-playbook.md`](.claude/skills/entertainment-studio/references/animation-craft-playbook.md) | What the studio has learned about directing and animation, with a benchmark scoreboard |
 | [`docs/`](docs/) | Extended architecture and engineering reports |
 | [`NOTICE.md`](.claude/skills/podcast-scout-skill/NOTICE.md) | Third-party references, license limitations and attribution |
+
+## Entertainment IP and the animation learning loop
+
+Scripted comedy (currently **Half Landing**: a cook called Dev, a kitchen beside a music venue, and a sound check that
+causes chaos) uses its own profile, separate from the Think! rules. [`entertainment-studio`](.claude/skills/entertainment-studio/SKILL.md)
+links each episode's script revision, versioned assets, shot plan, audio cues, takes, selected take and export; shots
+render into a cache, so a revised shot re-renders alone.
+
+The owner's goal is for the studio to **learn high-level animation by studying references and its own mistakes**, and
+to keep that learning in this repository. The loop:
+
+1. **Study** an owner-supplied reference at full size: frame sheets, single frames, every frame of key actions.
+   [`ref_motion.py`](.claude/skills/entertainment-studio/scripts/ref_motion.py) measures camera moves and easing, holds and
+   motion inside the picture; [`ref_compare.py`](.claude/skills/entertainment-studio/scripts/ref_compare.py) puts reference
+   and our frames side by side (`--diff` shows where each is alive); [`rea-video`](.claude/skills/rea-video/SKILL.md) breaks
+   down cuts and sound offline.
+2. **Practise** in a short internal drill or benchmark that recreates the technique in our own drawings, then compare.
+3. **Record** every verified mistake and technique with `record_lesson.py`, and update the
+   [animation craft playbook](.claude/skills/entertainment-studio/references/animation-craft-playbook.md): directing
+   principles, a director's sheet for every shot, stick-animation craft (strikes, reactions, flight, landing, run cycles,
+   clinches), dialogue film grammar, series templates and a scoreboard of every benchmark.
+4. **Apply** it to the series and re-measure ([`ep_review.py`](.claude/skills/entertainment-studio/scripts/ep_review.py)
+   warns when held poses freeze).
+
+References are studied for craft only; characters, scenes and assets stay original.
 
 ## Production standards and readiness
 
