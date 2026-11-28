@@ -65,6 +65,7 @@ Commit and push the curriculum, the playbook and `.claude/memory/`. Drill media 
 - A failed criterion must carry a fix. An attempt with no verdicts stays NEEDS WORK.
 - After three failed attempts the drill escalates. Its gaps are recorded, and the level rises only to 2, and only if the critic confirmed the timing.
 - Level 4 is never set by the script. It needs an owner-reviewed episode that uses the skill.
+- Large overlays (label boxes, big effects) can register as false camera moves. Before acting on a move, check the frames around it.
 - Measurements are evidence to check against the frames. They never replace watching.
 
 ## Limits

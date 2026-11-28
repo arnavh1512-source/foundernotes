@@ -311,14 +311,15 @@
    "id": "environment-richness",
    "name": "Lived-in environment",
    "prereqs": [],
-   "mastery": 0,
+   "mastery": 2,
    "refs": [
     "reference-ig-04"
    ],
    "evidence": [
-    "bench-zap: room sparse vs reference picture, dresser, rug, curtains, motes"
+    "bench-zap: room sparse vs reference picture, dresser, rug, curtains, motes",
+    "environment-richness-01: escalated after 3 tries"
    ],
-   "next_review": "2026-11-28",
+   "next_review": "2026-12-01",
    "criteria": [
     "3+ props that say where we are",
     "a moving trace in the background (motes, light)",
