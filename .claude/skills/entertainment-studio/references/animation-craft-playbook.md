@@ -231,6 +231,9 @@ colours across many bins.
 
 | Date | Benchmark | Still steps (ref) | What improved | Biggest gap now |
 |---|---|---|---|---|
+| 2026-11-28 | learn: hook-cold-open (passed, 2 tries, level 3) | - | something changes or is wrong in the first second; the question it raises is answered only at the end; no title, logo or setup before the hook | - |
+| 2026-11-28 | learn: escalation (passed, 2 tries, level 3) | - | each beat raises the stakes or absurdity over the last; no beat repeats the same level; the top is reached just before the end | - |
+| 2026-11-28 | learn: rule-of-three (passed, 2 tries, level 3) | - | two beats set a pattern; the third breaks it in a surprising but fair way; the break is the shortest beat | - |
 | 2026-11-28 | learn: motion-in-picture (escalated, 3 tries, level 2) | 4.95% local (7.47%) | many small independent movers, not one big one | local motion within 25% of the reference |
 | 2026-11-28 | learn: want-need (passed, 2 tries, level 3) | - | each lead wants something concrete on screen; the flaw causes the trouble; the want is visible in action, not stated | - |
 | 2026-11-28 | learn: secondary-overlap (escalated, 3 tries, level 2) | 0.96% local (7.35%) | loose parts (hair, cloth, props) drag 2-4 frames behind; a secondary action supports the main one without competing | - |

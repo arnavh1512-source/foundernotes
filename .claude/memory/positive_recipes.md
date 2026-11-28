@@ -245,3 +245,27 @@ _No tested recipes recorded yet._
 - Cause / rationale: Earlier drills were 63-87% below the reference. Here: take 1 had all 150 bubbles rising one way (read by the tool as camera pans while our camera was locked) and a push-in where the ref pulls out and tilts up; I misread the ref's zoom direction from a contact sheet.
 - Correction / recipe: Fill the frame with the subject; give every band its own movers (steam, surface, particles, hero chunks, flames). Dense fields: most particles jostle in place with slow drift (about a particle width per 2 frames), only some travel. Copy measured camera moves, not the contact-sheet impression; a pull-out/tilt should reveal a new subject (the ladle). Uniform one-direction particle flow fools the camera estimate.
 - Verification: Local motion -23% / -19% / -34% vs earlier drills' -63% to -87%; false pans gone in take 3; camera now matches ref timing. Escalated: take 3 jostle too small (-34%).
+
+### learn/rule-of-three-01 — Rule of three: the break is different in kind, not bigger, and it is the shortest beat
+
+- Recorded (UTC): 2026-11-28T15:14:19+00:00
+- Evidence: studio-output/learn/rule-of-three-01 draft1-2
+- Cause / rationale: Draft 1's third beat was the same action made bigger (a huge thump, an exploding stack), which is escalation and the expected outcome, and it was the longest beat.
+- Correction / recipe: Keep the trigger identical the third time and flip the pattern in kind (the tester becomes the tested: Dev wobbles and goes tink instead of the plates). Break in about 1.5 s, then a short button.
+- Verification: Draft 2 passed (self-review).
+
+### learn/escalation-01 — Escalation climbs by closeness to what the character cares about, not by a list of objects
+
+- Recorded (UTC): 2026-11-28T15:14:20+00:00
+- Evidence: studio-output/learn/escalation-01 draft1-2
+- Cause / rationale: Draft 1 listed objects reacting (glass, pans, forks, fridge) with nothing at stake for Dev; the fourth beat was calmer than the third and there was no peak.
+- Correction / recipe: Give the character something fragile they care about and climb by distance and energy toward it (across the room -> beside him -> moving toward it -> inside it); his response climbs too (unaware -> freeze -> block -> shield). Peak just before the end; the button can be a small reversal (his relief blows a strand off).
+- Verification: Draft 2 passed (self-review).
+
+### learn/hook-cold-open-01 — Hook: frame 1 is the wrong thing; answer the question with a picture at the end
+
+- Recorded (UTC): 2026-11-28T15:14:20+00:00
+- Evidence: studio-output/learn/hook-cold-open-01 draft1-2
+- Cause / rationale: Draft 1 spent 2 s on an exterior and a walk-up before anything was wrong, and answered the mystery with a spoken explanation.
+- Correction / recipe: Cut every establishing shot before the anomaly; open on it. Keep the answer for the last quarter and show it as an image (the subwoofer on its back), then land the payoff after it.
+- Verification: Draft 2 passed (self-review).

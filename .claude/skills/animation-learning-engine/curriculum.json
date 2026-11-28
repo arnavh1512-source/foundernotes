@@ -474,12 +474,14 @@
    "prereqs": [
     "setup-payoff"
    ],
-   "mastery": 0,
+   "mastery": 3,
    "refs": [
     "references/story-craft.md"
    ],
-   "evidence": [],
-   "next_review": "2026-11-28",
+   "evidence": [
+    "rule-of-three-01: passed after 2 tries"
+   ],
+   "next_review": "2026-12-05",
    "criteria": [
     "two beats set a pattern",
     "the third breaks it in a surprising but fair way",
@@ -493,12 +495,14 @@
    "prereqs": [
     "setup-payoff"
    ],
-   "mastery": 0,
+   "mastery": 3,
    "refs": [
     "references/story-craft.md"
    ],
-   "evidence": [],
-   "next_review": "2026-11-28",
+   "evidence": [
+    "escalation-01: passed after 2 tries"
+   ],
+   "next_review": "2026-12-05",
    "criteria": [
     "each beat raises the stakes or absurdity over the last",
     "no beat repeats the same level",
@@ -647,12 +651,14 @@
    "prereqs": [
     "logline"
    ],
-   "mastery": 0,
+   "mastery": 3,
    "refs": [
     "references/story-craft.md"
    ],
-   "evidence": [],
-   "next_review": "2026-11-28",
+   "evidence": [
+    "hook-cold-open-01: passed after 2 tries"
+   ],
+   "next_review": "2026-12-05",
    "criteria": [
     "something changes or is wrong in the first second",
     "the question it raises is answered only at the end",
