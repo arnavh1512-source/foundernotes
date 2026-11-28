@@ -109,3 +109,11 @@ _No tested recipes recorded yet._
 - Cause / rationale: the first precheck hid the scrubbing arm behind foam, put the smiley on the pocket and left his raised arm holding nothing
 - Correction / recipe: check every shot against its sheet's eye target before rendering; give action sounds their full rhythm
 - Verification: A12 exported, ep_check PASS, QC PASS
+
+### half-landing-a07-reel — Clusters of small impacts (six glasses landing) need short ticks (cue dur ~0.06 s) spaced >= 0.1 s, in picture and sound; ringing clinks 75 ms apart merge into one sound
+
+- Recorded (UTC): 2026-11-28T09:06:46+00:00
+- Evidence: A07 sync 11/20 -> 14/20 after re-spacing to 0.1 s and cutting thump tails -> 20/20 after cutting each clink to 0.06 s
+- Cause / rationale: each snap rang into the next and the onsets merged
+- Correction / recipe: space rapid impacts >= 0.1 s apart and cut each to a short tick; cut thump tails before clinks
+- Verification: A07 ep_review 20/20 within 50 ms

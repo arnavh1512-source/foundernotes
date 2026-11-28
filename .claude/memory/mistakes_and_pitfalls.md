@@ -247,3 +247,11 @@ The initial entries preserve documented observations from the 2026-11-11 study a
 - Cause / rationale: seam < 1% was calibrated on Reels that end on a still pose
 - Correction / recipe: ep_review now also measures the 95th percentile frame step; a loop is ok when the seam is under 1% or no bigger than an ordinary step; drive looping motion from (t - shot duration) in the last shot so it lands on the first frame's phase
 - Verification: tests pass; A09 and A12 loop_ok with seams 3.15% vs 17.26% and 1.44% vs 15.98%
+
+### half-landing-a07-reel — Two rig traps: a helper constant named GW clashed with an engine global (the whole helpers file failed, 'CAM7 is not defined'); and a balance pose's back arm used a positive angle, so it shot up forward instead of reaching out behind
+
+- Recorded (UTC): 2026-11-28T09:06:46+00:00
+- Evidence: A07 precheck: 'Identifier GW has already been declared'; G03 frame at 0.5 s showed the back arm raised forward over the tray
+- Cause / rationale: stick.html defines short global names; in the rig a positive limb angle points the way the character faces
+- Correction / recipe: prefix episode constants (GLW, CAM7...) and read the precheck's ERR lines first; for limbs that go behind the body use negative angles
+- Verification: precheck clean; G03 shows the back arm out behind and the back leg lifted (balance reads)

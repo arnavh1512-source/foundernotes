@@ -187,6 +187,7 @@ colours across many bins.
 | 2026-11-27 | bench-bump v1 | 7.3% (1.3%) | structure, clock, labels, loop | plain head; bump nearly invisible |
 | 2026-11-28 | bench-bump v2 | 8.1% | bump grows from the outline; match-cut roll in/out | face still generic (owner) |
 | 2026-11-28 | bench-bump v3 | 7.7% | face built from forms and tone planes; open/shut eye | soft gradients vs the reference's hard cel planes; section texture; upbeat music |
+| 2026-11-28 | A07 Line Check | still 11.2%; sync 20/20 | new landing set; counterbalance, one-leg balance, hang time, staggered landings | phone review |
 | 2026-11-28 | A12 Wash Day | still 10.8%; sync 24/26 | world reacts in small beats; payoff tremble -> impact -> 3-frame snap; loop check fixed for moving loops | phone review |
 | 2026-11-28 | A09 Espresso | still 13.4%; loop 0.14%; sync 7/7 | first episode from director's sheets; stick lessons on Dev (dive catch) | phone review; top-down shots could breathe more |
 | 2026-11-28 | bench-stick take 6 | - | run cycle on twos with per-leg phase; clinch with an aimed arm; heave and slam with clear silhouettes | carry into Dev (A09) |
