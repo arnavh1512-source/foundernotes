@@ -77,3 +77,11 @@ _No tested recipes recorded yet._
 - Cause / rationale: a strike reads through holds at the extremes and clean silhouettes, not through many in-betweens
 - Correction / recipe: author strikes as pose keys with holds at the extremes (track() keys in bench-stick/_common.js), knees bent in every fight pose, one smear frame, a reaction that folds around the impact point
 - Verification: take 2 frames match the beat order and hold lengths of the reference exchange
+
+### bench-stick — Stick flight and landing: arched C off the hit, tucked pose with hang time at the apex (pose nearly frozen for ~4 frames while it drifts), flat landing with an impact burst, a small bounce, and a dust column that rises and fades over ~15 frames; secondary motion: head snaps back on contact and settles, arms trail the body by 1-2 frames
+
+- Recorded (UTC): 2026-11-28T08:14:26+00:00
+- Evidence: reference-ig-03 11.85-12.55 s frame by frame (full crop); bench-stick take 3 frames 1.05-2.15 s; review/flight-compare.mp4
+- Cause / rationale: take 2 flew in a stiff upright pose and landed straight into a crouch with no impact; a follow camera weighted at 0.55 pushed the other fighter off the frame edge
+- Correction / recipe: author flight as keys with 'air' height: arch -> tuck (two near-identical keys for hang time) -> flat with 'inn' ease into the floor -> bounce key -> rest; add head snap and arm lag as offsets; camera follows the midpoint at ~0.3 weight with a lag and pulls back while a body is airborne
+- Verification: take 3: hang time visible frames 9-16, impact burst + bounce + dust column, both fighters stay in frame; QC PASS

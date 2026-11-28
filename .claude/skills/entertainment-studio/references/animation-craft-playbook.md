@@ -125,8 +125,15 @@ clones (fix: 12 close ghosts under a canvas blur for 2 frames); too small in fra
 holds at the extremes and interpolate between them (`track()` in `bench-stick/scenes/_common.js`), add a breath to every
 held pose, and review every frame of the action at full size, not the 0.25 s precheck.
 
-**Still to learn:** a tumbling body that reads in flight (ours lands upright too soon), clinch overlap, camera nudges that
-follow the action, and secondary motion (a head snapping back after the hit).
+**Flight and landing (reference-ig-03 11.85-12.55 s, rebuilt in take 3):** off the hit the body arcs back into a C;
+at the apex it **tucks and hangs** (the pose barely changes for ~4 frames while it drifts: weight comes from that slow
+apex); it lands **flat** with a 1-2 frame smear, an impact burst and a small **bounce**, then lies still while a **dust
+column** rises and fades over ~15 frames. **Secondary motion:** the hit head snaps back and settles; arms trail the body
+by 1-2 frames. **Camera:** follow the fighters' midpoint lightly (~0.3) with a lag, and pull back while someone is
+airborne, so nobody is pushed off the frame.
+
+**Still to learn:** clinch overlap (two bodies locked together), a run cycle with a strong lean, and bringing all of this
+into Dev's acting in Half Landing.
 
 ## Frame-level details (measured 2026-11-28 with `ref_motion.py` and full-frame close-ups)
 
@@ -169,6 +176,7 @@ colours across many bins.
 | 2026-11-27 | bench-bump v1 | 7.3% (1.3%) | structure, clock, labels, loop | plain head; bump nearly invisible |
 | 2026-11-28 | bench-bump v2 | 8.1% | bump grows from the outline; match-cut roll in/out | face still generic (owner) |
 | 2026-11-28 | bench-bump v3 | 7.7% | face built from forms and tone planes; open/shut eye | soft gradients vs the reference's hard cel planes; section texture; upbeat music |
+| 2026-11-28 | bench-stick take 3 | - | flight with hang time, flat landing + bounce + dust column, head snap, arm lag, light follow camera | clinch; run cycle; carry into Dev |
 | 2026-11-28 | bench-stick take 2 | - | strike grammar: coil, wind-up, smear, 3-frame holds, fold, blur launch | tumbling in flight; clinch; head snap; camera nudges |
 | 2026-11-28 | bench-bump v7 + A04 rewind | bench 4.6% local motion (ref 7.6%); A04R 5.9%, holds 3+: 0 | boil on twos; impact grammar carried into Half Landing (punch-in, smear, landing kick) | full-frame drift; music; owner phone review |
 | 2026-11-28 | bench-bump v5-v6 | 5.6%; holds 3+: 0 | every element moves (cells tumble, fat shimmers, marrow jiggles, blood flows in vessels); flat tone planes; bump colour clipped to the swelling | local motion 3.7% vs 7.6%: reference cells 'boil' a whole cell-width per 2 frames and the frame drifts |
