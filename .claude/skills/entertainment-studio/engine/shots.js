@@ -16,7 +16,7 @@ const SHOT_SPAN={CU:[J=>J.hd[1]-J.R*1.5,J=>J.sh[1]+J.R*.6,.58,.16], MCU:[J=>Math
 function frameShot(kind,Js,bx=.5){ const sp=SHOT_SPAN[kind], top=Math.min(...Js.map(sp[0])), bot=Math.max(...Js.map(sp[1]));
   let k=sp[2]*H/(bot-top);
   // two-shots frame on the heads (outer arms may crop): in 9:16 a side-by-side pair is width-bound, so hips would shrink them to dots
-  const xs=kind==='TWO'?Js.flatMap(J=>[J.hd[0]-J.R*2.6,J.hd[0]+J.R*2.6]):Js.flatMap(J=>[J.hd[0]-J.R*2,J.hd[0]+J.R*2,J.hip[0]-J.R*2.2,J.hip[0]+J.R*2.2]), wid=Math.max(...xs)-Math.min(...xs);
+  const xs=kind==='TWO'?Js.flatMap(J=>[J.hd[0]-J.R*2.6,J.hd[0]+J.R*2.6,J.hf[0]-J.R*1.3,J.hf[0]+J.R*1.3,J.hb[0]-J.R*1.3,J.hb[0]+J.R*1.3]):Js.flatMap(J=>[J.hd[0]-J.R*2,J.hd[0]+J.R*2,J.hip[0]-J.R*2.2,J.hip[0]+J.R*2.2]), wid=Math.max(...xs)-Math.min(...xs);
   if(kind==='TWO'||kind==='WS') k=Math.min(k,.94*W/wid);
   // keep both hands inside the frame width
   if(kind==='MCU'||kind==='MS'||kind==='WS'){ const hx=Js.flatMap(J=>[J.hf[0],J.hb[0],J.hd[0]]), hw=Math.max(...hx)-Math.min(...hx)+Js[0].R*5; k=Math.min(k,.92*W/hw) }
@@ -61,6 +61,6 @@ function useFullHands(){ handGlyph=fullHand }
 // a foreground table edge across the bottom of the frame (screen space): in 9:16 a seated two-shot otherwise leaves a dead
 // floor band (critic, learn/dialogue-grammar-03). Draw after the scene, before subtitles; top = share of frame height
 function ovTableEdge(top=.66,col='#7a5232',items=[]){ x.save(); x.setTransform(1,0,0,1,0,0); const Y=H*top;
-  x.fillStyle='rgba(0,0,0,.18)'; x.fillRect(0,Y-10,W,14); x.fillStyle=col; x.fillRect(0,Y,W,H-Y); x.fillStyle='rgba(255,255,255,.08)'; x.fillRect(0,Y,W,10);
+  x.fillStyle='rgba(0,0,0,.22)'; x.fillRect(0,Y-14,W,16); x.fillStyle=col; x.fillRect(0,Y,W,H-Y); x.fillStyle='rgba(255,236,200,.35)'; x.fillRect(0,Y,W,12); x.fillStyle='rgba(0,0,0,.25)'; x.fillRect(0,Y+70,W,10); x.fillStyle='rgba(0,0,0,.12)'; x.fillRect(0,Y+80,W,H-Y-80);
   x.strokeStyle='rgba(0,0,0,.12)'; x.lineWidth=3; for(let i=1;i<6;i++){ x.beginPath(); x.moveTo(0,Y+i*(H-Y)/6); x.bezierCurveTo(W*.3,Y+i*(H-Y)/6+8,W*.7,Y+i*(H-Y)/6-8,W,Y+i*(H-Y)/6); x.stroke() }
   for(const it of items) it(Y); x.restore() }
