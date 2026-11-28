@@ -146,3 +146,11 @@ Full notes and measurements: `.claude/skills/entertainment-studio/references/ani
 - reference-ig-03 (76 s): frame-by-frame stick fight with almost no holds (~1% still over two frames), smears on fast moves,
   persistent bodies and debris, long panning takes and colour grades for special moments.
 Limits: frames and measurements only; no transcription; inferences from rea-video are unconfirmed.
+
+## 2026-11-28: owner-supplied clip reference-ig-04 ("funny bone"), same creator as reference-ig-01
+
+Same 26.1 s, same beat grammar as the bump explainer with a new subject: a repeatable series template. New details: the
+invisible shown on the surface first (a glowing zigzag nerve up the arm, fingers splay), floating motes in every frame,
+a story-telling room, a target ring and brackets on the impact point. Measured with ref_motion.py: local motion 6.2%,
+1.8% repeated frames; camera rolls at 2.5 s (in), 13.6 s and 21.3 s (out). Full notes: entertainment-studio playbook.
+Candidates for Think! Shorts: a fixed series template; show the mechanism on the surface before going inside.

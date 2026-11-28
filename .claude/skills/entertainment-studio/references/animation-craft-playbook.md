@@ -151,6 +151,27 @@ punch-in -> a drop that becomes a new apron stain. Staging rule learned: a falli
 space, never across the character's body, and heads stay clear of set pieces at full lean; place the character first,
 then reframe.
 
+
+## A series template (reference-ig-04, 2026-11-28: same creator as reference-ig-01)
+
+The "funny bone" video runs **exactly 26.1 s with the same beat grammar** as the bump video: hit in a real setting ->
+the invisible made visible on the surface -> brackets lock on -> the camera rolls 90 deg into the body -> REWIND, SLOW
+press -> FAST clock with two-part labels, one actor at a time -> back out the same way -> a scan band proves the healing
+-> loop. Only the subject changes. Viewers learn the format once and then enjoy it every time; the creator makes each new
+episode on rails. Camera moves differ in detail (ref 04 rolls more, zooms less) but the beats and their order are the same.
+
+New details in ref 04:
+- **Show the invisible on the surface first:** a glowing double zigzag (cyan + yellow) shoots up the arm from the elbow
+  to the fingers, which splay in a tingle, before the camera goes inside to explain it.
+- **Atmosphere never stops:** golden motes float through the room in every frame (life in empty air).
+- **The setting tells a story before the science:** a night window with lit houses, a picture, a plant, a dresser, a rug.
+- **Eye guides:** a target ring and brackets on the impact point at the moment of the hit.
+
+**Half Landing's own template (keep it, so the page reads as one show):** 8-10 s vertical; frame one already moving
+(the hook); three thumps from the sound check (set up, escalate, pay off); a visible cause for every mishap; the key
+moment lands with several tools (smear, hold, impact frame, punch-in, sound, silence); Dev's deadpan look to camera;
+one apron stain more; the last frame equals the first (loop). Vary the prop, the gag and the set, never the grammar.
+
 ## Frame-level details (measured 2026-11-28 with `ref_motion.py` and full-frame close-ups)
 
 **Camera grammar (reference-ig-01, 12 zoom/roll moves in 26 s; ours v3 had 9):**

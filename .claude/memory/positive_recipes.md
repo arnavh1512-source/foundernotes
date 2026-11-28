@@ -157,3 +157,11 @@ _No tested recipes recorded yet._
 - Cause / rationale: the deliberate pause had nothing moving; smooth, faint drift is below what reads frame to frame
 - Correction / recipe: keep deliberate pauses but leave a trace of the last action moving through them (dust, steam, a swinging door); give particles a 2-frame boil
 - Verification: A13 re-exported; still 4.9%, sync 18/18, QC PASS
+
+### reference-ig-04 — A series template: the same creator repeats the exact beat grammar and length (26.1 s) with a new subject each time, so viewers learn the format once; make the invisible visible on the surface before going inside; keep atmosphere (floating motes) in every frame
+
+- Recorded (UTC): 2026-11-28T12:59:16+00:00
+- Evidence: reference-ig-04 vs reference-ig-01: identical length and beat order (hit, surface reveal, roll in, rewind, slow press, fast clock with labels, roll out, scan band, loop); ref_motion: local motion 6.2% vs 7.6%, rolls at 2.5/13.6/21.3 s
+- Cause / rationale: a fixed format lets a channel publish consistently and lets viewers enjoy the variation instead of relearning the structure
+- Correction / recipe: Half Landing keeps its own template (written in the playbook): hook in frame one, three thumps, visible cause, multi-tool key moment, look to camera, +1 apron stain, seamless loop; vary prop, gag and set only
+- Verification: template written into the playbook; existing episodes A03-A13 already follow it
