@@ -8,6 +8,8 @@
 //   "hits":   [0.5]            THE HIT: a white impact frame at each local time, fading over the next frame or two
 //   "light":  {"tint": "#ff9a3c", "alpha": 0.12, "vignette": 0.35}               LIGHT: a colour grade and vignette
 //   "counter":{"n": 2, "of": 3, "text": "THUMP"}  a progress row (filled boxes, "2 / 3 THUMP"); "n": "?" withholds the last
+//   "special":[t0, t1]  a "special moment" grade (reference-ig-03 44-47 s): the world turns cool teal and desaturated for
+//              the peak, then snaps back. Scenes can add afterimages(draw, ...) for coloured trailing ghosts of black line art.
 // Time itself can run ON TWOS: "twos": true on a shot or the manifest holds each drawing for two frames.
 const OV={ink:'#16161a', paper:'#f6f2e9', verb:'#ffd23f', chip:'rgba(22,22,26,.84)'};
 function ovIcon(mode,cx,cy,s,t){ x.fillStyle=OV.paper; x.beginPath();
@@ -38,5 +40,10 @@ function ovHits(hits,t){ for(const h of hits||[]){ const k=t-h; if(k>=0&&k<.1){ 
 function ovCounter(c){ if(!c) return; const of=c.of||3, n=c.n==='?'?of-1:c.n, bs=46, gap=16, rowW=of*bs+(of-1)*gap, X0=(W-rowW)/2, Y0=H*.075;
   for(let i=0;i<of;i++){ x.lineWidth=5; x.strokeStyle=OV.ink; x.fillStyle=i<n?OV.verb:'rgba(246,242,233,.85)'; x.beginPath(); x.roundRect(X0+i*(bs+gap),Y0,bs,bs,8); x.fill(); x.stroke() }
   x.font='800 50px Inst'; x.textAlign='center'; x.textBaseline='top'; x.fillStyle=OV.ink; x.fillText(`${c.n==='?'?n:c.n} / ${of}  ${c.n==='?'?'?':(c.text||'')}`,W/2,Y0+bs+18); x.textAlign='left' }
+// coloured afterimages of black line art (pink / cyan / violet ghosts behind a fast move): draw(dt) draws the subject at
+// time offset dt; a CSS filter turns black ink into a tinted, translucent ghost
+function afterimages(draw,n=3,step=.04,hues=[290,170,240]){ for(let i=n;i>=1;i--){ x.save(); x.filter=`invert(1) sepia(1) saturate(7) hue-rotate(${hues[(i-1)%hues.length]}deg) opacity(${.22+.12*(n-i)})`; draw(-i*step); x.restore() } }
+function ovSpecial(sp,t){ if(!sp) return; const [a,b]=sp; if(t<a||t>=b) return; x.save(); x.globalCompositeOperation='saturation'; x.globalAlpha=.65; x.fillStyle='#808080'; x.fillRect(0,0,W,H);
+  x.globalCompositeOperation='multiply'; x.globalAlpha=.35; x.fillStyle='#7fb7b0'; x.fillRect(0,0,W,H); x.restore() }
 function ovDraw(shot,t){ x.setTransform(1,0,0,1,0,0); x.globalAlpha=1;
-  ovLight(shot.light); if(shot.fx==='rewind') ovRewindFX(t); ovHits(shot.hits,t); ovCounter(shot.counter); ovUI(shot.ui,t); for(const L of shot.labels||[]) ovLabel(L,t) }
+  ovLight(shot.light); ovSpecial(shot.special,t); if(shot.fx==='rewind') ovRewindFX(t); ovHits(shot.hits,t); ovCounter(shot.counter); ovUI(shot.ui,t); for(const L of shot.labels||[]) ovLabel(L,t) }

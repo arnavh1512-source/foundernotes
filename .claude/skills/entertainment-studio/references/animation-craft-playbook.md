@@ -132,6 +132,11 @@ column** rises and fades over ~15 frames. **Secondary motion:** the hit head sna
 by 1-2 frames. **Camera:** follow the fighters' midpoint lightly (~0.3) with a lag, and pull back while someone is
 airborne, so nobody is pushed off the frame.
 
+**The special moment (reference-ig-03 44.2-47.2 s):** for a hero beat the whole world changes: a cool teal,
+desaturated grade, the other figures drop to black silhouettes, the hero leaves pink/cyan/violet afterimages and white
+shockwave arcs, then everything snaps back to normal on the next beat. Our tools: shot key `"special": [t0, t1]` and
+`afterimages(draw, n, step)` (overlay.js). Use it once per episode at most, and keep it short.
+
 **Run (reference-ig-03 12.3-12.9 s):** ~45 deg lean, head low and forward, the back leg thrown straight out behind,
 the front knee driving high, arms pumping opposite the legs, **on twos**. Each leg has its own phase: the knee bends
 while that leg swings forward, so the legs never line up; never swing a straight leg up high (it reads as a slide).

@@ -125,3 +125,11 @@ _No tested recipes recorded yet._
 - Cause / rationale: two sounds 20 ms apart merge into one onset (to the detector and to the ear); kick tails rang into the next beat
 - Correction / recipe: one beat list per shot feeds both picture (lift()) and cues; same-moment sounds share t; kick dur <= beat interval minus ~0.1 s
 - Verification: A10 ep_review 45/46 (the miss is a soft bowl plop under the groove); QC PASS; exported
+
+### reference-ig-03,half-landing-a09-reel — Mark the peak by changing the world: for the hero moment the scene grade turns cool teal and desaturated, other figures drop to silhouettes, and the hero leaves coloured afterimages (pink/cyan/violet), then everything snaps back on the next beat
+
+- Recorded (UTC): 2026-11-28T09:18:00+00:00
+- Evidence: reference-ig-03 44.2-47.2 s at 5 fps (teal grade, black silhouettes, chromatic ghost trails, shockwave arcs, snap back at 47.2 s); A09 E04 frames 3.3-3.7 s with the new tools
+- Cause / rationale: our payoffs used only camera punches and impact frames; nothing told the viewer 'this is the special moment' at a glance
+- Correction / recipe: shot key "special": [t0, t1] in workspace.json grades the stretch; afterimages(draw, n, step) in overlay.js tints earlier poses of black line art with a CSS filter (invert, sepia, saturate, hue-rotate); keep it short (0.2-0.5 s) and snap back
+- Verification: A09 re-rendered E04 only (cache), QC PASS, ep_check PASS; frames show grade, ghosts and snap back
